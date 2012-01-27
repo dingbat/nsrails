@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "RailsModel.h"
+#import "NSRails.h"
 #import "JSONFramework.h"
 #import "NSString+InflectionSupport.h"
 #import "NSData+Additions.h"
@@ -15,6 +15,9 @@
 
 #define RMLogErrors
 #define BASE_RAILS @"modelID=id"
+
+#define NSRLogError(x)	NSLog(@"Error Domain=%@ Code=%d \"%@\"",x.domain,x.code,[x localizedDescription]);
+
 
 
 @interface RailsModel (internal)
@@ -561,23 +564,34 @@ static NSString* appPassword;
 	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
 	
 	int statusCode = -1;
-	if ([response respondsToSelector:@selector(statusCode)])
+	BOOL err;
+	NSString *result;
+	if (!response || !data)
 	{
-		statusCode = [((NSHTTPURLResponse *)response) statusCode];
+		err = YES;
+		statusCode = 0;
+		result = [NSString stringWithFormat:@"Connection with %@ failed.",appURL];
 	}
-	BOOL err = (statusCode == -1 || statusCode >= 400);
-	
-	NSString *result = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-	
+	else
+	{
+		if ([response respondsToSelector:@selector(statusCode)])
+		{
+			statusCode = [((NSHTTPURLResponse *)response) statusCode];
+		}
+		err = (statusCode == -1 || statusCode >= 400);
+		
+		result = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+		
 #ifndef RMCompileWithARC
-	[request release];
-	[result autorelease];
+		[request release];
+		[result autorelease];
 #endif
 	
 #if RMLog > 1
-	NSLog(@"IN<=== Code %d; %@\n\n",statusCode,(err ? @"[see ERROR]" : result));
-	NSLog(@" ");
+		NSLog(@"IN<=== Code %d; %@\n\n",statusCode,(err ? @"[see ERROR]" : result));
+		NSLog(@" ");
 #endif
+	}
 	
 	if (err)
 	{
@@ -605,11 +619,7 @@ static NSString* appPassword;
 		}
 
 #if RMLog > 0
-#ifdef RMSuccinctErrorMessages
-		NSLog(@"%@",statusError);
-#else
-		NSLog(@"%@",result);
-#endif
+		NSRLogError(statusError);
 		NSLog(@" ");
 #endif
 		
@@ -718,15 +728,27 @@ static NSString* appPassword;
 	return [self createRemote:error exclude:list];
 }
 
-- (BOOL) updateRemote:(NSError **)error exclude:(NSArray *)exclude
+- (BOOL) checkForNilID:(NSError **)error
 {
 	if (!self.modelID)
 	{
+		NSError *e = [NSError errorWithDomain:@"rails" code:0 userInfo:[NSDictionary dictionaryWithObject:@"Attempted to update or delete an object with no ID." forKey:NSLocalizedDescriptionKey]];
+		if (error)
+			*error = e;
+		
 #ifdef RMLogErrors
-		NSLog(@"error in updating %@ instance - object has no ID.",[self camelizedModelName]);
+		NSRLogError(e);
 #endif
 		return NO;
 	}
+
+	return YES;
+}
+
+- (BOOL) updateRemote:(NSError **)error exclude:(NSArray *)exclude
+{
+	if (![self checkForNilID:error])
+		return NO;
 	
 	[sendableProperties removeObjectsInArray:exclude];
 	BOOL success = !![self makeRequest:@"PUT" requestBody:[self JSONRepresentation] method:nil error:error];
@@ -768,13 +790,8 @@ static NSString* appPassword;
 - (BOOL) destroyRemote {	return [self destroyRemote:nil]; }
 - (BOOL) destroyRemote:(NSError **)error
 {
-	if (!self.modelID)
-	{
-#ifdef RMLogErrors
-		NSLog(@"error in deleting %@ instance - object has no ID.",[self camelizedModelName]);
-#endif
+	if (![self checkForNilID:error])
 		return NO;
-	}
 	
 	return (!![self makeRequest:@"DELETE" requestBody:nil method:nil error:error]);
 }

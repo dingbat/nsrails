@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "RailsConfig.h"
+#import "NSRailsConfig.h"
 
 #define MakeRails(rails_properties) \
 	+ (NSString*) MakeRails { return [[super MakeRails] stringByAppendingFormat:@", %@", rails_properties]; }

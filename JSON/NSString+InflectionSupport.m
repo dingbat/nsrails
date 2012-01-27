@@ -7,7 +7,6 @@
 //
 
 #import "NSString+InflectionSupport.h"
-#import "RailsConfig.h"
 
 @implementation NSString (InflectionSupport)
 
