@@ -24,6 +24,8 @@
 - (NSDictionary *) dictionaryOfRelevantProperties;
 - (NSDictionary *) envelopedDictionaryOfRelevantProperties:(NSString *)envelope;
 - (NSString *) getIvarType:(NSString *)ivar;
+- (SEL) getIvarSetter:(NSString *)ivar;
+- (SEL) getIvarGetter:(NSString *)ivar;
 
 @end
 
@@ -238,28 +240,64 @@ static NSString* appPassword;
 }
 
 #pragma mark -
+#pragma mark Ivar tricks
+
+- (NSString *) getIvarType:(NSString *)ivar
+{
+	Ivar var = class_getInstanceVariable([self class], [ivar UTF8String]);
+	if (!var)
+		return nil;
+	
+	NSString *ret = [NSString stringWithCString:ivar_getTypeEncoding(var) encoding:NSUTF8StringEncoding];
+	
+	return [[ret stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
+}
+
+- (SEL) getIvar:(NSString *)ivar attribute:(NSString *)str
+{
+	objc_property_t property = class_getProperty([self class], [ivar UTF8String]);
+	if (!property)
+		return nil;
+	
+	NSString *atts = [NSString stringWithCString:property_getAttributes(property) encoding:NSUTF8StringEncoding];
+	for (NSString *att in [atts componentsSeparatedByString:@","])
+	{
+		if (att.length > 0 && [[att substringToIndex:1] isEqualToString:str])
+		{
+			NSString *setter = [att substringFromIndex:1];
+			return NSSelectorFromString(setter);
+		}
+	}
+	
+	return nil;
+}
+
+- (SEL) getIvarGetter:(NSString *)ivar
+{
+	SEL s = [self getIvar:ivar attribute:@"G"];
+	if (!s)
+	{
+		s = NSSelectorFromString(ivar);
+	}
+	return s;
+}
+
+- (SEL) getIvarSetter:(NSString *)ivar
+{
+	SEL s = [self getIvar:ivar attribute:@"S"];
+	if (!s)
+	{
+		s = NSSelectorFromString([NSString stringWithFormat:@"set%@:",[ivar toClassName]]);
+	}
+	return s;
+}
+
+#pragma mark -
 #pragma mark Internal RM stuff
 
 - (NSString *) description
 {
 	return [attributes description];
-}
-
-- (NSString *) getIvarType:(NSString *)ivar
-{
-	@try 
-	{
-		Ivar var = class_getInstanceVariable([self class], [ivar cStringUsingEncoding:NSASCIIStringEncoding]);
-		const char* typeEncoding = ivar_getTypeEncoding(var);
-		NSString *ret = [NSString stringWithCString:typeEncoding encoding:NSASCIIStringEncoding];
-		ret = [ret stringByReplacingOccurrencesOfString:@"\"" withString:@""];
-		ret = [ret stringByReplacingOccurrencesOfString:@"@" withString:@""];
-		return ret;
-	}
-	@catch (NSException *exception)
-	{
-		return nil;
-	}
 }
 
 - (id) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
@@ -297,7 +335,7 @@ static NSString* appPassword;
 
 - (id) representationOfObjectForProperty:(NSString *)prop
 {
-	SEL sel = NSSelectorFromString(prop);
+	SEL sel = [self getIvarGetter:prop];
 	if ([self respondsToSelector:sel])
 	{
 		id val = [self performSelector:sel];
@@ -360,7 +398,8 @@ static NSString* appPassword;
 				NSLog(@"found multiple instance variables tied to one rails equivalent (%@ are all set to equal rails property '%@'). setting data for it into the first ivar listed, but please fix.",equiv,key);
 #endif
 		
-			SEL sel = NSSelectorFromString([NSString stringWithFormat:@"set%@:",[property toClassName]]);
+			
+			SEL sel = [self getIvarSetter:property];
 			if ([self respondsToSelector:sel] && [retrievableProperties indexOfObject:property] != NSNotFound)
 				//means its marked as retrievable and is settable through setEtc:.
 			{
