@@ -49,7 +49,8 @@
 
 
 //rails methods
-+ (id) remoteObjectWithID:(int)mID;
++ (id) getRemoteObjectWithID:(int)mID;
++ (id) getRemoteObjectWithID:(int)mID error:(NSError **)error;
 
 - (BOOL) getRemoteLatest;
 - (BOOL) updateRemote;
@@ -66,6 +67,9 @@
 - (BOOL) updateRemote:(NSError **)error excluding:(NSString *)exc, ... NS_REQUIRES_NIL_TERMINATION;
 - (BOOL) createRemote:(NSError **)error excluding:(NSString *)exc, ... NS_REQUIRES_NIL_TERMINATION;
 
+- (BOOL) updateRemoteExcludingNilValues:(NSError **)error;
+- (BOOL) createRemoteExcludingNilValues:(NSError **)error;
+
 //custom methods (not CRUD)
 - (NSString *) makeGETRequestWithMethod:(NSString *)method error:(NSError **)error;
 - (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error;
@@ -75,11 +79,13 @@
 + (NSString *) makeGETRequestWithMethod:(NSString *)method error:(NSError **)error;
 + (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error;
 
-+ (NSString *) MakeRails;
-
 // will use whatever inputted in RailsMake()
 - (NSString *) JSONRepresentation;
 - (BOOL) setAttributesAsPerJSON:(NSString *)json;
+
+
++ (NSString *) MakeRails;
+
 
 @end
 

@@ -6,6 +6,12 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
+//TODO
+// 1. on update/create, if no ID, send back error with "nil ID" instead of simply logging
+// 2. synchronous HTTP calls (see how ASIHTTP does blocks - must be done in blocks
+// 3. documentation+screencast
+// 4. tests
+
 
 //  OPTIONS
 
@@ -13,9 +19,12 @@
 #define RMAppendRelatedModelKeyOnSend	@"_attributes"
 #define RMAutomaticallyUnderscoreAndCamelize
 #define RMAutomaticallyMakeURLsLowercase
-#define RMLog 2
-#define RMSendNilValues
+#define RMLog 3
 //#define RMSendHasManyRelationAsHash
+//#define RMCrashOnError
+#define RMSuccinctErrorMessages
+
+#define RMCompileWithARC
 
 
 // RMAppendRelatedModelKeyOnSend
@@ -35,10 +44,7 @@
 // when undefined: RM will only log internal errors
 // when defined as 1: RM will log HTTP verbs with URLs and any server errors
 // when defined as 2: RM will also log any request body going out and data coming in.
-
-// RMSendNilValues
-// when defined: if a property is nil, will send 'null' in request bodies. (does not include null id's)
-// when undefined: the key will simply be absent from request body
+// when defined as 3: RM will also log internal tips/warnings.
 
 // RMSendHasManyRelationAsHash
 // when defined: an object with a has_many will send those objects in a hash following: {"0"=>{"key":"val"}, "1"=>{"key":"val"}} 

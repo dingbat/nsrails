@@ -23,6 +23,7 @@
 
 - (NSDictionary *) dictionaryOfRelevantProperties;
 - (NSDictionary *) envelopedDictionaryOfRelevantProperties:(NSString *)envelope;
+- (NSString *) getIvarType:(NSString *)ivar;
 
 @end
 
@@ -110,7 +111,7 @@ static NSString* appPassword;
 
 - (NSString *) camelizedModelName
 {
-	return [[[self class] getModelName] camelize];
+	return [[[[self class] getModelName] camelize] toClassName];
 }
 
 - (id) init
@@ -156,7 +157,7 @@ static NSString* appPassword;
 						[decodeProperties addObject:prop];
 				}
 				
-				//if neither -s or -r aren't defined, by deault make it both sendable+retrievable
+				//if neither -s nor -r are defined, by default make it both sendable+retrievable
 				if (opSplit.count == 1 || 
 					([options rangeOfString:@"s"].location == NSNotFound && [options rangeOfString:@"r"].location == NSNotFound))
 				{
@@ -167,11 +168,36 @@ static NSString* appPassword;
 				if (modSplit.count > 1)
 				{
 					NSString *otherModel = [[modSplit lastObject] stringByTrimmingCharactersInSet:wn];
-	#ifdef RMLogErrors
-					if (!NSClassFromString(otherModel))
-						NSLog(@"failed to make relation with models %@ and %@ - could not find class %@. make sure you entered the class of the related model correctly into the MakeRails of the %@ class",[self camelizedModelName],otherModel,otherModel,[self camelizedModelName]);
-	#endif
-					[modelRelatedProperties setObject:otherModel forKey:prop];
+					if (otherModel.length > 0)
+					{
+#ifdef RMLogErrors
+						if (!NSClassFromString(otherModel))
+							NSLog(@"failed to make relation with models %@ and %@ - could not find class %@. make sure you entered the class of the related model correctly into the MakeRails of the %@ class",[self camelizedModelName],otherModel,otherModel,[self camelizedModelName]);
+#endif
+						[modelRelatedProperties setObject:otherModel forKey:prop];
+					}
+				}
+				else
+				{
+					NSString *ivarType = [self getIvarType:prop];
+					if (!([ivarType isEqualToString:@"NSString"] ||
+						  [ivarType isEqualToString:@"NSMutableString"] ||
+						  [ivarType isEqualToString:@"NSDictionary"] ||
+						  [ivarType isEqualToString:@"NSMutableDictionary"] ||
+						  [ivarType isEqualToString:@"NSNumber"] ||
+						  [ivarType isEqualToString:@"NSArray"] ||
+						  [ivarType isEqualToString:@"NSMutableArray"]))
+					{
+						//must be custom obj, see if its a railsmodel, if it is, link it automatically
+						Class c = NSClassFromString(ivarType);
+						if (c && [c isSubclassOfClass:[RailsModel class]])
+						{
+#if RMLog > 2
+							NSLog(@"automatically linking ivar %@ in class %@ with related railsmodel %@",prop,[self camelizedModelName],ivarType);
+#endif
+							[modelRelatedProperties setObject:ivarType forKey:prop];
+						}
+					}
 				}
 				
 				NSString *equivalent = prop;
@@ -180,16 +206,16 @@ static NSString* appPassword;
 					equivalent = [[eqSplit lastObject] stringByTrimmingCharactersInSet:wn];
 					if ([equivalent isEqualToString:@"id"] && i != 0)
 					{
-	#ifdef RMLogErrors
+#ifdef RMLogErrors
 						NSLog(@"found attempt to set the rails equivalent of ivar '%@' in model %@ to 'id'. this property is reserved and should be accessed through 'modelID' from a RailsModel subclass. equivalence not set, but please fix this.", prop, [self camelizedModelName]);
-	#endif
+#endif
 						equivalent = prop;
 					}
 					else if ([propertyEquivalents allKeysForObject:equivalent].count > 0)
 					{
-	#ifdef RMLogErrors
+#ifdef RMLogErrors
 						NSLog(@"found multiple instance variables tied to one rails equivalent in class %@. please fix; could be buggy.",[self camelizedModelName]);
-	#endif
+#endif
 					}
 				}
 #ifdef RMAutomaticallyUnderscoreAndCamelize
@@ -219,6 +245,23 @@ static NSString* appPassword;
 	return [attributes description];
 }
 
+- (NSString *) getIvarType:(NSString *)ivar
+{
+	@try 
+	{
+		Ivar var = class_getInstanceVariable([self class], [ivar cStringUsingEncoding:NSASCIIStringEncoding]);
+		const char* typeEncoding = ivar_getTypeEncoding(var);
+		NSString *ret = [NSString stringWithCString:typeEncoding encoding:NSASCIIStringEncoding];
+		ret = [ret stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+		ret = [ret stringByReplacingOccurrencesOfString:@"@" withString:@""];
+		return ret;
+	}
+	@catch (NSException *exception)
+	{
+		return nil;
+	}
+}
+
 - (id) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
 {
 	RailsModel *model = [[NSClassFromString(classN) alloc] init];
@@ -229,6 +272,9 @@ static NSString* appPassword;
 #endif
 		return nil;
 	}
+#ifndef RMCompileWithARC
+	[model autorelease];
+#endif
 	[model setAttributesAsPerDictionary:dict];
 	return model;
 }
@@ -267,20 +313,15 @@ static NSString* appPassword;
 				for (int i = 0; i < [val count]; i++)
 				{
 					id obj = [[val objectAtIndex:i] dictionaryOfRelevantProperties];
-#ifdef RMSendNilValues
 					if (!obj)
 					{
 						obj = [NSNull null];
 					}
-#endif
-					if (obj)
-					{
 #ifdef RMSendHasManyRelationAsHash
-						[new setObject:obj forKey:[NSString stringWithFormat:@"%d",i]];
+					[new setObject:obj forKey:[NSString stringWithFormat:@"%d",i]];
 #else
-						[new addObject:obj];
+					[new addObject:obj];
 #endif
-					}
 				}
 				return new;
 			}
@@ -347,6 +388,12 @@ static NSString* appPassword;
 							val = [self makeRelevantModelFromClass:relatedClass basedOn:[dict objectForKey:key]];
 						}
 					}
+					NSString *ivarType = [self getIvarType:property];
+					if ([val isKindOfClass:[NSDictionary class]]
+						&& ![ivarType isEqualToString:@"NSDictionary"] && ![ivarType isEqualToString:@"NSMutableDictionary"])
+					{
+						NSLog(@"NOTE: entering NSDictionary into %@'s ivar '%@' (type = %@) -- types do not match up!!",property,ivarType,[self camelizedModelName]);
+					}
 					[self performSelector:sel withObject:val];
 				}
 				else
@@ -374,30 +421,19 @@ static NSString* appPassword;
 		
 		id val = [self representationOfObjectForProperty:key];
 		BOOL null = !val;
-#ifdef RMSendNilValues
-		if (!val && ![property isEqualToString:@"id"])
+		if (!val && ![property isEqualToString:@"id"]) //if ID is null, simply bypass it, don't stick in "null" - it could be for create
 		{
-			@try
+			NSString *string = [self getIvarType:key];
+			if ([string isEqualToString:@"NSArray"] || [string isEqualToString:@"NSMutableArray"])
 			{
-				Ivar var = class_getInstanceVariable([self class], [key cStringUsingEncoding:NSASCIIStringEncoding]);
-				const char* typeEncoding = ivar_getTypeEncoding(var);
-				NSString *string = [NSString stringWithCString:typeEncoding encoding:NSASCIIStringEncoding];
-				if ([string isEqualToString:@"@\"NSArray\""] || [string isEqualToString:@"@\"NSMutableArray\""])
-				{
-					//there's an array, and because the value is nil, make it an empty array
-					val = [NSArray array];
-				}
-				else
-				{
-					val = [NSNull null];
-				}
+				//there's an array, and because the value is nil, make it an empty array
+				val = [NSArray array];
 			}
-			@catch (NSException *e)
+			else
 			{
 				val = [NSNull null];
 			}
 		}
-#endif
 		if (val)
 		{
 			if ([modelRelatedProperties objectForKey:key] && !null) //if its null/empty(for arrays), dont append _attributes
@@ -444,8 +480,6 @@ static NSString* appPassword;
 
 + (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route error:(NSError **)error
 {
-//	requestStr = @"{\"user\":{\"password\":\"123454\",\"username\":\"Dan\",\"stories\":[],\"friend\":{\"name\":\"hu\"}}}";
-		
 	NSString *url = [NSString stringWithFormat:@"%@/%@",appURL,route];
 	
 #ifdef RMAutomaticallyMakeURLsLowercase
@@ -453,8 +487,9 @@ static NSString* appPassword;
 #endif
 	
 #if RMLog > 0
+	NSLog(@" ");
 	NSLog(@"%@ to %@",type,url);
-#if RMLog == 2
+#if RMLog > 1
 	NSLog(@"OUT===> %@",requestStr);
 #endif
 #endif
@@ -495,12 +530,30 @@ static NSString* appPassword;
 	
 	NSString *result = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
 	
-#if RMLog == 2
+#ifndef RMCompileWithARC
+	[request release];
+	[result autorelease];
+#endif
+	
+#if RMLog > 1
 	NSLog(@"IN<=== Code %d; %@\n\n",statusCode,(err ? @"[see ERROR]" : result));
+	NSLog(@" ");
 #endif
 	
 	if (err)
 	{
+#ifdef RMSuccinctErrorMessages
+		if ([result rangeOfString:@"</html>"].location != NSNotFound)
+		{
+			NSArray *pres = [result componentsSeparatedByString:@"<pre>"];
+			if (pres.count > 1)
+			{
+				result = [[[pres objectAtIndex:1] componentsSeparatedByString:@"</pre"] objectAtIndex:0];
+				result = [result stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
+			}
+		}
+#endif
+		
 		NSDictionary *inf = [NSDictionary dictionaryWithObject:result
 														forKey:NSLocalizedDescriptionKey];
 		NSError *statusError = [NSError errorWithDomain:@"rails"
@@ -511,9 +564,18 @@ static NSString* appPassword;
 		{
 			*error = statusError;
 		}
-		
+
 #if RMLog > 0
-		NSLog(@"%@",[statusError localizedDescription]);
+#ifdef RMSuccinctErrorMessages
+		NSLog(@"%@",statusError);
+#else
+		NSLog(@"%@",result);
+#endif
+		NSLog(@" ");
+#endif
+		
+#ifdef RMCrashOnError
+		[NSException raise:[NSString stringWithFormat:@"Rails error code %d",statusCode] format:result];
 #endif
 		
 		return nil;
@@ -540,24 +602,6 @@ static NSString* appPassword;
 - (NSString *) makeGETRequestWithMethod:(NSString *)method error:(NSError **)error
 {
 	return [self makeRequest:@"GET" requestBody:nil method:method error:error];
-}
-
-- (id) makeRequest:(NSString *)type error:(NSError **)error
-{
-	if ([type isEqualToString:@"GET"])
-	{
-		return [self makeGETRequestWithMethod:nil error:error];
-	}
-	
-	if ([type isEqualToString:@"DELETE"])
-	{
-		return [self makeRequest:@"DELETE" requestBody:nil method:nil error:error];
-	}
-	
-	NSString *body = [self JSONRepresentation];		
-	
-	//for POST, PUT, and any others
-	return [self makeRequest:type requestBody:body method:nil error:error];
 }
 
 + (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error
@@ -588,10 +632,36 @@ static NSString* appPassword;
 #pragma mark -
 #pragma mark External stuff (CRUD)
 
+- (BOOL) createRemote:(NSError **)error exclude:(NSArray *)exclude
+{
+	if (!self.modelID)
+	{
+#ifdef RMLogErrors
+		NSLog(@"error in creating %@ instance - object has no ID.",[self camelizedModelName]);
+#endif
+		return NO;
+	}
+	
+	[sendableProperties removeObjectsInArray:exclude];
+	NSString *json = [[self class] makeRequest:@"POST" requestBody:[self JSONRepresentation] method:nil error:error];
+	[sendableProperties addObjectsFromArray:exclude];
+	
+	return (json && [self setAttributesAsPerJSON:json]);
+}
 - (BOOL) createRemote {	return [self createRemote:nil];	}
 - (BOOL) createRemote:(NSError **)error {	return [self createRemote:error excluding:nil];	}
-- (BOOL) createRemote:(NSError **)error excluding:(NSString *)exc, ...
+- (BOOL) createRemoteExcludingNilValues:(NSError **)error
 {
+	NSMutableArray *list = [NSMutableArray array];
+	
+	for (NSString *prop in sendableProperties)
+		if (![self representationOfObjectForProperty:prop])
+			[list addObject:prop];
+	
+	return [self createRemote:error exclude:list];
+}
+- (BOOL) createRemote:(NSError **)error excluding:(NSString *)exc, ...
+{	
 	NSMutableArray *list = [NSMutableArray array];
 	
 	if (exc)
@@ -606,16 +676,10 @@ static NSString* appPassword;
 		
 	}
 	
-	[sendableProperties removeObjectsInArray:list];
-	NSString *json = [self makeRequest:@"POST" error:error];
-	[sendableProperties addObjectsFromArray:list];
-	
-	return (json && [self setAttributesAsPerJSON:json]);
+	return [self createRemote:error exclude:list];
 }
 
-- (BOOL) updateRemote {	return [self updateRemote:nil];	}
-- (BOOL) updateRemote:(NSError **)error {	return [self updateRemote:error excluding:nil];	}
-- (BOOL) updateRemote:(NSError **)error excluding:(NSString *)exc, ...
+- (BOOL) updateRemote:(NSError **)error exclude:(NSArray *)exclude
 {
 	if (!self.modelID)
 	{
@@ -625,6 +689,26 @@ static NSString* appPassword;
 		return NO;
 	}
 	
+	[sendableProperties removeObjectsInArray:exclude];
+	BOOL success = !![self makeRequest:@"PUT" requestBody:[self JSONRepresentation] method:nil error:error];
+	[sendableProperties addObjectsFromArray:exclude];
+	
+	return success;
+}
+- (BOOL) updateRemote {	return [self updateRemote:nil];	}
+- (BOOL) updateRemote:(NSError **)error {	return [self updateRemote:error excluding:nil];	}
+- (BOOL) updateRemoteExcludingNilValues:(NSError **)error
+{
+	NSMutableArray *list = [NSMutableArray array];
+	
+	for (NSString *prop in sendableProperties)
+		if (![self representationOfObjectForProperty:prop])
+			[list addObject:prop];
+	
+	return [self updateRemote:error exclude:list];
+}
+- (BOOL) updateRemote:(NSError **)error excluding:(NSString *)exc, ...
+{	
 	NSMutableArray *list = [NSMutableArray array];
 	
 	if (exc)
@@ -639,11 +723,7 @@ static NSString* appPassword;
 		
 	}
 	
-	[sendableProperties removeObjectsInArray:list];
-	BOOL success = !![self makeRequest:@"PUT" error:error];
-	[sendableProperties addObjectsFromArray:list];
-	
-	return success;
+	return [self updateRemote:error exclude:list];
 }
 
 - (BOOL) destroyRemote {	return [self destroyRemote:nil]; }
@@ -657,13 +737,13 @@ static NSString* appPassword;
 		return NO;
 	}
 	
-	return ([self makeRequest:@"DELETE" error:error] != nil);
+	return (!![self makeRequest:@"DELETE" requestBody:nil method:nil error:error]);
 }
 
 - (BOOL) getRemoteLatest {	return [self getRemoteLatest:nil]; }
 - (BOOL) getRemoteLatest:(NSError **)error
 {
-	NSString *json = [self makeRequest:@"GET" error:error];
+	NSString *json = [self makeGETRequestWithMethod:nil error:error];
 	if (!json)
 	{
 		return NO;
@@ -671,19 +751,23 @@ static NSString* appPassword;
 	return ([self setAttributesAsPerJSON:json]); //will return true/false if conversion worked
 }
 
-+ (id) remoteObjectWithID:(int)mID
++ (id) getRemoteObjectWithID:(int)mID	{ return [self getRemoteObjectWithID:mID error:nil]; }
++ (id) getRemoteObjectWithID:(int)mID error:(NSError **)error
 {
 	RailsModel *rm = [[[self class] alloc] init];
 	rm.modelID = [NSDecimalNumber numberWithInt:mID];
 	
-	if (![rm getRemoteLatest])
+	if (![rm getRemoteLatest:error])
 		rm = nil;
 	
+#ifndef RMCompileWithARC
+	[rm autorelease];
+#endif
+
 	return rm;
 }
 
 + (NSArray *) getAllRemote {	return [self getAllRemote:nil]; }
-
 + (NSArray *) getAllRemote:(NSError **)error
 {
 	NSString *json = [[self class] makeGETRequestWithMethod:nil error:error];
@@ -702,6 +786,10 @@ static NSString* appPassword;
 		[obj setAttributesAsPerDictionary:dict];
 		
 		[objects addObject:obj];
+		
+#ifndef RMCompileWithARC
+		[obj release];
+#endif
 	}
 	
 	return objects;
@@ -712,5 +800,24 @@ static NSString* appPassword;
 	// enveloped meaning with the model name out front, {"user"=>{"name"=>"x", "password"=>"y"}}
 	return [[self envelopedDictionaryOfRelevantProperties:[[self class] getModelName]] JSONRepresentation];
 }
+
+#ifndef RMCompileWithARC
+
+- (void) dealloc
+{
+	[modelID release];
+	[attributes release];
+	
+	[sendableProperties release];
+	[retrievableProperties release];
+	[encodeProperties release];
+	[decodeProperties release];
+	[modelRelatedProperties release];
+	[propertyEquivalents release];
+	
+	[super dealloc];
+}
+
+#endif
 
 @end
