@@ -1,20 +1,20 @@
 //
-//  RailsConfig.h
+//  NSRConfig.h
 //  RailsTest
 //
-//  Created by Dan Hassin on 1/25/12.
+//  Created by Dan Hassin on 1/28/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
+
 //TODO
-// 1. on update/create, if no ID, send back error with "nil ID" instead of simply logging
-// 2. synchronous HTTP calls (see how ASIHTTP does blocks - must be done in blocks
-// 3. documentation+screencast
-// 4. tests
+// 1. synchronous HTTP calls (see how ASIHTTP does blocks - must be done in blocks
+// 2. documentation+screencast
+// 3. tests
 
 
 //  OPTIONS
-
 
 #define NSRAppendRelatedModelKeyOnSend	@"_attributes"
 #define NSRAutomaticallyUnderscoreAndCamelize
@@ -25,6 +25,21 @@
 #define NSRSuccinctErrorMessages
 
 #define NSRCompileWithARC
+
+@interface NSRConfig : NSObject
+{
+	
+}
+
++ (void) setAppURL:(NSString *)str;
++ (void) setAppUsername:(NSString *)str;
++ (void) setAppPassword:(NSString *)str;
+
++ (NSString *) appURL;
++ (NSString *) appUsername;
++ (NSString *) appPassword;
+
+@end
 
 
 // NSRAppendRelatedModelKeyOnSend

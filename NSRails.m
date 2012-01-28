@@ -7,9 +7,10 @@
 //
 
 #import "NSRails.h"
+
 #import "JSONFramework.h"
 #import "NSString+InflectionSupport.h"
-#import "NSData+Additions.h"
+#import "NSRConnection.h"
 
 #import <objc/runtime.h>
 
@@ -17,8 +18,7 @@
 #define NSRLogErrors
 #define BASE_RAILS @"modelID=id"
 
-#define NSRLogError(x)	NSLog(@"Error Domain=%@ Code=%d \"%@\"",x.domain,x.code,[x localizedDescription]);
-
+// if it's too intimidating, remember that you can navigate this file quickly in xcode with #pragma marks
 
 
 @interface RailsModel (internal)
@@ -36,31 +36,6 @@
 
 @implementation RailsModel
 @synthesize modelID, attributes, destroyOnNesting;
-
-#pragma mark App Setup
-
-//super-static
-static NSString* appURL;
-static NSString* appUsername;
-static NSString* appPassword;
-
-+ (void) setAppURL:(NSString *)str
-{
-	//get rid of trailing /
-	if ([[str substringFromIndex:str.length-1] isEqualToString:@"/"])
-		str = [str substringToIndex:str.length-1];
-	
-	//add http:// if not included already
-	NSString *http = (str.length < 7 ? nil : [str substringToIndex:7]);
-	if (![http isEqualToString:@"http://"] && ![http isEqualToString:@"https:/"])
-	{
-		str = [@"http://" stringByAppendingString:str];
-	}
-	
-	appURL = str;
-}
-+ (void) setAppUsername:(NSString *)str {	appUsername = str;	}
-+ (void) setAppPassword:(NSString *)str {	appPassword = str;	}
 
 #pragma mark -
 #pragma mark Meta-NSR stuff
@@ -340,6 +315,12 @@ static NSString* appPassword;
 	return [attributes description];
 }
 
+- (NSString *) JSONRepresentation
+{
+	// enveloped meaning with the model name out front, {"user"=>{"name"=>"x", "password"=>"y"}}
+	return [[self envelopedDictionaryOfRelevantProperties:[[self class] getModelName]] JSONRepresentation];
+}
+
 - (id) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
 {
 	//make a new class to be entered for this property/array (we can assume it subclasses RM)
@@ -565,134 +546,7 @@ static NSString* appPassword;
 #pragma mark -
 #pragma mark HTTP Request stuff
 
-+ (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route error:(NSError **)error
-{
-	//generate url based on base URL + route given
-	NSString *url = [NSString stringWithFormat:@"%@/%@",appURL,route];
-	
-#ifdef NSRAutomaticallyMakeURLsLowercase
-	url = [url lowercaseString];
-#endif
-	
-	//log relevant stuff
-#if NSRLog > 0
-	NSLog(@" ");
-	NSLog(@"%@ to %@",type,url);
-#if NSRLog > 1
-	NSLog(@"OUT===> %@",requestStr);
-#endif
-#endif
-	
-	NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
-	
-	[request setHTTPMethod:type];
-	[request setHTTPShouldHandleCookies:NO];
-	//set for json content
-    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-	
-	//if username & password set, assume basic HTTP authentication
-	if (appUsername && appPassword)
-	{
-		//add auth header encoded in base64
-		NSString *authStr = [NSString stringWithFormat:@"%@:%@", appUsername, appPassword];
-		NSData *authData = [authStr dataUsingEncoding:NSUTF8StringEncoding];
-		NSString *authHeader = [NSString stringWithFormat:@"Basic %@", [authData base64Encoding]];
-		
-		[request setValue:authHeader forHTTPHeaderField:@"Authorization"]; 
-	}
-	
-	//if there's an actual request, add the body
-	if (requestStr)
-	{
-		NSData *requestData = [NSData dataWithBytes:[requestStr UTF8String] length:[requestStr length]];
-
-		[request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-		[request setHTTPBody: requestData];
-		[request setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];
- 	}
-	
-	//send request!
-	NSURLResponse *response = nil;
-	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
-	
-	int statusCode = -1;
-	BOOL err;
-	NSString *result;
-	//if no response, the server must be down and log an error
-	if (!response || !data)
-	{
-		err = YES;
-		statusCode = 0;
-		result = [NSString stringWithFormat:@"Connection with %@ failed.",appURL];
-	}
-	else
-	{
-		//otherwise, get the statuscode from the response (it'll be an NSHTTPURLResponse but to be safe check if it responds)
-		if ([response respondsToSelector:@selector(statusCode)])
-		{
-			statusCode = [((NSHTTPURLResponse *)response) statusCode];
-		}
-		err = (statusCode == -1 || statusCode >= 400);
-		
-		result = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-		
-#ifndef NSRCompileWithARC
-		[request release];
-		[result autorelease];
-#endif
-	
-#if NSRLog > 1
-		NSLog(@"IN<=== Code %d; %@\n\n",statusCode,(err ? @"[see ERROR]" : result));
-		NSLog(@" ");
-#endif
-	}
-	
-	if (err)
-	{
-#ifdef NSRSuccinctErrorMessages
-		//if error message is in HTML,
-		if ([result rangeOfString:@"</html>"].location != NSNotFound)
-		{
-			NSArray *pres = [result componentsSeparatedByString:@"<pre>"];
-			if (pres.count > 1)
-			{
-				//get the value between <pre> and </pre>
-				result = [[[pres objectAtIndex:1] componentsSeparatedByString:@"</pre"] objectAtIndex:0];
-				//some weird thing rails does, will send html tags &quot; for quotes
-				result = [result stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
-			}
-		}
-#endif
-		
-		//make a new error
-		NSDictionary *inf = [NSDictionary dictionaryWithObject:result
-														forKey:NSLocalizedDescriptionKey];
-		NSError *statusError = [NSError errorWithDomain:@"rails"
-												   code:statusCode
-											   userInfo:inf];
-
-		if (error)
-		{
-			*error = statusError;
-		}
-
-#if NSRLog > 0
-		NSRLogError(statusError);
-		NSLog(@" ");
-#endif
-		
-#ifdef NSRCrashOnError
-		[NSException raise:[NSString stringWithFormat:@"Rails error code %d",statusCode] format:result];
-#endif
-		
-		return nil;
-	}
-	
-	return result;
-}
-
-
-- (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error
+- (NSString *) routeForMethod:(NSString *)method
 {
 	//make request on instance, so set URL to be in format "users/1"
 	NSString *route = [NSString stringWithFormat:@"%@/%@",[[self class] getPluralModelName], self.modelID];
@@ -706,16 +560,10 @@ static NSString* appPassword;
 		//tack the method onto the end
 		route = [route stringByAppendingFormat:@"/%@",method];
 	}
-	
-	return [RailsModel makeRequestType:httpVerb requestBody:requestStr route:route error:error];
+	return route;
 }
 
-- (NSString *) makeGETRequestWithMethod:(NSString *)method error:(NSError **)error
-{
-	return [self makeRequest:@"GET" requestBody:nil method:method error:error];
-}
-
-+ (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error
++ (NSString *) routeForMethod:(NSString *)method
 {
 	NSString *route;
 	NSString *controller = [self getPluralModelName];
@@ -734,27 +582,58 @@ static NSString* appPassword;
 		route = method;
 	}
 	
-	return [RailsModel makeRequestType:httpVerb requestBody:requestStr route:route error:error];
+	return route;
 }
 
-+ (NSString *) makeGETRequestWithMethod:(NSString *)method error:(NSError **)error
+#pragma mark Performing actions on instances
+
+- (NSString *) makeGETRequestWithMethod:(NSString *)method error:(NSError **)error
 {
+	return [NSRConnection makeRequestType:@"GET" requestBody:nil route:[self routeForMethod:method] sync:error orAsync:nil];
+}
+
+- (void) makeGETRequestWithMethod:(NSString *)method async:(void(^)(NSString *result, NSError *error))completionBlock
+{
+	[NSRConnection makeRequestType:@"GET" requestBody:nil route:[self routeForMethod:method] sync:nil orAsync:completionBlock];
+}
+
+- (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error
+{
+	return [NSRConnection makeRequestType:httpVerb requestBody:requestStr route:[self routeForMethod:method] sync:error orAsync:nil];
+}
+
+- (void) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method async:(void(^)(NSString *result, NSError *error))block
+{
+	[NSRConnection makeRequestType:httpVerb requestBody:requestStr route:[self routeForMethod:method] sync:nil orAsync:block];
+}
+
+#pragma mark Performing actions on classes
+
++ (void) makeGETRequestWithMethod:(NSString *)method async:(void (^)(NSString *result, NSError *))completionBlock
+{ 
+	[self makeRequest:@"GET" requestBody:nil method:method async:completionBlock];
+}
++ (NSString *) makeGETRequestWithMethod:(NSString *)method error:(NSError **)error
+{ 
 	return [self makeRequest:@"GET" requestBody:nil method:method error:error];
+} 
+
++ (void) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method async:(void (^)(NSString *result, NSError *))block
+{ 
+	[NSRConnection makeRequestType:httpVerb requestBody:requestStr route:[self routeForMethod:method] sync:nil orAsync:block];
+}
++ (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error
+{ 
+	return [NSRConnection makeRequestType:httpVerb requestBody:requestStr route:[self routeForMethod:method] sync:error orAsync:nil];
 }
 
 #pragma mark -
 #pragma mark External stuff (CRUD)
 
+/* bad practice?
+ 
 - (BOOL) createRemote:(NSError **)error exclude:(NSArray *)exclude
-{
-	if (!self.modelID)
-	{
-#ifdef NSRLogErrors
-		NSLog(@"error in creating %@ instance - object has no ID.",[self camelizedModelName]);
-#endif
-		return NO;
-	}
-	
+{	
 	//we're gonna exclude whatever's in the "exclude" array, so remove from sendable props temporarily
 	[sendableProperties removeObjectsInArray:exclude];
 	//send a POST (for create) with myself in JSON
@@ -766,8 +645,6 @@ static NSString* appPassword;
 	//return true if json wasn't nil and if the setAttributes worked
 	return (json && [self setAttributesAsPerJSON:json]);
 }
-- (BOOL) createRemote {	return [self createRemote:nil];	}
-- (BOOL) createRemote:(NSError **)error {	return [self createRemote:error excluding:nil];	}
 - (BOOL) createRemoteExcludingNilValues:(NSError **)error
 {
 	NSMutableArray *list = [NSMutableArray array];
@@ -780,28 +657,34 @@ static NSString* appPassword;
 	//run createRemote with the nil list as exclude
 	return [self createRemote:error exclude:list];
 }
-- (BOOL) createRemote:(NSError **)error excluding:(NSString *)exc, ...
-{	
-	NSMutableArray *list = [NSMutableArray array];
-	
-	//just some fun with va_lists. actually the method that takes in the array might be more useful
-	//go through va_arg and add it to the list,
-	if (exc)
-	{
-		va_list args;
-		va_start(args, exc);
-		for (id arg = exc; arg != nil; arg = va_arg(args, id))
-		{
-			[list addObject:arg];
-		}
-		va_end(args);
-		
-	}
-	
-	//then send it to the exclude method
-	return [self createRemote:error exclude:list];
-}
+ 
+- (BOOL) updateRemoteExcludingNilValues:(NSError **)error
+{
+//exclude works same as above for create
 
+NSMutableArray *list = [NSMutableArray array];
+
+for (NSString *prop in sendableProperties)
+if (![self representationOfObjectForProperty:prop])
+[list addObject:prop];
+
+return [self updateRemote:error exclude:list];
+}
+ 
+ - (BOOL) updateRemote:(NSError **)error exclude:(NSArray *)exclude
+ {
+ if (![self checkForNilID:error])
+ return NO;
+ 
+ //exclude works same as above for create
+ 
+ [sendableProperties removeObjectsInArray:exclude];
+ BOOL success = !![self makeRequest:@"PUT" requestBody:[self JSONRepresentation] method:nil error:error];
+ [sendableProperties addObjectsFromArray:exclude];
+ 
+ return success;
+ }
+*/
 - (BOOL) checkForNilID:(NSError **)error
 {
 	//used as a helper for update/create
@@ -821,55 +704,55 @@ static NSString* appPassword;
 	return YES;
 }
 
-- (BOOL) updateRemote:(NSError **)error exclude:(NSArray *)exclude
+#pragma mark Create
+
+- (BOOL) createRemote {	return [self createRemote:nil];	}
+- (BOOL) createRemote:(NSError **)error
+{
+	NSString *json = [[self class] makeRequest:@"POST" requestBody:[self JSONRepresentation] method:nil error:error];
+	
+	//check to see if json exists, and if it does, set all of my attributes to it (like to add the new ID), and return if it worked
+	return (json && [self setAttributesAsPerJSON:json]);
+}
+- (void) createRemoteAsync:(void (^)(NSError *))completionBlock
+{
+	[[self class] makeRequest:@"POST" requestBody:[self JSONRepresentation] method:nil async:^(NSString *result, NSError *error) 
+	{
+		if (result)
+			[self setAttributesAsPerJSON:result];
+		completionBlock(error);
+	}];
+}
+
+#pragma mark Update
+
+- (BOOL) updateRemote {	return [self updateRemote:nil];	}
+- (BOOL) updateRemote:(NSError **)error
 {
 	if (![self checkForNilID:error])
 		return NO;
 	
-	//exclude works same as above for create
-	
-	[sendableProperties removeObjectsInArray:exclude];
-	BOOL success = !![self makeRequest:@"PUT" requestBody:[self JSONRepresentation] method:nil error:error];
-	[sendableProperties addObjectsFromArray:exclude];
-	
-	return success;
+	return !![self makeRequest:@"PUT" requestBody:[self JSONRepresentation] method:nil error:error];
 }
-- (BOOL) updateRemote {	return [self updateRemote:nil];	}
-- (BOOL) updateRemote:(NSError **)error {	return [self updateRemote:error excluding:nil];	}
-- (BOOL) updateRemoteExcludingNilValues:(NSError **)error
+- (void) updateRemoteAsync:(void (^)(NSError *))completionBlock
 {
-	//exclude works same as above for create
-
-	NSMutableArray *list = [NSMutableArray array];
-	
-	for (NSString *prop in sendableProperties)
-		if (![self representationOfObjectForProperty:prop])
-			[list addObject:prop];
-	
-	return [self updateRemote:error exclude:list];
-}
-- (BOOL) updateRemote:(NSError **)error excluding:(NSString *)exc, ...
-{	
-	//exclude works same as above for create
-
-	NSMutableArray *list = [NSMutableArray array];
-	
-	if (exc)
+	NSError *error;
+	if (![self checkForNilID:&error])
 	{
-		va_list args;
-		va_start(args, exc);
-		for (id arg = exc; arg != nil; arg = va_arg(args, id))
-		{
-			[list addObject:arg];
-		}
-		va_end(args);
-		
+		completionBlock(error);
 	}
-	
-	return [self updateRemote:error exclude:list];
+	else
+	{
+		[self makeRequest:@"PUT" requestBody:[self JSONRepresentation] method:nil async:^(NSString *result, NSError *error) 
+		{
+			completionBlock(error);
+		}];
+	}
 }
 
-- (BOOL) destroyRemote {	return [self destroyRemote:nil]; }
+#pragma mark Destroy
+
+- (BOOL) destroyRemote { return [self destroyRemote:nil]; }
 - (BOOL) destroyRemote:(NSError **)error
 {
 	if (![self checkForNilID:error])
@@ -878,6 +761,22 @@ static NSString* appPassword;
 	//makeRequest will actually return a result string, return if it's not nil (!! = not nil, nifty way to turn object to BOOL)
 	return (!![self makeRequest:@"DELETE" requestBody:nil method:nil error:error]);
 }
+- (void) destroyRemoteAsync:(void (^)(NSError *))completionBlock
+{
+	NSError *error;
+	if (![self checkForNilID:&error])
+	{
+		completionBlock(error);
+	}
+	else
+	{
+		[self makeRequest:@"DELETE" requestBody:nil method:nil async:^(NSString *result, NSError *error) {
+			completionBlock(error);
+		}];
+	}
+}
+
+#pragma mark Get latest
 
 - (BOOL) getRemoteLatest {	return [self getRemoteLatest:nil]; }
 - (BOOL) getRemoteLatest:(NSError **)error
@@ -889,6 +788,17 @@ static NSString* appPassword;
 	}
 	return ([self setAttributesAsPerJSON:json]); //will return true/false if conversion worked
 }
+- (void) getRemoteLatestAsync:(void (^)(NSError *error))completionBlock
+{
+	[self makeGETRequestWithMethod:nil async:^(NSString *result, NSError *error) 
+	{
+		if (result)
+			[self setAttributesAsPerJSON:result];
+		completionBlock(error);
+	}];
+}
+
+#pragma mark Get specific object (class-level)
 
 + (id) getRemoteObjectWithID:(int)mID	{ return [self getRemoteObjectWithID:mID error:nil]; }
 + (id) getRemoteObjectWithID:(int)mID error:(NSError **)error
@@ -909,27 +819,46 @@ static NSString* appPassword;
 
 	return obj;
 }
-
-+ (NSArray *) getAllRemote {	return [self getAllRemote:nil]; }
-+ (NSArray *) getAllRemote:(NSError **)error
++ (void) getRemoteObjectWithID:(int)mID async:(void (^)(id object, NSError *error))completionBlock
 {
-	//make a class GET call (so just the controller - myapp.com/users)
-	NSString *json = [self makeGETRequestWithMethod:nil error:error];
+	RailsModel *obj = [[[self class] alloc] init];
+	obj.modelID = [NSDecimalNumber numberWithInt:mID];
 	
-	if (!json)
+#ifndef NSRCompileWithARC
+	[obj autorelease];
+#endif
+	
+	[obj getRemoteLatestAsync:^(NSError *error) {
+		if (error)
+			completionBlock(nil, error);
+		else
+			completionBlock(obj, error);
+	}];
+}
+
+#pragma mark Get all objects (class-level)
+
++ (NSArray *) arrayOfModelsFromJSON:(NSString *)json error:(NSError **)error
+{
+	//helper method for both sync+async for getAllRemote
+	if (![[json JSONValue] isKindOfClass:[NSArray class]])
 	{
+		NSError *e = [NSError errorWithDomain:@"rails" 
+										 code:0 
+									 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"getAll method (index) for %@ controller did not return an array - check your rails app.",[self getModelName]]
+																		  forKey:NSLocalizedDescriptionKey]];
+#ifdef NSRLogErrors
+		NSRLogError(e);
+#endif
+		
+		if (error)
+			*error = e;
+		
 		return nil;
 	}
 	
 	//transform result into array (via json)
 	id arr = [json JSONValue];
-	if (![arr isKindOfClass:[NSArray class]])
-	{
-#ifdef NSRLogErrors
-		NSLog(@"getAll method (index) for %@ controller did not return an array - check your rails app.",[self getModelName]);
-#endif
-		return nil;
-	}
 	
 	NSMutableArray *objects = [NSMutableArray array];
 	
@@ -952,12 +881,37 @@ static NSString* appPassword;
 	return objects;
 }
 
-- (NSString *) JSONRepresentation
++ (NSArray *) getAllRemote {	return [self getAllRemote:nil]; }
++ (NSArray *) getAllRemote:(NSError **)error
 {
-	// enveloped meaning with the model name out front, {"user"=>{"name"=>"x", "password"=>"y"}}
-	return [[self envelopedDictionaryOfRelevantProperties:[[self class] getModelName]] JSONRepresentation];
+	//make a class GET call (so just the controller - myapp.com/users)
+	NSString *json = [self makeGETRequestWithMethod:nil error:error];
+	if (!json)
+	{
+		return nil;
+	}
+	return [self arrayOfModelsFromJSON:json error:error];
 }
 
++ (void) getAllRemoteAsync:(void (^)(NSArray *, NSError *))completionBlock
+{
+	[self makeGETRequestWithMethod:nil async:^(NSString *result, NSError *error) 
+	{
+		if (error || !result)
+		{
+			completionBlock(nil, error);
+		}
+		else
+		{
+			//make an array from the result returned async, and we can reuse the same error dereference (since we know it's nil)
+			NSArray *array = [self arrayOfModelsFromJSON:result error:&error];
+			completionBlock(array,error);
+		}
+	}];
+}
+
+#pragma mark -
+#pragma mark Dealloc for non-ARC
 #ifndef NSRCompileWithARC
 
 - (void) dealloc
