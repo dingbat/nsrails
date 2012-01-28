@@ -1,0 +1,367 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5911979014D4C1ED0082379C /* NSData+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5911978114D4C1ED0082379C /* NSData+Additions.m */; };
+		5911979114D4C1ED0082379C /* NSObject+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 5911978314D4C1ED0082379C /* NSObject+SBJSON.m */; };
+		5911979214D4C1ED0082379C /* NSString+InflectionSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 5911978514D4C1ED0082379C /* NSString+InflectionSupport.m */; };
+		5911979314D4C1ED0082379C /* NSString+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 5911978714D4C1ED0082379C /* NSString+SBJSON.m */; };
+		5911979414D4C1ED0082379C /* SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 5911978914D4C1ED0082379C /* SBJSON.m */; };
+		5911979514D4C1ED0082379C /* NSRails.m in Sources */ = {isa = PBXBuildFile; fileRef = 5911978B14D4C1ED0082379C /* NSRails.m */; };
+		5911979614D4C1ED0082379C /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 5911978D14D4C1ED0082379C /* NSRConfig.m */; };
+		5911979714D4C1ED0082379C /* NSRConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5911978F14D4C1ED0082379C /* NSRConnection.m */; };
+		593A45A014D231AC0099C3FA /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 593A459F14D231AB0099C3FA /* User.m */; };
+		5943DD6B14CFB8D2005DE581 /* Story.m in Sources */ = {isa = PBXBuildFile; fileRef = 5943DD6A14CFB8D2005DE581 /* Story.m */; };
+		5943DD7214D07C20005DE581 /* Friend.m in Sources */ = {isa = PBXBuildFile; fileRef = 5943DD7114D07C20005DE581 /* Friend.m */; };
+		59DA5ADD14CF924D006083E5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DA5ADC14CF924D006083E5 /* UIKit.framework */; };
+		59DA5ADF14CF924D006083E5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DA5ADE14CF924D006083E5 /* Foundation.framework */; };
+		59DA5AE114CF924D006083E5 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DA5AE014CF924D006083E5 /* CoreGraphics.framework */; };
+		59DA5AE714CF924D006083E5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 59DA5AE514CF924D006083E5 /* InfoPlist.strings */; };
+		59DA5AE914CF924D006083E5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 59DA5AE814CF924D006083E5 /* main.m */; };
+		59DA5AED14CF924D006083E5 /* SLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 59DA5AEC14CF924D006083E5 /* SLAppDelegate.m */; };
+		59DA5AF014CF924D006083E5 /* SLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 59DA5AEF14CF924D006083E5 /* SLViewController.m */; };
+		59DA5AF314CF924D006083E5 /* SLViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 59DA5AF114CF924D006083E5 /* SLViewController.xib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		5911977F14D4C1ED0082379C /* JSONFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONFramework.h; sourceTree = "<group>"; };
+		5911978014D4C1ED0082379C /* NSData+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Additions.h"; sourceTree = "<group>"; };
+		5911978114D4C1ED0082379C /* NSData+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Additions.m"; sourceTree = "<group>"; };
+		5911978214D4C1ED0082379C /* NSObject+SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJSON.h"; sourceTree = "<group>"; };
+		5911978314D4C1ED0082379C /* NSObject+SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SBJSON.m"; sourceTree = "<group>"; };
+		5911978414D4C1ED0082379C /* NSString+InflectionSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+InflectionSupport.h"; sourceTree = "<group>"; };
+		5911978514D4C1ED0082379C /* NSString+InflectionSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+InflectionSupport.m"; sourceTree = "<group>"; };
+		5911978614D4C1ED0082379C /* NSString+SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SBJSON.h"; sourceTree = "<group>"; };
+		5911978714D4C1ED0082379C /* NSString+SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SBJSON.m"; sourceTree = "<group>"; };
+		5911978814D4C1ED0082379C /* SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJSON.h; sourceTree = "<group>"; };
+		5911978914D4C1ED0082379C /* SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJSON.m; sourceTree = "<group>"; };
+		5911978A14D4C1ED0082379C /* NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRails.h; sourceTree = "<group>"; };
+		5911978B14D4C1ED0082379C /* NSRails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRails.m; sourceTree = "<group>"; };
+		5911978C14D4C1ED0082379C /* NSRConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRConfig.h; sourceTree = "<group>"; };
+		5911978D14D4C1ED0082379C /* NSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConfig.m; sourceTree = "<group>"; };
+		5911978E14D4C1ED0082379C /* NSRConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRConnection.h; sourceTree = "<group>"; };
+		5911978F14D4C1ED0082379C /* NSRConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConnection.m; sourceTree = "<group>"; };
+		593A459E14D231AB0099C3FA /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		593A459F14D231AB0099C3FA /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		5943DD6914CFB8D2005DE581 /* Story.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Story.h; sourceTree = "<group>"; };
+		5943DD6A14CFB8D2005DE581 /* Story.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Story.m; sourceTree = "<group>"; };
+		5943DD7014D07C20005DE581 /* Friend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Friend.h; sourceTree = "<group>"; };
+		5943DD7114D07C20005DE581 /* Friend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Friend.m; sourceTree = "<group>"; };
+		59DA5AD814CF924D006083E5 /* RailsTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RailsTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		59DA5ADC14CF924D006083E5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		59DA5ADE14CF924D006083E5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		59DA5AE014CF924D006083E5 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		59DA5AE414CF924D006083E5 /* RailsTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RailsTest-Info.plist"; sourceTree = "<group>"; };
+		59DA5AE614CF924D006083E5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		59DA5AE814CF924D006083E5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		59DA5AEA14CF924D006083E5 /* RailsTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RailsTest-Prefix.pch"; sourceTree = "<group>"; };
+		59DA5AEB14CF924D006083E5 /* SLAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLAppDelegate.h; sourceTree = "<group>"; };
+		59DA5AEC14CF924D006083E5 /* SLAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLAppDelegate.m; sourceTree = "<group>"; };
+		59DA5AEE14CF924D006083E5 /* SLViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLViewController.h; sourceTree = "<group>"; };
+		59DA5AEF14CF924D006083E5 /* SLViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLViewController.m; sourceTree = "<group>"; };
+		59DA5AF214CF924D006083E5 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/SLViewController.xib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		59DA5AD514CF924D006083E5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59DA5ADD14CF924D006083E5 /* UIKit.framework in Frameworks */,
+				59DA5ADF14CF924D006083E5 /* Foundation.framework in Frameworks */,
+				59DA5AE114CF924D006083E5 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5911977D14D4C1ED0082379C /* NSRails */ = {
+			isa = PBXGroup;
+			children = (
+				5911977E14D4C1ED0082379C /* JSON */,
+				5911978A14D4C1ED0082379C /* NSRails.h */,
+				5911978B14D4C1ED0082379C /* NSRails.m */,
+				5911978C14D4C1ED0082379C /* NSRConfig.h */,
+				5911978D14D4C1ED0082379C /* NSRConfig.m */,
+				5911978E14D4C1ED0082379C /* NSRConnection.h */,
+				5911978F14D4C1ED0082379C /* NSRConnection.m */,
+			);
+			name = NSRails;
+			path = Source;
+			sourceTree = SOURCE_ROOT;
+		};
+		5911977E14D4C1ED0082379C /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				5911977F14D4C1ED0082379C /* JSONFramework.h */,
+				5911978014D4C1ED0082379C /* NSData+Additions.h */,
+				5911978114D4C1ED0082379C /* NSData+Additions.m */,
+				5911978214D4C1ED0082379C /* NSObject+SBJSON.h */,
+				5911978314D4C1ED0082379C /* NSObject+SBJSON.m */,
+				5911978414D4C1ED0082379C /* NSString+InflectionSupport.h */,
+				5911978514D4C1ED0082379C /* NSString+InflectionSupport.m */,
+				5911978614D4C1ED0082379C /* NSString+SBJSON.h */,
+				5911978714D4C1ED0082379C /* NSString+SBJSON.m */,
+				5911978814D4C1ED0082379C /* SBJSON.h */,
+				5911978914D4C1ED0082379C /* SBJSON.m */,
+			);
+			path = JSON;
+			sourceTree = "<group>";
+		};
+		59DA5ACD14CF924C006083E5 = {
+			isa = PBXGroup;
+			children = (
+				59DA5AE214CF924D006083E5 /* RailsTest */,
+				59DA5ADB14CF924D006083E5 /* Frameworks */,
+				59DA5AD914CF924D006083E5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		59DA5AD914CF924D006083E5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				59DA5AD814CF924D006083E5 /* RailsTest.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		59DA5ADB14CF924D006083E5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				59DA5ADC14CF924D006083E5 /* UIKit.framework */,
+				59DA5ADE14CF924D006083E5 /* Foundation.framework */,
+				59DA5AE014CF924D006083E5 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		59DA5AE214CF924D006083E5 /* RailsTest */ = {
+			isa = PBXGroup;
+			children = (
+				59DA5AEB14CF924D006083E5 /* SLAppDelegate.h */,
+				59DA5AEC14CF924D006083E5 /* SLAppDelegate.m */,
+				59DA5AEE14CF924D006083E5 /* SLViewController.h */,
+				59DA5AEF14CF924D006083E5 /* SLViewController.m */,
+				59DA5AF114CF924D006083E5 /* SLViewController.xib */,
+				5943DD6914CFB8D2005DE581 /* Story.h */,
+				5943DD6A14CFB8D2005DE581 /* Story.m */,
+				5943DD7014D07C20005DE581 /* Friend.h */,
+				5943DD7114D07C20005DE581 /* Friend.m */,
+				593A459E14D231AB0099C3FA /* User.h */,
+				593A459F14D231AB0099C3FA /* User.m */,
+				5911977D14D4C1ED0082379C /* NSRails */,
+				59DA5AE314CF924D006083E5 /* Supporting Files */,
+			);
+			path = RailsTest;
+			sourceTree = "<group>";
+		};
+		59DA5AE314CF924D006083E5 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				59DA5AE414CF924D006083E5 /* RailsTest-Info.plist */,
+				59DA5AE514CF924D006083E5 /* InfoPlist.strings */,
+				59DA5AE814CF924D006083E5 /* main.m */,
+				59DA5AEA14CF924D006083E5 /* RailsTest-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		59DA5AD714CF924D006083E5 /* RailsTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 59DA5AF614CF924D006083E5 /* Build configuration list for PBXNativeTarget "RailsTest" */;
+			buildPhases = (
+				59DA5AD414CF924D006083E5 /* Sources */,
+				59DA5AD514CF924D006083E5 /* Frameworks */,
+				59DA5AD614CF924D006083E5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RailsTest;
+			productName = RailsTest;
+			productReference = 59DA5AD814CF924D006083E5 /* RailsTest.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		59DA5ACF14CF924C006083E5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = 59DA5AD214CF924C006083E5 /* Build configuration list for PBXProject "RailsTest" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 59DA5ACD14CF924C006083E5;
+			productRefGroup = 59DA5AD914CF924D006083E5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				59DA5AD714CF924D006083E5 /* RailsTest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		59DA5AD614CF924D006083E5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59DA5AE714CF924D006083E5 /* InfoPlist.strings in Resources */,
+				59DA5AF314CF924D006083E5 /* SLViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		59DA5AD414CF924D006083E5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59DA5AE914CF924D006083E5 /* main.m in Sources */,
+				59DA5AED14CF924D006083E5 /* SLAppDelegate.m in Sources */,
+				59DA5AF014CF924D006083E5 /* SLViewController.m in Sources */,
+				5943DD6B14CFB8D2005DE581 /* Story.m in Sources */,
+				5943DD7214D07C20005DE581 /* Friend.m in Sources */,
+				593A45A014D231AC0099C3FA /* User.m in Sources */,
+				5911979014D4C1ED0082379C /* NSData+Additions.m in Sources */,
+				5911979114D4C1ED0082379C /* NSObject+SBJSON.m in Sources */,
+				5911979214D4C1ED0082379C /* NSString+InflectionSupport.m in Sources */,
+				5911979314D4C1ED0082379C /* NSString+SBJSON.m in Sources */,
+				5911979414D4C1ED0082379C /* SBJSON.m in Sources */,
+				5911979514D4C1ED0082379C /* NSRails.m in Sources */,
+				5911979614D4C1ED0082379C /* NSRConfig.m in Sources */,
+				5911979714D4C1ED0082379C /* NSRConnection.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		59DA5AE514CF924D006083E5 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				59DA5AE614CF924D006083E5 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		59DA5AF114CF924D006083E5 /* SLViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				59DA5AF214CF924D006083E5 /* en */,
+			);
+			name = SLViewController.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		59DA5AF414CF924D006083E5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		59DA5AF514CF924D006083E5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		59DA5AF714CF924D006083E5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RailsTest/RailsTest-Prefix.pch";
+				INFOPLIST_FILE = "RailsTest/RailsTest-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		59DA5AF814CF924D006083E5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RailsTest/RailsTest-Prefix.pch";
+				INFOPLIST_FILE = "RailsTest/RailsTest-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		59DA5AD214CF924C006083E5 /* Build configuration list for PBXProject "RailsTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				59DA5AF414CF924D006083E5 /* Debug */,
+				59DA5AF514CF924D006083E5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		59DA5AF614CF924D006083E5 /* Build configuration list for PBXNativeTarget "RailsTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				59DA5AF714CF924D006083E5 /* Debug */,
+				59DA5AF814CF924D006083E5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 59DA5ACF14CF924C006083E5 /* Project object */;
+}
