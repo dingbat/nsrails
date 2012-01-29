@@ -1,0 +1,361 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		59BABD5614D5FDC7008637DE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59BABD5514D5FDC7008637DE /* Cocoa.framework */; };
+		59BABD6014D5FDC7008637DE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 59BABD5E14D5FDC7008637DE /* InfoPlist.strings */; };
+		59BABD6214D5FDC7008637DE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD6114D5FDC7008637DE /* main.m */; };
+		59BABD6614D5FDC7008637DE /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 59BABD6414D5FDC7008637DE /* Credits.rtf */; };
+		59BABD7814D5FF43008637DE /* MyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD7714D5FF43008637DE /* MyTest.m */; };
+		59BABD7A14D5FFB9008637DE /* GHUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59BABD7914D5FFB9008637DE /* GHUnit.framework */; };
+		59BABD7B14D5FFC0008637DE /* GHUnit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 59BABD7914D5FFB9008637DE /* GHUnit.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		59BABD7214D5FE23008637DE /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				59BABD7B14D5FFC0008637DE /* GHUnit.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		59BABD2114D5FD42008637DE /* NSData+Additions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+Additions.h"; sourceTree = "<group>"; };
+		59BABD2214D5FD42008637DE /* NSData+Additions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+Additions.m"; sourceTree = "<group>"; };
+		59BABD2314D5FD42008637DE /* NSString+InflectionSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+InflectionSupport.h"; sourceTree = "<group>"; };
+		59BABD2414D5FD42008637DE /* NSString+InflectionSupport.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+InflectionSupport.m"; sourceTree = "<group>"; };
+		59BABD2614D5FD42008637DE /* JSONFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSONFramework.h; sourceTree = "<group>"; };
+		59BABD2714D5FD42008637DE /* NSObject+SBJSON.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJSON.h"; sourceTree = "<group>"; };
+		59BABD2814D5FD42008637DE /* NSObject+SBJSON.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SBJSON.m"; sourceTree = "<group>"; };
+		59BABD2914D5FD42008637DE /* NSString+SBJSON.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+SBJSON.h"; sourceTree = "<group>"; };
+		59BABD2A14D5FD42008637DE /* NSString+SBJSON.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+SBJSON.m"; sourceTree = "<group>"; };
+		59BABD2B14D5FD42008637DE /* SBJSON.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SBJSON.h; sourceTree = "<group>"; };
+		59BABD2C14D5FD42008637DE /* SBJSON.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SBJSON.m; sourceTree = "<group>"; };
+		59BABD2D14D5FD42008637DE /* NSRails.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSRails.h; sourceTree = "<group>"; };
+		59BABD2E14D5FD42008637DE /* NSRails.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSRails.m; sourceTree = "<group>"; };
+		59BABD2F14D5FD42008637DE /* NSRConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSRConfig.h; sourceTree = "<group>"; };
+		59BABD3014D5FD42008637DE /* NSRConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSRConfig.m; sourceTree = "<group>"; };
+		59BABD3114D5FD42008637DE /* NSRConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSRConnection.h; sourceTree = "<group>"; };
+		59BABD3214D5FD42008637DE /* NSRConnection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSRConnection.m; sourceTree = "<group>"; };
+		59BABD5214D5FDC7008637DE /* Tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tests.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		59BABD5514D5FDC7008637DE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		59BABD5814D5FDC7008637DE /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		59BABD5914D5FDC7008637DE /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		59BABD5A14D5FDC7008637DE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		59BABD5D14D5FDC7008637DE /* Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Tests-Info.plist"; sourceTree = "<group>"; };
+		59BABD5F14D5FDC7008637DE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		59BABD6114D5FDC7008637DE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		59BABD6314D5FDC7008637DE /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
+		59BABD6514D5FDC7008637DE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		59BABD7714D5FF43008637DE /* MyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyTest.m; sourceTree = "<group>"; };
+		59BABD7914D5FFB9008637DE /* GHUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GHUnit.framework; path = "../../../../Downloads/gabriel-gh-unit-fea526d/Examples/MyTestable-MacOSX/Frameworks/GHUnit.framework"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		59BABD4F14D5FDC7008637DE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59BABD5614D5FDC7008637DE /* Cocoa.framework in Frameworks */,
+				59BABD7A14D5FFB9008637DE /* GHUnit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		59BABD1614D5FD2D008637DE = {
+			isa = PBXGroup;
+			children = (
+				59BABD1F14D5FD42008637DE /* source */,
+				59BABD5214D5FDC7008637DE /* Tests.app */,
+				59BABD5B14D5FDC7008637DE /* Tests */,
+				59BABD5414D5FDC7008637DE /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		59BABD1F14D5FD42008637DE /* source */ = {
+			isa = PBXGroup;
+			children = (
+				59BABD2014D5FD42008637DE /* Convenience */,
+				59BABD2514D5FD42008637DE /* JSON */,
+				59BABD2D14D5FD42008637DE /* NSRails.h */,
+				59BABD2E14D5FD42008637DE /* NSRails.m */,
+				59BABD2F14D5FD42008637DE /* NSRConfig.h */,
+				59BABD3014D5FD42008637DE /* NSRConfig.m */,
+				59BABD3114D5FD42008637DE /* NSRConnection.h */,
+				59BABD3214D5FD42008637DE /* NSRConnection.m */,
+			);
+			name = source;
+			path = ../source;
+			sourceTree = "<group>";
+		};
+		59BABD2014D5FD42008637DE /* Convenience */ = {
+			isa = PBXGroup;
+			children = (
+				59BABD2114D5FD42008637DE /* NSData+Additions.h */,
+				59BABD2214D5FD42008637DE /* NSData+Additions.m */,
+				59BABD2314D5FD42008637DE /* NSString+InflectionSupport.h */,
+				59BABD2414D5FD42008637DE /* NSString+InflectionSupport.m */,
+			);
+			path = Convenience;
+			sourceTree = "<group>";
+		};
+		59BABD2514D5FD42008637DE /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				59BABD2614D5FD42008637DE /* JSONFramework.h */,
+				59BABD2714D5FD42008637DE /* NSObject+SBJSON.h */,
+				59BABD2814D5FD42008637DE /* NSObject+SBJSON.m */,
+				59BABD2914D5FD42008637DE /* NSString+SBJSON.h */,
+				59BABD2A14D5FD42008637DE /* NSString+SBJSON.m */,
+				59BABD2B14D5FD42008637DE /* SBJSON.h */,
+				59BABD2C14D5FD42008637DE /* SBJSON.m */,
+			);
+			path = JSON;
+			sourceTree = "<group>";
+		};
+		59BABD5414D5FDC7008637DE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				59BABD7914D5FFB9008637DE /* GHUnit.framework */,
+				59BABD5514D5FDC7008637DE /* Cocoa.framework */,
+				59BABD5714D5FDC7008637DE /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		59BABD5714D5FDC7008637DE /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				59BABD5814D5FDC7008637DE /* AppKit.framework */,
+				59BABD5914D5FDC7008637DE /* CoreData.framework */,
+				59BABD5A14D5FDC7008637DE /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		59BABD5B14D5FDC7008637DE /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				59BABD5C14D5FDC7008637DE /* Supporting Files */,
+				59BABD7714D5FF43008637DE /* MyTest.m */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		59BABD5C14D5FDC7008637DE /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				59BABD5D14D5FDC7008637DE /* Tests-Info.plist */,
+				59BABD5E14D5FDC7008637DE /* InfoPlist.strings */,
+				59BABD6114D5FDC7008637DE /* main.m */,
+				59BABD6314D5FDC7008637DE /* Tests-Prefix.pch */,
+				59BABD6414D5FDC7008637DE /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		59BABD5114D5FDC7008637DE /* Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 59BABD6D14D5FDC7008637DE /* Build configuration list for PBXNativeTarget "Tests" */;
+			buildPhases = (
+				59BABD4E14D5FDC7008637DE /* Sources */,
+				59BABD4F14D5FDC7008637DE /* Frameworks */,
+				59BABD5014D5FDC7008637DE /* Resources */,
+				59BABD7214D5FE23008637DE /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Tests;
+			productName = Tests;
+			productReference = 59BABD5214D5FDC7008637DE /* Tests.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		59BABD1814D5FD2D008637DE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = 59BABD1B14D5FD2D008637DE /* Build configuration list for PBXProject "NSRails" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 59BABD1614D5FD2D008637DE;
+			productRefGroup = 59BABD1614D5FD2D008637DE;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				59BABD5114D5FDC7008637DE /* Tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		59BABD5014D5FDC7008637DE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59BABD6014D5FDC7008637DE /* InfoPlist.strings in Resources */,
+				59BABD6614D5FDC7008637DE /* Credits.rtf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		59BABD4E14D5FDC7008637DE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59BABD6214D5FDC7008637DE /* main.m in Sources */,
+				59BABD7814D5FF43008637DE /* MyTest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		59BABD5E14D5FDC7008637DE /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				59BABD5F14D5FDC7008637DE /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		59BABD6414D5FDC7008637DE /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				59BABD6514D5FDC7008637DE /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		59BABD1D14D5FD2E008637DE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		59BABD1E14D5FD2E008637DE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		59BABD6E14D5FDC7008637DE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../Downloads/gabriel-gh-unit-fea526d/Examples/MyTestable-iOS\"",
+					"\"$(SRCROOT)/../../../../Downloads/gabriel-gh-unit-fea526d/Examples/MyTestable-MacOSX/Frameworks\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Tests/Tests-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "Tests/Tests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		59BABD6F14D5FDC7008637DE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../Downloads/gabriel-gh-unit-fea526d/Examples/MyTestable-iOS\"",
+					"\"$(SRCROOT)/../../../../Downloads/gabriel-gh-unit-fea526d/Examples/MyTestable-MacOSX/Frameworks\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Tests/Tests-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "Tests/Tests-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		59BABD1B14D5FD2D008637DE /* Build configuration list for PBXProject "NSRails" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				59BABD1D14D5FD2E008637DE /* Debug */,
+				59BABD1E14D5FD2E008637DE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		59BABD6D14D5FDC7008637DE /* Build configuration list for PBXNativeTarget "Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				59BABD6E14D5FDC7008637DE /* Debug */,
+				59BABD6F14D5FDC7008637DE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 59BABD1814D5FD2D008637DE /* Project object */;
+}
