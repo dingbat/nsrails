@@ -40,6 +40,7 @@
 - (NSString *)toClassName;
 
 
+//NSRails addition
 - (NSString *) pluralize;
 
 @end

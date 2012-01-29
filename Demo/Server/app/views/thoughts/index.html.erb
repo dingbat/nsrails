@@ -1,0 +1,25 @@
+<h1>Listing thoughts</h1>
+
+<table>
+  <tr>
+    <th>Brain</th>
+    <th>Content</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @thoughts.each do |thought| %>
+  <tr>
+    <td><%= thought.brain_id %></td>
+    <td><%= thought.content %></td>
+    <td><%= link_to 'Show', thought %></td>
+    <td><%= link_to 'Edit', edit_thought_path(thought) %></td>
+    <td><%= link_to 'Destroy', thought, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Thought', new_thought_path %>

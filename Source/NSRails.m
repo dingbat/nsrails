@@ -1,9 +1,9 @@
 //
 //  RailsModel.m
-//  Storyline
+//  NSRails
 //
 //  Created by Dan Hassin on 1/10/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
 #import "NSRails.h"
@@ -44,23 +44,23 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 
-+ (NSString *) MakeRails
++ (NSString *) RailsShare
 {
 	return BASE_RAILS;
 }
 
 + (NSString *) railsProperties
 {
-	if ([self respondsToSelector:@selector(MakeRailsNoSuper)])
+	if ([self respondsToSelector:@selector(RailsShareNoSuper)])
 	{
-		NSString *props = [self performSelector:@selector(MakeRailsNoSuper)];
+		NSString *props = [self performSelector:@selector(RailsShareNoSuper)];
 		if (props.length > 0)
 		{
 			//always want to keep base (modelID) even if nosuper
 			return [BASE_RAILS stringByAppendingFormat:@", %@",props];
 		}
 	}
-	return [self MakeRails];
+	return [self RailsShare];
 }
 
 + (NSString *) getModelName
@@ -109,14 +109,14 @@
 		//initialize property categories
 		sendableProperties = [[NSMutableArray alloc] init];
 		retrievableProperties = [[NSMutableArray alloc] init];
-		modelRelatedProperties = [[NSMutableDictionary alloc] init];
+		nestedModelProperties = [[NSMutableDictionary alloc] init];
 		propertyEquivalents = [[NSMutableDictionary alloc] init];
 		encodeProperties = [[NSMutableArray alloc] init];
 		decodeProperties = [[NSMutableArray alloc] init];
 		
 		destroyOnNesting = NO;
 		
-		//begin reading in properties defined through MakeRails
+		//begin reading in properties defined through RailsShare
 		NSString *props = [[self class] railsProperties];
 		NSCharacterSet *wn = [NSCharacterSet whitespaceAndNewlineCharacterSet];
 		
@@ -179,7 +179,7 @@
 #endif
 						}
 						else
-							[modelRelatedProperties setObject:otherModel forKey:prop];
+							[nestedModelProperties setObject:otherModel forKey:prop];
 					}
 				}
 				else
@@ -199,9 +199,9 @@
 						if (c && [c isSubclassOfClass:[RailsModel class]])
 						{
 #if NSRLog > 2
-							NSLog(@"automatically linking ivar %@ in class %@ with related railsmodel %@",prop,[self camelizedModelName],ivarType);
+							NSLog(@"automatically linking ivar %@ in class %@ with nested railsmodel %@",prop,[self camelizedModelName],ivarType);
 #endif
-							[modelRelatedProperties setObject:ivarType forKey:prop];
+							[nestedModelProperties setObject:ivarType forKey:prop];
 						}
 					}
 				}
@@ -240,7 +240,7 @@
 		
 	//	NSLog(@"sendable: %@",sendableProperties);
 	//	NSLog(@"retrievable: %@",retrievableProperties);
-	//	NSLog(@"MRP: %@",modelRelatedProperties);
+	//	NSLog(@"NMP: %@",nestedModelProperties);
 	//	NSLog(@"eqiuvalents: %@",propertyEquivalents);
 		 
 	}
@@ -368,7 +368,7 @@
 		id val = [self performSelector:sel];
 		
 		//see if this property actually links to a custom RailsModel subclass
-		if ([modelRelatedProperties objectForKey:prop])
+		if ([nestedModelProperties objectForKey:prop])
 		{
 			//if the ivar is an array, we need to make every element into JSON and then put them back in the array
 			if ([val isKindOfClass:[NSArray class]])
@@ -438,9 +438,9 @@
 				val = [self objectForProperty:property representation:([val isKindOfClass:[NSNull class]] ? nil : val)];
 				if (val)
 				{
-					NSString *relatedClass = [[modelRelatedProperties objectForKey:property] toClassName];
-					//instantiate it as the class specified in MakeRails
-					if (relatedClass)
+					NSString *nestedClass = [[nestedModelProperties objectForKey:property] toClassName];
+					//instantiate it as the class specified in RailsShare
+					if (nestedClass)
 					{
 						//if the JSON conversion returned an array for the value, instantiate each element
 						if ([val isKindOfClass:[NSArray class]])
@@ -448,14 +448,14 @@
 							NSMutableArray *array = [NSMutableArray array];
 							for (NSDictionary *dict in val)
 							{
-								id model = [self makeRelevantModelFromClass:relatedClass basedOn:dict];
+								id model = [self makeRelevantModelFromClass:nestedClass basedOn:dict];
 								[array addObject:model];
 							}
 							val = array;
 						}
 						else
 						{
-							val = [self makeRelevantModelFromClass:relatedClass basedOn:[dict objectForKey:key]];
+							val = [self makeRelevantModelFromClass:nestedClass basedOn:[dict objectForKey:key]];
 						}
 					}
 					//TODO: maybe remove/enhance?
@@ -511,8 +511,8 @@
 		}
 		if (val)
 		{
-			if ([modelRelatedProperties objectForKey:key] && !null) //if its null/empty(for arrays), dont append _attributes
-				property = [property stringByAppendingString:NSRAppendRelatedModelKeyOnSend];
+			if ([nestedModelProperties objectForKey:key] && !null) //if its null/empty(for arrays), dont append _attributes
+				property = [property stringByAppendingString:NSRAppendNestedModelKeyOnSend];
 			[dict setObject:val forKey:property];
 		}
 	}
@@ -923,7 +923,7 @@ return [self updateRemote:error exclude:list];
 	[retrievableProperties release];
 	[encodeProperties release];
 	[decodeProperties release];
-	[modelRelatedProperties release];
+	[nestedModelProperties release];
 	[propertyEquivalents release];
 	
 	[super dealloc];

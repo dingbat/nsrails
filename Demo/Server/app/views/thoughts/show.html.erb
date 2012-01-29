@@ -1,0 +1,15 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Brain:</b>
+  <%= @thought.brain_id %>
+</p>
+
+<p>
+  <b>Content:</b>
+  <%= @thought.content %>
+</p>
+
+
+<%= link_to 'Edit', edit_thought_path(@thought) %> |
+<%= link_to 'Back', thoughts_path %>

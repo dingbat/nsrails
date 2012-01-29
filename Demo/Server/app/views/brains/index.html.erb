@@ -1,0 +1,23 @@
+<h1>Listing brains</h1>
+
+<table>
+  <tr>
+    <th>Person</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @brains.each do |brain| %>
+  <tr>
+    <td><%= brain.person_id %></td>
+    <td><%= link_to 'Show', brain %></td>
+    <td><%= link_to 'Edit', edit_brain_path(brain) %></td>
+    <td><%= link_to 'Destroy', brain, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Brain', new_brain_path %>

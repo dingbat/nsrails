@@ -1,9 +1,9 @@
 //
-//  RailsModel.h
-//  Storyline
+//  NSRails.h
+//  NSRails
 //
 //  Created by Dan Hassin on 1/10/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -20,7 +20,7 @@
 	NSMutableArray *retrievableProperties;
 	NSMutableArray *encodeProperties;
 	NSMutableArray *decodeProperties;
-	NSMutableDictionary *modelRelatedProperties;
+	NSMutableDictionary *nestedModelProperties;
 	NSMutableDictionary *propertyEquivalents;
 	
 	//for nested models
@@ -105,7 +105,7 @@
 
 ///////////////////////////////////////////
 //manual json encoding/decoding
-//will use whatever inputted in RailsMake()
+//will use whatever inputted in RailsShare()
 ///////////////////////////////////////////
 
 - (NSString *) JSONRepresentation;
@@ -114,16 +114,19 @@
 
 
 //macros
-+ (NSString *) MakeRails;
-#define MakeRails(rails_properties) \
-+ (NSString*) MakeRails { return [[super MakeRails] stringByAppendingFormat:@", %@", rails_properties]; }
-#define MakeRailsNoSuper(rails_properties) \
-+ (NSString*) MakeRailsNoSuper { return rails_properties; }
+
+#define NSRStringFromCString(cstr)	[NSString stringWithCString:cstr encoding:NSUTF8StringEncoding]
+
++ (NSString *) RailsShare;
+#define RailsShare(rails_properties) \
++ (NSString*) RailsShare { return [[super RailsShare] stringByAppendingFormat:@", %@", NSRStringFromCString(rails_properties)]; }
+#define RailsShareNoSuper(rails_properties) \
++ (NSString*) RailsShareNoSuper { return NSRStringFromCString(rails_properties); }
 
 #define ModelName(exact_rails_model) \
-+ (NSString*) ModelName { return exact_rails_model; }
++ (NSString*) ModelName { return NSRStringFromCString(exact_rails_model); }
 #define ModelNameWithPlural(exact_rails_model,exact_rails_model_plural) \
-+ (NSString*) ModelName { return exact_rails_model; } + (NSString*) PluralModelName { return exact_rails_model_plural; }
++ (NSString*) ModelName { return exact_rails_model; } + (NSString*) PluralModelName { return NSRStringFromCString(exact_rails_model_plural); }
 
 
 @end

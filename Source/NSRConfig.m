@@ -1,9 +1,9 @@
 //
 //  NSRConfig.m
-//  RailsTest
+//  NSRails
 //
 //  Created by Dan Hassin on 1/28/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
 #import "NSRConfig.h"

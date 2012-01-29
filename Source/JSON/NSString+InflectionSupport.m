@@ -91,11 +91,17 @@
 										 withString:[[result substringWithRange:NSMakeRange(0,1)] uppercaseString]];
 }
 
-
+//NSRails addition
 - (NSString *) pluralize
 {
 	if (self.length == 0)
 		return self;
+	
+	if ([self isEqualToString:@"person"])
+		return @"people";
+	
+	if ([self isEqualToString:@"Person"])
+		return @"People";
 	
 	if ([[self substringFromIndex:self.length-1] isEqualToString:@"y"] &&
 		(self.length == 1 || ![[self substringFromIndex:self.length-2] isEqualToString:@"ey"]))
