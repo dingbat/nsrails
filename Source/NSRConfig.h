@@ -9,9 +9,8 @@
 #import <Foundation/Foundation.h>
 
 //TODO
-// 1. synchronous HTTP calls (see how ASIHTTP does blocks - must be done in blocks
-// 2. documentation+screencast
-// 3. tests
+// 1. documentation+screencast
+// 2. tests
 
 
 //  OPTIONS

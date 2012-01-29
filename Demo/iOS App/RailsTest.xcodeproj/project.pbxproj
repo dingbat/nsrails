@@ -7,14 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		591197B114D4C9660082379C /* NSData+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 591197A214D4C9660082379C /* NSData+Additions.m */; };
 		591197B214D4C9660082379C /* NSObject+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 591197A414D4C9660082379C /* NSObject+SBJSON.m */; };
-		591197B314D4C9660082379C /* NSString+InflectionSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 591197A614D4C9660082379C /* NSString+InflectionSupport.m */; };
 		591197B414D4C9660082379C /* NSString+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 591197A814D4C9660082379C /* NSString+SBJSON.m */; };
 		591197B514D4C9660082379C /* SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 591197AA14D4C9660082379C /* SBJSON.m */; };
 		591197B614D4C9660082379C /* NSRails.m in Sources */ = {isa = PBXBuildFile; fileRef = 591197AC14D4C9660082379C /* NSRails.m */; };
 		591197B714D4C9660082379C /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 591197AE14D4C9660082379C /* NSRConfig.m */; };
 		591197B814D4C9660082379C /* NSRConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 591197B014D4C9660082379C /* NSRConnection.m */; };
+		591197BE14D534C50082379C /* NSData+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 591197BB14D534C50082379C /* NSData+Additions.m */; };
+		591197BF14D534C50082379C /* NSString+InflectionSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 591197BD14D534C50082379C /* NSString+InflectionSupport.m */; };
 		593A45A014D231AC0099C3FA /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = 593A459F14D231AB0099C3FA /* Person.m */; };
 		5943DD6B14CFB8D2005DE581 /* Thought.m in Sources */ = {isa = PBXBuildFile; fileRef = 5943DD6A14CFB8D2005DE581 /* Thought.m */; };
 		5943DD7214D07C20005DE581 /* Brain.m in Sources */ = {isa = PBXBuildFile; fileRef = 5943DD7114D07C20005DE581 /* Brain.m */; };
@@ -30,12 +30,8 @@
 
 /* Begin PBXFileReference section */
 		591197A014D4C9660082379C /* JSONFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONFramework.h; sourceTree = "<group>"; };
-		591197A114D4C9660082379C /* NSData+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Additions.h"; sourceTree = "<group>"; };
-		591197A214D4C9660082379C /* NSData+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Additions.m"; sourceTree = "<group>"; };
 		591197A314D4C9660082379C /* NSObject+SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJSON.h"; sourceTree = "<group>"; };
 		591197A414D4C9660082379C /* NSObject+SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SBJSON.m"; sourceTree = "<group>"; };
-		591197A514D4C9660082379C /* NSString+InflectionSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+InflectionSupport.h"; sourceTree = "<group>"; };
-		591197A614D4C9660082379C /* NSString+InflectionSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+InflectionSupport.m"; sourceTree = "<group>"; };
 		591197A714D4C9660082379C /* NSString+SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SBJSON.h"; sourceTree = "<group>"; };
 		591197A814D4C9660082379C /* NSString+SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SBJSON.m"; sourceTree = "<group>"; };
 		591197A914D4C9660082379C /* SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJSON.h; sourceTree = "<group>"; };
@@ -46,6 +42,10 @@
 		591197AE14D4C9660082379C /* NSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConfig.m; sourceTree = "<group>"; };
 		591197AF14D4C9660082379C /* NSRConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRConnection.h; sourceTree = "<group>"; };
 		591197B014D4C9660082379C /* NSRConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConnection.m; sourceTree = "<group>"; };
+		591197BA14D534C50082379C /* NSData+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+Additions.h"; path = "Convenience/NSData+Additions.h"; sourceTree = "<group>"; };
+		591197BB14D534C50082379C /* NSData+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+Additions.m"; path = "Convenience/NSData+Additions.m"; sourceTree = "<group>"; };
+		591197BC14D534C50082379C /* NSString+InflectionSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+InflectionSupport.h"; path = "Convenience/NSString+InflectionSupport.h"; sourceTree = "<group>"; };
+		591197BD14D534C50082379C /* NSString+InflectionSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+InflectionSupport.m"; path = "Convenience/NSString+InflectionSupport.m"; sourceTree = "<group>"; };
 		593A459E14D231AB0099C3FA /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
 		593A459F14D231AB0099C3FA /* Person.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Person.m; sourceTree = "<group>"; };
 		5943DD6914CFB8D2005DE581 /* Thought.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Thought.h; sourceTree = "<group>"; };
@@ -84,6 +84,7 @@
 		5911979E14D4C9660082379C /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				591197B914D534BB0082379C /* Convenience */,
 				5911979F14D4C9660082379C /* JSON */,
 				591197AB14D4C9660082379C /* NSRails.h */,
 				591197AC14D4C9660082379C /* NSRails.m */,
@@ -100,18 +101,25 @@
 			isa = PBXGroup;
 			children = (
 				591197A014D4C9660082379C /* JSONFramework.h */,
-				591197A114D4C9660082379C /* NSData+Additions.h */,
-				591197A214D4C9660082379C /* NSData+Additions.m */,
 				591197A314D4C9660082379C /* NSObject+SBJSON.h */,
 				591197A414D4C9660082379C /* NSObject+SBJSON.m */,
-				591197A514D4C9660082379C /* NSString+InflectionSupport.h */,
-				591197A614D4C9660082379C /* NSString+InflectionSupport.m */,
 				591197A714D4C9660082379C /* NSString+SBJSON.h */,
 				591197A814D4C9660082379C /* NSString+SBJSON.m */,
 				591197A914D4C9660082379C /* SBJSON.h */,
 				591197AA14D4C9660082379C /* SBJSON.m */,
 			);
 			path = JSON;
+			sourceTree = "<group>";
+		};
+		591197B914D534BB0082379C /* Convenience */ = {
+			isa = PBXGroup;
+			children = (
+				591197BA14D534C50082379C /* NSData+Additions.h */,
+				591197BB14D534C50082379C /* NSData+Additions.m */,
+				591197BC14D534C50082379C /* NSString+InflectionSupport.h */,
+				591197BD14D534C50082379C /* NSString+InflectionSupport.m */,
+			);
+			name = Convenience;
 			sourceTree = "<group>";
 		};
 		59DA5ACD14CF924C006083E5 = {
@@ -240,14 +248,14 @@
 				5943DD6B14CFB8D2005DE581 /* Thought.m in Sources */,
 				5943DD7214D07C20005DE581 /* Brain.m in Sources */,
 				593A45A014D231AC0099C3FA /* Person.m in Sources */,
-				591197B114D4C9660082379C /* NSData+Additions.m in Sources */,
 				591197B214D4C9660082379C /* NSObject+SBJSON.m in Sources */,
-				591197B314D4C9660082379C /* NSString+InflectionSupport.m in Sources */,
 				591197B414D4C9660082379C /* NSString+SBJSON.m in Sources */,
 				591197B514D4C9660082379C /* SBJSON.m in Sources */,
 				591197B614D4C9660082379C /* NSRails.m in Sources */,
 				591197B714D4C9660082379C /* NSRConfig.m in Sources */,
 				591197B814D4C9660082379C /* NSRConnection.m in Sources */,
+				591197BE14D534C50082379C /* NSData+Additions.m in Sources */,
+				591197BF14D534C50082379C /* NSString+InflectionSupport.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
