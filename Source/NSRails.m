@@ -11,14 +11,15 @@
 #import "JSONFramework.h"
 #import "NSString+InflectionSupport.h"
 #import "NSRConnection.h"
-
 #import <objc/runtime.h>
 
-//log NSR errors by default
-#define NSRLogErrors
-#define BASE_RAILS @"modelID=id"
 
 // if it's too intimidating, remember that you can navigate this file quickly in xcode with #pragma marks
+
+
+//this will be the RailsShare for RailsModel
+//tie modelID to rails property id
+#define BASE_RAILS @"modelID=id"
 
 
 @interface RailsModel (internal)
@@ -26,7 +27,6 @@
 - (void) setAttributesAsPerDictionary:(NSDictionary *)dict;
 
 - (NSDictionary *) dictionaryOfRelevantProperties;
-- (NSDictionary *) envelopedDictionaryOfRelevantProperties:(NSString *)envelope;
 - (NSString *) getIvarType:(NSString *)ivar;
 - (SEL) getIvarSetter:(NSString *)ivar;
 - (SEL) getIvarGetter:(NSString *)ivar;
@@ -259,7 +259,7 @@
 	
 	NSString *ret = [NSString stringWithCString:ivar_getTypeEncoding(var) encoding:NSUTF8StringEncoding];
 	
-	//ret will be like @"NSString", so strip " and @
+	//ret will be like @"NSString", so strip "s and @s
 	return [[ret stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
 }
 
@@ -288,7 +288,7 @@
 - (SEL) getIvarGetter:(NSString *)ivar
 {
 	SEL s = [self getIvar:ivar attributePrefix:@"G"];
-	//if no custom setter specified, return the standard etc
+	//if no custom getter specified, return the standard "etc"
 	if (!s)
 	{
 		s = NSSelectorFromString(ivar);
@@ -299,7 +299,7 @@
 - (SEL) getIvarSetter:(NSString *)ivar
 {
 	SEL s = [self getIvar:ivar attributePrefix:@"S"];
-	//if no custom setter specified, return the standard setEtc:
+	//if no custom setter specified, return the standard "setEtc:"
 	if (!s)
 	{
 		s = NSSelectorFromString([NSString stringWithFormat:@"set%@:",[ivar toClassName]]);
@@ -318,7 +318,11 @@
 - (NSString *) JSONRepresentation
 {
 	// enveloped meaning with the model name out front, {"user"=>{"name"=>"x", "password"=>"y"}}
-	return [[self envelopedDictionaryOfRelevantProperties:[[self class] getModelName]] JSONRepresentation];
+	
+	NSDictionary *enveloped = [NSDictionary dictionaryWithObject:[self dictionaryOfRelevantProperties]
+														  forKey:[[self class] getModelName]];
+	
+	return [enveloped JSONRepresentation];
 }
 
 - (id) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
@@ -424,11 +428,11 @@
 		if (equiv.count > 0) //means its a relevant property, so lets try to set it
 		{
 			property = [equiv objectAtIndex:0];
+			
 #ifdef NSRLogErrors
 			if (equiv.count > 1)
 				NSLog(@"found multiple instance variables tied to one rails equivalent (%@ are all set to equal rails property '%@'). setting data for it into the first ivar listed, but please fix.",equiv,key);
 #endif
-		
 			
 			SEL sel = [self getIvarSetter:property];
 			if ([self respondsToSelector:sel] && [retrievableProperties indexOfObject:property] != NSNotFound)
@@ -477,13 +481,6 @@
 			}
 		}
 	}
-}
-
-- (NSDictionary *) envelopedDictionaryOfRelevantProperties:(NSString *)envelope
-{
-	NSDictionary *dict = [NSDictionary dictionaryWithObject:[self dictionaryOfRelevantProperties]
-													 forKey:envelope];
-	return dict;
 }
 
 - (NSDictionary *) dictionaryOfRelevantProperties

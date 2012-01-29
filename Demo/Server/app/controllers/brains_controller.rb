@@ -6,7 +6,7 @@ class BrainsController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.json { render :json => @brains }
+      format.json { render :json => @brains.to_json(:include => [:thoughts]) }
     end
   end
 
@@ -17,7 +17,7 @@ class BrainsController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json { render :json => @brain.to_json }
+      format.json { render :json => @brain.to_json(:include => [:thoughts]) }
     end
   end
 
@@ -45,7 +45,7 @@ class BrainsController < ApplicationController
     respond_to do |format|
       if @brain.save
         format.html { redirect_to @brain, :notice => 'Brain was successfully created.' }
-        format.json { render :json => @brain.to_json, :status => :created, :location => @brain }
+        format.json { render :json => @brain.to_json(:include => [:thoughts]), :status => :created, :location => @brain }
       else
         format.html { render :action => "new" }
         format.json { render :json => @brain.errors, :status => :unprocessable_entity }

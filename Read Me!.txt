@@ -1,38 +1,38 @@
-=-=-=-=-=
- NSRails
-   0.1
-=-=-=-=-=
+=================
+///  NSRails  ///
+////////// 0.1 //
+=================
 
 Welcome! NSRails is a light-weight Objective-C library to make interfacing with a Rails back-end easy.
 
 
 How do I get started?
 =====================
-Throw the Source folder into your Xcode project and do either or both:
+Stick the Source folder into your Xcode project and do either or both:
 - Watch the short screencast at http://nsrails.com/
-- See the Demo iPhone app included
+- See the included demo iPhone app
 
 Some readables:
 - Read up on NSRails documentation at http://nsrails.com/documentation 
-- Read the included Troubleshooting file if you run into any errors
+- See the included Troubleshooting file if you run into any errors
 
 
 What can NSRails do?
 ====================
 NSRails is very flexible and customizable so you'll be able to fit it right in with your Rails server.
 - In one line, define attributes to be shared and not shared with Rails
-- Full nesting support
-- Support for differences in Rails-side and iOS-side variable names
-- Inherit from RailsModel and get built-in CRUD methods along with a getAll
-- Encoding/decoding of specific attributes
+- Get built-in CRUD methods
+- Rails-side and iOS-side property names can be different, as well as with model names
+- Full support for nesting models
+- Encoding/decoding support for attributes
 - Async support with blocks
 - Support for basic HTTP authentication
 
 
 What's in the sources?
 ======================
-The main NSRails class and the one to inherit from is RailsModel (defined in NSRails.h). Also included are a mainly-static NSRConfig class and a NSRConnection class used internally.
-NSRails also makes use of the Objective-C JSON framework (https://github.com/stig/json-framework) and steals ObjectiveResource's NSString InflectionSupport category. Objective-Resource was largely the inspiration for NSRails. Thanks guys!
+The main class in NSRails and the one to inherit from is RailsModel (defined in NSRails.h). Also included are a mainly-static NSRConfig class for app settings and an NSRConnection class used internally.
+NSRails also makes use of the Objective-C JSON framework (https://github.com/stig/json-framework) and steals ObjectiveResource's NSString InflectionSupport category. ObjectiveResource was largely the inspiration for NSRails. Thanks guys!
 
 
-So happy coding and remember to visit the NSRails github page (http://github.com/dhassin/nsrails) to check out any update or patches.
+Happy coding. Remember to visit the NSRails github page (http://github.com/dingbat/nsrails) to check out any update or patches.

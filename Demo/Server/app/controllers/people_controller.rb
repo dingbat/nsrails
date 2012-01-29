@@ -6,7 +6,7 @@ class PeopleController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.json { render :json => @people }
+      format.json { render :json => @people.to_json(:include => {:brain => {:include => :thoughts}}) }
     end
   end
 
@@ -45,7 +45,7 @@ class PeopleController < ApplicationController
     respond_to do |format|
       if @person.save
         format.html { redirect_to @person, :notice => 'Person was successfully created.' }
-        format.json { render :json => @person.to_json(:include => [{:brain => :thoughts}]), :status => :created, :location => @person }
+        format.json { render :json => @person.to_json(:include => {:brain => {:include => :thoughts}}), :status => :created, :location => @person }
       else
         format.html { render :action => "new" }
         format.json { render :json => @person.errors, :status => :unprocessable_entity }

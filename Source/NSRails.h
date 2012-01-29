@@ -11,6 +11,9 @@
 
 #define NSRLogError(error)	NSLog(@"Error Domain=%@ Code=%d \"%@\"",error.domain,error.code,[error localizedDescription]);
 
+//log NSR errors by default
+#define NSRLogErrors
+
 @interface RailsModel : NSObject
 {
 	NSNumber *modelID;
@@ -25,7 +28,6 @@
 	
 	//for nested models
 	//remember that rails-side needs to implement ":allow_destroy => true" on accepts_nested_attributes_for
-	//this won't destroy this object, only destroy its RELATION. to destroy it use destroyRemote
 	BOOL destroyOnNesting;
 }
 
@@ -68,16 +70,16 @@
 /* is this bad practice?
  
 - (BOOL) updateRemoteExcluding:(NSArray *)exc error:(NSError **)error;
-- (BOOL) updateRemoteExcluding:(NSArray *)exc async:(void(^)(NSError *error))completionBlock;
+- (void) updateRemoteExcluding:(NSArray *)exc async:(void(^)(NSError *error))completionBlock;
 
 - (BOOL) createRemoteExcluding:(NSArray *)exc error:(NSError **)error;
-- (BOOL) createRemoteExcluding:(NSArray *)exc async:(void(^)(NSError *error))completionBlock;
+- (void) createRemoteExcluding:(NSArray *)exc async:(void(^)(NSError *error))completionBlock;
 
 - (BOOL) getRemoteLatestExcluding:(NSArray *)exc error:(NSError **)error;
-- (BOOL) getRemoteLatestExcluding:(NSArray *)exc async:(void(^)(NSError *error))completionBlock;
+- (void) getRemoteLatestExcluding:(NSArray *)exc async:(void(^)(NSError *error))completionBlock;
 
 - (BOOL) getRemoteLatestOnlyForProperties:(NSArray *)exc error:(NSError **)error;
-- (BOOL) getRemoteLatestOnlyForProperties:(NSArray *)exc async:(void(^)(NSError *error))completionBlock;
+- (void) getRemoteLatestOnlyForProperties:(NSArray *)exc async:(void(^)(NSError *error))completionBlock;
 */
 
 ///////////////////////////////////////
@@ -102,6 +104,7 @@
 
 + (NSString *)	makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error;
 + (void)		makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method async:(void(^)(NSString *result, NSError *error))completionBlock;
+
 
 ///////////////////////////////////////////
 //manual json encoding/decoding

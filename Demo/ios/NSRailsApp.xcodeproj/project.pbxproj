@@ -1,0 +1,402 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		591197D414D5CE5A0082379C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 591197D314D5CE5A0082379C /* UIKit.framework */; };
+		591197D614D5CE5A0082379C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 591197D514D5CE5A0082379C /* Foundation.framework */; };
+		591197D814D5CE5A0082379C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 591197D714D5CE5A0082379C /* CoreGraphics.framework */; };
+		591197DE14D5CE5A0082379C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 591197DC14D5CE5A0082379C /* InfoPlist.strings */; };
+		591197E014D5CE5A0082379C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 591197DF14D5CE5A0082379C /* main.m */; };
+		591197E414D5CE5A0082379C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 591197E314D5CE5A0082379C /* AppDelegate.m */; };
+		591197E714D5CE5A0082379C /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 591197E614D5CE5A0082379C /* MasterViewController.m */; };
+		591197EA14D5CE5A0082379C /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 591197E914D5CE5A0082379C /* DetailViewController.m */; };
+		591197ED14D5CE5A0082379C /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 591197EB14D5CE5A0082379C /* MasterViewController.xib */; };
+		591197F014D5CE5A0082379C /* DetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 591197EE14D5CE5A0082379C /* DetailViewController.xib */; };
+		5911980B14D5D52C0082379C /* go.png in Resources */ = {isa = PBXBuildFile; fileRef = 5911980914D5D52C0082379C /* go.png */; };
+		5911980C14D5D52C0082379C /* goWhite.png in Resources */ = {isa = PBXBuildFile; fileRef = 5911980A14D5D52C0082379C /* goWhite.png */; };
+		5911982B14D5D6FB0082379C /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = 5911982A14D5D6FB0082379C /* Person.m */; };
+		5911982E14D5E88F0082379C /* Brain.m in Sources */ = {isa = PBXBuildFile; fileRef = 5911982D14D5E88F0082379C /* Brain.m */; };
+		5911986314D5EB2E0082379C /* Thought.m in Sources */ = {isa = PBXBuildFile; fileRef = 5911986214D5EB2D0082379C /* Thought.m */; };
+		598E923214D5FAFB00F0B6B7 /* NSData+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 598E922114D5FAFB00F0B6B7 /* NSData+Additions.m */; };
+		598E923314D5FAFB00F0B6B7 /* NSString+InflectionSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 598E922314D5FAFB00F0B6B7 /* NSString+InflectionSupport.m */; };
+		598E923414D5FAFB00F0B6B7 /* NSObject+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 598E922714D5FAFB00F0B6B7 /* NSObject+SBJSON.m */; };
+		598E923514D5FAFB00F0B6B7 /* NSString+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 598E922914D5FAFB00F0B6B7 /* NSString+SBJSON.m */; };
+		598E923614D5FAFB00F0B6B7 /* SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 598E922B14D5FAFB00F0B6B7 /* SBJSON.m */; };
+		598E923714D5FAFB00F0B6B7 /* NSRails.m in Sources */ = {isa = PBXBuildFile; fileRef = 598E922D14D5FAFB00F0B6B7 /* NSRails.m */; };
+		598E923814D5FAFB00F0B6B7 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 598E922F14D5FAFB00F0B6B7 /* NSRConfig.m */; };
+		598E923914D5FAFB00F0B6B7 /* NSRConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 598E923114D5FAFB00F0B6B7 /* NSRConnection.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		591197CF14D5CE5A0082379C /* NSRailsApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NSRailsApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		591197D314D5CE5A0082379C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		591197D514D5CE5A0082379C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		591197D714D5CE5A0082379C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		591197DB14D5CE5A0082379C /* NSRailsApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NSRailsApp-Info.plist"; sourceTree = "<group>"; };
+		591197DD14D5CE5A0082379C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		591197DF14D5CE5A0082379C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		591197E114D5CE5A0082379C /* NSRailsApp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSRailsApp-Prefix.pch"; sourceTree = "<group>"; };
+		591197E214D5CE5A0082379C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		591197E314D5CE5A0082379C /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		591197E514D5CE5A0082379C /* MasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MasterViewController.h; sourceTree = "<group>"; };
+		591197E614D5CE5A0082379C /* MasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MasterViewController.m; sourceTree = "<group>"; };
+		591197E814D5CE5A0082379C /* DetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
+		591197E914D5CE5A0082379C /* DetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
+		591197EC14D5CE5A0082379C /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MasterViewController.xib; sourceTree = "<group>"; };
+		591197EF14D5CE5A0082379C /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DetailViewController.xib; sourceTree = "<group>"; };
+		5911980914D5D52C0082379C /* go.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = go.png; sourceTree = "<group>"; };
+		5911980A14D5D52C0082379C /* goWhite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = goWhite.png; sourceTree = "<group>"; };
+		5911982914D5D6FA0082379C /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
+		5911982A14D5D6FB0082379C /* Person.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Person.m; sourceTree = "<group>"; };
+		5911982C14D5E88E0082379C /* Brain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Brain.h; sourceTree = "<group>"; };
+		5911982D14D5E88F0082379C /* Brain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Brain.m; sourceTree = "<group>"; };
+		5911986114D5EB2D0082379C /* Thought.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Thought.h; sourceTree = "<group>"; };
+		5911986214D5EB2D0082379C /* Thought.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Thought.m; sourceTree = "<group>"; };
+		598E922014D5FAFB00F0B6B7 /* NSData+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Additions.h"; sourceTree = "<group>"; };
+		598E922114D5FAFB00F0B6B7 /* NSData+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Additions.m"; sourceTree = "<group>"; };
+		598E922214D5FAFB00F0B6B7 /* NSString+InflectionSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+InflectionSupport.h"; sourceTree = "<group>"; };
+		598E922314D5FAFB00F0B6B7 /* NSString+InflectionSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+InflectionSupport.m"; sourceTree = "<group>"; };
+		598E922514D5FAFB00F0B6B7 /* JSONFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONFramework.h; sourceTree = "<group>"; };
+		598E922614D5FAFB00F0B6B7 /* NSObject+SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJSON.h"; sourceTree = "<group>"; };
+		598E922714D5FAFB00F0B6B7 /* NSObject+SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SBJSON.m"; sourceTree = "<group>"; };
+		598E922814D5FAFB00F0B6B7 /* NSString+SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SBJSON.h"; sourceTree = "<group>"; };
+		598E922914D5FAFB00F0B6B7 /* NSString+SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SBJSON.m"; sourceTree = "<group>"; };
+		598E922A14D5FAFB00F0B6B7 /* SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJSON.h; sourceTree = "<group>"; };
+		598E922B14D5FAFB00F0B6B7 /* SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJSON.m; sourceTree = "<group>"; };
+		598E922C14D5FAFB00F0B6B7 /* NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRails.h; sourceTree = "<group>"; };
+		598E922D14D5FAFB00F0B6B7 /* NSRails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRails.m; sourceTree = "<group>"; };
+		598E922E14D5FAFB00F0B6B7 /* NSRConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRConfig.h; sourceTree = "<group>"; };
+		598E922F14D5FAFB00F0B6B7 /* NSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConfig.m; sourceTree = "<group>"; };
+		598E923014D5FAFB00F0B6B7 /* NSRConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRConnection.h; sourceTree = "<group>"; };
+		598E923114D5FAFB00F0B6B7 /* NSRConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConnection.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		591197CC14D5CE5A0082379C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				591197D414D5CE5A0082379C /* UIKit.framework in Frameworks */,
+				591197D614D5CE5A0082379C /* Foundation.framework in Frameworks */,
+				591197D814D5CE5A0082379C /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		591197C414D5CE5A0082379C = {
+			isa = PBXGroup;
+			children = (
+				591197D914D5CE5A0082379C /* NSRailsApp */,
+				591197D214D5CE5A0082379C /* Frameworks */,
+				591197D014D5CE5A0082379C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		591197D014D5CE5A0082379C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				591197CF14D5CE5A0082379C /* NSRailsApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		591197D214D5CE5A0082379C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				591197D314D5CE5A0082379C /* UIKit.framework */,
+				591197D514D5CE5A0082379C /* Foundation.framework */,
+				591197D714D5CE5A0082379C /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		591197D914D5CE5A0082379C /* NSRailsApp */ = {
+			isa = PBXGroup;
+			children = (
+				591197E214D5CE5A0082379C /* AppDelegate.h */,
+				591197E314D5CE5A0082379C /* AppDelegate.m */,
+				591197E514D5CE5A0082379C /* MasterViewController.h */,
+				591197E614D5CE5A0082379C /* MasterViewController.m */,
+				591197E814D5CE5A0082379C /* DetailViewController.h */,
+				591197E914D5CE5A0082379C /* DetailViewController.m */,
+				591197EB14D5CE5A0082379C /* MasterViewController.xib */,
+				591197EE14D5CE5A0082379C /* DetailViewController.xib */,
+				598E921E14D5FAFB00F0B6B7 /* NSRails */,
+				591197DA14D5CE5A0082379C /* Supporting Files */,
+				5911982914D5D6FA0082379C /* Person.h */,
+				5911982A14D5D6FB0082379C /* Person.m */,
+				5911982C14D5E88E0082379C /* Brain.h */,
+				5911982D14D5E88F0082379C /* Brain.m */,
+				5911986114D5EB2D0082379C /* Thought.h */,
+				5911986214D5EB2D0082379C /* Thought.m */,
+			);
+			path = NSRailsApp;
+			sourceTree = "<group>";
+		};
+		591197DA14D5CE5A0082379C /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5911980914D5D52C0082379C /* go.png */,
+				5911980A14D5D52C0082379C /* goWhite.png */,
+				591197DB14D5CE5A0082379C /* NSRailsApp-Info.plist */,
+				591197DC14D5CE5A0082379C /* InfoPlist.strings */,
+				591197DF14D5CE5A0082379C /* main.m */,
+				591197E114D5CE5A0082379C /* NSRailsApp-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		598E921E14D5FAFB00F0B6B7 /* NSRails */ = {
+			isa = PBXGroup;
+			children = (
+				598E921F14D5FAFB00F0B6B7 /* Convenience */,
+				598E922414D5FAFB00F0B6B7 /* JSON */,
+				598E922C14D5FAFB00F0B6B7 /* NSRails.h */,
+				598E922D14D5FAFB00F0B6B7 /* NSRails.m */,
+				598E922E14D5FAFB00F0B6B7 /* NSRConfig.h */,
+				598E922F14D5FAFB00F0B6B7 /* NSRConfig.m */,
+				598E923014D5FAFB00F0B6B7 /* NSRConnection.h */,
+				598E923114D5FAFB00F0B6B7 /* NSRConnection.m */,
+			);
+			name = NSRails;
+			path = ../../../source;
+			sourceTree = "<group>";
+		};
+		598E921F14D5FAFB00F0B6B7 /* Convenience */ = {
+			isa = PBXGroup;
+			children = (
+				598E922014D5FAFB00F0B6B7 /* NSData+Additions.h */,
+				598E922114D5FAFB00F0B6B7 /* NSData+Additions.m */,
+				598E922214D5FAFB00F0B6B7 /* NSString+InflectionSupport.h */,
+				598E922314D5FAFB00F0B6B7 /* NSString+InflectionSupport.m */,
+			);
+			path = Convenience;
+			sourceTree = "<group>";
+		};
+		598E922414D5FAFB00F0B6B7 /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				598E922514D5FAFB00F0B6B7 /* JSONFramework.h */,
+				598E922614D5FAFB00F0B6B7 /* NSObject+SBJSON.h */,
+				598E922714D5FAFB00F0B6B7 /* NSObject+SBJSON.m */,
+				598E922814D5FAFB00F0B6B7 /* NSString+SBJSON.h */,
+				598E922914D5FAFB00F0B6B7 /* NSString+SBJSON.m */,
+				598E922A14D5FAFB00F0B6B7 /* SBJSON.h */,
+				598E922B14D5FAFB00F0B6B7 /* SBJSON.m */,
+			);
+			path = JSON;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		591197CE14D5CE5A0082379C /* NSRailsApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 591197F314D5CE5A0082379C /* Build configuration list for PBXNativeTarget "NSRailsApp" */;
+			buildPhases = (
+				591197CB14D5CE5A0082379C /* Sources */,
+				591197CC14D5CE5A0082379C /* Frameworks */,
+				591197CD14D5CE5A0082379C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NSRailsApp;
+			productName = NSRailsApp;
+			productReference = 591197CF14D5CE5A0082379C /* NSRailsApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		591197C614D5CE5A0082379C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+				ORGANIZATIONNAME = "InContext LLC";
+			};
+			buildConfigurationList = 591197C914D5CE5A0082379C /* Build configuration list for PBXProject "NSRailsApp" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 591197C414D5CE5A0082379C;
+			productRefGroup = 591197D014D5CE5A0082379C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				591197CE14D5CE5A0082379C /* NSRailsApp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		591197CD14D5CE5A0082379C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				591197DE14D5CE5A0082379C /* InfoPlist.strings in Resources */,
+				591197ED14D5CE5A0082379C /* MasterViewController.xib in Resources */,
+				591197F014D5CE5A0082379C /* DetailViewController.xib in Resources */,
+				5911980B14D5D52C0082379C /* go.png in Resources */,
+				5911980C14D5D52C0082379C /* goWhite.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		591197CB14D5CE5A0082379C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				591197E014D5CE5A0082379C /* main.m in Sources */,
+				591197E414D5CE5A0082379C /* AppDelegate.m in Sources */,
+				591197E714D5CE5A0082379C /* MasterViewController.m in Sources */,
+				591197EA14D5CE5A0082379C /* DetailViewController.m in Sources */,
+				5911982B14D5D6FB0082379C /* Person.m in Sources */,
+				5911982E14D5E88F0082379C /* Brain.m in Sources */,
+				5911986314D5EB2E0082379C /* Thought.m in Sources */,
+				598E923214D5FAFB00F0B6B7 /* NSData+Additions.m in Sources */,
+				598E923314D5FAFB00F0B6B7 /* NSString+InflectionSupport.m in Sources */,
+				598E923414D5FAFB00F0B6B7 /* NSObject+SBJSON.m in Sources */,
+				598E923514D5FAFB00F0B6B7 /* NSString+SBJSON.m in Sources */,
+				598E923614D5FAFB00F0B6B7 /* SBJSON.m in Sources */,
+				598E923714D5FAFB00F0B6B7 /* NSRails.m in Sources */,
+				598E923814D5FAFB00F0B6B7 /* NSRConfig.m in Sources */,
+				598E923914D5FAFB00F0B6B7 /* NSRConnection.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		591197DC14D5CE5A0082379C /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				591197DD14D5CE5A0082379C /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		591197EB14D5CE5A0082379C /* MasterViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				591197EC14D5CE5A0082379C /* en */,
+			);
+			name = MasterViewController.xib;
+			sourceTree = "<group>";
+		};
+		591197EE14D5CE5A0082379C /* DetailViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				591197EF14D5CE5A0082379C /* en */,
+			);
+			name = DetailViewController.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		591197F114D5CE5A0082379C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		591197F214D5CE5A0082379C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		591197F414D5CE5A0082379C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "NSRailsApp/NSRailsApp-Prefix.pch";
+				INFOPLIST_FILE = "NSRailsApp/NSRailsApp-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		591197F514D5CE5A0082379C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "NSRailsApp/NSRailsApp-Prefix.pch";
+				INFOPLIST_FILE = "NSRailsApp/NSRailsApp-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		591197C914D5CE5A0082379C /* Build configuration list for PBXProject "NSRailsApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				591197F114D5CE5A0082379C /* Debug */,
+				591197F214D5CE5A0082379C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		591197F314D5CE5A0082379C /* Build configuration list for PBXNativeTarget "NSRailsApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				591197F414D5CE5A0082379C /* Debug */,
+				591197F514D5CE5A0082379C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 591197C614D5CE5A0082379C /* Project object */;
+}

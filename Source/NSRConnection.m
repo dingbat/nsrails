@@ -104,6 +104,23 @@ static NSOperationQueue *queue = nil;
 
 + (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock;
 {
+	//make sure the app URL is set
+	if (![NSRConfig appURL])
+	{
+		NSError *err = [NSError errorWithDomain:@"rails" code:0 userInfo:[NSDictionary dictionaryWithObject:@"No server root URL specified. Set your rails app's root with +[NSRConfig setAppURL:] somewhere in your app setup." forKey:NSLocalizedDescriptionKey]];
+		if (error)
+			*error = err;
+		if (completionBlock)
+			completionBlock(nil, err);
+		
+#ifdef NSRLogErrors
+		NSRLogError(err);
+		NSLog(@" ");
+#endif
+		
+		return nil;
+	}
+	
 	//generate url based on base URL + route given
 	NSString *url = [NSString stringWithFormat:@"%@/%@",[NSRConfig appURL],route];
 	
