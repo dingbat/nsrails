@@ -84,6 +84,7 @@
 	{
 		// Configure the cell.
 		cell.textLabel.text = [(Thought *)[brain.thoughts objectAtIndex:indexPath.row] content];
+		cell.textLabel.textAlignment = UITextAlignmentLeft;
     }
 	else
 	{
