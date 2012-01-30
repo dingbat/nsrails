@@ -68,20 +68,6 @@
 + (void) getAllRemoteAsync:(void(^)(NSArray *allRemote, NSError *error))completionBlock;
 + (void) getRemoteObjectWithID:(int)mID async:(void(^)(id object, NSError *error))completionBlock;
 
-/* is this bad practice?
- 
-- (BOOL) updateRemoteExcluding:(NSArray *)exc error:(NSError **)error;
-- (void) updateRemoteExcluding:(NSArray *)exc async:(void(^)(NSError *error))completionBlock;
-
-- (BOOL) createRemoteExcluding:(NSArray *)exc error:(NSError **)error;
-- (void) createRemoteExcluding:(NSArray *)exc async:(void(^)(NSError *error))completionBlock;
-
-- (BOOL) getRemoteLatestExcluding:(NSArray *)exc error:(NSError **)error;
-- (void) getRemoteLatestExcluding:(NSArray *)exc async:(void(^)(NSError *error))completionBlock;
-
-- (BOOL) getRemoteLatestOnlyForProperties:(NSArray *)exc error:(NSError **)error;
-- (void) getRemoteLatestOnlyForProperties:(NSArray *)exc async:(void(^)(NSError *error))completionBlock;
-*/
 
 ///////////////////////////////////////
 //custom methods (not CRUD) on instance
