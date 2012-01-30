@@ -709,7 +709,7 @@ return [self updateRemote:error exclude:list];
 	NSString *json = [[self class] makeRequest:@"POST" requestBody:[self JSONRepresentation] method:nil error:error];
 	
 	//check to see if json exists, and if it does, set all of my attributes to it (like to add the new ID), and return if it worked
-	return (json && [self setAttributesAsPerJSON:json]);
+	return (!!json && [self setAttributesAsPerJSON:json]);
 }
 - (void) createRemoteAsync:(void (^)(NSError *))completionBlock
 {

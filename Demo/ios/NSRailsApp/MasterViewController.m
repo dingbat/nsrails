@@ -51,7 +51,7 @@
 	[picker reloadAllComponents];
 }
 
-- (void) updateToRow:(int)row
+- (void) updateUIToRow:(int)row
 {
 	if (row == 0)
 	{
@@ -70,7 +70,7 @@
 {
 	[super viewDidLoad];
 	
-	[self updateToRow:0];
+	[self updateUIToRow:0];
 	[self refresh];
 }
 
@@ -96,10 +96,37 @@
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
-	[self updateToRow:row];
+	[self updateUIToRow:row];
 }
 
 #pragma mark CRUD
+
+- (void) alertForError:(NSError *)e
+{
+	int errors = 0;
+	NSString *errorString = @"";
+	NSString *errorTitle = @"Error";
+	NSDictionary *validationErrors = [[e userInfo] objectForKey:NSRValidationErrorsKey];
+	if (validationErrors)
+	{
+		for (NSString *property in validationErrors)
+		{
+			for (NSString *message in [validationErrors objectForKey:property])
+			{
+				errorString = [errorString stringByAppendingFormat:@"%@ %@. ",[property toClassName],message];
+				errors++;
+			}
+		}
+		if (errors > 1)
+			errorTitle = [NSString stringWithFormat:@"%d Errors",errors];
+	}
+	else
+	{
+		errorString = [e localizedDescription];
+	}
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:errorTitle message:errorString delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+	[alert show];
+}
 
 - (void) updateAttributesFromUI
 {
@@ -122,19 +149,7 @@
 	}
 	else
 	{
-		int errors = 0;
-		NSString *errorString = @"";
-		NSDictionary *error = [[e localizedDescription] JSONValue];
-		for (NSString *property in error)
-		{
-			for (NSString *message in [error objectForKey:property])
-			{
-				errorString = [errorString stringByAppendingFormat:@"%@ %@. ",[property toClassName],message];
-				errors++;
-			}
-		}
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%d Error%@",errors,errors > 1 ? @"s" : @""] message:errorString delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-		[alert show];
+		[self alertForError:e];
 		[self updateUI];
 	}
 }
@@ -143,7 +158,11 @@
 {
 	[self updateAttributesFromUI];
 	
-	[person updateRemote];
+	NSError *e;
+	if (![person updateRemote:&e])
+	{
+		[self alertForError:e];
+	}
 	
 	[self updateUI];
 }
@@ -167,9 +186,7 @@
 		person = nil;
 	}
 	
-	[self updateToRow:personIndex+1];
-
-	[self updateUI];
+	[self updateUIToRow:personIndex+1];
 }
 
 - (IBAction) refresh

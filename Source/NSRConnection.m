@@ -9,6 +9,7 @@
 #import "NSRConnection.h"
 #import "NSData+Additions.h"
 #import "NSRails.h"
+#import "JSONFramework.h"
 
 @implementation NSRConnection
 
@@ -29,34 +30,25 @@ static NSOperationQueue *queue = nil;
 	int statusCode = -1;
 	BOOL err;
 	NSString *result;
-	//if no response, the server must be down and log an error
-	if (!response || !data)
+	
+	//otherwise, get the statuscode from the response (it'll be an NSHTTPURLResponse but to be safe check if it responds)
+	if ([response respondsToSelector:@selector(statusCode)])
 	{
-		err = YES;
-		statusCode = 0;
-		result = [NSString stringWithFormat:@"Connection with %@ failed.",[NSRConfig appURL]];
+		statusCode = [((NSHTTPURLResponse *)response) statusCode];
 	}
-	else
-	{
-		//otherwise, get the statuscode from the response (it'll be an NSHTTPURLResponse but to be safe check if it responds)
-		if ([response respondsToSelector:@selector(statusCode)])
-		{
-			statusCode = [((NSHTTPURLResponse *)response) statusCode];
-		}
-		err = (statusCode == -1 || statusCode >= 400);
-		
-		result = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-		
+	err = (statusCode == -1 || statusCode >= 400);
+	
+	result = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+	
 #ifndef NSRCompileWithARC
-		[request release];
-		[result autorelease];
+	[request release];
+	[result autorelease];
 #endif
-		
+	
 #if NSRLog > 1
-		NSLog(@"IN<=== Code %d; %@\n\n",statusCode,(err ? @"[see ERROR]" : result));
-		NSLog(@" ");
+	NSLog(@"IN<=== Code %d; %@\n\n",statusCode,(err ? @"[see ERROR]" : result));
+	NSLog(@" ");
 #endif
-	}
 	
 	if (err)
 	{
@@ -76,8 +68,14 @@ static NSOperationQueue *queue = nil;
 #endif
 		
 		//make a new error
-		NSDictionary *inf = [NSDictionary dictionaryWithObject:result
+		NSMutableDictionary *inf = [NSMutableDictionary dictionaryWithObject:result
 														forKey:NSLocalizedDescriptionKey];
+		//means there was a validation error - the specific errors were sent in JSON
+		if (statusCode == 422)
+		{
+			[inf setObject:[result JSONValue] forKey:NSRValidationErrorsKey];
+		}
+		
 		NSError *statusError = [NSError errorWithDomain:@"rails"
 												   code:statusCode
 											   userInfo:inf];
@@ -185,8 +183,18 @@ static NSOperationQueue *queue = nil;
 	}
 	else
 	{
+		NSError *connectionError;
 		NSURLResponse *response = nil;
-		NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
+		NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&connectionError];
+		
+		//if there's an error here there must have been an issue connecting to the server.
+		if (connectionError)
+		{
+			//if there was a dereferenced error passed in, set it to Apple's
+			if (error)
+				*error = connectionError;
+			return nil;
+		}
 		
 		return [self resultWithRequest:response data:data error:error];
 	}
