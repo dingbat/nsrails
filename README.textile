@@ -1,0 +1,33 @@
+h2. NSRails
+
+Welcome! NSRails is a light-weight Objective-C library to make interfacing with a Rails back-end easy.
+
+
+h3. +What can NSRails do?+
+
+NSRails builds ActiveResource support straight into your iOS models, meaning CRUD operations and others can be called seamlessly via Objective-C methods.
+This library is simple but flexible, meaning that it'll fit the various needs of your Rails project:
+* Define only certain attributes to be shared with Rails
+* Have different property and/or model names between Rails and iOS
+* Nested models
+* Basic HTTP authentication
+* Asynchronous requests
+
+
+h3. +How do I get started?+
+
+Stick the source folder into your Xcode project (making sure to copy files), and:
+* Subclass RailsModel
+* List the properties you want to share with Rails using the RailsShare macro
+* Create, get, destroy, and update your models in one line!
+
+For more details:
+* See the Wiki
+* See the included troubleshooting file if you run into any errors
+* Documentation soon to come (promise)
+
+
+h3. +What's in the sources?+
+
+The main class in NSRails and the one to inherit from is RailsModel (defined in NSRails.h). Also included are a mainly-static NSRConfig class for app settings and an NSRConnection class used internally.
+NSRails also makes use of the Objective-C JSON framework and steals ObjectiveResource's NSString InflectionSupport category. ObjectiveResource was largely the inspiration for NSRails, and it was sad to see it drop support. Thanks guys!
