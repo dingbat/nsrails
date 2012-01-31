@@ -19,9 +19,9 @@
 #define NSRAutomaticallyUnderscoreAndCamelize
 #define NSRAutomaticallyMakeURLsLowercase
 #define NSRLog 3
+#define NSRSuccinctErrorMessages
 //#define NSRSendHasManyRelationAsHash
 //#define NSRCrashOnError
-#define NSRSuccinctErrorMessages
 
 #define NSRCompileWithARC
 

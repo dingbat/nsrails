@@ -25,6 +25,18 @@ static NSOperationQueue *queue = nil;
 	return queue;
 }
 
++ (void) crashWithError:(NSError *)error
+{
+#if NSRLog > 0
+	NSRLogError(error);
+	NSLog(@" ");
+#endif
+	
+#ifdef NSRCrashOnError
+	[NSException raise:[NSString stringWithFormat:@"%@ error code %d",[error domain],[error code]] format:[error localizedDescription]];
+#endif
+}
+
 + (NSString *) resultWithRequest:(NSURLResponse *)response data:(NSData *)data error:(NSError **)error
 {
 	int statusCode = -1;
@@ -85,14 +97,7 @@ static NSOperationQueue *queue = nil;
 			*error = statusError;
 		}
 		
-#if NSRLog > 0
-		NSRLogError(statusError);
-		NSLog(@" ");
-#endif
-		
-#ifdef NSRCrashOnError
-		[NSException raise:[NSString stringWithFormat:@"Rails error code %d",statusCode] format:result];
-#endif
+		[self crashWithError:statusError];
 		
 		return nil;
 	}
@@ -111,10 +116,7 @@ static NSOperationQueue *queue = nil;
 		if (completionBlock)
 			completionBlock(nil, err);
 		
-#ifdef NSRLogErrors
-		NSRLogError(err);
-		NSLog(@" ");
-#endif
+		[self crashWithError:err];
 		
 		return nil;
 	}
@@ -193,6 +195,9 @@ static NSOperationQueue *queue = nil;
 			//if there was a dereferenced error passed in, set it to Apple's
 			if (error)
 				*error = connectionError;
+			
+			[self crashWithError:connectionError];
+			
 			return nil;
 		}
 		

@@ -12,6 +12,8 @@
 {
 }
 
++ (void) crashWithError:(NSError *)error;
+
 + (NSOperationQueue *) sharedQueue;
 
 + (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock;
