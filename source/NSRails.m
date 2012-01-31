@@ -860,9 +860,7 @@ static NSOperationQueue *queue = nil;
 		if (error)
 			*error = e;
 		
-#ifdef NSRLogErrors
-		NSRLogError(e);
-#endif
+		[NSRConnection crashWithError:e];
 		return NO;
 	}
 
@@ -1012,12 +1010,11 @@ static NSOperationQueue *queue = nil;
 										 code:0 
 									 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"getAll method (index) for %@ controller did not return an array - check your rails app.",[self getModelName]]
 																		  forKey:NSLocalizedDescriptionKey]];
-#ifdef NSRLogErrors
-		NSRLogError(e);
-#endif
 		
 		if (error)
 			*error = e;
+		
+		[NSRConnection crashWithError:e];
 		
 		return nil;
 	}
