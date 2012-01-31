@@ -1,0 +1,6 @@
+# Ignore Xcode files
+demo/ios/NSRailsApp.xcodeproj/*
+tests/NSRails.xcodeproj/*
+*.pbxuser
+*.mode1v3
+*.xcuserstate
