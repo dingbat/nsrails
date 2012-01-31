@@ -10,6 +10,6 @@
 
 @implementation Thought
 @synthesize content;
-RailsShare("content")
+NSRailsUse("content")
 
 @end

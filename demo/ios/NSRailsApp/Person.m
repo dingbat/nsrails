@@ -8,8 +8,9 @@
 
 #import "Person.h"
 
-@implementation Person
+@implementation Person 
 @synthesize name, age, brain;
-RailsShare("name, age, brain")
+NSRailsUse("name, age, brain")
+
 
 @end

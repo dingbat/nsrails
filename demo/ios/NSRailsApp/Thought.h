@@ -8,7 +8,7 @@
 
 #import "NSRails.h"
 
-@interface Thought : RailsModel
+@interface Thought : NSRailsModel
 
 @property (nonatomic, strong) NSString *content;
 

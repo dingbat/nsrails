@@ -9,7 +9,7 @@
 #import "NSRails.h"
 #import "Brain.h"
 
-@interface Person : RailsModel
+@interface Person : NSRailsModel
 {
 	NSString *name;
 	NSNumber *age;

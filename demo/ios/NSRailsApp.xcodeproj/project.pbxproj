@@ -29,7 +29,6 @@
 		598E923614D5FAFB00F0B6B7 /* SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 598E922B14D5FAFB00F0B6B7 /* SBJSON.m */; };
 		598E923714D5FAFB00F0B6B7 /* NSRails.m in Sources */ = {isa = PBXBuildFile; fileRef = 598E922D14D5FAFB00F0B6B7 /* NSRails.m */; };
 		598E923814D5FAFB00F0B6B7 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 598E922F14D5FAFB00F0B6B7 /* NSRConfig.m */; };
-		598E923914D5FAFB00F0B6B7 /* NSRConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 598E923114D5FAFB00F0B6B7 /* NSRConnection.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,11 +50,11 @@
 		591197EF14D5CE5A0082379C /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DetailViewController.xib; sourceTree = "<group>"; };
 		5911980914D5D52C0082379C /* go.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = go.png; sourceTree = "<group>"; };
 		5911980A14D5D52C0082379C /* goWhite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = goWhite.png; sourceTree = "<group>"; };
-		5911982914D5D6FA0082379C /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
+		5911982914D5D6FA0082379C /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Person.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5911982A14D5D6FB0082379C /* Person.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Person.m; sourceTree = "<group>"; };
-		5911982C14D5E88E0082379C /* Brain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Brain.h; sourceTree = "<group>"; };
+		5911982C14D5E88E0082379C /* Brain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Brain.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5911982D14D5E88F0082379C /* Brain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Brain.m; sourceTree = "<group>"; };
-		5911986114D5EB2D0082379C /* Thought.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Thought.h; sourceTree = "<group>"; };
+		5911986114D5EB2D0082379C /* Thought.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Thought.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5911986214D5EB2D0082379C /* Thought.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Thought.m; sourceTree = "<group>"; };
 		598E922014D5FAFB00F0B6B7 /* NSData+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Additions.h"; sourceTree = "<group>"; };
 		598E922114D5FAFB00F0B6B7 /* NSData+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Additions.m"; sourceTree = "<group>"; };
@@ -68,12 +67,10 @@
 		598E922914D5FAFB00F0B6B7 /* NSString+SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SBJSON.m"; sourceTree = "<group>"; };
 		598E922A14D5FAFB00F0B6B7 /* SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJSON.h; sourceTree = "<group>"; };
 		598E922B14D5FAFB00F0B6B7 /* SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJSON.m; sourceTree = "<group>"; };
-		598E922C14D5FAFB00F0B6B7 /* NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRails.h; sourceTree = "<group>"; };
-		598E922D14D5FAFB00F0B6B7 /* NSRails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRails.m; sourceTree = "<group>"; };
+		598E922C14D5FAFB00F0B6B7 /* NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = NSRails.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		598E922D14D5FAFB00F0B6B7 /* NSRails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = NSRails.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		598E922E14D5FAFB00F0B6B7 /* NSRConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRConfig.h; sourceTree = "<group>"; };
 		598E922F14D5FAFB00F0B6B7 /* NSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConfig.m; sourceTree = "<group>"; };
-		598E923014D5FAFB00F0B6B7 /* NSRConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRConnection.h; sourceTree = "<group>"; };
-		598E923114D5FAFB00F0B6B7 /* NSRConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConnection.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,8 +159,6 @@
 				598E922D14D5FAFB00F0B6B7 /* NSRails.m */,
 				598E922E14D5FAFB00F0B6B7 /* NSRConfig.h */,
 				598E922F14D5FAFB00F0B6B7 /* NSRConfig.m */,
-				598E923014D5FAFB00F0B6B7 /* NSRConnection.h */,
-				598E923114D5FAFB00F0B6B7 /* NSRConnection.m */,
 			);
 			name = NSRails;
 			path = ../../../source;
@@ -274,7 +269,6 @@
 				598E923614D5FAFB00F0B6B7 /* SBJSON.m in Sources */,
 				598E923714D5FAFB00F0B6B7 /* NSRails.m in Sources */,
 				598E923814D5FAFB00F0B6B7 /* NSRConfig.m in Sources */,
-				598E923914D5FAFB00F0B6B7 /* NSRConnection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

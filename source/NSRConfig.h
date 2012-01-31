@@ -27,13 +27,11 @@
 
 @interface NSRConfig : NSObject
 
-+ (void) setAppURL:(NSString *)str;
-+ (void) setAppUsername:(NSString *)str;
-+ (void) setAppPassword:(NSString *)str;
+@property (nonatomic, strong) NSString *appURL;
+@property (nonatomic, strong) NSString *appUsername;
+@property (nonatomic, strong) NSString *appPassword;
 
-+ (NSString *) appURL;
-+ (NSString *) appUsername;
-+ (NSString *) appPassword;
++ (NSRConfig *) defaultConfig;
 
 @end
 
@@ -45,7 +43,7 @@
 // NSRAutomaticallyUnderscoreAndCamelize
 // when defined: eg, "myProperty" as obj-c ivar will change to "my_property" when sending/receiving from server
 //					what this really means is that by default all properties will have equivalencies with their underscored version
-// when undefined: both properties (defined in RailsShare) and class names are expected to be identically formatted on server-side.
+// when undefined: both properties (defined in NSRailsUse) and class names are expected to be identically formatted on server-side.
 
 // NSRAutomaticallyMakeURLsLowercase
 // when defined: before making a request, downcases entire URL

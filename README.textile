@@ -17,17 +17,17 @@ This library is simple but flexible, meaning that it'll fit the various needs of
 h3. +How do I get started?+
 
 Stick the source folder into your Xcode project (making sure to copy files), and:
-* Subclass RailsModel
+* Subclass NSRailsModel
 * List the properties you want to share with Rails using the RailsShare macro
 * Create, get, destroy, and update your models in one line!
 
 For more details:
-* See the Wiki
+* See the "Wiki":https://github.com/dingbat/nsrails/wiki
 * See the included troubleshooting file if you run into any errors
 * Documentation soon to come (promise)
 
 
 h3. +What's in the sources?+
 
-The main class in NSRails and the one to inherit from is RailsModel (defined in NSRails.h). Also included are a mainly-static NSRConfig class for app settings and an NSRConnection class used internally.
+The main class in NSRails and the one to inherit from is NSRailsModel (defined in NSRails.h). Also included is an NSRConfig class for app settings.
 NSRails also makes use of the Objective-C JSON framework and steals ObjectiveResource's NSString InflectionSupport category. ObjectiveResource was largely the inspiration for NSRails, and it was sad to see it drop support. Thanks guys!

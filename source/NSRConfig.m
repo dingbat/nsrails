@@ -9,12 +9,17 @@
 #import "NSRConfig.h"
 
 @implementation NSRConfig
+@synthesize appURL, appUsername, appPassword;
 
-static NSString* appURL;
-static NSString* appUsername;
-static NSString* appPassword;
+static NSRConfig *defaultConfig = nil;
 
-+ (void) setAppURL:(NSString *)str
++ (NSRConfig *) defaultConfig
+{
+	if (!defaultConfig) defaultConfig = [[NSRConfig alloc] init];
+	return defaultConfig;
+}
+
+- (void) setAppURL:(NSString *)str
 {
 	//get rid of trailing /
 	if ([[str substringFromIndex:str.length-1] isEqualToString:@"/"])
@@ -29,11 +34,5 @@ static NSString* appPassword;
 	
 	appURL = str;
 }
-+ (void) setAppUsername:(NSString *)str {	appUsername = str;	}
-+ (void) setAppPassword:(NSString *)str {	appPassword = str;	}
-
-+ (NSString *) appURL { return appURL; }
-+ (NSString *) appUsername { return appUsername; }
-+ (NSString *) appPassword { return appPassword; }
 
 @end

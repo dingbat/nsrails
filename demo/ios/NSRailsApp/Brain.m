@@ -10,6 +10,6 @@
 
 @implementation Brain
 @synthesize size, thoughts;
-RailsShare("size, thoughts:Thought")
+NSRailsUse("size, thoughts:Thought")
 
 @end

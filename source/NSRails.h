@@ -15,7 +15,7 @@
 //log NSR errors by default
 #define NSRLogErrors
 
-@interface RailsModel : NSObject
+@interface NSRailsModel : NSObject
 {
 	NSNumber *modelID;
 	NSDictionary *attributes;
@@ -83,7 +83,7 @@
 ///////////////////////////////////////
 //custom methods (not CRUD) on class
 //if called on a subclass, will direct it to the controller ([User makeGET:@"hello"] => myapp.com/users/hello)
-//if called on RailsModel, will direct it to the app's root ([RailsModel makeGET:@"hello"] => myapp.com/hello)
+//if called on NSRailsModel, will direct it to the app's root ([NSRailsModel makeGET:@"hello"] => myapp.com/hello)
 ///////////////////////////////////////
 
 + (NSString *)	makeGETRequestWithMethod:(NSString *)method error:(NSError **)error;
@@ -95,28 +95,44 @@
 
 ///////////////////////////////////////////
 //manual json encoding/decoding
-//will use whatever inputted in RailsShare()
+//will use whatever inputted in NSRailsUse()
 ///////////////////////////////////////////
 
 - (NSString *) JSONRepresentation;
 - (BOOL) setAttributesAsPerJSON:(NSString *)json;
 
 
++ (void) setClassConfig:(NSRConfig *)config;
+
 
 //macros
 
+//#define NSRPropertyMacro		NSRailsUse
+//#define NSRModelNameMacro		NSRailsModelName
+//#define NSRModelNamePlMacro		NSRailsModelNameWithPlural
+//#define NSRConfigMacro			NSRailsSetConfig
+//#define NSRConfigAuthMacro		NSRailsSetConfigAuth
+
 #define NSRStringFromCString(cstr)	[NSString stringWithCString:cstr encoding:NSUTF8StringEncoding]
 
-+ (NSString *) RailsShare;
-#define RailsShare(rails_properties) \
-+ (NSString*) RailsShare { return [[super RailsShare] stringByAppendingFormat:@", %@", NSRStringFromCString(rails_properties)]; }
-#define RailsShareNoSuper(rails_properties) \
-+ (NSString*) RailsShareNoSuper { return NSRStringFromCString(rails_properties); }
++ (NSString *) NSRailsUse;
 
-#define ModelName(exact_rails_model) \
-+ (NSString*) ModelName { return NSRStringFromCString(exact_rails_model); }
-#define ModelNameWithPlural(exact_rails_model,exact_rails_model_plural) \
-+ (NSString*) ModelName { return exact_rails_model; } + (NSString*) PluralModelName { return NSRStringFromCString(exact_rails_model_plural); }
+#define NSRailsUse(rails_properties) \
++ (NSString*) NSRailsUse { return [[super NSRailsUse] stringByAppendingFormat:@", %@", NSRStringFromCString(rails_properties)]; }
+#define NSRailsUseNoSuper(rails_properties) \
++ (NSString*) NSRailsUseNoSuper { return NSRStringFromCString(rails_properties); }
+
+#define NSRailsModelName(exact_rails_model) \
++ (NSString*) NSRailsModelName { return NSRStringFromCString(exact_rails_model); }
+
+#define NSRailsModelNameWithPlural(exact_rails_model,exact_rails_model_plural) \
++ (NSString*) NSRailsModelName { return NSRStringFromCString(exact_rails_model); } + (NSString*) NSRailsModelNameWithPlural { return NSRStringFromCString(exact_rails_model_plural); }
+
+#define NSRailsSetConfig(app_url_for_model) \
++ (NSRConfig *) NSRailsSetConfig { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = NSRStringFromCString(app_url_for_model); return config; }
+
+#define NSRailsSetConfigAuth(app_url_for_model, username, password) \
++ (NSRConfig *) NSRailsSetConfigAuth { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = NSRStringFromCString(app_url_for_model); config.appUsername = username; config.appPassword = password; return config; }
 
 
 @end

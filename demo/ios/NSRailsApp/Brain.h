@@ -8,7 +8,7 @@
 
 #import "NSRails.h"
 
-@interface Brain : RailsModel
+@interface Brain : NSRailsModel
 
 @property (nonatomic, strong) NSMutableArray *thoughts;
 @property (nonatomic, strong) NSString *size;
