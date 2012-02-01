@@ -43,7 +43,7 @@
 // NSRAutomaticallyUnderscoreAndCamelize
 // when defined: eg, "myProperty" as obj-c ivar will change to "my_property" when sending/receiving from server
 //					what this really means is that by default all properties will have equivalencies with their underscored version
-// when undefined: both properties (defined in NSRailsUse) and class names are expected to be identically formatted on server-side.
+// when undefined: both properties (defined in NSRailsProperties) and class names are expected to be identically formatted on server-side.
 
 // NSRAutomaticallyMakeURLsLowercase
 // when defined: before making a request, downcases entire URL

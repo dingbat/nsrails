@@ -132,7 +132,12 @@
 {
 	person.name = nameField.text;
 	person.age = [NSNumber numberWithInt:[ageField.text intValue]];
-	person.brain.size = brainSizeField.text;
+	if (brainSizeField.text.length > 0)
+	{
+		if (!person.brain)
+			person.brain = [[Brain alloc] init];
+		person.brain.size = brainSizeField.text;
+	}
 }
 
 - (IBAction) create

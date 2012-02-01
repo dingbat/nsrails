@@ -10,6 +10,6 @@
 
 @implementation Thought
 @synthesize content;
-NSRailsUse("content")
+NSRailsify (*)
 
 @end

@@ -18,7 +18,7 @@
 // if it's too intimidating, remember that you can navigate this file quickly in xcode with #pragma marks
 
 
-//this will be the NSRailsUse for NSRailsModel
+//this will be the NSRailsProperties for NSRailsModel
 //tie modelID to rails property id
 #define BASE_RAILS @"modelID=id"
 
@@ -47,23 +47,23 @@ static NSRConfig *config = nil;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 
-+ (NSString *) NSRailsUse
++ (NSString *) NSRailsProperties
 {
 	return BASE_RAILS;
 }
 
 + (NSString *) railsProperties
 {
-	if ([self respondsToSelector:@selector(NSRailsUseNoSuper)])
+	if ([self respondsToSelector:@selector(NSRailsPropertiesNoSuper)])
 	{
-		NSString *props = [self performSelector:@selector(NSRailsUseNoSuper)];
+		NSString *props = [self performSelector:@selector(NSRailsPropertiesNoSuper)];
 		if (props.length > 0)
 		{
 			//always want to keep base (modelID) even if nosuper
 			return [BASE_RAILS stringByAppendingFormat:@", %@",props];
 		}
 	}
-	return [self NSRailsUse];
+	return [self NSRailsProperties];
 }
 
 + (void) setClassConfig:(NSRConfig *)_config
@@ -110,6 +110,23 @@ static NSRConfig *config = nil;
 	return [[[[self class] getModelName] camelize] toClassName];
 }
 
++ (NSArray *) iVarNamesForClass:(Class) aClass
+{
+	unsigned int ivarCount;
+	Ivar *ivars = class_copyIvarList(aClass, &ivarCount);
+	if (ivars)
+	{
+		NSMutableArray *results = [NSMutableArray arrayWithCapacity:ivarCount];
+		
+		while (ivarCount--) 
+			[results addObject:[NSString stringWithCString: ivar_getName(ivars[ivarCount]) encoding: NSASCIIStringEncoding]];
+		
+		free(ivars);	
+		return results;
+	}
+	return nil;
+}
+
 - (id) init
 {
 	if ((self = [super init]))
@@ -141,133 +158,181 @@ static NSRConfig *config = nil;
 		
 		destroyOnNesting = NO;
 		
-		//begin reading in properties defined through NSRailsUse
+		
+		//begin reading in properties defined through NSRailsProperties
 		NSString *props = [[self class] railsProperties];
 		NSCharacterSet *wn = [NSCharacterSet whitespaceAndNewlineCharacterSet];
 		
-		NSArray *elements = [props componentsSeparatedByString:@","];
-		for (int i = 0; i < elements.count; i++)
+		NSMutableArray *exclude = [NSMutableArray array];
+		BOOL markedAll = NO;
+		BOOL onStarIteration = NO;
+		
+		do
 		{
-			NSString *str = [elements objectAtIndex:i];
-			NSString *prop = [str stringByTrimmingCharactersInSet:wn];
-			
-			if (prop.length > 0)
+			NSMutableArray *elements;
+			if (markedAll)
 			{
-				//prop ~= "username=user_name:Class -etc"
-				//find string sets between =, :, and -
-				NSArray *opSplit = [prop componentsSeparatedByString:@"-"];
-				NSArray *modSplit = [[opSplit objectAtIndex:0] componentsSeparatedByString:@":"];
-				NSArray *eqSplit = [[modSplit objectAtIndex:0] componentsSeparatedByString:@"="];
-				
-				prop = [[eqSplit objectAtIndex:0] stringByTrimmingCharactersInSet:wn];
-				
-				NSString *options = [opSplit lastObject];
-				if (opSplit.count > 1)
+				onStarIteration = YES;
+				markedAll = NO;
+				elements = [NSMutableArray array];
+				for (NSString *ivar in [[self class] iVarNamesForClass:[self class]])
 				{
-					//if any of these flags exist, add to appropriate category
-					if ([options rangeOfString:@"s"].location != NSNotFound)
-						[sendableProperties addObject:prop];
-					if ([options rangeOfString:@"r"].location != NSNotFound)
-						[retrievableProperties addObject:prop];
-					if ([options rangeOfString:@"e"].location != NSNotFound)
-						[encodeProperties addObject:prop];
-					if ([options rangeOfString:@"d"].location != NSNotFound)
-						[decodeProperties addObject:prop];
-				}
-				
-				//if no options are defined or they _are_ but neither -s nor -r are defined, by default add sendable+retrievable
-				if (opSplit.count == 1 ||
-					([options rangeOfString:@"s"].location == NSNotFound && [options rangeOfString:@"r"].location == NSNotFound))
-				{
-					[sendableProperties addObject:prop];
-					[retrievableProperties addObject:prop];
-				}
-				
-				//see if there was a : declared
-				if (modSplit.count > 1)
-				{
-					NSString *otherModel = [[modSplit lastObject] stringByTrimmingCharactersInSet:wn];
-					if (otherModel.length > 0)
+					if (![exclude containsObject:ivar] && ![propertyEquivalents objectForKey:ivar])
 					{
-						//class entered is not a real class
-						if (!NSClassFromString(otherModel))
-						{
-#ifdef NSRLogErrors
-							NSLog(@"failed to find class %@ (declared for property %@ of class %@) - please fix this. relation not set. ",otherModel,prop,[self camelizedModelName]);
-#endif
-						}
-						//class entered is not a subclass of NSRailsModel
-						else if (![NSClassFromString(otherModel) isSubclassOfClass:[NSRailsModel class]])
-						{
-#ifdef NSRLogErrors
-							NSLog(@"class %@ was declared for property %@ of class %@, but %@ is not a subclass of NSRailsModel - please fix this. relation not set.",otherModel,prop,[self camelizedModelName],otherModel);
-#endif
-						}
-						else
-							[nestedModelProperties setObject:otherModel forKey:prop];
+						[elements addObject:ivar];
 					}
 				}
-				else
+			}
+			else
+			{
+				elements = [NSMutableArray arrayWithArray:[props componentsSeparatedByString:@","]];
+			}
+			for (int i = 0; i < elements.count; i++)
+			{
+				NSString *str = [elements objectAtIndex:i];
+				NSString *prop = [str stringByTrimmingCharactersInSet:wn];
+				
+				if (prop.length > 0)
 				{
-					//if no : was declared for this property, check to see if we should link it anyway
-					NSString *ivarType = [self getIvarType:prop];
-					if (!([ivarType isEqualToString:@"NSString"] ||
-						  [ivarType isEqualToString:@"NSMutableString"] ||
-						  [ivarType isEqualToString:@"NSDictionary"] ||
-						  [ivarType isEqualToString:@"NSMutableDictionary"] ||
-						  [ivarType isEqualToString:@"NSNumber"] ||
-						  [ivarType isEqualToString:@"NSArray"] ||
-						  [ivarType isEqualToString:@"NSMutableArray"]))
+					if ([prop isEqualToString:@"*"])
 					{
-						//must be custom obj, see if its a railsmodel, if it is, link it automatically
-						Class c = NSClassFromString(ivarType);
-						if (c && [c isSubclassOfClass:[NSRailsModel class]])
+						//if * was declared (so like, "*, username=user_name, password -x")
+						//then mark ALL and save it for last (to see if there were any excludes or special options)
+						
+						markedAll = YES;
+						
+						continue;
+					}
+					//prop ~= "username=user_name:Class -etc"
+					//find string sets between =, :, and -
+					NSArray *opSplit = [prop componentsSeparatedByString:@"-"];
+					NSArray *modSplit = [[opSplit objectAtIndex:0] componentsSeparatedByString:@":"];
+					NSArray *eqSplit = [[modSplit objectAtIndex:0] componentsSeparatedByString:@"="];
+					
+					prop = [[eqSplit objectAtIndex:0] stringByTrimmingCharactersInSet:wn];
+					
+					NSString *options = [opSplit lastObject];
+					if (opSplit.count > 1)
+					{
+						//if it was marked exclude, add to exclude list in case * was declared
+						if ([options rangeOfString:@"x"].location != NSNotFound)
+						{
+							[exclude addObject:prop];
+							continue;
+						}
+						
+						//if any of these flags exist, add to appropriate category
+						if ([options rangeOfString:@"s"].location != NSNotFound)
+							[sendableProperties addObject:prop];
+						if ([options rangeOfString:@"r"].location != NSNotFound)
+							[retrievableProperties addObject:prop];
+						if ([options rangeOfString:@"e"].location != NSNotFound)
+							[encodeProperties addObject:prop];
+						if ([options rangeOfString:@"d"].location != NSNotFound)
+							[decodeProperties addObject:prop];
+					}
+					
+					//if no options are defined or they _are_ but neither -s nor -r are defined, by default add sendable+retrievable
+					if (opSplit.count == 1 ||
+						([options rangeOfString:@"s"].location == NSNotFound && [options rangeOfString:@"r"].location == NSNotFound))
+					{
+						[sendableProperties addObject:prop];
+						[retrievableProperties addObject:prop];
+					}
+					
+					//see if there was a : declared
+					if (modSplit.count > 1)
+					{
+						NSString *otherModel = [[modSplit lastObject] stringByTrimmingCharactersInSet:wn];
+						if (otherModel.length > 0)
+						{
+							//class entered is not a real class
+							if (!NSClassFromString(otherModel))
+							{
+	#ifdef NSRLogErrors
+								NSLog(@"failed to find class %@ (declared for property %@ of class %@) - please fix this. relation not set. ",otherModel,prop,[self camelizedModelName]);
+	#endif
+							}
+							//class entered is not a subclass of NSRailsModel
+							else if (![NSClassFromString(otherModel) isSubclassOfClass:[NSRailsModel class]])
+							{
+	#ifdef NSRLogErrors
+								NSLog(@"class %@ was declared for property %@ of class %@, but %@ is not a subclass of NSRailsModel - please fix this. relation not set.",otherModel,prop,[self camelizedModelName],otherModel);
+	#endif
+							}
+							else
+								[nestedModelProperties setObject:otherModel forKey:prop];
+						}
+					}
+					else
+					{
+						//if no : was declared for this property, check to see if we should link it anyway
+						NSString *ivarType = [self getIvarType:prop];
+						
+						if ([ivarType isEqualToString:@"NSArray"] ||
+							[ivarType isEqualToString:@"NSMutableArray"])
 						{
 #if NSRLog > 2
-							//uncomment the log to test if something isn't working
-					//		NSLog(@"automatically linking ivar %@ in class %@ with nested railsmodel %@",prop,[self camelizedModelName],ivarType);
+
+							NSLog(@"warning: property '%@' in class %@ was found to be an array, but no nesting model was set. note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved rails attributes will be set. if NSDictionaries are desired, to suppress this warning, simply add a colon with nothing following to the property in NSRailsify... %@:",prop,[self camelizedModelName],str);
 #endif
-							[nestedModelProperties setObject:ivarType forKey:prop];
+						}
+						else if (!([ivarType isEqualToString:@"NSString"] ||
+							  [ivarType isEqualToString:@"NSMutableString"] ||
+							  [ivarType isEqualToString:@"NSDictionary"] ||
+							  [ivarType isEqualToString:@"NSMutableDictionary"] ||
+							  [ivarType isEqualToString:@"NSNumber"]))
+						{
+							//must be custom obj, see if its a railsmodel, if it is, link it automatically
+							Class c = NSClassFromString(ivarType);
+							if (c && [c isSubclassOfClass:[NSRailsModel class]])
+							{
+	#if NSRLog > 2
+								//uncomment the log to test if something isn't working
+						//		NSLog(@"automatically linking ivar %@ in class %@ with nested railsmodel %@",prop,[self camelizedModelName],ivarType);
+	#endif
+								[nestedModelProperties setObject:ivarType forKey:prop];
+							}
 						}
 					}
-				}
-				
-				//see if there are any = declared
-				NSString *equivalent = prop;
-				if (eqSplit.count > 1)
-				{
-					equivalent = [[eqSplit lastObject] stringByTrimmingCharactersInSet:wn];
-					//if they tried to tie it to 'id', give error (but ignore if it's the first equivalence (modelID via base_rails)
-					if ([equivalent isEqualToString:@"id"] && i != 0)
+					
+					//see if there are any = declared
+					NSString *equivalent = prop;
+					if (eqSplit.count > 1)
 					{
-#ifdef NSRLogErrors
-						NSLog(@"found attempt to set the rails equivalent of ivar '%@' in class %@ to 'id'. this property is reserved and should be accessed through 'modelID' from a NSRailsModel subclass - please fix this. equivalence not set.", prop, [self camelizedModelName]);
-#endif
-						equivalent = prop;
+						equivalent = [[eqSplit lastObject] stringByTrimmingCharactersInSet:wn];
+						//if they tried to tie it to 'id', give error (but ignore if it's the first equivalence (modelID via base_rails)
+						if ([equivalent isEqualToString:@"id"] && i != 0)
+						{
+	#ifdef NSRLogErrors
+							NSLog(@"found attempt to set the rails equivalent of ivar '%@' in class %@ to 'id'. this property is reserved and should be accessed through 'modelID' from a NSRailsModel subclass - please fix this. equivalence not set.", prop, [self camelizedModelName]);
+	#endif
+							equivalent = prop;
+						}
+						//see if there's already 1 or more rails names set for this equivalency
+						else if ([propertyEquivalents allKeysForObject:equivalent].count > 0)
+						{
+	#ifdef NSRLogErrors
+							NSLog(@"found multiple instance variables tied to one rails equivalent in class %@ - please fix this. when receiving rails property %@, NSR will assign it to the first equivalence listed.",[self camelizedModelName], equivalent);
+	#endif
+						}
 					}
-					//see if there's already 1 or more rails names set for this equivalency
-					else if ([propertyEquivalents allKeysForObject:equivalent].count > 0)
+	#ifdef NSRAutomaticallyUnderscoreAndCamelize
+					else
 					{
-#ifdef NSRLogErrors
-						NSLog(@"found multiple instance variables tied to one rails equivalent in class %@ - please fix this. when receiving rails property %@, NSR will assign it to the first equivalence listed.",[self camelizedModelName], equivalent);
-#endif
+						//if no = was declared for this property, default by using underscore+lowercase'd version of it
+						equivalent = [[prop underscore] lowercaseString];
 					}
+	#endif
+					[propertyEquivalents setObject:equivalent forKey:prop];
 				}
-#ifdef NSRAutomaticallyUnderscoreAndCamelize
-				else
-				{
-					//if no = was declared for this property, default by using underscore+lowercase'd version of it
-					equivalent = [[prop underscore] lowercaseString];
-				}
-#endif
-				[propertyEquivalents setObject:equivalent forKey:prop];
 			}
-		}
+		} while (markedAll);
 		
-	//	NSLog(@"sendable: %@",sendableProperties);
-	//	NSLog(@"retrievable: %@",retrievableProperties);
-	//	NSLog(@"NMP: %@",nestedModelProperties);
-	//	NSLog(@"eqiuvalents: %@",propertyEquivalents);
+//		NSLog(@"sendable: %@",sendableProperties);
+//		NSLog(@"retrievable: %@",retrievableProperties);
+//		NSLog(@"NMP: %@",nestedModelProperties);
+//		NSLog(@"eqiuvalents: %@",propertyEquivalents);
 		 
 	}
 	return self;
@@ -469,7 +534,7 @@ static NSRConfig *config = nil;
 				if (val)
 				{
 					NSString *nestedClass = [[nestedModelProperties objectForKey:property] toClassName];
-					//instantiate it as the class specified in NSRailsUse
+					//instantiate it as the class specified in NSRailsProperties
 					if (nestedClass)
 					{
 						//if the JSON conversion returned an array for the value, instantiate each element
@@ -573,6 +638,7 @@ static NSOperationQueue *queue = nil;
 
 + (void) crashWithError:(NSError *)error
 {
+	//purpose of this method is to factor printing out an error message (if NSRLog allows) and crash if necessary
 #if NSRLog > 0
 	NSRLogError(error);
 	NSLog(@" ");
@@ -860,7 +926,7 @@ static NSOperationQueue *queue = nil;
 		if (error)
 			*error = e;
 		
-		[NSRConnection crashWithError:e];
+		[[self class] crashWithError:e];
 		return NO;
 	}
 
@@ -1014,7 +1080,7 @@ static NSOperationQueue *queue = nil;
 		if (error)
 			*error = e;
 		
-		[NSRConnection crashWithError:e];
+		[[self class] crashWithError:e];
 		
 		return nil;
 	}

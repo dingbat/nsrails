@@ -95,7 +95,7 @@
 
 ///////////////////////////////////////////
 //manual json encoding/decoding
-//will use whatever inputted in NSRailsUse()
+//will use whatever inputted in NSRailsProperties()
 ///////////////////////////////////////////
 
 - (NSString *) JSONRepresentation;
@@ -104,35 +104,38 @@
 
 + (void) setClassConfig:(NSRConfig *)config;
 
+//macro definitions
 
-//macros
-
-//#define NSRPropertyMacro		NSRailsUse
-//#define NSRModelNameMacro		NSRailsModelName
-//#define NSRModelNamePlMacro		NSRailsModelNameWithPlural
-//#define NSRConfigMacro			NSRailsSetConfig
-//#define NSRConfigAuthMacro		NSRailsSetConfigAuth
+//clever macro trick to allow "overloading" macro functions thanks to orj's gist: https://gist.github.com/985501
+#define CAT(a, b) _PRIMITIVE_CAT(a, b)
+#define _PRIMITIVE_CAT(a, b) a##b
+#define N_ARGS(...) N_ARGS_1(__VA_ARGS__, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#define N_ARGS_1(...) N_ARGS_2(__VA_ARGS__)
+#define N_ARGS_2(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, n, ...) n
 
 #define NSRStringFromCString(cstr)	[NSString stringWithCString:cstr encoding:NSUTF8StringEncoding]
+// adding a # before va_args will simply make its contents a cstring
+#define _LIST_STR(...) NSRStringFromCString(#__VA_ARGS__)
 
-+ (NSString *) NSRailsUse;
++ (NSString *) NSRailsProperties;
 
-#define NSRailsUse(rails_properties) \
-+ (NSString*) NSRailsUse { return [[super NSRailsUse] stringByAppendingFormat:@", %@", NSRStringFromCString(rails_properties)]; }
-#define NSRailsUseNoSuper(rails_properties) \
-+ (NSString*) NSRailsUseNoSuper { return NSRStringFromCString(rails_properties); }
+#define NSRailsify(...) \
++ (NSString*) NSRailsProperties { return [[super NSRailsProperties] stringByAppendingFormat:@", %@", _LIST_STR(__VA_ARGS__)]; }
+#define NSRailsifyNoSuper(...) \
++ (NSString*) NSRailsPropertiesNoSuper { return _LIST_STR(__VA_ARGS__); }
 
-#define NSRailsModelName(exact_rails_model) \
-+ (NSString*) NSRailsModelName { return NSRStringFromCString(exact_rails_model); }
+#define NSRailsModelName(...) CAT(_NSR_Name,N_ARGS(__VA_ARGS__))(__VA_ARGS__)
+#define _NSR_Name1(x) \
++ (NSString*) NSRailsModelName { return x; }
+#define _NSR_Name2(x,y)  \
++ (NSString*) NSRailsModelName { return x; } \
++ (NSString*) NSRailsModelNameWithPlural { return y; }
 
-#define NSRailsModelNameWithPlural(exact_rails_model,exact_rails_model_plural) \
-+ (NSString*) NSRailsModelName { return NSRStringFromCString(exact_rails_model); } + (NSString*) NSRailsModelNameWithPlural { return NSRStringFromCString(exact_rails_model_plural); }
-
-#define NSRailsSetConfig(app_url_for_model) \
-+ (NSRConfig *) NSRailsSetConfig { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = NSRStringFromCString(app_url_for_model); return config; }
-
-#define NSRailsSetConfigAuth(app_url_for_model, username, password) \
-+ (NSRConfig *) NSRailsSetConfigAuth { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = NSRStringFromCString(app_url_for_model); config.appUsername = username; config.appPassword = password; return config; }
+#define NSRailsModelConfig(...) CAT(_NSR_Config,N_ARGS(__VA_ARGS__))(__VA_ARGS__)
+#define _NSR_Config1(x) \
++ (NSRConfig *) NSRailsSetConfig { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = x; return config; }
+#define _NSR_Config3(x,y,z)  \
++ (NSRConfig *) NSRailsSetConfigAuth { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = x; config.appUsername = y; config.appPassword = z; return config; }
 
 
 @end

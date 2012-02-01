@@ -8,9 +8,8 @@
 
 #import "Person.h"
 
-@implementation Person 
+@implementation Person
 @synthesize name, age, brain;
-NSRailsUse("name, age, brain")
-
+NSRailsify (*)
 
 @end
