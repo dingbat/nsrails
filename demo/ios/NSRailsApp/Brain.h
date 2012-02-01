@@ -7,6 +7,7 @@
 //
 
 #import "NSRails.h"
+#import "Person.h"
 
 @interface Brain : NSRailsModel
 

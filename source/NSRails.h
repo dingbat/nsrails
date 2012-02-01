@@ -104,7 +104,6 @@
 
 + (void) setClassConfig:(NSRConfig *)config;
 
-//macro definitions
 
 //clever macro trick to allow "overloading" macro functions thanks to orj's gist: https://gist.github.com/985501
 #define CAT(a, b) _PRIMITIVE_CAT(a, b)
@@ -115,14 +114,14 @@
 
 #define NSRStringFromCString(cstr)	[NSString stringWithCString:cstr encoding:NSUTF8StringEncoding]
 // adding a # before va_args will simply make its contents a cstring
-#define _LIST_STR(...) NSRStringFromCString(#__VA_ARGS__)
+#define _MAKE_STR(...)	NSRStringFromCString(#__VA_ARGS__)
 
-+ (NSString *) NSRailsProperties;
 
+//macro definitions
 #define NSRailsify(...) \
-+ (NSString*) NSRailsProperties { return [[super NSRailsProperties] stringByAppendingFormat:@", %@", _LIST_STR(__VA_ARGS__)]; }
-#define NSRailsifyNoSuper(...) \
-+ (NSString*) NSRailsPropertiesNoSuper { return _LIST_STR(__VA_ARGS__); }
++ (NSString*) NSRailsProperties { return _MAKE_STR(__VA_ARGS__); }
+#define NSRNoCarryFromSuper			_NSR_NO_SUPER_
+#define _NSRNoCarryFromSuper_STR	_MAKE_STR(_NSR_NO_SUPER_)
 
 #define NSRailsModelName(...) CAT(_NSR_Name,N_ARGS(__VA_ARGS__))(__VA_ARGS__)
 #define _NSR_Name1(x) \

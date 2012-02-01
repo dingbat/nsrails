@@ -8,6 +8,8 @@
 
 #import "DetailViewController.h"
 #import "Thought.h"
+#import "Brain.h"
+#import "Person.h"
 
 @implementation DetailViewController
 

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Person.h"
+#import "Brain.h"
 
 @interface MasterViewController : UIViewController <UIPickerViewDelegate, UIPickerViewDataSource>
 {

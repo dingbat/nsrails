@@ -20,7 +20,7 @@
 
 //this will be the NSRailsProperties for NSRailsModel
 //tie modelID to rails property id
-#define BASE_RAILS @"modelID=id"
+#define NSRAILS_BASE_PROPS @"modelID=id"
 
 
 @interface NSRailsModel (internal)
@@ -49,21 +49,31 @@ static NSRConfig *config = nil;
 
 + (NSString *) NSRailsProperties
 {
-	return BASE_RAILS;
+	return NSRAILS_BASE_PROPS;
 }
 
 + (NSString *) railsProperties
 {
-	if ([self respondsToSelector:@selector(NSRailsPropertiesNoSuper)])
+	NSString *base = NSRAILS_BASE_PROPS;
+	
+	if ([[self NSRailsProperties] rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
 	{
-		NSString *props = [self performSelector:@selector(NSRailsPropertiesNoSuper)];
-		if (props.length > 0)
-		{
-			//always want to keep base (modelID) even if nosuper
-			return [BASE_RAILS stringByAppendingFormat:@", %@",props];
-		}
+		//always want to keep base (modelID) even if nosuper
+		return [base stringByAppendingFormat:@", %@",[self NSRailsProperties]];
 	}
-	return [self NSRailsProperties];
+	else
+	{
+		for (Class c = self; c != [NSRailsModel class]; c = [c superclass])
+		{
+			if ([c respondsToSelector:@selector(NSRailsProperties)])
+			{
+				base = [base stringByAppendingFormat:@", %@", [c NSRailsProperties]];
+			}
+		}
+		//make sure none of the superclasses this inherited from declared a NSRNoCarryFromSuper
+		//(otherwise it'll screw up the check to see if THIS class wants to do a nosuper)
+		return [base stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
+	}
 }
 
 + (void) setClassConfig:(NSRConfig *)_config
@@ -110,10 +120,10 @@ static NSRConfig *config = nil;
 	return [[[[self class] getModelName] camelize] toClassName];
 }
 
-+ (NSArray *) iVarNamesForClass:(Class) aClass
++ (NSMutableArray *) iVarNames
 {
 	unsigned int ivarCount;
-	Ivar *ivars = class_copyIvarList(aClass, &ivarCount);
+	Ivar *ivars = class_copyIvarList(self, &ivarCount);
 	if (ivars)
 	{
 		NSMutableArray *results = [NSMutableArray arrayWithCapacity:ivarCount];
@@ -161,6 +171,7 @@ static NSRConfig *config = nil;
 		
 		//begin reading in properties defined through NSRailsProperties
 		NSString *props = [[self class] railsProperties];
+		//NSLog(@"found props %@",props);
 		NSCharacterSet *wn = [NSCharacterSet whitespaceAndNewlineCharacterSet];
 		
 		NSMutableArray *exclude = [NSMutableArray array];
@@ -175,7 +186,20 @@ static NSRConfig *config = nil;
 				onStarIteration = YES;
 				markedAll = NO;
 				elements = [NSMutableArray array];
-				for (NSString *ivar in [[self class] iVarNamesForClass:[self class]])
+				NSMutableArray *myIvars = [[self class] iVarNames];
+				
+				//must mean the * intentionally meant to get all props for superclasses
+				if ([props rangeOfString:_NSRNoCarryFromSuper_STR].location == NSNotFound)
+				{
+					Class c = [self superclass];
+					while (c != [NSRailsModel class])
+					{
+						[myIvars addObjectsFromArray:[c iVarNames]];
+						c = [c superclass];
+					}
+				}
+				
+				for (NSString *ivar in myIvars)
 				{
 					if (![exclude containsObject:ivar] && ![propertyEquivalents objectForKey:ivar])
 					{
@@ -190,7 +214,8 @@ static NSRConfig *config = nil;
 			for (int i = 0; i < elements.count; i++)
 			{
 				NSString *str = [elements objectAtIndex:i];
-				NSString *prop = [str stringByTrimmingCharactersInSet:wn];
+				//remove any whitespace along with trailing NSRNoCarryFromSuper's to not screw anything up
+				NSString *prop = [[str stringByTrimmingCharactersInSet:wn] stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
 				
 				if (prop.length > 0)
 				{
@@ -232,7 +257,7 @@ static NSRConfig *config = nil;
 							[decodeProperties addObject:prop];
 					}
 					
-					//if no options are defined or they _are_ but neither -s nor -r are defined, by default add sendable+retrievable
+					//if no options are defined or some are but neither -s nor -r are defined, by default add sendable+retrievable
 					if (opSplit.count == 1 ||
 						([options rangeOfString:@"s"].location == NSNotFound && [options rangeOfString:@"r"].location == NSNotFound))
 					{
@@ -273,7 +298,6 @@ static NSRConfig *config = nil;
 							[ivarType isEqualToString:@"NSMutableArray"])
 						{
 #if NSRLog > 2
-
 							NSLog(@"warning: property '%@' in class %@ was found to be an array, but no nesting model was set. note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved rails attributes will be set. if NSDictionaries are desired, to suppress this warning, simply add a colon with nothing following to the property in NSRailsify... %@:",prop,[self camelizedModelName],str);
 #endif
 						}
@@ -327,12 +351,14 @@ static NSRConfig *config = nil;
 					[propertyEquivalents setObject:equivalent forKey:prop];
 				}
 			}
-		} while (markedAll);
+		} 
+		//if markedAll (a * was encountered somewhere), loop again one more time to add all the properties not listed
+		while (markedAll);
 		
-//		NSLog(@"sendable: %@",sendableProperties);
-//		NSLog(@"retrievable: %@",retrievableProperties);
-//		NSLog(@"NMP: %@",nestedModelProperties);
-//		NSLog(@"eqiuvalents: %@",propertyEquivalents);
+		//NSLog(@"sendable: %@",sendableProperties);
+		//NSLog(@"retrievable: %@",retrievableProperties);
+		//NSLog(@"NMP: %@",nestedModelProperties);
+		//NSLog(@"eqiuvalents: %@",propertyEquivalents);
 		 
 	}
 	return self;
