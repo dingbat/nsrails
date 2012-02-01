@@ -9,13 +9,19 @@
 #import <GHUnitIOS/GHUnit.h> 
 #import "NSRConfig.h"
 
+#import "STChild.h"
+#import "STGrandchild.h"
+
 @interface MyTest : GHTestCase { }
 @end
 
 @implementation MyTest
 
-- (void) testAddition3
+- (void) testSubclassing
 {
+	//Looking at logs... I know this isn't the best way to do tests but until I can think of a better way manual it is...
+	STGrandchild *child = [[STGrandchild alloc] init];
+	
 	GHAssertTrue(1+1==2, @"yep");
 }
 

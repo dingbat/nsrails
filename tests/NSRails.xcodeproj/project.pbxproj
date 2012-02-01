@@ -7,6 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		59B7718F14D9D7C5009F3D7A /* STChild.m in Sources */ = {isa = PBXBuildFile; fileRef = 59B7718C14D9D7C5009F3D7A /* STChild.m */; };
+		59B7719014D9D7C5009F3D7A /* STParent.m in Sources */ = {isa = PBXBuildFile; fileRef = 59B7718E14D9D7C5009F3D7A /* STParent.m */; };
+		59B7719114D9D7CC009F3D7A /* NSData+Additions.h in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD2114D5FD42008637DE /* NSData+Additions.h */; };
+		59B7719214D9D7CC009F3D7A /* NSData+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD2214D5FD42008637DE /* NSData+Additions.m */; };
+		59B7719314D9D7CC009F3D7A /* NSString+InflectionSupport.h in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD2314D5FD42008637DE /* NSString+InflectionSupport.h */; };
+		59B7719414D9D7CC009F3D7A /* NSString+InflectionSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD2414D5FD42008637DE /* NSString+InflectionSupport.m */; };
+		59B7719514D9D7CC009F3D7A /* JSONFramework.h in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD2614D5FD42008637DE /* JSONFramework.h */; };
+		59B7719614D9D7CC009F3D7A /* NSObject+SBJSON.h in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD2714D5FD42008637DE /* NSObject+SBJSON.h */; };
+		59B7719714D9D7CC009F3D7A /* NSObject+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD2814D5FD42008637DE /* NSObject+SBJSON.m */; };
+		59B7719814D9D7CC009F3D7A /* NSString+SBJSON.h in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD2914D5FD42008637DE /* NSString+SBJSON.h */; };
+		59B7719914D9D7CC009F3D7A /* NSString+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD2A14D5FD42008637DE /* NSString+SBJSON.m */; };
+		59B7719A14D9D7CC009F3D7A /* SBJSON.h in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD2B14D5FD42008637DE /* SBJSON.h */; };
+		59B7719B14D9D7CC009F3D7A /* SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD2C14D5FD42008637DE /* SBJSON.m */; };
+		59B7719C14D9D7CC009F3D7A /* NSRails.h in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD2D14D5FD42008637DE /* NSRails.h */; };
+		59B7719D14D9D7CD009F3D7A /* NSRails.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD2E14D5FD42008637DE /* NSRails.m */; };
+		59B7719E14D9D7CD009F3D7A /* NSRConfig.h in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD2F14D5FD42008637DE /* NSRConfig.h */; };
+		59B7719F14D9D7CD009F3D7A /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD3014D5FD42008637DE /* NSRConfig.m */; };
+		59B771A214D9DC53009F3D7A /* STGrandchild.m in Sources */ = {isa = PBXBuildFile; fileRef = 59B771A114D9DC53009F3D7A /* STGrandchild.m */; };
 		59BABD5614D5FDC7008637DE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59BABD5514D5FDC7008637DE /* Cocoa.framework */; };
 		59BABD6014D5FDC7008637DE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 59BABD5E14D5FDC7008637DE /* InfoPlist.strings */; };
 		59BABD6214D5FDC7008637DE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD6114D5FDC7008637DE /* main.m */; };
@@ -30,6 +48,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		59B7718B14D9D7C5009F3D7A /* STChild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STChild.h; sourceTree = "<group>"; };
+		59B7718C14D9D7C5009F3D7A /* STChild.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STChild.m; sourceTree = "<group>"; };
+		59B7718D14D9D7C5009F3D7A /* STParent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STParent.h; sourceTree = "<group>"; };
+		59B7718E14D9D7C5009F3D7A /* STParent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STParent.m; sourceTree = "<group>"; };
+		59B771A014D9DC53009F3D7A /* STGrandchild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STGrandchild.h; sourceTree = "<group>"; };
+		59B771A114D9DC53009F3D7A /* STGrandchild.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STGrandchild.m; sourceTree = "<group>"; };
 		59BABD2114D5FD42008637DE /* NSData+Additions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+Additions.h"; sourceTree = "<group>"; };
 		59BABD2214D5FD42008637DE /* NSData+Additions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+Additions.m"; sourceTree = "<group>"; };
 		59BABD2314D5FD42008637DE /* NSString+InflectionSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+InflectionSupport.h"; sourceTree = "<group>"; };
@@ -45,8 +69,6 @@
 		59BABD2E14D5FD42008637DE /* NSRails.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSRails.m; sourceTree = "<group>"; };
 		59BABD2F14D5FD42008637DE /* NSRConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSRConfig.h; sourceTree = "<group>"; };
 		59BABD3014D5FD42008637DE /* NSRConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSRConfig.m; sourceTree = "<group>"; };
-		59BABD3114D5FD42008637DE /* NSRConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSRConnection.h; sourceTree = "<group>"; };
-		59BABD3214D5FD42008637DE /* NSRConnection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSRConnection.m; sourceTree = "<group>"; };
 		59BABD5214D5FDC7008637DE /* Tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		59BABD5514D5FDC7008637DE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		59BABD5814D5FDC7008637DE /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -74,6 +96,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		59B7718A14D9D7BB009F3D7A /* Subclassing Tests */ = {
+			isa = PBXGroup;
+			children = (
+				59B7718B14D9D7C5009F3D7A /* STChild.h */,
+				59B7718C14D9D7C5009F3D7A /* STChild.m */,
+				59B7718D14D9D7C5009F3D7A /* STParent.h */,
+				59B7718E14D9D7C5009F3D7A /* STParent.m */,
+				59B771A014D9DC53009F3D7A /* STGrandchild.h */,
+				59B771A114D9DC53009F3D7A /* STGrandchild.m */,
+			);
+			name = "Subclassing Tests";
+			sourceTree = "<group>";
+		};
 		59BABD1614D5FD2D008637DE = {
 			isa = PBXGroup;
 			children = (
@@ -93,8 +128,6 @@
 				59BABD2E14D5FD42008637DE /* NSRails.m */,
 				59BABD2F14D5FD42008637DE /* NSRConfig.h */,
 				59BABD3014D5FD42008637DE /* NSRConfig.m */,
-				59BABD3114D5FD42008637DE /* NSRConnection.h */,
-				59BABD3214D5FD42008637DE /* NSRConnection.m */,
 			);
 			name = source;
 			path = ../source;
@@ -148,6 +181,7 @@
 		59BABD5B14D5FDC7008637DE /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				59B7718A14D9D7BB009F3D7A /* Subclassing Tests */,
 				59BABD5C14D5FDC7008637DE /* Supporting Files */,
 				59BABD7714D5FF43008637DE /* MyTest.m */,
 			);
@@ -229,8 +263,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59B7719114D9D7CC009F3D7A /* NSData+Additions.h in Sources */,
+				59B7719214D9D7CC009F3D7A /* NSData+Additions.m in Sources */,
+				59B7719314D9D7CC009F3D7A /* NSString+InflectionSupport.h in Sources */,
+				59B7719414D9D7CC009F3D7A /* NSString+InflectionSupport.m in Sources */,
+				59B7719514D9D7CC009F3D7A /* JSONFramework.h in Sources */,
+				59B7719614D9D7CC009F3D7A /* NSObject+SBJSON.h in Sources */,
+				59B7719714D9D7CC009F3D7A /* NSObject+SBJSON.m in Sources */,
+				59B7719814D9D7CC009F3D7A /* NSString+SBJSON.h in Sources */,
+				59B7719914D9D7CC009F3D7A /* NSString+SBJSON.m in Sources */,
+				59B7719A14D9D7CC009F3D7A /* SBJSON.h in Sources */,
+				59B7719B14D9D7CC009F3D7A /* SBJSON.m in Sources */,
+				59B7719C14D9D7CC009F3D7A /* NSRails.h in Sources */,
+				59B7719D14D9D7CD009F3D7A /* NSRails.m in Sources */,
+				59B7719E14D9D7CD009F3D7A /* NSRConfig.h in Sources */,
+				59B7719F14D9D7CD009F3D7A /* NSRConfig.m in Sources */,
 				59BABD6214D5FDC7008637DE /* main.m in Sources */,
 				59BABD7814D5FF43008637DE /* MyTest.m in Sources */,
+				59B7718F14D9D7C5009F3D7A /* STChild.m in Sources */,
+				59B7719014D9D7C5009F3D7A /* STParent.m in Sources */,
+				59B771A214D9DC53009F3D7A /* STGrandchild.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,6 +406,7 @@
 				59BABD6F14D5FDC7008637DE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

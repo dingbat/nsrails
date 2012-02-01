@@ -103,6 +103,7 @@
 
 
 + (void) setClassConfig:(NSRConfig *)config;
+- (id) initWithRailsifyString:(NSString *)str;
 
 
 //clever macro trick to allow "overloading" macro functions thanks to orj's gist: https://gist.github.com/985501

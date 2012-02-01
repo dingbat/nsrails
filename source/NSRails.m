@@ -25,6 +25,8 @@
 
 @interface NSRailsModel (internal)
 
++ (NSMutableArray *) ivarNames;
+
 - (void) setAttributesAsPerDictionary:(NSDictionary *)dict;
 
 - (NSDictionary *) dictionaryOfRelevantProperties;
@@ -120,27 +122,14 @@ static NSRConfig *config = nil;
 	return [[[[self class] getModelName] camelize] toClassName];
 }
 
-+ (NSMutableArray *) iVarNames
-{
-	unsigned int ivarCount;
-	Ivar *ivars = class_copyIvarList(self, &ivarCount);
-	if (ivars)
-	{
-		NSMutableArray *results = [NSMutableArray arrayWithCapacity:ivarCount];
-		
-		while (ivarCount--) 
-			[results addObject:[NSString stringWithCString: ivar_getName(ivars[ivarCount]) encoding: NSASCIIStringEncoding]];
-		
-		free(ivars);	
-		return results;
-	}
-	return nil;
-}
-
-- (id) init
+- (id) initWithRailsifyString:(NSString *)props
 {
 	if ((self = [super init]))
 	{
+		//log on param string for testing
+		//NSLog(@"found props %@",props);
+		
+		
 		//get the config for this class
 		if (!config)
 		{
@@ -168,39 +157,60 @@ static NSRConfig *config = nil;
 		
 		destroyOnNesting = NO;
 		
+		//here begins the code used for parsing the NSRailsify param string
 		
-		//begin reading in properties defined through NSRailsProperties
-		NSString *props = [[self class] railsProperties];
-		//NSLog(@"found props %@",props);
+		//character set that'll be used later on
 		NSCharacterSet *wn = [NSCharacterSet whitespaceAndNewlineCharacterSet];
 		
+		//exclude array for any properties declared as -x (will later remove properties from * definition)
 		NSMutableArray *exclude = [NSMutableArray array];
-		BOOL markedAll = NO;
+		
+		//check to see if we should even consider *
+		BOOL markedAll = ([props rangeOfString:@"*"].location != NSNotFound);
+		
+		//marked as NO for the first time in the loop
+		//if a * appeared (markedAll is true), this will enable by the end of the loop and the whole thing will loop again, for the *
 		BOOL onStarIteration = NO;
 		
 		do
 		{
 			NSMutableArray *elements;
-			if (markedAll)
+			//if we're on the * run,
+			if (onStarIteration)
 			{
-				onStarIteration = YES;
+				//make sure we don't loop again
+				onStarIteration = NO;
 				markedAll = NO;
-				elements = [NSMutableArray array];
-				NSMutableArray *myIvars = [[self class] iVarNames];
 				
-				//must mean the * intentionally meant to get all props for superclasses
-				if ([props rangeOfString:_NSRNoCarryFromSuper_STR].location == NSNotFound)
+				NSMutableArray *relevantIvars = [NSMutableArray array];
+				
+				//start with the current class
+				Class c = [self class];
+				
+				//loop going up the class hierarchy all the way up to NSRailsModel
+				while (c != [NSRailsModel class])
 				{
-					Class c = [self superclass];
-					while (c != [NSRailsModel class])
-					{
-						[myIvars addObjectsFromArray:[c iVarNames]];
-						c = [c superclass];
-					}
+					//get the property list for that specific class
+					NSString *properties = [c NSRailsProperties];
+					
+					//if there's a *, add all ivars from that class
+					if ([properties rangeOfString:@"*"].location != NSNotFound)
+						[relevantIvars addObjectsFromArray:[c iVarNames]];
+					
+					//if there's a NoCarryFromSuper, stop the loop right there since we don't want stuff from any more superclasses
+					if ([properties rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
+						break;
+					
+					//move up in the hierarchy for next iteration
+					c = [c superclass];
 				}
 				
-				for (NSString *ivar in myIvars)
+				
+				elements = [NSMutableArray array];
+				//go through all the ivars we found
+				for (NSString *ivar in relevantIvars)
 				{
+					//if it hasn't been declared as -x or declared at all (from the first run), add it to the list we have to process
 					if (![exclude containsObject:ivar] && ![propertyEquivalents objectForKey:ivar])
 					{
 						[elements addObject:ivar];
@@ -209,6 +219,7 @@ static NSRConfig *config = nil;
 			}
 			else
 			{
+				//if on the first run, split properties by commas ("username=user_name, password"=>["username=user_name","password"]
 				elements = [NSMutableArray arrayWithArray:[props componentsSeparatedByString:@","]];
 			}
 			for (int i = 0; i < elements.count; i++)
@@ -219,16 +230,14 @@ static NSRConfig *config = nil;
 				
 				if (prop.length > 0)
 				{
-					if ([prop isEqualToString:@"*"])
+					if ([prop rangeOfString:@"*"].location != NSNotFound)
 					{
-						//if * was declared (so like, "*, username=user_name, password -x")
-						//then mark ALL and save it for last (to see if there were any excludes or special options)
-						
-						markedAll = YES;
+						//if there's a * in this piece, skip it (we already accounted for stars above)
 						
 						continue;
 					}
-					//prop ~= "username=user_name:Class -etc"
+					
+					//prop can be something like "username=user_name:Class -etc"
 					//find string sets between =, :, and -
 					NSArray *opSplit = [prop componentsSeparatedByString:@"-"];
 					NSArray *modSplit = [[opSplit objectAtIndex:0] componentsSeparatedByString:@":"];
@@ -297,15 +306,15 @@ static NSRConfig *config = nil;
 						if ([ivarType isEqualToString:@"NSArray"] ||
 							[ivarType isEqualToString:@"NSMutableArray"])
 						{
-#if NSRLog > 2
+	#if NSRLog > 2
 							NSLog(@"warning: property '%@' in class %@ was found to be an array, but no nesting model was set. note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved rails attributes will be set. if NSDictionaries are desired, to suppress this warning, simply add a colon with nothing following to the property in NSRailsify... %@:",prop,[self camelizedModelName],str);
-#endif
+	#endif
 						}
 						else if (!([ivarType isEqualToString:@"NSString"] ||
-							  [ivarType isEqualToString:@"NSMutableString"] ||
-							  [ivarType isEqualToString:@"NSDictionary"] ||
-							  [ivarType isEqualToString:@"NSMutableDictionary"] ||
-							  [ivarType isEqualToString:@"NSNumber"]))
+								   [ivarType isEqualToString:@"NSMutableString"] ||
+								   [ivarType isEqualToString:@"NSDictionary"] ||
+								   [ivarType isEqualToString:@"NSMutableDictionary"] ||
+								   [ivarType isEqualToString:@"NSNumber"]))
 						{
 							//must be custom obj, see if its a railsmodel, if it is, link it automatically
 							Class c = NSClassFromString(ivarType);
@@ -313,7 +322,7 @@ static NSRConfig *config = nil;
 							{
 	#if NSRLog > 2
 								//uncomment the log to test if something isn't working
-						//		NSLog(@"automatically linking ivar %@ in class %@ with nested railsmodel %@",prop,[self camelizedModelName],ivarType);
+								//		NSLog(@"automatically linking ivar %@ in class %@ with nested railsmodel %@",prop,[self camelizedModelName],ivarType);
 	#endif
 								[nestedModelProperties setObject:ivarType forKey:prop];
 							}
@@ -351,21 +360,61 @@ static NSRConfig *config = nil;
 					[propertyEquivalents setObject:equivalent forKey:prop];
 				}
 			}
+
+			//if markedAll (a * was encountered somewhere), loop again one more time to add all properties not already listed (*)
+			if (markedAll)
+				onStarIteration = YES;
 		} 
-		//if markedAll (a * was encountered somewhere), loop again one more time to add all the properties not listed
-		while (markedAll);
+		while (onStarIteration);
 		
-		//NSLog(@"sendable: %@",sendableProperties);
-		//NSLog(@"retrievable: %@",retrievableProperties);
-		//NSLog(@"NMP: %@",nestedModelProperties);
-		//NSLog(@"eqiuvalents: %@",propertyEquivalents);
-		 
+		NSLog(@"-------- %@ ----------",[[self class] getModelName]);
+		NSLog(@"list: %@",props);
+		NSLog(@"sendable: %@",sendableProperties);
+		NSLog(@"retrievable: %@",retrievableProperties);
+		NSLog(@"NMP: %@",nestedModelProperties);
+		NSLog(@"eqiuvalents: %@",propertyEquivalents);
+		NSLog(@"\n");
+	}
+
+	return self;
+}
+
+- (id) init
+{
+	//read in properties defined through NSRailsProperties
+	NSString *props = [[self class] railsProperties];
+	
+	if ((self = [self initWithRailsifyString:props]))
+	{
 	}
 	return self;
 }
 
 #pragma mark -
 #pragma mark Ivar tricks
+
+//borrowed from code in http://x-cake.ning.com/profiles/blogs/browsing-the-objc-runtime-on
++ (NSMutableArray *) iVarNames
+{
+	unsigned int ivarCount;
+	//copy all ivars for self (will be a Class)
+	Ivar *ivars = class_copyIvarList(self, &ivarCount);
+	if (ivars)
+	{
+		NSMutableArray *results = [NSMutableArray arrayWithCapacity:ivarCount];
+		
+		while (ivarCount--)
+		{
+			//get each ivar name and add it to the results
+			const char *ivarName = ivar_getName(ivars[ivarCount]);
+			[results addObject:[NSString stringWithCString:ivarName encoding:NSASCIIStringEncoding]];
+		}
+		
+		free(ivars);	
+		return results;
+	}
+	return nil;
+}
 
 - (NSString *) getIvarType:(NSString *)ivar
 {
@@ -499,8 +548,10 @@ static NSRConfig *config = nil;
 #else
 				NSMutableArray *new = [NSMutableArray arrayWithCapacity:[val count]];
 #endif
+				//go through every nested object in the array
 				for (int i = 0; i < [val count]; i++)
 				{
+					//use the NSRailsModel instance method -dictionaryOfRelevantProperties to get that object back in dictionary form
 					id obj = [[val objectAtIndex:i] dictionaryOfRelevantProperties];
 					if (!obj)
 					{
@@ -514,7 +565,7 @@ static NSRConfig *config = nil;
 				}
 				return new;
 			}
-			//otherwise, make it into JSON through dictionary method in NSRailsModel
+			//otherwise, make that nested object a dictionary through NSRailsModel
 			return [val dictionaryOfRelevantProperties];
 		}
 		
@@ -1076,6 +1127,7 @@ static NSOperationQueue *queue = nil;
 }
 + (void) getRemoteObjectWithID:(int)mID async:(void (^)(id object, NSError *error))completionBlock
 {
+	//see comments for previous method
 	NSRailsModel *obj = [[[self class] alloc] init];
 	obj.modelID = [NSDecimalNumber numberWithInt:mID];
 	
