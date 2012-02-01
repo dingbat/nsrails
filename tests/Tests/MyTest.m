@@ -19,6 +19,7 @@
 
 - (void) testSubclassing
 {
+	
 	//Looking at logs... I know this isn't the best way to do tests but until I can think of a better way manual it is...
 	STGrandchild *child = [[STGrandchild alloc] init];
 	
