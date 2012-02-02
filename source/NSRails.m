@@ -394,7 +394,7 @@ static NSRConfig *config = nil;
 #pragma mark Ivar tricks
 
 //borrowed from code in http://x-cake.ning.com/profiles/blogs/browsing-the-objc-runtime-on , my comments
-+ (NSMutableArray *) iVarNames
++ (NSMutableArray *) ivarNames
 {
 	unsigned int ivarCount;
 	//copy all ivars for self (will be a Class)
