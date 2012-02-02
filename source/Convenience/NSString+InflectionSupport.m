@@ -1,3 +1,5 @@
+//this category borrowed from ObjectiveResource
+
 //
 //  NSString+InflectionSupport.m
 //  

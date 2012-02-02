@@ -30,5 +30,10 @@
 
 - (IBAction) seeThoughts;
 
+- (void) updateUI;
+- (void) updateUIToRow:(int)row;
+- (void) updateAttributesFromUI;
+- (void) alertForError:(NSError *)e;
+
 
 @end

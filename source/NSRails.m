@@ -728,6 +728,7 @@ static NSOperationQueue *queue = nil;
 
 + (NSOperationQueue *) sharedQueue
 {
+	//queue used for async requests
 	if (!queue)
 	{
 		queue = [[NSOperationQueue alloc] init];

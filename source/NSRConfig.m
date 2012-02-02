@@ -19,6 +19,15 @@ static NSRConfig *defaultConfig = nil;
 	return defaultConfig;
 }
 
+- (id) initWithAppURL:(NSString *)url
+{
+	if ((self = [super init]))
+	{
+		[self setAppURL:url];
+	}
+	return self;
+}
+
 - (void) setAppURL:(NSString *)str
 {
 	//get rid of trailing /

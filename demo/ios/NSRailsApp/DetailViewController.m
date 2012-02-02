@@ -19,7 +19,8 @@
 
 - (void) refresh
 {
-	[brain getRemoteLatest];
+	[brain getRemoteLatest]; ///<------------------ get (read/retrieve) will update this instance's attributes to match server
+	
 	[self.tableView reloadData];
 }
 
@@ -29,34 +30,6 @@
 	self.navigationItem.rightBarButtonItem = ref;
 	
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-}
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-	[super viewWillDisappear:animated];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-	[super viewDidDisappear:animated];
 }
 
 
@@ -84,7 +57,6 @@
 	
 	if (indexPath.section == 0)
 	{
-		// Configure the cell.
 		cell.textLabel.text = [(Thought *)[brain.thoughts objectAtIndex:indexPath.row] content];
 		cell.textLabel.textAlignment = UITextAlignmentLeft;
     }
@@ -98,31 +70,19 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+	//if user selected the "cluttered mind" row (only row in section 1)
 	if (indexPath.section == 1)
 	{
 		for (Thought *t in brain.thoughts)
 		{
-			t.destroyOnNesting = YES;
+			t.destroyOnNesting = YES;  ///<------------------ mark each Thought for delete on the nested update later
 		}
-		[brain updateRemote];
+		[brain updateRemote];  ///<------------------ update to server (will return boolean for whether it was successful)
 		
 		[brain.thoughts removeAllObjects];
 		[tableView reloadData];
 	}
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    // Return YES for supported orientations
-	return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
-}
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-    }
-    return self;
-}
 							
 @end

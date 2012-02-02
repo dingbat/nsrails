@@ -15,6 +15,82 @@
 
 @implementation MasterViewController
 
+#pragma mark NSRails
+
+- (IBAction) create
+{	
+	[self updateAttributesFromUI];
+	
+	NSError *e;
+	if ([person createRemote:&e]) ///<------------------ create (will return boolean for whether it was successful)
+	{
+		[people addObject:person];
+		
+		[self updateUI];
+		[picker selectRow:people.count inComponent:0 animated:YES];
+	}
+	else
+	{
+		[self alertForError:e];
+		[self updateUI];
+	}
+}
+
+- (IBAction) update
+{
+	[self updateAttributesFromUI];
+	
+	NSError *e;
+	if (![person updateRemote:&e]) ///<------------------ update to server (will return boolean for whether it was successful)
+	{
+		[self alertForError:e];
+	}
+	
+	[self updateUI];
+}
+
+- (IBAction) destroy
+{
+	NSError *e;
+	if ([person destroyRemote:&e])  ///<------------------ destroy (will return boolean for whether it was successful)
+	{
+		int personIndex = [people indexOfObject:person];
+		[people removeObjectIdenticalTo:person];
+		
+		if (people.count > 0)
+		{
+			if (personIndex == people.count)
+				personIndex--;
+			person = [people objectAtIndex:personIndex];
+		}
+		else
+		{
+			personIndex = -1;
+			person = nil;
+		}
+		
+		[self updateUIToRow:personIndex+1];
+	}
+	else
+	{
+		[self alertForError:e];
+	}
+}
+
+- (IBAction) refresh
+{
+	people = [NSMutableArray arrayWithArray:[Person getAllRemote]]; ///<------- getAll (index) - will return an array of People
+	
+	if (person.modelID)
+	{
+		[person getRemoteLatest];  ///<------------------ get (read/retrieve) will update this instance's attributes to match server
+	}
+	
+	[self updateUI];
+}
+
+#pragma mark App UI Stuff
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -67,14 +143,27 @@
 }
 
 - (void) viewDidLoad
-{
+{	
 	[super viewDidLoad];
 	
 	[self updateUIToRow:0];
 	[self refresh];
 }
 
-#pragma mark - View lifecycle
+- (void) updateAttributesFromUI
+{
+	person.name = nameField.text;
+	person.age = [NSNumber numberWithInt:[ageField.text intValue]];
+	if (brainSizeField.text.length > 0)
+	{
+		if (!person.brain)
+			person.brain = [[Brain alloc] init];
+		person.brain.size = brainSizeField.text;
+	}
+}
+
+
+#pragma mark - Picker stuff
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
 {
@@ -99,7 +188,7 @@
 	[self updateUIToRow:row];
 }
 
-#pragma mark CRUD
+#pragma mark Error handling
 
 - (void) alertForError:(NSError *)e
 {
@@ -126,84 +215,6 @@
 	}
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:errorTitle message:errorString delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
 	[alert show];
-}
-
-- (void) updateAttributesFromUI
-{
-	person.name = nameField.text;
-	person.age = [NSNumber numberWithInt:[ageField.text intValue]];
-	if (brainSizeField.text.length > 0)
-	{
-		if (!person.brain)
-			person.brain = [[Brain alloc] init];
-		person.brain.size = brainSizeField.text;
-	}
-}
-
-- (IBAction) create
-{	
-	[self updateAttributesFromUI];
-	
-	NSError *e;
-	if ([person createRemote:&e])
-	{
-		[people addObject:person];
-		
-		[self updateUI];
-		[picker selectRow:people.count inComponent:0 animated:YES];
-	}
-	else
-	{
-		[self alertForError:e];
-		[self updateUI];
-	}
-}
-
-- (IBAction) update
-{
-	[self updateAttributesFromUI];
-	
-	NSError *e;
-	if (![person updateRemote:&e])
-	{
-		[self alertForError:e];
-	}
-	
-	[self updateUI];
-}
-
-- (IBAction) destroy
-{
-	[person destroyRemote];
-	
-	int personIndex = [people indexOfObject:person];
-	[people removeObjectIdenticalTo:person];
-
-	if (people.count > 0)
-	{
-		if (personIndex == people.count)
-			personIndex--;
-		person = [people objectAtIndex:personIndex];
-	}
-	else
-	{
-		personIndex = -1;
-		person = nil;
-	}
-	
-	[self updateUIToRow:personIndex+1];
-}
-
-- (IBAction) refresh
-{
-	people = [NSMutableArray arrayWithArray:[Person getAllRemote]];
-	
-	if (person.modelID)
-	{
-		[person getRemoteLatest];
-	}
-
-	[self updateUI];
 }
 
 - (void) seeThoughts
