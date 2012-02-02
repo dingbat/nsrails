@@ -195,7 +195,7 @@ static NSRConfig *config = nil;
 					
 					//if there's a *, add all ivars from that class
 					if ([properties rangeOfString:@"*"].location != NSNotFound)
-						[relevantIvars addObjectsFromArray:[c iVarNames]];
+						[relevantIvars addObjectsFromArray:[c ivarNames]];
 					
 					//if there's a NoCarryFromSuper, stop the loop right there since we don't want stuff from any more superclasses
 					if ([properties rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
@@ -393,7 +393,7 @@ static NSRConfig *config = nil;
 #pragma mark -
 #pragma mark Ivar tricks
 
-//borrowed from code in http://x-cake.ning.com/profiles/blogs/browsing-the-objc-runtime-on
+//borrowed from code in http://x-cake.ning.com/profiles/blogs/browsing-the-objc-runtime-on , my comments
 + (NSMutableArray *) iVarNames
 {
 	unsigned int ivarCount;
@@ -1018,7 +1018,7 @@ static NSOperationQueue *queue = nil;
 	NSString *json = [[self class] makeRequest:@"POST" requestBody:[self JSONRepresentation] method:nil error:error];
 	
 	//check to see if json exists, and if it does, set all of my attributes to it (like to add the new ID), and return if it worked
-	return (!!json && [self setAttributesAsPerJSON:json]);
+	return (json && [self setAttributesAsPerJSON:json]);
 }
 - (void) createRemoteAsync:(void (^)(NSError *))completionBlock
 {
@@ -1038,6 +1038,7 @@ static NSOperationQueue *queue = nil;
 	if (![self checkForNilID:error])
 		return NO;
 	
+	//makeRequest will actually return a result string, return if it's not nil (!! = not nil, nifty way to turn object to BOOL)
 	return !![self makeRequest:@"PUT" requestBody:[self JSONRepresentation] method:nil error:error];
 }
 - (void) updateRemoteAsync:(void (^)(NSError *))completionBlock
@@ -1064,7 +1065,6 @@ static NSOperationQueue *queue = nil;
 	if (![self checkForNilID:error])
 		return NO;
 	
-	//makeRequest will actually return a result string, return if it's not nil (!! = not nil, nifty way to turn object to BOOL)
 	return (!![self makeRequest:@"DELETE" requestBody:nil method:nil error:error]);
 }
 - (void) destroyRemoteAsync:(void (^)(NSError *))completionBlock
