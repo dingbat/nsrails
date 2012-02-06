@@ -8,7 +8,6 @@
 
 #import "NSRails.h"
 
-#import "JSONFramework.h"
 #import "NSString+InflectionSupport.h"
 #import <objc/runtime.h>
 
@@ -367,13 +366,13 @@ static NSRConfig *config = nil;
 		} 
 		while (onStarIteration);
 		
-		NSLog(@"-------- %@ ----------",[[self class] getModelName]);
-		NSLog(@"list: %@",props);
-		NSLog(@"sendable: %@",sendableProperties);
-		NSLog(@"retrievable: %@",retrievableProperties);
-		NSLog(@"NMP: %@",nestedModelProperties);
-		NSLog(@"eqiuvalents: %@",propertyEquivalents);
-		NSLog(@"\n");
+	//	NSLog(@"-------- %@ ----------",[[self class] getModelName]);
+	//	NSLog(@"list: %@",props);
+	//	NSLog(@"sendable: %@",sendableProperties);
+	//	NSLog(@"retrievable: %@",retrievableProperties);
+	//	NSLog(@"NMP: %@",nestedModelProperties);
+	//	NSLog(@"eqiuvalents: %@",propertyEquivalents);
+	//	NSLog(@"\n");
 	}
 
 	return self;
@@ -692,6 +691,12 @@ static NSRConfig *config = nil;
 
 - (BOOL) setAttributesAsPerJSON:(NSString *)json
 {
+	if (!json)
+	{
+		NSLog(@"can't set attributes to nil json");
+		return NO;
+	}
+	
 	NSDictionary *dict = [json JSONValue];
 	
 	if (!dict || dict.count == 0)
@@ -788,7 +793,7 @@ static NSOperationQueue *queue = nil;
 			[inf setObject:[result JSONValue] forKey:NSRValidationErrorsKey];
 		}
 		
-		NSError *statusError = [NSError errorWithDomain:@"rails"
+		NSError *statusError = [NSError errorWithDomain:@"Rails"
 												   code:statusCode
 											   userInfo:inf];
 		
@@ -807,10 +812,15 @@ static NSOperationQueue *queue = nil;
 
 + (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock
 {
+	NSString *appURL = config.appURL;
+	//if there's no config specific to this class, use default
+	if (!appURL)
+		appURL = [[NSRConfig defaultConfig] appURL];
+	
 	//make sure the app URL is set
-	if (!config.appURL)
+	if (!appURL)
 	{
-		NSError *err = [NSError errorWithDomain:@"rails" code:0 userInfo:[NSDictionary dictionaryWithObject:@"No server root URL specified. Set your rails app's root with +[NSRConfig setAppURL:] somewhere in your app setup." forKey:NSLocalizedDescriptionKey]];
+		NSError *err = [NSError errorWithDomain:@"NSRails" code:0 userInfo:[NSDictionary dictionaryWithObject:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup." forKey:NSLocalizedDescriptionKey]];
 		if (error)
 			*error = err;
 		if (completionBlock)
@@ -822,7 +832,7 @@ static NSOperationQueue *queue = nil;
 	}
 	
 	//generate url based on base URL + route given
-	NSString *url = [NSString stringWithFormat:@"%@/%@",config.appURL,route];
+	NSString *url = [NSString stringWithFormat:@"%@/%@",appURL,route];
 	
 #ifdef NSRAutomaticallyMakeURLsLowercase
 	url = [url lowercaseString];
@@ -1000,7 +1010,7 @@ static NSOperationQueue *queue = nil;
 	//if no ID for this model, return error.
 	if (!self.modelID)
 	{
-		NSError *e = [NSError errorWithDomain:@"rails" code:0 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Attempted to update or delete an object with no ID. (Instance of %@)",NSStringFromClass([self class])] forKey:NSLocalizedDescriptionKey]];
+		NSError *e = [NSError errorWithDomain:@"NSRails" code:0 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Attempted to update or delete an object with no ID. (Instance of %@)",NSStringFromClass([self class])] forKey:NSLocalizedDescriptionKey]];
 		if (error)
 			*error = e;
 		
@@ -1148,10 +1158,13 @@ static NSOperationQueue *queue = nil;
 
 + (NSArray *) arrayOfModelsFromJSON:(NSString *)json error:(NSError **)error
 {
+	//transform result into array (via json)
+	id arr = [json JSONValue];
+	
 	//helper method for both sync+async for getAllRemote
-	if (![[json JSONValue] isKindOfClass:[NSArray class]])
+	if (![arr isKindOfClass:[NSArray class]])
 	{
-		NSError *e = [NSError errorWithDomain:@"rails" 
+		NSError *e = [NSError errorWithDomain:@"NSRails" 
 										 code:0 
 									 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"getAll method (index) for %@ controller did not return an array - check your rails app.",[self getModelName]]
 																		  forKey:NSLocalizedDescriptionKey]];
@@ -1163,9 +1176,6 @@ static NSOperationQueue *queue = nil;
 		
 		return nil;
 	}
-	
-	//transform result into array (via json)
-	id arr = [json JSONValue];
 	
 	NSMutableArray *objects = [NSMutableArray array];
 	
