@@ -24,14 +24,14 @@
 
 @interface NSRailsModel (internal)
 
-+ (NSMutableArray *) ivarNames;
++ (NSMutableArray *) classPropertyNames;
 
 - (void) setAttributesAsPerDictionary:(NSDictionary *)dict;
 
 - (NSDictionary *) dictionaryOfRelevantProperties;
-- (NSString *) getIvarType:(NSString *)ivar;
-- (SEL) getIvarSetter:(NSString *)ivar;
-- (SEL) getIvarGetter:(NSString *)ivar;
+- (NSString *) getPropertyType:(NSString *)ivar;
+- (SEL) getPropertySetter:(NSString *)ivar;
+- (SEL) getPropertyGetter:(NSString *)ivar;
 
 @end
 
@@ -204,7 +204,7 @@
 					
 					//if there's a *, add all ivars from that class
 					if ([properties rangeOfString:@"*"].location != NSNotFound)
-						[relevantIvars addObjectsFromArray:[c ivarNames]];
+						[relevantIvars addObjectsFromArray:[c classPropertyNames]];
 					
 					//if there's a NoCarryFromSuper, stop the loop right there since we don't want stuff from any more superclasses
 					if ([properties rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
@@ -310,7 +310,7 @@
 					else
 					{
 						//if no : was declared for this property, check to see if we should link it anyway
-						NSString *ivarType = [self getIvarType:prop];
+						NSString *ivarType = [self getPropertyType:prop];
 						
 						if ([ivarType isEqualToString:@"NSArray"] ||
 							[ivarType isEqualToString:@"NSMutableArray"])
@@ -404,32 +404,32 @@
 #pragma mark Ivar tricks
 
 //borrowed from code in http://x-cake.ning.com/profiles/blogs/browsing-the-objc-runtime-on , my comments
-+ (NSMutableArray *) ivarNames
++ (NSMutableArray *) classPropertyNames
 {
-	unsigned int ivarCount;
-	//copy all ivars for self (will be a Class)
-	Ivar *ivars = class_copyIvarList(self, &ivarCount);
-	if (ivars)
+	unsigned int propertyCount;
+	//copy all properties for self (will be a Class)
+	objc_property_t *properties = class_copyPropertyList(self, &propertyCount);
+	if (properties)
 	{
-		NSMutableArray *results = [NSMutableArray arrayWithCapacity:ivarCount];
+		NSMutableArray *results = [NSMutableArray arrayWithCapacity:propertyCount];
 		
-		while (ivarCount--)
+		while (propertyCount--)
 		{
 			//get each ivar name and add it to the results
-			const char *ivarName = ivar_getName(ivars[ivarCount]);
-			[results addObject:[NSString stringWithCString:ivarName encoding:NSASCIIStringEncoding]];
+			const char *propName = property_getName(properties[propertyCount]);
+			[results addObject:[NSString stringWithCString:propName encoding:NSASCIIStringEncoding]];
 		}
 		
-		free(ivars);	
+		free(properties);	
 		return results;
 	}
 	return nil;
 }
 
-- (NSString *) getIvarType:(NSString *)ivar
+- (NSString *) getPropertyType:(NSString *)prop
 {
-	//get class's ivar
-	Ivar var = class_getInstanceVariable([self class], [ivar UTF8String]);
+	//get class's ivar for the property
+	Ivar var = class_getInstanceVariable([self class], [prop UTF8String]);
 	if (!var)
 		return nil;
 	
@@ -439,9 +439,9 @@
 	return [[ret stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
 }
 
-- (SEL) getIvar:(NSString *)ivar attributePrefix:(NSString *)str
+- (SEL) getProperty:(NSString *)prop attributePrefix:(NSString *)str
 {
-	objc_property_t property = class_getProperty([self class], [ivar UTF8String]);
+	objc_property_t property = class_getProperty([self class], [prop UTF8String]);
 	if (!property)
 		return nil;
 	
@@ -461,24 +461,24 @@
 	return nil;
 }
 
-- (SEL) getIvarGetter:(NSString *)ivar
+- (SEL) getPropertyGetter:(NSString *)prop
 {
-	SEL s = [self getIvar:ivar attributePrefix:@"G"];
+	SEL s = [self getProperty:prop attributePrefix:@"G"];
 	//if no custom getter specified, return the standard "etc"
 	if (!s)
 	{
-		s = NSSelectorFromString(ivar);
+		s = NSSelectorFromString(prop);
 	}
 	return s;
 }
 
-- (SEL) getIvarSetter:(NSString *)ivar
+- (SEL) getPropertySetter:(NSString *)prop
 {
-	SEL s = [self getIvar:ivar attributePrefix:@"S"];
+	SEL s = [self getProperty:prop attributePrefix:@"S"];
 	//if no custom setter specified, return the standard "setEtc:"
 	if (!s)
 	{
-		s = NSSelectorFromString([NSString stringWithFormat:@"set%@:",[ivar toClassName]]);
+		s = NSSelectorFromString([NSString stringWithFormat:@"set%@:",[prop toClassName]]);
 	}
 	return s;
 }
@@ -542,7 +542,7 @@
 - (id) representationOfObjectForProperty:(NSString *)prop
 {
 	//get the value of the property
-	SEL sel = [self getIvarGetter:prop];
+	SEL sel = [self getPropertyGetter:prop];
 	if ([self respondsToSelector:sel])
 	{
 		id val = [self performSelector:sel];
@@ -609,10 +609,10 @@
 			
 #ifdef NSRLogErrors
 			if (equiv.count > 1)
-				NSLog(@"found multiple instance variables tied to one rails equivalent (%@ are all set to equal rails property '%@'). setting data for it into the first ivar listed, but please fix.",equiv,key);
+				NSLog(@"found multiple instance variables tied to one rails equivalent (%@ are all set to equal rails property '%@'). setting data for it into the first properties listed, but please fix.",equiv,key);
 #endif
 			
-			SEL sel = [self getIvarSetter:property];
+			SEL sel = [self getPropertySetter:property];
 			if ([self respondsToSelector:sel] && [retrievableProperties indexOfObject:property] != NSNotFound)
 				//means its marked as retrievable and is settable through setEtc:.
 			{
@@ -642,7 +642,7 @@
 					}
 					//TODO: maybe remove/enhance?
 					// check to see if you're gonna enter a dictionary and ivar isn't a dict (ie custom class)
-					NSString *ivarType = [self getIvarType:property];
+					NSString *ivarType = [self getPropertyType:property];
 					if ([val isKindOfClass:[NSDictionary class]]
 						&& ![ivarType isEqualToString:@"NSDictionary"] && ![ivarType isEqualToString:@"NSMutableDictionary"])
 					{
@@ -673,7 +673,7 @@
 		BOOL null = !val;
 		if (!val && ![property isEqualToString:@"id"]) //if ID is null, simply bypass it, don't stick in "null" - it could be for create
 		{
-			NSString *string = [self getIvarType:key];
+			NSString *string = [self getPropertyType:key];
 			if ([string isEqualToString:@"NSArray"] || [string isEqualToString:@"NSMutableArray"])
 			{
 				//there's an array, and because the value is nil, make it an empty array (rails will get angry if you send nil)
