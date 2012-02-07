@@ -35,9 +35,11 @@
 
 @end
 
-@interface NSRConfig (overriders)
+@interface NSRConfig (access)
 
 + (NSRConfig *) overrideConfig;
++ (void) crashWithError:(NSError *)error;
+- (NSString *) resultForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock;
 
 @end
 
@@ -732,7 +734,7 @@
 	//get relevant config, whether it's the overridden one or a specific one to the class (defined thru macro) or just default
 	NSRConfig *config = [self getRelevantConfig];
 	
-	return [config makeRequestType:type requestBody:requestStr route:route sync:error orAsync:completionBlock];
+	return [config resultForRequestType:type requestBody:requestStr route:route sync:error orAsync:completionBlock];
 }
 
 - (NSString *) routeForMethod:(NSString *)method

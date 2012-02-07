@@ -29,6 +29,12 @@
 }
 @end
 
+@interface NSRConfig (private) 
+
+- (NSString *) makeHTTPRequestWithRequest:(NSURLRequest *)request sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock;
+
+@end
+
 @implementation NSRConfig
 @synthesize appURL, appUsername, appPassword;
 
@@ -76,12 +82,16 @@ static NSMutableArray *overrideConfigStack = nil;
 	appURL = str;
 }
 
+
+
+
+
 #pragma mark HTTP stuff
+
+//purpose of this method is to factor printing out an error message (if NSRLog allows) and crash (if desired)
 
 + (void) crashWithError:(NSError *)error
 {
-	//purpose of this method is to factor printing out an error message (if NSRLog allows) and crash if necessary
-	
 #if NSRLog > 0
 	NSLog(@"%@",error);
 	NSLog(@" ");
@@ -92,72 +102,8 @@ static NSMutableArray *overrideConfigStack = nil;
 #endif
 }
 
-- (NSString *) resultWithResponse:(NSString *)response error:(NSError **)error
-{
-	int statusCode = -1;
-	BOOL err;
-	NSString *result;
-	
-	//otherwise, get the statuscode from the response (it'll be an NSHTTPURLResponse but to be safe check if it responds)
-	if ([response respondsToSelector:@selector(statusCode)])
-	{
-		statusCode = [((NSHTTPURLResponse *)response) statusCode];
-	}
-	err = (statusCode == -1 || statusCode >= 400);
-		
-#ifndef NSRCompileWithARC
-	[request release];
-	[result autorelease];
-#endif
-	
-#if NSRLog > 1
-	NSLog(@"IN<=== Code %d; %@\n\n",statusCode,(err ? @"[see ERROR]" : result));
-	NSLog(@" ");
-#endif
-	
-	if (err)
-	{
-#ifdef NSRSuccinctErrorMessages
-		//if error message is in HTML,
-		if ([result rangeOfString:@"</html>"].location != NSNotFound)
-		{
-			NSArray *pres = [result componentsSeparatedByString:@"<pre>"];
-			if (pres.count > 1)
-			{
-				//get the value between <pre> and </pre>
-				result = [[[pres objectAtIndex:1] componentsSeparatedByString:@"</pre"] objectAtIndex:0];
-				//some weird thing rails does, will send html tags &quot; for quotes
-				result = [result stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
-			}
-		}
-#endif
-		
-		//make a new error
-		NSMutableDictionary *inf = [NSMutableDictionary dictionaryWithObject:result
-																	  forKey:NSLocalizedDescriptionKey];
-		//means there was a validation error - the specific errors were sent in JSON
-		if (statusCode == 422)
-		{
-			[inf setObject:[result JSONValue] forKey:NSRValidationErrorsKey];
-		}
-		
-		NSError *statusError = [NSError errorWithDomain:@"Rails"
-												   code:statusCode
-											   userInfo:inf];
-		
-		if (error)
-		{
-			*error = statusError;
-		}
-		
-		[NSRConfig crashWithError:statusError];
-		
-		return nil;
-	}
-	
-	return result;
-}
-
+//Do not override this method - it includes a check to see if there's no AppURL specified
+//Used by NSRails
 - (NSString *) resultForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock
 {
 	//make sure the app URL is set
@@ -174,45 +120,133 @@ static NSMutableArray *overrideConfigStack = nil;
 		return nil;
 	}
 	
-	if (error)
+	//If you want to override handling the connection, override this method
+	return [self makeRequestType:type requestBody:requestStr route:route sync:error orAsync:completionBlock];
+}
+
+//Overide THIS method if necessary (for SSL etc)
+- (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock
+{	
+	//helper method to get an NSURLRequest object based on above params
+	NSURLRequest *request = [self HTTPRequestForRequestType:type requestBody:requestStr route:route];
+	
+	//send request using HTTP!
+	return [self makeHTTPRequestWithRequest:request sync:error orAsync:completionBlock];
+}
+
+
+- (NSString *) makeHTTPRequestWithRequest:(NSURLRequest *)request sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock
+{
+	if (completionBlock)
 	{
-		NSString *raw = [self makeRequestType:type requestBody:requestStr route:route sync:error orAsync:nil];
-		return [self resultWithResponse:raw error:error];
-	}
-	else if (completionBlock)
-	{
-		[self makeRequestType:type requestBody:requestStr route:route sync:nil orAsync:^
-		 (NSString *raw, NSError *error)
+		[NSURLConnection sendAsynchronousRequest:request queue:asyncOperationQueue completionHandler:
+		 ^(NSURLResponse *response, NSData *data, NSError *appleError) 
 		 {
-			 if (error)
+			 //if there's an error from the request there must have been an issue connecting to the server.
+			 if (appleError)
 			 {
-				 completionBlock(nil, error); 
+				 completionBlock(nil,appleError);
 			 }
 			 else
 			 {
-				 NSString *result = [self resultWithResponse:raw error:&error];
-				 completionBlock(result, error);
+				 //get result from response data
+				 NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+				 
+				 //see if there's an error from this response using this helper method
+				 NSError *railsError = [self errorForResponse:rawResult statusCode:[(NSHTTPURLResponse *)response statusCode]];
+				 
+				 if (railsError)
+					 completionBlock(nil, railsError);
+				 else
+					 completionBlock(rawResult, nil);
 			 }
 		 }];
+	}
+	else
+	{
+		NSError *appleError;
+		NSURLResponse *response = nil;
+		NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&appleError];
+		
+		//if there's an error here there must have been an issue connecting to the server.
+		if (appleError)
+		{
+			//if there was a dereferenced error passed in, set it to Apple's
+			if (error)
+				*error = appleError;
+			
+			return nil;
+		}
+		
+		//get result from response data
+		NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+		
+		//see if there's an error from this response using this helper method
+		NSError *railsError = [self errorForResponse:rawResult statusCode:[(NSHTTPURLResponse *)response statusCode]];
+		if (railsError)
+		{
+			//if there is, set it to the dereferenced error
+			if (error)
+				*error = railsError;
+			
+			return nil;
+		}
+		return rawResult;
 	}
 	return nil;
 }
 
-- (NSError *) errorWithErrorCodeFromReponse:(NSHTTPURLResponse *)reponse
+
+- (NSError *) errorForResponse:(NSString *)response statusCode:(int)statusCode
 {
-	int statusCode = -1;
+	BOOL err = (statusCode < 0 || statusCode >= 400);
 	
-	//otherwise, get the statuscode from the response (it'll be an NSHTTPURLResponse but to be safe check if it responds)
-	if ([response respondsToSelector:@selector(statusCode)])
+#if NSRLog > 1
+	NSLog(@"IN<=== Code %d; %@\n\n",statusCode,(err ? @"[see ERROR]" : response));
+	NSLog(@" ");
+#endif
+	
+	if (err)
 	{
-		statusCode = [((NSHTTPURLResponse *)response) statusCode];
+#ifdef NSRSuccinctErrorMessages
+		//if error message is in HTML,
+		if ([response rangeOfString:@"</html>"].location != NSNotFound)
+		{
+			NSArray *pres = [response componentsSeparatedByString:@"<pre>"];
+			if (pres.count > 1)
+			{
+				//get the value between <pre> and </pre>
+				response = [[[pres objectAtIndex:1] componentsSeparatedByString:@"</pre"] objectAtIndex:0];
+				//some weird thing rails does, will send html tags &quot; for quotes
+				response = [response stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
+			}
+		}
+#endif
+		
+		//make a new error
+		NSMutableDictionary *inf = [NSMutableDictionary dictionaryWithObject:response
+																	  forKey:NSLocalizedDescriptionKey];
+		
+		//means there was a validation error - the specific errors were sent in JSON
+		if (statusCode == 422)
+		{
+			//make them into a dictionary and stick it into the key with constant NSRValidationErrorsKey
+			[inf setObject:[response JSONValue] forKey:NSRValidationErrorsKey];
+		}
+		
+		NSError *statusError = [NSError errorWithDomain:@"Rails"
+												   code:statusCode
+											   userInfo:inf];
+		
+		[NSRConfig crashWithError:statusError];
+		
+		return statusError;
 	}
-	err = (statusCode == -1 || statusCode >= 400);
 	
-	
+	return nil;
 }
 				
-- (NSURLRequest *) requestForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route
+- (NSURLRequest *) HTTPRequestForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route
 {
 	//generate url based on base URL + route given
 	NSString *url = [NSString stringWithFormat:@"%@/%@",appURL,route];
@@ -259,50 +293,6 @@ static NSMutableArray *overrideConfigStack = nil;
 		[request setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];
  	}
 	return request;
-}
-
-- (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock
-{	
-	NSURLRequest *request = [self requestForRequestType:type requestBody:requestStr route:route];
-	
-	//send request!
-	if (completionBlock)
-	{
-		[NSURLConnection sendAsynchronousRequest:request queue:asyncOperationQueue completionHandler:
-		 ^(NSURLResponse *response, NSData *data, NSError *error) 
-		 {
-			 if (error)
-			 {
-				 completionBlock(nil,error);
-			 }
-			 else
-			 {
-				 NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding]; 
-				 completionBlock(rawResult, nil);
-			 }
-		 }];
-		
-		return nil;
-	}
-	else
-	{
-		NSError *connectionError;
-		NSURLResponse *response = nil;
-		NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&connectionError];
-		
-		//if there's an error here there must have been an issue connecting to the server.
-		if (connectionError)
-		{
-			//if there was a dereferenced error passed in, set it to Apple's
-			if (error)
-				*error = connectionError;
-			
-			return nil;
-		}
-		
-		NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-		return rawResult;
-	}
 }
 
 
