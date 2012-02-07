@@ -33,4 +33,9 @@
 
 - (id) initWithAppURL:(NSString *)url;
 
+- (void) use;
+- (void) end;
+
+- (void) useFor:(void(^)(void))block;
+
 @end

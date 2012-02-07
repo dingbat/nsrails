@@ -38,10 +38,11 @@
 
 @property (nonatomic) BOOL destroyOnNesting;
 
-//////
+///////
 //CRUD
-//////
+///////
 
+/////////////////////////
 //sync, no error retrieval
 - (BOOL) getRemoteLatest;
 - (BOOL) updateRemote;
@@ -51,6 +52,7 @@
 + (NSArray *) getAllRemote;
 + (id) getRemoteObjectWithID:(int)mID;
 
+/////////////////////////
 //sync
 - (BOOL) getRemoteLatest:(NSError **)error;
 - (BOOL) updateRemote:(NSError **)error;
@@ -60,6 +62,7 @@
 + (NSArray *) getAllRemote:(NSError **)error;
 + (id) getRemoteObjectWithID:(int)mID error:(NSError **)error;
 
+///////////////////////////
 //async
 - (void) getRemoteLatestAsync:(void(^)(NSError *error))completionBlock;
 - (void) updateRemoteAsync:(void(^)(NSError *error))completionBlock;
@@ -102,8 +105,7 @@
 - (NSString *) JSONRepresentation;
 - (BOOL) setAttributesAsPerJSON:(NSString *)json;
 
-
-+ (void) setClassConfig:(NSRConfig *)config;
+//manual railsify string for instances
 - (id) initWithRailsifyString:(NSString *)str;
 
 
@@ -122,17 +124,21 @@
 //macro definitions
 #define NSRailsify(...) \
 + (NSString*) NSRailsProperties { return _MAKE_STR(__VA_ARGS__); }
+
 #define NSRNoCarryFromSuper			_NSR_NO_SUPER_
 #define _NSRNoCarryFromSuper_STR	_MAKE_STR(_NSR_NO_SUPER_)
 
-#define NSRailsModelName(...) CAT(_NSR_Name,N_ARGS(__VA_ARGS__))(__VA_ARGS__)
+#define NSRailsSetModelName(...) CAT(_NSR_Name,N_ARGS(__VA_ARGS__))(__VA_ARGS__)
+#define NSRailsUseDefaultModelName _NSR_Name2(nil,nil)
 #define _NSR_Name1(x) \
 + (NSString*) NSRailsModelName { return x; }
 #define _NSR_Name2(x,y)  \
 + (NSString*) NSRailsModelName { return x; } \
 + (NSString*) NSRailsModelNameWithPlural { return y; }
 
-#define NSRailsModelConfig(...) CAT(_NSR_Config,N_ARGS(__VA_ARGS__))(__VA_ARGS__)
+#define NSRailsSetConfig(...) CAT(_NSR_Config,N_ARGS(__VA_ARGS__))(__VA_ARGS__)
+#define NSRailsUseDefaultConfig \
++ (NSRConfig *) NSRailsSetConfigAuth { return [NSRConfig defaultConfig]; }
 #define _NSR_Config1(x) \
 + (NSRConfig *) NSRailsSetConfig { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = x; return config; }
 #define _NSR_Config3(x,y,z)  \

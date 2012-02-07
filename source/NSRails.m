@@ -35,11 +35,15 @@
 
 @end
 
+@interface NSRConfig (overriders)
+
++ (NSRConfig *) overrideConfig;
+
+@end
+
 
 @implementation NSRailsModel
 @synthesize modelID, attributes, destroyOnNesting;
-
-static NSRConfig *config = nil;
 
 #pragma mark -
 #pragma mark Meta-NSR stuff
@@ -77,16 +81,11 @@ static NSRConfig *config = nil;
 	}
 }
 
-+ (void) setClassConfig:(NSRConfig *)_config
-{
-	config = _config;
-}
-
 + (NSString *) getModelName
 {
 	//if defined through NSRailsModelName() then use that instead
 	SEL sel = @selector(NSRailsModelName);
-	if ([self respondsToSelector:sel])
+	if ([self respondsToSelector:sel] && [self performSelector:sel])
 	{
 		return [self performSelector:sel];
 	}
@@ -107,7 +106,7 @@ static NSRConfig *config = nil;
 {
 	//if defined through NSRailsModelNameWithPlural(), use that instead
 	SEL sel = @selector(NSRailsModelNameWithPlural);
-	if ([self respondsToSelector:sel])
+	if ([self respondsToSelector:sel] && [self performSelector:sel])
 	{
 		return [self performSelector:sel];
 	}
@@ -121,30 +120,41 @@ static NSRConfig *config = nil;
 	return [[[[self class] getModelName] camelize] toClassName];
 }
 
++ (NSRConfig *) getRelevantConfig
+{
+	//get the config for this class
+	
+	//if there's an overriding config in this context (an -[NSRConfig use] was called (explicitly or implicity via a block))
+	//use the overrider
+	if ([NSRConfig overrideConfig])
+	{
+		return [NSRConfig overrideConfig];
+	}
+	
+	//if this class defines NSRailsSetConfigAuth, use it over whatever NSRailsSetConfig (no auth) is defined
+	//moreover, if a subclass implements NSRailsUseDefaultConfig, it'll implement this method and simply return the default, as to override whatever a parents may declare this to be
+	else if ([[self class] respondsToSelector:@selector(NSRailsSetConfigAuth)])
+	{
+		return [[self class] performSelector:@selector(NSRailsSetConfigAuth)];
+	}
+	else if ([[self class] respondsToSelector:@selector(NSRailsSetConfig)])
+	{
+		return [[self class] performSelector:@selector(NSRailsSetConfig)];
+	} 
+	
+	//otherwise, use the default config
+	else
+	{
+		return [NSRConfig defaultConfig];
+	}
+}
+
 - (id) initWithRailsifyString:(NSString *)props
 {
 	if ((self = [super init]))
 	{
 		//log on param string for testing
 		//NSLog(@"found props %@",props);
-		
-		
-		//get the config for this class
-		if (!config)
-		{
-			if ([[self class] respondsToSelector:@selector(NSRailsSetConfigAuth)])
-			{
-				config = [[self class] performSelector:@selector(NSRailsSetConfigAuth)];
-			}
-			else if ([[self class] respondsToSelector:@selector(NSRailsSetConfig)])
-			{
-				config = [[self class] performSelector:@selector(NSRailsSetConfig)];
-			}
-			else
-			{
-				config = [NSRConfig defaultConfig];
-			}
-		}
 		
 		//initialize property categories
 		sendableProperties = [[NSMutableArray alloc] init];
@@ -366,6 +376,7 @@ static NSRConfig *config = nil;
 		} 
 		while (onStarIteration);
 		
+	// for testing's sake
 	//	NSLog(@"-------- %@ ----------",[[self class] getModelName]);
 	//	NSLog(@"list: %@",props);
 	//	NSLog(@"sendable: %@",sendableProperties);
@@ -812,10 +823,10 @@ static NSOperationQueue *queue = nil;
 
 + (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock
 {
+	//get relevant config, whether it's the overridden one or a specific one to the class (defined thru macro) or just default
+	NSRConfig *config = [self getRelevantConfig];
+
 	NSString *appURL = config.appURL;
-	//if there's no config specific to this class, use default
-	if (!appURL)
-		appURL = [[NSRConfig defaultConfig] appURL];
 	
 	//make sure the app URL is set
 	if (!appURL)
@@ -853,7 +864,7 @@ static NSOperationQueue *queue = nil;
 	[request setHTTPShouldHandleCookies:NO];
 	//set for json content
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-	
+		
 	//if username & password set, assume basic HTTP authentication
 	if (config.appUsername && config.appPassword)
 	{
@@ -872,6 +883,7 @@ static NSOperationQueue *queue = nil;
 		
 		[request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
 		[request setHTTPBody: requestData];
+
 		[request setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];
  	}
 	
