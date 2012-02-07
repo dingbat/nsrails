@@ -727,209 +727,12 @@
 #pragma mark -
 #pragma mark HTTP Request stuff
 
-static NSOperationQueue *queue = nil;
-
-+ (void) crashWithError:(NSError *)error
-{
-	//purpose of this method is to factor printing out an error message (if NSRLog allows) and crash if necessary
-#if NSRLog > 0
-	NSRLogError(error);
-	NSLog(@" ");
-#endif
-	
-#ifdef NSRCrashOnError
-	[NSException raise:[NSString stringWithFormat:@"%@ error code %d",[error domain],[error code]] format:[error localizedDescription]];
-#endif
-}
-
-+ (NSOperationQueue *) sharedQueue
-{
-	//queue used for async requests
-	if (!queue)
-	{
-		queue = [[NSOperationQueue alloc] init];
-		[queue setMaxConcurrentOperationCount:5];
-	}
-	return queue;
-}
-
-+ (NSString *) resultWithRequest:(NSURLResponse *)response data:(NSData *)data error:(NSError **)error
-{
-	int statusCode = -1;
-	BOOL err;
-	NSString *result;
-	
-	//otherwise, get the statuscode from the response (it'll be an NSHTTPURLResponse but to be safe check if it responds)
-	if ([response respondsToSelector:@selector(statusCode)])
-	{
-		statusCode = [((NSHTTPURLResponse *)response) statusCode];
-	}
-	err = (statusCode == -1 || statusCode >= 400);
-	
-	result = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-	
-#ifndef NSRCompileWithARC
-	[request release];
-	[result autorelease];
-#endif
-	
-#if NSRLog > 1
-	NSLog(@"IN<=== Code %d; %@\n\n",statusCode,(err ? @"[see ERROR]" : result));
-	NSLog(@" ");
-#endif
-	
-	if (err)
-	{
-#ifdef NSRSuccinctErrorMessages
-		//if error message is in HTML,
-		if ([result rangeOfString:@"</html>"].location != NSNotFound)
-		{
-			NSArray *pres = [result componentsSeparatedByString:@"<pre>"];
-			if (pres.count > 1)
-			{
-				//get the value between <pre> and </pre>
-				result = [[[pres objectAtIndex:1] componentsSeparatedByString:@"</pre"] objectAtIndex:0];
-				//some weird thing rails does, will send html tags &quot; for quotes
-				result = [result stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
-			}
-		}
-#endif
-		
-		//make a new error
-		NSMutableDictionary *inf = [NSMutableDictionary dictionaryWithObject:result
-																	  forKey:NSLocalizedDescriptionKey];
-		//means there was a validation error - the specific errors were sent in JSON
-		if (statusCode == 422)
-		{
-			[inf setObject:[result JSONValue] forKey:NSRValidationErrorsKey];
-		}
-		
-		NSError *statusError = [NSError errorWithDomain:@"Rails"
-												   code:statusCode
-											   userInfo:inf];
-		
-		if (error)
-		{
-			*error = statusError;
-		}
-		
-		[self crashWithError:statusError];
-		
-		return nil;
-	}
-	
-	return result;
-}
-
 + (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock
 {
 	//get relevant config, whether it's the overridden one or a specific one to the class (defined thru macro) or just default
 	NSRConfig *config = [self getRelevantConfig];
-
-	NSString *appURL = config.appURL;
 	
-	//make sure the app URL is set
-	if (!appURL)
-	{
-		NSError *err = [NSError errorWithDomain:@"NSRails" code:0 userInfo:[NSDictionary dictionaryWithObject:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup." forKey:NSLocalizedDescriptionKey]];
-		if (error)
-			*error = err;
-		if (completionBlock)
-			completionBlock(nil, err);
-		
-		[self crashWithError:err];
-		
-		return nil;
-	}
-	
-	//generate url based on base URL + route given
-	NSString *url = [NSString stringWithFormat:@"%@/%@",appURL,route];
-	
-#ifdef NSRAutomaticallyMakeURLsLowercase
-	url = [url lowercaseString];
-#endif
-	
-	//log relevant stuff
-#if NSRLog > 0
-	NSLog(@" ");
-	NSLog(@"%@ to %@",type,url);
-#if NSRLog > 1
-	NSLog(@"OUT===> %@",requestStr);
-#endif
-#endif
-	
-	NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
-	
-	[request setHTTPMethod:type];
-	[request setHTTPShouldHandleCookies:NO];
-	//set for json content
-    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-		
-	//if username & password set, assume basic HTTP authentication
-	if (config.appUsername && config.appPassword)
-	{
-		//add auth header encoded in base64
-		NSString *authStr = [NSString stringWithFormat:@"%@:%@", config.appUsername, config.appPassword];
-		NSData *authData = [authStr dataUsingEncoding:NSUTF8StringEncoding];
-		NSString *authHeader = [NSString stringWithFormat:@"Basic %@", [authData base64Encoding]];
-		
-		[request setValue:authHeader forHTTPHeaderField:@"Authorization"]; 
-	}
-	
-	//if there's an actual request, add the body
-	if (requestStr)
-	{
-		NSData *requestData = [NSData dataWithBytes:[requestStr UTF8String] length:[requestStr length]];
-		
-		[request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-		[request setHTTPBody: requestData];
-
-		[request setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];
- 	}
-	
-	//send request!
-	if (completionBlock)
-	{
-		[NSURLConnection sendAsynchronousRequest:request queue:[[self class] sharedQueue] completionHandler:
-		 ^(NSURLResponse *response, NSData *data, NSError *error) 
-		 {
-			 if (error)
-			 {
-				 [self crashWithError:error];
-
-				 completionBlock(nil,error);
-			 }
-			 NSError *e = nil;
-			 NSString *result = [self resultWithRequest:response data:data error:&e];
-		
-			 if (e)
-				 [self crashWithError:e];
-
-			 completionBlock(result,e);
-		 }];
-		
-		return nil;
-	}
-	else
-	{
-		NSError *connectionError;
-		NSURLResponse *response = nil;
-		NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&connectionError];
-		
-		//if there's an error here there must have been an issue connecting to the server.
-		if (connectionError)
-		{
-			//if there was a dereferenced error passed in, set it to Apple's
-			if (error)
-				*error = connectionError;
-			
-			[self crashWithError:connectionError];
-
-			return nil;
-		}
-		
-		return [self resultWithRequest:response data:data error:error];
-	}
+	return [config makeRequestType:type requestBody:requestStr route:route sync:error orAsync:completionBlock];
 }
 
 - (NSString *) routeForMethod:(NSString *)method
@@ -1026,7 +829,7 @@ static NSOperationQueue *queue = nil;
 		if (error)
 			*error = e;
 		
-		[[self class] crashWithError:e];
+		[NSRConfig crashWithError:e];
 		return NO;
 	}
 
@@ -1184,7 +987,7 @@ static NSOperationQueue *queue = nil;
 		if (error)
 			*error = e;
 		
-		[[self class] crashWithError:e];
+		[NSRConfig crashWithError:e];
 		
 		return nil;
 	}

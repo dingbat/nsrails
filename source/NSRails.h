@@ -10,9 +10,6 @@
 #import "NSRConfig.h"
 #import "JSONFramework.h"
 
-#define NSRLogError(error)	NSLog(@"Error Domain=%@ Code=%d \"%@\"",error.domain,error.code,[error localizedDescription]);
-#define NSRValidationErrorsKey	@"validation errors"
-
 //log NSR errors by default
 #define NSRLogErrors
 
