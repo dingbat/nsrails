@@ -10,11 +10,6 @@
 @class Brain;
 
 @interface Person : NSRailsModel
-{
-	NSString *name;
-	NSNumber *age;
-	Brain *brain;
-}
 
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSNumber *age;

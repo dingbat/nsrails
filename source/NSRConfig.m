@@ -36,7 +36,7 @@
 @end
 
 @implementation NSRConfig
-@synthesize appURL, appUsername, appPassword;
+@synthesize appURL, appUsername, appPassword, dateFormat;
 
 static NSRConfig *defaultConfig = nil;
 static NSMutableArray *overrideConfigStack = nil;
@@ -45,7 +45,8 @@ static NSMutableArray *overrideConfigStack = nil;
 {
 	//singleton
 	
-	if (!defaultConfig) [self setDefaultConfig:[[NSRConfig alloc] init]];
+	if (!defaultConfig) 
+		[self setDefaultConfig:[[NSRConfig alloc] init]];
 	return defaultConfig;
 }
 
@@ -54,13 +55,24 @@ static NSMutableArray *overrideConfigStack = nil;
 	defaultConfig = config;
 }
 
-- (id) initWithAppURL:(NSString *)url
+- (id) init
 {
 	if ((self = [super init]))
 	{
+		//by default, set to accept datestring like "2012-02-01T00:56:24Z"
+		//this is default in rails (ISO 8601)
+		self.dateFormat = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
+		
 		asyncOperationQueue = [[NSOperationQueue alloc] init];
 		[asyncOperationQueue setMaxConcurrentOperationCount:5];
-		
+	}
+	return self;
+}
+
+- (id) initWithAppURL:(NSString *)url
+{
+	if ((self = [self init]))
+	{		
 		[self setAppURL:url];
 	}
 	return self;
@@ -250,10 +262,6 @@ static NSMutableArray *overrideConfigStack = nil;
 {
 	//generate url based on base URL + route given
 	NSString *url = [NSString stringWithFormat:@"%@/%@",appURL,route];
-	
-#ifdef NSRAutomaticallyMakeURLsLowercase
-	url = [url lowercaseString];
-#endif
 	
 	//log relevant stuff
 #if NSRLog > 0

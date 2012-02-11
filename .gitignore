@@ -1,5 +1,6 @@
 # Ignore Xcode files
 *.pbxuser
 *.mode1v3
-./**/*.xcuserstate
-./demo/ios/NSRailsApp.xcodeproj/project.xcworkspace/xcuserdata/*
+**/*.xcuserstate
+**/*/.DS_Store
+**/*/DerivedData/*

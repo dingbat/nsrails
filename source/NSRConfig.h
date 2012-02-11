@@ -10,7 +10,6 @@
 // for documentation on these, see https://github.com/dingbat/nsrails/wiki/Compile-config
 
 #define NSRAutomaticallyUnderscoreAndCamelize
-#define NSRAutomaticallyMakeURLsLowercase
 #define NSRLog 3
 #define NSRAppendNestedModelKeyOnSend	@"_attributes"
 #define NSRCompileWithARC
@@ -33,6 +32,8 @@
 @property (nonatomic, strong) NSString *appURL;
 @property (nonatomic, strong) NSString *appUsername;
 @property (nonatomic, strong) NSString *appPassword;
+
+@property (nonatomic, strong) NSString *dateFormat;
 
 + (NSRConfig *) defaultConfig;
 + (void) setDefaultConfig:(NSRConfig *)config;
@@ -58,7 +59,7 @@
 //Some helper methods that could be useful
 //These shouldn't really be used outside of subclassing NSRailsConfig
 
-//Will give you any rails-specific erros (like validation errors) and make the error message succinct
+//Will give you any rails-specific errors (like validation errors) and make the error message succinct
 //Highly recommended that you use this on your result string to check for errors
 //You can also override this on its own if you have server-specific errors you want handled
 

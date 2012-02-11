@@ -294,16 +294,16 @@
 							//class entered is not a real class
 							if (!NSClassFromString(otherModel))
 							{
-	#ifdef NSRLogErrors
+#ifdef NSRLogErrors
 								NSLog(@"failed to find class %@ (declared for property %@ of class %@) - please fix this. relation not set. ",otherModel,prop,[self camelizedModelName]);
-	#endif
+#endif
 							}
 							//class entered is not a subclass of NSRailsModel
 							else if (![NSClassFromString(otherModel) isSubclassOfClass:[NSRailsModel class]])
 							{
-	#ifdef NSRLogErrors
+#ifdef NSRLogErrors
 								NSLog(@"class %@ was declared for property %@ of class %@, but %@ is not a subclass of NSRailsModel - please fix this. relation not set.",otherModel,prop,[self camelizedModelName],otherModel);
-	#endif
+#endif
 							}
 							else
 								[nestedModelProperties setObject:otherModel forKey:prop];
@@ -317,24 +317,25 @@
 						if ([ivarType isEqualToString:@"NSArray"] ||
 							[ivarType isEqualToString:@"NSMutableArray"])
 						{
-	#if NSRLog > 2
+#if NSRLog > 2
 							NSLog(@"warning: property '%@' in class %@ was found to be an array, but no nesting model was set. note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved rails attributes will be set. if NSDictionaries are desired, to suppress this warning, simply add a colon with nothing following to the property in NSRailsify... %@:",prop,[self camelizedModelName],str);
-	#endif
+#endif
 						}
 						else if (!([ivarType isEqualToString:@"NSString"] ||
 								   [ivarType isEqualToString:@"NSMutableString"] ||
 								   [ivarType isEqualToString:@"NSDictionary"] ||
 								   [ivarType isEqualToString:@"NSMutableDictionary"] ||
-								   [ivarType isEqualToString:@"NSNumber"]))
+								   [ivarType isEqualToString:@"NSNumber"] ||
+								   [ivarType isEqualToString:@"NSDate"]))
 						{
 							//must be custom obj, see if its a railsmodel, if it is, link it automatically
 							Class c = NSClassFromString(ivarType);
 							if (c && [c isSubclassOfClass:[NSRailsModel class]])
 							{
-	#if NSRLog > 2
+#if NSRLog > 2
 								//uncomment the log to test if something isn't working
 								//		NSLog(@"automatically linking ivar %@ in class %@ with nested railsmodel %@",prop,[self camelizedModelName],ivarType);
-	#endif
+#endif
 								[nestedModelProperties setObject:ivarType forKey:prop];
 							}
 						}
@@ -348,26 +349,26 @@
 						//if they tried to tie it to 'id', give error (but ignore if it's the first equivalence (modelID via base_rails)
 						if ([equivalent isEqualToString:@"id"] && i != 0)
 						{
-	#ifdef NSRLogErrors
+#ifdef NSRLogErrors
 							NSLog(@"found attempt to set the rails equivalent of ivar '%@' in class %@ to 'id'. this property is reserved and should be accessed through 'modelID' from a NSRailsModel subclass - please fix this. equivalence not set.", prop, [self camelizedModelName]);
-	#endif
+#endif
 							equivalent = prop;
 						}
 						//see if there's already 1 or more rails names set for this equivalency
 						else if ([propertyEquivalents allKeysForObject:equivalent].count > 0)
 						{
-	#ifdef NSRLogErrors
+#ifdef NSRLogErrors
 							NSLog(@"found multiple instance variables tied to one rails equivalent in class %@ - please fix this. when receiving rails property %@, NSR will assign it to the first equivalence listed.",[self camelizedModelName], equivalent);
-	#endif
+#endif
 						}
 					}
-	#ifdef NSRAutomaticallyUnderscoreAndCamelize
+#ifdef NSRAutomaticallyUnderscoreAndCamelize
 					else
 					{
 						//if no = was declared for this property, default by using underscore+lowercase'd version of it
 						equivalent = [[prop underscore] lowercaseString];
 					}
-	#endif
+#endif
 					[propertyEquivalents setObject:equivalent forKey:prop];
 				}
 			}
@@ -536,6 +537,21 @@
 			return obj;
 		}
 	}
+	//if the object is of class NSDate and the representation in JSON is a string, automatically convert it to string
+	else if ([[self getPropertyType:prop] isEqualToString:@"NSDate"] && [rep isKindOfClass:[NSString class]])
+	{
+		NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+		
+		//format to whatever date format is defined in the config
+		[formatter setDateFormat:[[self class] getRelevantConfig].dateFormat];
+		
+		NSDate *date = [formatter dateFromString:rep];
+
+#ifndef NSRCompileWithARC
+		[formatter release];
+#endif
+		return date;
+	}
 	
 	//otherwise, return whatever it is
 	return rep;
@@ -580,7 +596,7 @@
 			//otherwise, make that nested object a dictionary through NSRailsModel
 			return [val dictionaryOfRelevantProperties];
 		}
-		
+				
 		//if NOT linked property, if its declared as encodable, return encoded version
 		if ([encodeProperties indexOfObject:prop] != NSNotFound)
 		{
@@ -591,6 +607,21 @@
 				id obj = [self performSelector:selector withObject:val];
 				return obj;
 			}
+		}
+		//if the object is of class NSDate, we need to automatically convert it to string for the JSON framework to handle correctly
+		else if ([val isKindOfClass:[NSDate class]])
+		{
+			NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+			
+			//format to whatever date format is defined in the config
+			[formatter setDateFormat:[[self class] getRelevantConfig].dateFormat];
+			
+			NSString *dateValue = [formatter stringFromDate:val];
+			
+#ifndef NSRCompileWithARC
+			[formatter release];
+#endif
+			return dateValue;
 		}
 		
 		return val;
