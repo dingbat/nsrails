@@ -2,4 +2,4 @@
 *.pbxuser
 *.mode1v3
 ./**/*.xcuserstate
-demo/ios/NSRailsApp.xcodeproj/project.xcworkspace/xcuserdata/*
+./demo/ios/NSRailsApp.xcodeproj/project.xcworkspace/xcuserdata/*
