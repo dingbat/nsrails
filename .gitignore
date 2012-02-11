@@ -4,3 +4,5 @@
 **/*.xcuserstate
 **/*/.DS_Store
 **/*/DerivedData/*
+
+demo/ios/NSRailsApp.xcodeproj/project.xcworkspace/xcuserdata/
