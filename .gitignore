@@ -2,7 +2,10 @@
 *.pbxuser
 *.mode1v3
 **/*.xcuserstate
-**/*/.DS_Store
-**/*/DerivedData/*
+demo/ios/.DS_Store
+demo/ios/DerivedData/
+
+tests/DerivedData/
+tests/.DS_Store
 
 demo/ios/NSRailsApp.xcodeproj/project.xcworkspace/xcuserdata/
