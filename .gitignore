@@ -1,4 +1,4 @@
 # Ignore Xcode files
 *.pbxuser
 *.mode1v3
-*.xcuserstate
+./**/*.xcuserstate
