@@ -9,20 +9,14 @@
 //  OPTIONS
 // for documentation on these, see https://github.com/dingbat/nsrails/wiki/Compile-config
 
-#define NSRAutomaticallyUnderscoreAndCamelize
 #define NSRLog 3
-#define NSRAppendNestedModelKeyOnSend	@"_attributes"
 #define NSRCompileWithARC
 #define NSRSuccinctErrorMessages
-
-//#define NSRSendHasManyRelationAsHash
 //#define NSRCrashOnError
-
-
 
 #define NSRValidationErrorsKey	@"validation errors"
 
-//NSRConfig
+
 
 @interface NSRConfig : NSObject
 {
@@ -34,6 +28,7 @@
 @property (nonatomic, strong) NSString *appPassword;
 
 @property (nonatomic, strong) NSString *dateFormat;
+@property (nonatomic) BOOL automaticallyUnderscoreAndCamelize;
 
 + (NSRConfig *) defaultConfig;
 + (void) setDefaultConfig:(NSRConfig *)config;

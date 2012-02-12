@@ -26,6 +26,8 @@
 
 + (NSMutableArray *) classPropertyNames;
 
++ (NSRConfig *) getRelevantConfig;
+
 - (void) setAttributesAsPerDictionary:(NSDictionary *)dict;
 
 - (NSDictionary *) dictionaryOfRelevantProperties;
@@ -97,11 +99,10 @@
 	if ([class isEqualToString:@"NSRailsModel"])
 		class = nil;
 	
-#ifdef NSRAutomaticallyUnderscoreAndCamelize
-	return [class underscore];
-#else
-	return class;
-#endif
+	if ([self getRelevantConfig].automaticallyUnderscoreAndCamelize)
+		return [[class underscore] lowercaseString];
+	else
+		return class;
 }
 
 + (NSString *) getPluralModelName
@@ -361,15 +362,14 @@
 							NSLog(@"found multiple instance variables tied to one rails equivalent in class %@ - please fix this. when receiving rails property %@, NSR will assign it to the first equivalence listed.",[self camelizedModelName], equivalent);
 #endif
 						}
+						
+						[propertyEquivalents setObject:equivalent forKey:prop];
 					}
-#ifdef NSRAutomaticallyUnderscoreAndCamelize
 					else
 					{
-						//if no = was declared for this property, default by using underscore+lowercase'd version of it
-						equivalent = [[prop underscore] lowercaseString];
+						//if no property explicitly set, make it blank
+						[propertyEquivalents setObject:@"" forKey:prop];
 					}
-#endif
-					[propertyEquivalents setObject:equivalent forKey:prop];
 				}
 			}
 
@@ -571,11 +571,7 @@
 			//if the ivar is an array, we need to make every element into JSON and then put them back in the array
 			if ([val isKindOfClass:[NSArray class]])
 			{
-#ifdef NSRSendHasManyRelationAsHash
-				NSMutableDictionary *new = [NSMutableDictionary dictionary];
-#else
 				NSMutableArray *new = [NSMutableArray arrayWithCapacity:[val count]];
-#endif
 				//go through every nested object in the array
 				for (int i = 0; i < [val count]; i++)
 				{
@@ -585,11 +581,7 @@
 					{
 						obj = [NSNull null];
 					}
-#ifdef NSRSendHasManyRelationAsHash
-					[new setObject:obj forKey:[NSString stringWithFormat:@"%d",i]];
-#else
 					[new addObject:obj];
-#endif
 				}
 				return new;
 			}
@@ -639,6 +631,21 @@
 		if (equiv.count > 0) //means its a relevant property, so lets try to set it
 		{
 			property = [equiv objectAtIndex:0];
+		}
+		else
+		{
+			if ([[self class] getRelevantConfig].automaticallyUnderscoreAndCamelize)
+			{
+				property = [key camelize];
+			}
+			else
+			{
+				property = key;
+			}
+		}
+		if ([propertyEquivalents objectForKey:property])
+		{
+		
 			
 #ifdef NSRLogErrors
 			if (equiv.count > 1)
@@ -702,6 +709,21 @@
 	{
 		NSString *property = [propertyEquivalents objectForKey:key];
 		
+		//if the equivalence is blank, means there was none explicitly set
+		if (property.length == 0)
+		{
+			//if automaticallyUnderscoreAndCamelize for this config, use underscore+lowercase'd version of it
+			if ([[self class] getRelevantConfig].automaticallyUnderscoreAndCamelize)
+			{
+				property = [[key underscore] lowercaseString];
+			}
+			//otherwise, use exactly the property name
+			else
+			{			
+				property = key;
+			}
+		}
+		
 		id val = [self representationOfObjectForProperty:key];
 		BOOL null = !val;
 		if (!val && ![property isEqualToString:@"id"]) //if ID is null, simply bypass it, don't stick in "null" - it could be for create
@@ -720,7 +742,7 @@
 		if (val)
 		{
 			if ([nestedModelProperties objectForKey:key] && !null) //if its null/empty(for arrays), dont append _attributes
-				property = [property stringByAppendingString:NSRAppendNestedModelKeyOnSend];
+				property = [property stringByAppendingString:@"_attributes"];
 			[dict setObject:val forKey:property];
 		}
 	}

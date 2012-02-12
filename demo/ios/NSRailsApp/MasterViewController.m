@@ -180,7 +180,8 @@
 	if (row == 0)
 		return @"[New person]";
 
-	return [(Person *)[people objectAtIndex:row-1] name];
+	Person *p = [people objectAtIndex:row-1];
+	return [p name];
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component

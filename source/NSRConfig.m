@@ -36,7 +36,7 @@
 @end
 
 @implementation NSRConfig
-@synthesize appURL, appUsername, appPassword, dateFormat;
+@synthesize appURL, appUsername, appPassword, dateFormat, automaticallyUnderscoreAndCamelize;
 
 static NSRConfig *defaultConfig = nil;
 static NSMutableArray *overrideConfigStack = nil;
@@ -62,6 +62,7 @@ static NSMutableArray *overrideConfigStack = nil;
 		//by default, set to accept datestring like "2012-02-01T00:56:24Z"
 		//this is default in rails (ISO 8601)
 		self.dateFormat = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
+		automaticallyUnderscoreAndCamelize = YES;
 		
 		asyncOperationQueue = [[NSOperationQueue alloc] init];
 		[asyncOperationQueue setMaxConcurrentOperationCount:5];
