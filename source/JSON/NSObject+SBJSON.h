@@ -56,5 +56,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 - (NSString *)JSONRepresentation;
 
+
+//NSRails addition - to retrieve errors too
+- (NSString *)JSONRepresentation:(NSError **)e;
+
 @end
 

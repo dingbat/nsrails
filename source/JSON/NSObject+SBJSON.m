@@ -43,15 +43,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return json;
 }
 
-- (NSString *)JSONRepresentation {
-    SBJSON *generator = [SBJSON new];
+//NSRails addition
+- (NSString *)JSONRepresentation:(NSError **)error
+{
+	SBJSON *generator = [SBJSON new];
     
-    NSError *error;
-    NSString *json = [generator stringWithObject:self error:&error];
+    NSString *json = [generator stringWithObject:self error:error];
     
-    if (!json)
-        NSLog(@"%@", error);
     return json;
+}
+
+- (NSString *)JSONRepresentation
+{
+	return [self JSONRepresentation:nil];
 }
 
 @end

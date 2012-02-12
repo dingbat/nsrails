@@ -45,16 +45,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return o;
 }
 
+//NSRails addition
+- (id)JSONValue:(NSError **)error
+{
+	SBJSON *json = [SBJSON new];
+    
+    id o = [json objectWithString:self error:error];
+    
+    return o;
+}
+
 - (id)JSONValue
 {
-    SBJSON *json = [SBJSON new];
-    
-    NSError *error;
-    id o = [json objectWithString:self error:&error];
-    
-    if (!o)
-        NSLog(@"%@", error);
-    return o;
+    return [self JSONValue:nil];
 }
 
 @end

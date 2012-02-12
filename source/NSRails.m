@@ -488,12 +488,20 @@
 
 - (NSString *) JSONRepresentation
 {
+	return [self JSONRepresentation:nil];
+}
+
+- (NSString *) JSONRepresentation:(NSError **)e
+{
 	// enveloped meaning with the model name out front, {"user"=>{"name"=>"x", "password"=>"y"}}
-	
+
 	NSDictionary *enveloped = [NSDictionary dictionaryWithObject:[self dictionaryOfRelevantProperties]
 														  forKey:[[self class] getModelName]];
 	
-	return [enveloped JSONRepresentation];
+	NSString *json = [enveloped JSONRepresentation:e];
+	if (!json)
+		[NSRConfig crashWithError:*e];
+	return json;
 }
 
 - (id) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
@@ -761,11 +769,12 @@
 		return NO;
 	}
 	
-	NSDictionary *dict = [json JSONValue];
+	NSError *e;
+	NSDictionary *dict = [json JSONValue:&e];
 	
-	if (!dict || dict.count == 0)
+	if (!dict)
 	{
-		NSLog(@"NSR Warning: Something went wrong in JSON conversion!");
+		[NSRConfig crashWithError:e];
 		return NO;
 	}
 	
@@ -894,19 +903,32 @@
 - (BOOL) createRemote {	return [self createRemote:nil];	}
 - (BOOL) createRemote:(NSError **)error
 {
-	NSString *json = [[self class] makeRequest:@"POST" requestBody:[self JSONRepresentation] method:nil error:error];
+	NSString *jsonBody = [self JSONRepresentation:error];
+	if (*error)
+		return NO;
+	
+	NSString *jsonResponse = [[self class] makeRequest:@"POST" requestBody:jsonBody method:nil error:error];
 	
 	//check to see if json exists, and if it does, set all of my attributes to it (like to add the new ID), and return if it worked
-	return (json && [self setAttributesAsPerJSON:json]);
+	return (jsonResponse && [self setAttributesAsPerJSON:jsonResponse]);
 }
 - (void) createRemoteAsync:(void (^)(NSError *))completionBlock
 {
-	[[self class] makeRequest:@"POST" requestBody:[self JSONRepresentation] method:nil async:^(NSString *result, NSError *error) 
+	NSError *jsonError;
+	NSString *jsonBody = [self JSONRepresentation:&jsonError];
+	if (!jsonBody)
 	{
-		if (result)
-			[self setAttributesAsPerJSON:result];
-		completionBlock(error);
-	}];
+		completionBlock(jsonError);
+	}
+	else
+	{
+		[[self class] makeRequest:@"POST" requestBody:jsonBody method:nil async:^(NSString *result, NSError *error) 
+		{
+			if (result)
+				[self setAttributesAsPerJSON:result];
+			completionBlock(error);
+		}];
+	}
 }
 
 #pragma mark Update
@@ -917,8 +939,12 @@
 	if (![self checkForNilID:error])
 		return NO;
 	
+	NSString *jsonBody = [self JSONRepresentation:error];
+	if (*error)
+		return NO;
+	
 	//makeRequest will actually return a result string, return if it's not nil (!! = not nil, nifty way to turn object to BOOL)
-	return !![self makeRequest:@"PUT" requestBody:[self JSONRepresentation] method:nil error:error];
+	return !![self makeRequest:@"PUT" requestBody:jsonBody method:nil error:error];
 }
 - (void) updateRemoteAsync:(void (^)(NSError *))completionBlock
 {
@@ -929,10 +955,19 @@
 	}
 	else
 	{
-		[self makeRequest:@"PUT" requestBody:[self JSONRepresentation] method:nil async:^(NSString *result, NSError *error) 
+		NSError *jsonError;
+		NSString *jsonBody = [self JSONRepresentation:&jsonError];
+		if (!jsonBody)
 		{
-			completionBlock(error);
-		}];
+			completionBlock(jsonError);
+		}
+		else
+		{
+			[self makeRequest:@"PUT" requestBody:jsonBody method:nil async:^(NSString *result, NSError *error) 
+			{
+				completionBlock(error);
+			}];
+		}
 	}
 }
 
@@ -1022,8 +1057,16 @@
 
 + (NSArray *) arrayOfModelsFromJSON:(NSString *)json error:(NSError **)error
 {
+	NSError *jsonError;
+	
 	//transform result into array (via json)
-	id arr = [json JSONValue];
+	id arr = [json JSONValue:&jsonError];
+	
+	if (!arr)
+	{
+		*error = jsonError;
+		return nil;
+	}
 	
 	//helper method for both sync+async for getAllRemote
 	if (![arr isKindOfClass:[NSArray class]])

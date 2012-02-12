@@ -38,4 +38,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /// Returns the dictionary or array represented in the receiver, or nil on error.
 - (id)JSONValue;
 
+//NSRails addition - includes error dereference
+- (id)JSONValue:(NSError **)error;
+
 @end
