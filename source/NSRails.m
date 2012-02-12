@@ -257,6 +257,15 @@
 					
 					prop = [[eqSplit objectAtIndex:0] stringByTrimmingCharactersInSet:wn];
 					
+					//check to see if a class is redefining modelID (modelID from NSRailsModel is the first property checked - if it's not the first, give a warning)
+					if ([prop isEqualToString:@"modelID"] && i > 0)
+					{
+#ifdef NSRLogErrors
+						NSLog(@"NSR Warning: Found attempt to define 'modelID' in NSRailsify for class %@. This property is reserved by the NSRailsModel superclass and should not be modified. Please fix this; element ignored.", NSStringFromClass([self class]));
+#endif
+						continue;
+					}
+					
 					NSString *options = [opSplit lastObject];
 					if (opSplit.count > 1)
 					{
@@ -296,14 +305,14 @@
 							if (!NSClassFromString(otherModel))
 							{
 #ifdef NSRLogErrors
-								NSLog(@"failed to find class %@ (declared for property %@ of class %@) - please fix this. relation not set. ",otherModel,prop,[self camelizedModelName]);
+								NSLog(@"NSR Warning: Failed to find class for nested model %@ (declared for property %@ of class %@) - please fix this. Nesting relation not set. ",otherModel,prop,[self camelizedModelName]);
 #endif
 							}
 							//class entered is not a subclass of NSRailsModel
 							else if (![NSClassFromString(otherModel) isSubclassOfClass:[NSRailsModel class]])
 							{
 #ifdef NSRLogErrors
-								NSLog(@"class %@ was declared for property %@ of class %@, but %@ is not a subclass of NSRailsModel - please fix this. relation not set.",otherModel,prop,[self camelizedModelName],otherModel);
+								NSLog(@"NSR Warning: %@ was declared for the nested model property %@ of class %@, but %@ is not a subclass of NSRailsModel - please fix this. Nesting relation not set.",otherModel,prop,[self camelizedModelName],otherModel);
 #endif
 							}
 							else
@@ -319,7 +328,7 @@
 							[ivarType isEqualToString:@"NSMutableArray"])
 						{
 #if NSRLog > 2
-							NSLog(@"warning: property '%@' in class %@ was found to be an array, but no nesting model was set. note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved rails attributes will be set. if NSDictionaries are desired, to suppress this warning, simply add a colon with nothing following to the property in NSRailsify... %@:",prop,[self camelizedModelName],str);
+							NSLog(@"NSR Warning: Property '%@' in class %@ was found to be an array, but no nesting model was set. Note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved Rails attributes will be set. If NSDictionaries are desired, to suppress this warning, simply add a colon with nothing following to the property in NSRailsify... '%@:'",prop,[self camelizedModelName],str);
 #endif
 						}
 						else if (!([ivarType isEqualToString:@"NSString"] ||
@@ -333,10 +342,7 @@
 							Class c = NSClassFromString(ivarType);
 							if (c && [c isSubclassOfClass:[NSRailsModel class]])
 							{
-#if NSRLog > 2
-								//uncomment the log to test if something isn't working
-								//		NSLog(@"automatically linking ivar %@ in class %@ with nested railsmodel %@",prop,[self camelizedModelName],ivarType);
-#endif
+								//automatically link that ivar type (ie, Pet) for that property (ie, pets)
 								[nestedModelProperties setObject:ivarType forKey:prop];
 							}
 						}
@@ -346,28 +352,15 @@
 					NSString *equivalent = prop;
 					if (eqSplit.count > 1)
 					{
+						//set the equivalence to the last element after the =
 						equivalent = [[eqSplit lastObject] stringByTrimmingCharactersInSet:wn];
-						//if they tried to tie it to 'id', give error (but ignore if it's the first equivalence (modelID via base_rails)
-						if ([equivalent isEqualToString:@"id"] && i != 0)
-						{
-#ifdef NSRLogErrors
-							NSLog(@"found attempt to set the rails equivalent of ivar '%@' in class %@ to 'id'. this property is reserved and should be accessed through 'modelID' from a NSRailsModel subclass - please fix this. equivalence not set.", prop, [self camelizedModelName]);
-#endif
-							equivalent = prop;
-						}
-						//see if there's already 1 or more rails names set for this equivalency
-						else if ([propertyEquivalents allKeysForObject:equivalent].count > 0)
-						{
-#ifdef NSRLogErrors
-							NSLog(@"found multiple instance variables tied to one rails equivalent in class %@ - please fix this. when receiving rails property %@, NSR will assign it to the first equivalence listed.",[self camelizedModelName], equivalent);
-#endif
-						}
 						
 						[propertyEquivalents setObject:equivalent forKey:prop];
 					}
 					else
 					{
 						//if no property explicitly set, make it blank
+						//later on we'll see if automaticallyCamelize is on for the config and get the equivalence accordingly
 						[propertyEquivalents setObject:@"" forKey:prop];
 					}
 				}
@@ -380,13 +373,13 @@
 		while (onStarIteration);
 		
 	// for testing's sake
-	//	NSLog(@"-------- %@ ----------",[[self class] getModelName]);
-	//	NSLog(@"list: %@",props);
-	//	NSLog(@"sendable: %@",sendableProperties);
-	//	NSLog(@"retrievable: %@",retrievableProperties);
-	//	NSLog(@"NMP: %@",nestedModelProperties);
-	//	NSLog(@"eqiuvalents: %@",propertyEquivalents);
-	//	NSLog(@"\n");
+//		NSLog(@"-------- %@ ----------",[[self class] getModelName]);
+//		NSLog(@"list: %@",props);
+//		NSLog(@"sendable: %@",sendableProperties);
+//		NSLog(@"retrievable: %@",retrievableProperties);
+//		NSLog(@"NMP: %@",nestedModelProperties);
+//		NSLog(@"eqiuvalents: %@",propertyEquivalents);
+//		NSLog(@"\n");
 	}
 
 	return self;
@@ -406,7 +399,6 @@
 #pragma mark -
 #pragma mark Ivar tricks
 
-//borrowed from code in http://x-cake.ning.com/profiles/blogs/browsing-the-objc-runtime-on , my comments
 + (NSMutableArray *) classPropertyNames
 {
 	unsigned int propertyCount;
@@ -511,7 +503,7 @@
 	if (!model)
 	{
 #ifdef NSRLogErrors
-		NSLog(@"could not find %@ class; leaving property null.",classN);
+		NSLog(@"NSR Warning: Could not find %@ class to nest into class %@; leaving property null.",classN, NSStringFromClass([self class]));
 #endif
 		return nil;
 	}
@@ -624,78 +616,64 @@
 - (void) setAttributesAsPerDictionary:(NSDictionary *)dict
 {
 	attributes = dict;
-	for (NSString *key in dict)
+	
+	for (NSString *objcProperty in retrievableProperties)
 	{
-		NSString *property;
-		NSArray *equiv = [propertyEquivalents allKeysForObject:key];
-		if (equiv.count > 0) //means its a relevant property, so lets try to set it
+		NSString *railsEquivalent = [propertyEquivalents objectForKey:objcProperty];
+		if (railsEquivalent.length == 0)
 		{
-			property = [equiv objectAtIndex:0];
-		}
-		else
-		{
+			//means there was no equivalence defined.
+			//if config supports underscoring and camelizing, guess the rails equivalent by underscoring
 			if ([[self class] getRelevantConfig].automaticallyUnderscoreAndCamelize)
 			{
-				property = [key camelize];
+				railsEquivalent = [objcProperty underscore];
+			}
+			//otherwise, assume that the rails equivalent is precisely how it's defined in obj-c
+			else
+			{
+				railsEquivalent = objcProperty;
+			}
+		}
+		SEL sel = [self getPropertySetter:objcProperty];
+		if ([self respondsToSelector:sel])
+			//means its marked as retrievable and is settable through setEtc:.
+		{
+			id val = [dict objectForKey:railsEquivalent];
+			//skip if the key doesn't exist (we probably guessed wrong above (or if the explicit equivalence was wrong))
+			if (!val)
+				continue;
+			
+			//get the intended value
+			val = [self objectForProperty:objcProperty representation:([val isKindOfClass:[NSNull class]] ? nil : val)];
+			if (val)
+			{
+				NSString *nestedClass = [[nestedModelProperties objectForKey:objcProperty] toClassName];
+				//instantiate it as the class specified in NSRailsProperties
+				if (nestedClass)
+				{
+					//if the JSON conversion returned an array for the value, instantiate each element
+					if ([val isKindOfClass:[NSArray class]])
+					{
+						NSMutableArray *array = [NSMutableArray array];
+						for (NSDictionary *dict in val)
+						{
+							id model = [self makeRelevantModelFromClass:nestedClass basedOn:dict];
+							[array addObject:model];
+						}
+						val = array;
+					}
+					//if it's not an arry and just a dict, make a new class based on that dict
+					else
+					{
+						val = [self makeRelevantModelFromClass:nestedClass basedOn:[dict objectForKey:railsEquivalent]];
+					}
+				}
+				//if there was no nested class specified, simply give it what JSON decoded (in the case of a nested model, it will be a dictionary, or, an array of dictionaries. don't worry, the user got ample warning)
+				[self performSelector:sel withObject:val];
 			}
 			else
 			{
-				property = key;
-			}
-		}
-		if ([propertyEquivalents objectForKey:property])
-		{
-		
-			
-#ifdef NSRLogErrors
-			if (equiv.count > 1)
-				NSLog(@"found multiple instance variables tied to one rails equivalent (%@ are all set to equal rails property '%@'). setting data for it into the first properties listed, but please fix.",equiv,key);
-#endif
-			
-			SEL sel = [self getPropertySetter:property];
-			if ([self respondsToSelector:sel] && [retrievableProperties indexOfObject:property] != NSNotFound)
-				//means its marked as retrievable and is settable through setEtc:.
-			{
-				id val = [dict objectForKey:key];
-				val = [self objectForProperty:property representation:([val isKindOfClass:[NSNull class]] ? nil : val)];
-				if (val)
-				{
-					NSString *nestedClass = [[nestedModelProperties objectForKey:property] toClassName];
-					//instantiate it as the class specified in NSRailsProperties
-					if (nestedClass)
-					{
-						//if the JSON conversion returned an array for the value, instantiate each element
-						if ([val isKindOfClass:[NSArray class]])
-						{
-							NSMutableArray *array = [NSMutableArray array];
-							for (NSDictionary *dict in val)
-							{
-								id model = [self makeRelevantModelFromClass:nestedClass basedOn:dict];
-								[array addObject:model];
-							}
-							val = array;
-						}
-						else
-						{
-							val = [self makeRelevantModelFromClass:nestedClass basedOn:[dict objectForKey:key]];
-						}
-					}
-					//TODO: maybe remove/enhance?
-					// check to see if you're gonna enter a dictionary and ivar isn't a dict (ie custom class)
-					NSString *ivarType = [self getPropertyType:property];
-					if ([val isKindOfClass:[NSDictionary class]]
-						&& ![ivarType isEqualToString:@"NSDictionary"] && ![ivarType isEqualToString:@"NSMutableDictionary"])
-					{
-#ifdef NSRLogErrors
-						NSLog(@"NOTE: entering NSDictionary into %@'s ivar '%@' (type = %@) -- types do not match up!!",property,ivarType,[self camelizedModelName]);
-#endif
-					}
-					[self performSelector:sel withObject:val];
-				}
-				else
-				{
-					[self performSelector:sel withObject:nil];
-				}
+				[self performSelector:sel withObject:nil];
 			}
 		}
 	}
@@ -705,30 +683,31 @@
 {
 	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 	//loop through all properties marked as sendable
-	for (NSString *key in sendableProperties)
+	for (NSString *objcProperty in sendableProperties)
 	{
-		NSString *property = [propertyEquivalents objectForKey:key];
+		NSString *railsEquivalent = [propertyEquivalents objectForKey:objcProperty];
 		
 		//if the equivalence is blank, means there was none explicitly set
-		if (property.length == 0)
+		if (railsEquivalent.length == 0)
 		{
 			//if automaticallyUnderscoreAndCamelize for this config, use underscore+lowercase'd version of it
 			if ([[self class] getRelevantConfig].automaticallyUnderscoreAndCamelize)
 			{
-				property = [[key underscore] lowercaseString];
+				railsEquivalent = [[objcProperty underscore] lowercaseString];
 			}
 			//otherwise, use exactly the property name
 			else
 			{			
-				property = key;
+				railsEquivalent = objcProperty;
 			}
 		}
 		
-		id val = [self representationOfObjectForProperty:key];
+		id val = [self representationOfObjectForProperty:objcProperty];
 		BOOL null = !val;
-		if (!val && ![property isEqualToString:@"id"]) //if ID is null, simply bypass it, don't stick in "null" - it could be for create
+		if (!val && ![railsEquivalent isEqualToString:@"id"]) 
+			//if ID is null, simply bypass it, don't stick in "null" - it could be for create
 		{
-			NSString *string = [self getPropertyType:key];
+			NSString *string = [self getPropertyType:objcProperty];
 			if ([string isEqualToString:@"NSArray"] || [string isEqualToString:@"NSMutableArray"])
 			{
 				//there's an array, and because the value is nil, make it an empty array (rails will get angry if you send nil)
@@ -741,9 +720,28 @@
 		}
 		if (val)
 		{
-			if ([nestedModelProperties objectForKey:key] && !null) //if its null/empty(for arrays), dont append _attributes
-				property = [property stringByAppendingString:@"_attributes"];
-			[dict setObject:val forKey:property];
+			if ([nestedModelProperties objectForKey:objcProperty] && !null) //if its null/empty(for arrays), dont append _attributes
+				railsEquivalent = [railsEquivalent stringByAppendingString:@"_attributes"];
+			//check to see if it was already set (ie, there are multiple properties pointing to the same rails attr)
+			if ([dict objectForKey:railsEquivalent])
+			{
+				if ([railsEquivalent isEqualToString:@"id"])
+				{
+#ifdef NSRLogErrors
+					NSLog(@"NSR Warning: Obj-C property %@ (class %@) found to set equivalence with 'id'. this is fine for retrieving but should not be marked as sendable. Ignoring this property on send.", objcProperty, NSStringFromClass([self class]));
+#endif
+				}
+				else
+				{
+#ifdef NSRLogErrors
+					NSLog(@"NSR Warning: Multiple Obj-C properties found pointing to the same Rails attribute (%@). Only using data from the first Obj-C property listed. Please fix by only having one sendable property per Rails attribute (you can make the others retrieve-only with the -r flag).", railsEquivalent);
+#endif
+				}
+			}
+			else
+			{
+				[dict setObject:val forKey:railsEquivalent];
+			}
 		}
 	}
 	//if object is marked as destroy for nesting, add "_destroy"=>true to hash 
@@ -759,7 +757,7 @@
 {
 	if (!json)
 	{
-		NSLog(@"can't set attributes to nil json");
+		NSLog(@"NSR Warning: Can't set attributes to nil JSON");
 		return NO;
 	}
 	
@@ -767,7 +765,7 @@
 	
 	if (!dict || dict.count == 0)
 	{
-		NSLog(@"something went wrong in json conversion!");
+		NSLog(@"NSR Warning: Something went wrong in JSON conversion!");
 		return NO;
 	}
 	
@@ -969,11 +967,7 @@
 - (BOOL) getRemoteLatest:(NSError **)error
 {
 	NSString *json = [self makeGETRequestWithMethod:nil error:error];
-	if (!json)
-	{
-		return NO;
-	}
-	return ([self setAttributesAsPerJSON:json]); //will return true/false if conversion worked
+	return (json && [self setAttributesAsPerJSON:json]); //will return true/false if conversion worked
 }
 - (void) getRemoteLatestAsync:(void (^)(NSError *error))completionBlock
 {
