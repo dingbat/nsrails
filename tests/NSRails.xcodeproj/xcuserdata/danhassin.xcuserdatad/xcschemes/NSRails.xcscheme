@@ -4,6 +4,22 @@
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "59E3187314E9CD8700B0FC39"
+               BuildableName = "NSRails.app"
+               BlueprintName = "NSRails"
+               ReferencedContainer = "container:NSRails.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
    </BuildAction>
    <TestAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.GDB"
@@ -11,23 +27,13 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "59BABD3714D5FD7C008637DE"
-               BuildableName = "NSRails.octest"
-               BlueprintName = "NSRails"
-               ReferencedContainer = "container:NSRails.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "59BABD5114D5FDC7008637DE"
-            BuildableName = "Tests.app"
-            BlueprintName = "Tests"
+            BlueprintIdentifier = "59E3187314E9CD8700B0FC39"
+            BuildableName = "NSRails.app"
+            BlueprintName = "NSRails"
             ReferencedContainer = "container:NSRails.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -43,9 +49,9 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "59BABD5114D5FDC7008637DE"
-            BuildableName = "Tests.app"
-            BlueprintName = "Tests"
+            BlueprintIdentifier = "59E3187314E9CD8700B0FC39"
+            BuildableName = "NSRails.app"
+            BlueprintName = "NSRails"
             ReferencedContainer = "container:NSRails.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -58,6 +64,15 @@
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
+      <BuildableProductRunnable>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "59E3187314E9CD8700B0FC39"
+            BuildableName = "NSRails.app"
+            BlueprintName = "NSRails"
+            ReferencedContainer = "container:NSRails.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

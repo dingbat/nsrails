@@ -13,7 +13,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "59BABD5114D5FDC7008637DE"
+               BlueprintIdentifier = "59E318AE14E9CDC500B0FC39"
                BuildableName = "Tests.app"
                BlueprintName = "Tests"
                ReferencedContainer = "container:NSRails.xcodeproj">
@@ -31,7 +31,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "59BABD5114D5FDC7008637DE"
+            BlueprintIdentifier = "59E318AE14E9CDC500B0FC39"
             BuildableName = "Tests.app"
             BlueprintName = "Tests"
             ReferencedContainer = "container:NSRails.xcodeproj">
@@ -49,7 +49,7 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "59BABD5114D5FDC7008637DE"
+            BlueprintIdentifier = "59E318AE14E9CDC500B0FC39"
             BuildableName = "Tests.app"
             BlueprintName = "Tests"
             ReferencedContainer = "container:NSRails.xcodeproj">
@@ -67,7 +67,7 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "59BABD5114D5FDC7008637DE"
+            BlueprintIdentifier = "59E318AE14E9CDC500B0FC39"
             BuildableName = "Tests.app"
             BlueprintName = "Tests"
             ReferencedContainer = "container:NSRails.xcodeproj">
