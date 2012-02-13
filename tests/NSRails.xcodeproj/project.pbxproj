@@ -32,6 +32,7 @@
 		59BABD7814D5FF43008637DE /* MyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 59BABD7714D5FF43008637DE /* MyTest.m */; };
 		59BABD7A14D5FFB9008637DE /* GHUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59BABD7914D5FFB9008637DE /* GHUnit.framework */; };
 		59BABD7B14D5FFC0008637DE /* GHUnit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 59BABD7914D5FFB9008637DE /* GHUnit.framework */; };
+		59E3186714E9CC6200B0FC39 /* NSObject+Properties.m in Sources */ = {isa = PBXBuildFile; fileRef = 59E3186614E9CC6200B0FC39 /* NSObject+Properties.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -81,6 +82,8 @@
 		59BABD6514D5FDC7008637DE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		59BABD7714D5FF43008637DE /* MyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyTest.m; sourceTree = "<group>"; };
 		59BABD7914D5FFB9008637DE /* GHUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GHUnit.framework; path = "../../../../Downloads/gabriel-gh-unit-fea526d/Examples/MyTestable-MacOSX/Frameworks/GHUnit.framework"; sourceTree = "<group>"; };
+		59E3186514E9CC6200B0FC39 /* NSObject+Properties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Properties.h"; sourceTree = "<group>"; };
+		59E3186614E9CC6200B0FC39 /* NSObject+Properties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Properties.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +127,8 @@
 			children = (
 				59BABD2014D5FD42008637DE /* Convenience */,
 				59BABD2514D5FD42008637DE /* JSON */,
+				59E3186514E9CC6200B0FC39 /* NSObject+Properties.h */,
+				59E3186614E9CC6200B0FC39 /* NSObject+Properties.m */,
 				59BABD2D14D5FD42008637DE /* NSRails.h */,
 				59BABD2E14D5FD42008637DE /* NSRails.m */,
 				59BABD2F14D5FD42008637DE /* NSRConfig.h */,
@@ -283,6 +288,7 @@
 				59B7718F14D9D7C5009F3D7A /* STChild.m in Sources */,
 				59B7719014D9D7C5009F3D7A /* STParent.m in Sources */,
 				59B771A214D9DC53009F3D7A /* STGrandchild.m in Sources */,
+				59E3186714E9CC6200B0FC39 /* NSObject+Properties.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

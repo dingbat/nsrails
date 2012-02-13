@@ -11,9 +11,12 @@
 #import "NSData+Additions.h"
 #import "JSONFramework.h"
 
+//NSRConfigStackElement implementation
+
 //this small helper class is used to keep track of which config is contextually relevant
 //a stack is used so that -[NSRConfig use] commands can be nested
-//the problem with simply adding the NSRConfig to the stack is that the NSMutableArray will act funny if it's added multiple times (since an instance can only exist once in an array) and removing is even more of a nightmare
+//the problem with simply adding the NSRConfig to an NSMutableArray stack is that it will act funny if it's added multiple times (since an instance can only exist once in an array) and removing is even more of a nightmare
+
 //the stack will be comprised of this element, whose sole purpose is to point to a config, meaning it can be pushed to the stack multiple times if needed be
 
 @interface NSRConfigStackElement : NSObject
@@ -29,6 +32,11 @@
 }
 @end
 
+
+
+
+//NSRConfig implementation
+
 @interface NSRConfig (private) 
 
 - (NSString *) makeHTTPRequestWithRequest:(NSURLRequest *)request sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock;
@@ -37,6 +45,9 @@
 
 @implementation NSRConfig
 @synthesize appURL, appUsername, appPassword, dateFormat, automaticallyUnderscoreAndCamelize;
+
+#pragma mark -
+#pragma mark Config inits
 
 static NSRConfig *defaultConfig = nil;
 static NSMutableArray *overrideConfigStack = nil;
@@ -60,7 +71,7 @@ static NSMutableArray *overrideConfigStack = nil;
 	if ((self = [super init]))
 	{
 		//by default, set to accept datestring like "2012-02-01T00:56:24Z"
-		//this is default in rails (ISO 8601)
+		//this format (ISO 8601) is default in rails
 		self.dateFormat = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
 		automaticallyUnderscoreAndCamelize = YES;
 		
@@ -81,8 +92,8 @@ static NSMutableArray *overrideConfigStack = nil;
 
 - (void) setAppURL:(NSString *)str
 {
-	//get rid of trailing /
-	if ([[str substringFromIndex:str.length-1] isEqualToString:@"/"])
+	//get rid of trailing / if it's there
+	if (str.length > 0 && [[str substringFromIndex:str.length-1] isEqualToString:@"/"])
 		str = [str substringToIndex:str.length-1];
 	
 	//add http:// if not included already
@@ -98,7 +109,7 @@ static NSMutableArray *overrideConfigStack = nil;
 
 
 
-
+#pragma mark -
 #pragma mark HTTP stuff
 
 //purpose of this method is to factor printing out an error message (if NSRLog allows) and crash (if desired)
@@ -116,7 +127,6 @@ static NSMutableArray *overrideConfigStack = nil;
 }
 
 //Do not override this method - it includes a check to see if there's no AppURL specified
-//Used by NSRails
 - (NSString *) resultForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock
 {
 	//make sure the app URL is set
@@ -146,7 +156,6 @@ static NSMutableArray *overrideConfigStack = nil;
 	//send request using HTTP!
 	return [self makeHTTPRequestWithRequest:request sync:error orAsync:completionBlock];
 }
-
 
 - (NSString *) makeHTTPRequestWithRequest:(NSURLRequest *)request sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock
 {
@@ -304,7 +313,7 @@ static NSMutableArray *overrideConfigStack = nil;
 	return request;
 }
 
-
+#pragma mark -
 #pragma mark Contextual stuff
 
 + (NSRConfig *) overrideConfig

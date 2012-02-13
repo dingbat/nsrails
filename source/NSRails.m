@@ -9,10 +9,8 @@
 #import "NSRails.h"
 
 #import "NSString+InflectionSupport.h"
-#import <objc/runtime.h>
-
 #import "NSData+Additions.h"
-
+#import "NSObject+Properties.h"
 
 // if it's too intimidating, remember that you can navigate this file quickly in xcode with #pragma marks
 
@@ -24,16 +22,14 @@
 
 @interface NSRailsModel (internal)
 
-+ (NSMutableArray *) classPropertyNames;
-
 + (NSRConfig *) getRelevantConfig;
 
 - (void) setAttributesAsPerDictionary:(NSDictionary *)dict;
-
 - (NSDictionary *) dictionaryOfRelevantProperties;
-- (NSString *) getPropertyType:(NSString *)ivar;
-- (SEL) getPropertySetter:(NSString *)ivar;
-- (SEL) getPropertyGetter:(NSString *)ivar;
+
++ (NSString *) railsProperties;
++ (NSString *) getModelName;
++ (NSString *) getPluralModelName;
 
 @end
 
@@ -49,12 +45,18 @@
 @implementation NSRailsModel
 @synthesize modelID, attributes, destroyOnNesting;
 
+
+
+
+
+
 #pragma mark -
 #pragma mark Meta-NSR stuff
 
 //this will suppress the compiler warnings that come with ARC when doing performSelector
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+
 
 + (NSString *) NSRailsProperties
 {
@@ -115,12 +117,6 @@
 	}
 	//otherwise, pluralize ModelName
 	return [[self getModelName] pluralize];
-}
-
-//convenience
-- (NSString *) camelizedModelName
-{
-	return [[[[self class] getModelName] camelize] toClassName];
 }
 
 + (NSRConfig *) getRelevantConfig
@@ -305,14 +301,14 @@
 							if (!NSClassFromString(otherModel))
 							{
 #ifdef NSRLogErrors
-								NSLog(@"NSR Warning: Failed to find class for nested model %@ (declared for property %@ of class %@) - please fix this. Nesting relation not set. ",otherModel,prop,[self camelizedModelName]);
+								NSLog(@"NSR Warning: Failed to find class for nested model %@ (declared for property %@ of class %@) - please fix this. Nesting relation not set. ",otherModel,prop,NSStringFromClass([self class]));
 #endif
 							}
 							//class entered is not a subclass of NSRailsModel
 							else if (![NSClassFromString(otherModel) isSubclassOfClass:[NSRailsModel class]])
 							{
 #ifdef NSRLogErrors
-								NSLog(@"NSR Warning: %@ was declared for the nested model property %@ of class %@, but %@ is not a subclass of NSRailsModel - please fix this. Nesting relation not set.",otherModel,prop,[self camelizedModelName],otherModel);
+								NSLog(@"NSR Warning: %@ was declared for the nested model property %@ of class %@, but %@ is not a subclass of NSRailsModel - please fix this. Nesting relation not set.",otherModel,prop, NSStringFromClass([self class]),otherModel);
 #endif
 							}
 							else
@@ -328,7 +324,7 @@
 							[ivarType isEqualToString:@"NSMutableArray"])
 						{
 #if NSRLog > 2
-							NSLog(@"NSR Warning: Property '%@' in class %@ was found to be an array, but no nesting model was set. Note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved Rails attributes will be set. If NSDictionaries are desired, to suppress this warning, simply add a colon with nothing following to the property in NSRailsify... '%@:'",prop,[self camelizedModelName],str);
+							NSLog(@"NSR Warning: Property '%@' in class %@ was found to be an array, but no nesting model was set. Note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved Rails attributes will be set. If NSDictionaries are desired, to suppress this warning, simply add a colon with nothing following to the property in NSRailsify... '%@:'",prop,NSStringFromClass([self class]),str);
 #endif
 						}
 						else if (!([ivarType isEqualToString:@"NSString"] ||
@@ -396,87 +392,9 @@
 	return self;
 }
 
-#pragma mark -
-#pragma mark Ivar tricks
 
-+ (NSMutableArray *) classPropertyNames
-{
-	unsigned int propertyCount;
-	//copy all properties for self (will be a Class)
-	objc_property_t *properties = class_copyPropertyList(self, &propertyCount);
-	if (properties)
-	{
-		NSMutableArray *results = [NSMutableArray arrayWithCapacity:propertyCount];
-		
-		while (propertyCount--)
-		{
-			//get each ivar name and add it to the results
-			const char *propName = property_getName(properties[propertyCount]);
-			[results addObject:[NSString stringWithCString:propName encoding:NSASCIIStringEncoding]];
-		}
-		
-		free(properties);	
-		return results;
-	}
-	return nil;
-}
 
-- (NSString *) getPropertyType:(NSString *)prop
-{
-	//get class's ivar for the property
-	Ivar var = class_getInstanceVariable([self class], [prop UTF8String]);
-	if (!var)
-		return nil;
-	
-	NSString *ret = [NSString stringWithCString:ivar_getTypeEncoding(var) encoding:NSUTF8StringEncoding];
-	
-	//ret will be like @"NSString", so strip "s and @s
-	return [[ret stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
-}
 
-- (SEL) getProperty:(NSString *)prop attributePrefix:(NSString *)str
-{
-	objc_property_t property = class_getProperty([self class], [prop UTF8String]);
-	if (!property)
-		return nil;
-	
-	NSString *atts = [NSString stringWithCString:property_getAttributes(property) encoding:NSUTF8StringEncoding];
-	//this will return some garbage like "Ti,GgetFoo,SsetFoo:,Vproperty"
-	//getter is prefixed by a G and setter is prefixed by an S
-	//split it by attribute and return anything matching the prefix specified (would be S or G)
-	for (NSString *att in [atts componentsSeparatedByString:@","])
-	{
-		if (att.length > 0 && [[att substringToIndex:1] isEqualToString:str])
-		{
-			NSString *setter = [att substringFromIndex:1];
-			return NSSelectorFromString(setter);
-		}
-	}
-	
-	return nil;
-}
-
-- (SEL) getPropertyGetter:(NSString *)prop
-{
-	SEL s = [self getProperty:prop attributePrefix:@"G"];
-	//if no custom getter specified, return the standard "etc"
-	if (!s)
-	{
-		s = NSSelectorFromString(prop);
-	}
-	return s;
-}
-
-- (SEL) getPropertySetter:(NSString *)prop
-{
-	SEL s = [self getProperty:prop attributePrefix:@"S"];
-	//if no custom setter specified, return the standard "setEtc:"
-	if (!s)
-	{
-		s = NSSelectorFromString([NSString stringWithFormat:@"set%@:",[prop toClassName]]);
-	}
-	return s;
-}
 
 #pragma mark -
 #pragma mark Internal NSR stuff
@@ -543,10 +461,18 @@
 		NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 		
 		//format to whatever date format is defined in the config
-		[formatter setDateFormat:[[self class] getRelevantConfig].dateFormat];
+		NSString *format = [[self class] getRelevantConfig].dateFormat;
+		[formatter setDateFormat:format];
 		
 		NSDate *date = [formatter dateFromString:rep];
 
+		if (!date)
+		{
+#ifdef NSRLogErrors
+			NSLog(@"NSR Warning: Attempted to convert date string returned by Rails (%@) into an NSDate* object for the property '%@' in class %@, but conversion failed. Please check your config's dateFormat (using format \"%@\" for this operation).",rep,prop,NSStringFromClass([self class]),format);
+#endif
+		}
+		
 #ifndef NSRCompileWithARC
 		[formatter release];
 #endif
@@ -783,36 +709,14 @@
 	return YES;
 }
 
+//pop the warning suppressor defined above (for calling performSelector's in ARC)
 #pragma clang diagnostic pop
+
+
 
 
 #pragma mark -
 #pragma mark HTTP Request stuff
-
-+ (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock
-{
-	//get relevant config, whether it's the overridden one or a specific one to the class (defined thru macro) or just default
-	NSRConfig *config = [self getRelevantConfig];
-	
-	return [config resultForRequestType:type requestBody:requestStr route:route sync:error orAsync:completionBlock];
-}
-
-- (NSString *) routeForMethod:(NSString *)method
-{
-	//make request on instance, so set URL to be in format "users/1"
-	NSString *route = [NSString stringWithFormat:@"%@/%@",[[self class] getPluralModelName], self.modelID];
-	if (method.length > 0)
-	{
-		//if there's a method included too,
-		//make sure sure there's no / starting the method string
-		if ([[method substringToIndex:1] isEqualToString:@"/"])
-			method = [method substringFromIndex:1];
-		
-		//tack the method onto the end
-		route = [route stringByAppendingFormat:@"/%@",method];
-	}
-	return route;
-}
 
 + (NSString *) routeForMethod:(NSString *)method
 {
@@ -836,29 +740,52 @@
 	return route;
 }
 
+- (NSString *) routeForInstanceMethod:(NSString *)method
+{
+	//make request on instance, so set "method" for above method to be "1", or "1/method" if there's a method included
+	NSString *idAndMethod = [NSString stringWithFormat:@"%@%@",self.modelID,(method ? [@"/" stringByAppendingString:method] : @"")];
+	
+	return [[self class] routeForMethod:idAndMethod];
+}
+
+
 #pragma mark Performing actions on instances
-
-- (NSString *) makeGETRequestWithMethod:(NSString *)method error:(NSError **)error
-{
-	return [[self class] makeRequestType:@"GET" requestBody:nil route:[self routeForMethod:method] sync:error orAsync:nil];
-}
-
-- (void) makeGETRequestWithMethod:(NSString *)method async:(void(^)(NSString *result, NSError *error))completionBlock
-{
-	[[self class] makeRequestType:@"GET" requestBody:nil route:[self routeForMethod:method] sync:nil orAsync:completionBlock];
-}
 
 - (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error
 {
-	return [[self class] makeRequestType:httpVerb requestBody:requestStr route:[self routeForMethod:method] sync:error orAsync:nil];
+	return [[[self class] getRelevantConfig] makeRequestType:httpVerb requestBody:requestStr route:[self routeForInstanceMethod:method] sync:error orAsync:nil];
 }
 
 - (void) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method async:(void(^)(NSString *result, NSError *error))block
 {
-	[[self class] makeRequestType:httpVerb requestBody:requestStr route:[self routeForMethod:method] sync:nil orAsync:block];
+	[[[self class] getRelevantConfig] makeRequestType:httpVerb requestBody:requestStr route:[self routeForInstanceMethod:method] sync:nil orAsync:block];
 }
 
+//these are really just convenience methods that'll call the above method with pre-built "GET" and no body
+
+- (NSString *) makeGETRequestWithMethod:(NSString *)method error:(NSError **)error
+{
+	return [self makeRequest:@"GET" requestBody:nil method:[self routeForInstanceMethod:method] error:error];
+}
+- (void) makeGETRequestWithMethod:(NSString *)method async:(void(^)(NSString *result, NSError *error))completionBlock
+{
+	[self makeRequest:@"GET" requestBody:nil method:[self routeForInstanceMethod:method] async:completionBlock];
+}
+
+
 #pragma mark Performing actions on classes
+
+
++ (void) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method async:(void (^)(NSString *result, NSError *))block
+{ 
+	[[self getRelevantConfig] makeRequestType:httpVerb requestBody:requestStr route:[self routeForMethod:method] sync:nil orAsync:block];
+}
++ (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error
+{ 
+	return [[self getRelevantConfig] makeRequestType:httpVerb requestBody:requestStr route:[self routeForMethod:method] sync:error orAsync:nil];
+}
+
+//these are really just convenience methods that'll call the above method with pre-built "GET" and no body
 
 + (void) makeGETRequestWithMethod:(NSString *)method async:(void (^)(NSString *result, NSError *))completionBlock
 { 
@@ -869,14 +796,11 @@
 	return [self makeRequest:@"GET" requestBody:nil method:method error:error];
 } 
 
-+ (void) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method async:(void (^)(NSString *result, NSError *))block
-{ 
-	[[self class] makeRequestType:httpVerb requestBody:requestStr route:[self routeForMethod:method] sync:nil orAsync:block];
-}
-+ (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error
-{ 
-	return [[self class] makeRequestType:httpVerb requestBody:requestStr route:[self routeForMethod:method] sync:error orAsync:nil];
-}
+
+
+
+
+
 
 #pragma mark -
 #pragma mark External stuff (CRUD)
@@ -1073,7 +997,7 @@
 	{
 		NSError *e = [NSError errorWithDomain:@"NSRails" 
 										 code:0 
-									 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"getAll method (index) for %@ controller did not return an array - check your rails app.",[self getModelName]]
+									 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"getAll method (index) for %@ controller did not return an array - check your rails app.",[self getPluralModelName]]
 																		  forKey:NSLocalizedDescriptionKey]];
 		
 		if (error)
@@ -1133,6 +1057,9 @@
 		}
 	}];
 }
+
+
+
 
 #pragma mark -
 #pragma mark Dealloc for non-ARC
