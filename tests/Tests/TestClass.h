@@ -1,14 +1,13 @@
 //
-//  STGrandchild.h
+//  TestClass.h
 //  NSRails
 //
-//  Created by Dan Hassin on 2/1/12.
+//  Created by Dan Hassin on 2/14/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
 #import "NSRails.h"
-#import "STChild.h"
 
-@interface STGrandchild : STChild
+@interface TestClass : NSRailsModel
 
 @end

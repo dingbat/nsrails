@@ -7,14 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5914243414EADBCA00481815 /* InheritanceTestClasses.m in Sources */ = {isa = PBXBuildFile; fileRef = 5914243314EADBCA00481815 /* InheritanceTestClasses.m */; };
+		5914243714EAE2B400481815 /* TestClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 5914243614EAE2B400481815 /* TestClass.m */; };
 		59E318B114E9CDC500B0FC39 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E3187814E9CD8700B0FC39 /* UIKit.framework */; };
 		59E318B214E9CDC500B0FC39 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E3187A14E9CD8700B0FC39 /* Foundation.framework */; };
 		59E318B314E9CDC500B0FC39 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E3187C14E9CD8700B0FC39 /* CoreGraphics.framework */; };
 		59E318B914E9CDC500B0FC39 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 59E318B714E9CDC500B0FC39 /* InfoPlist.strings */; };
 		59E318BB14E9CDC500B0FC39 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 59E318BA14E9CDC500B0FC39 /* main.m */; };
-		59E318D214E9D09B00B0FC39 /* STChild.m in Sources */ = {isa = PBXBuildFile; fileRef = 59E318CD14E9D09B00B0FC39 /* STChild.m */; };
-		59E318D314E9D09B00B0FC39 /* STParent.m in Sources */ = {isa = PBXBuildFile; fileRef = 59E318CF14E9D09B00B0FC39 /* STParent.m */; };
-		59E318D414E9D09B00B0FC39 /* STGrandchild.m in Sources */ = {isa = PBXBuildFile; fileRef = 59E318D114E9D09B00B0FC39 /* STGrandchild.m */; };
 		59E318D614E9D0A600B0FC39 /* Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 59E318D514E9D0A600B0FC39 /* Test.m */; };
 		59E318D814E9D0F200B0FC39 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E318D714E9D0F200B0FC39 /* GHUnitIOS.framework */; };
 		59E3190314E9D65200B0FC39 /* NSData+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 59E318F214E9D65200B0FC39 /* NSData+Additions.m */; };
@@ -28,6 +27,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5914243214EADBC900481815 /* InheritanceTestClasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InheritanceTestClasses.h; sourceTree = "<group>"; };
+		5914243314EADBCA00481815 /* InheritanceTestClasses.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InheritanceTestClasses.m; sourceTree = "<group>"; };
+		5914243514EAE2B400481815 /* TestClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestClass.h; sourceTree = "<group>"; };
+		5914243614EAE2B400481815 /* TestClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestClass.m; sourceTree = "<group>"; };
 		59E3187814E9CD8700B0FC39 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		59E3187A14E9CD8700B0FC39 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		59E3187C14E9CD8700B0FC39 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -36,12 +39,6 @@
 		59E318B814E9CDC500B0FC39 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		59E318BA14E9CDC500B0FC39 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		59E318BC14E9CDC500B0FC39 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
-		59E318CC14E9D09B00B0FC39 /* STChild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STChild.h; sourceTree = "<group>"; };
-		59E318CD14E9D09B00B0FC39 /* STChild.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STChild.m; sourceTree = "<group>"; };
-		59E318CE14E9D09B00B0FC39 /* STParent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STParent.h; sourceTree = "<group>"; };
-		59E318CF14E9D09B00B0FC39 /* STParent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STParent.m; sourceTree = "<group>"; };
-		59E318D014E9D09B00B0FC39 /* STGrandchild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STGrandchild.h; sourceTree = "<group>"; };
-		59E318D114E9D09B00B0FC39 /* STGrandchild.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STGrandchild.m; sourceTree = "<group>"; };
 		59E318D514E9D0A600B0FC39 /* Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Test.m; sourceTree = "<group>"; };
 		59E318D714E9D0F200B0FC39 /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GHUnitIOS.framework; path = Tests/GHUnitIOS.framework; sourceTree = "<group>"; };
 		59E318F114E9D65200B0FC39 /* NSData+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Additions.h"; sourceTree = "<group>"; };
@@ -131,30 +128,12 @@
 			isa = PBXGroup;
 			children = (
 				59E318D514E9D0A600B0FC39 /* Test.m */,
-				59E318CB14E9D08A00B0FC39 /* NSRailsify Test Classes */,
-				59E318CA14E9D07900B0FC39 /* Inheritance Test Classes */,
+				5914243214EADBC900481815 /* InheritanceTestClasses.h */,
+				5914243314EADBCA00481815 /* InheritanceTestClasses.m */,
+				5914243514EAE2B400481815 /* TestClass.h */,
+				5914243614EAE2B400481815 /* TestClass.m */,
 			);
 			name = Tests;
-			sourceTree = "<group>";
-		};
-		59E318CA14E9D07900B0FC39 /* Inheritance Test Classes */ = {
-			isa = PBXGroup;
-			children = (
-				59E318CC14E9D09B00B0FC39 /* STChild.h */,
-				59E318CD14E9D09B00B0FC39 /* STChild.m */,
-				59E318CE14E9D09B00B0FC39 /* STParent.h */,
-				59E318CF14E9D09B00B0FC39 /* STParent.m */,
-				59E318D014E9D09B00B0FC39 /* STGrandchild.h */,
-				59E318D114E9D09B00B0FC39 /* STGrandchild.m */,
-			);
-			name = "Inheritance Test Classes";
-			sourceTree = "<group>";
-		};
-		59E318CB14E9D08A00B0FC39 /* NSRailsify Test Classes */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "NSRailsify Test Classes";
 			sourceTree = "<group>";
 		};
 		59E318EF14E9D65200B0FC39 /* NSRails */ = {
@@ -260,9 +239,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				59E318BB14E9CDC500B0FC39 /* main.m in Sources */,
-				59E318D214E9D09B00B0FC39 /* STChild.m in Sources */,
-				59E318D314E9D09B00B0FC39 /* STParent.m in Sources */,
-				59E318D414E9D09B00B0FC39 /* STGrandchild.m in Sources */,
 				59E318D614E9D0A600B0FC39 /* Test.m in Sources */,
 				59E3190314E9D65200B0FC39 /* NSData+Additions.m in Sources */,
 				59E3190414E9D65200B0FC39 /* NSString+InflectionSupport.m in Sources */,
@@ -272,6 +248,8 @@
 				59E3190814E9D65200B0FC39 /* NSObject+Properties.m in Sources */,
 				59E3190914E9D65200B0FC39 /* NSRails.m in Sources */,
 				59E3190A14E9D65200B0FC39 /* NSRConfig.m in Sources */,
+				5914243414EADBCA00481815 /* InheritanceTestClasses.m in Sources */,
+				5914243714EAE2B400481815 /* TestClass.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -74,11 +74,20 @@
 	}
 	else
 	{
+		//go up the class hierarchy, adding the property list from each class
 		for (Class c = self; c != [NSRailsModel class]; c = [c superclass])
 		{
 			if ([c respondsToSelector:@selector(NSRailsProperties)])
 			{
-				base = [base stringByAppendingFormat:@", %@", [c NSRailsProperties]];
+				//get those properties and tack them on to our growing string
+				NSString *props = [c NSRailsProperties];
+				base = [base stringByAppendingFormat:@", %@", props];
+				
+				//if that class defines NSRNoCarryFromSuper, stop rising classes right there
+				if ([props rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
+				{
+					break;
+				}
 			}
 		}
 		//make sure none of the superclasses this inherited from declared a NSRNoCarryFromSuper

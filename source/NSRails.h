@@ -124,7 +124,7 @@
 #define NSRNoCarryFromSuper			_NSR_NO_SUPER_
 #define _NSRNoCarryFromSuper_STR	_MAKE_STR(_NSR_NO_SUPER_)
 
-#define NSRailsSetModelName(...) CAT(_NSR_Name,N_ARGS(__VA_ARGS__))(__VA_ARGS__)
+#define NSRailsUseModelName(...) CAT(_NSR_Name,N_ARGS(__VA_ARGS__))(__VA_ARGS__)
 #define NSRailsUseDefaultModelName _NSR_Name2(nil,nil)
 #define _NSR_Name1(x) \
 + (NSString*) NSRailsModelName { return x; }
@@ -132,7 +132,7 @@
 + (NSString*) NSRailsModelName { return x; } \
 + (NSString*) NSRailsModelNameWithPlural { return y; }
 
-#define NSRailsSetConfig(...) CAT(_NSR_Config,N_ARGS(__VA_ARGS__))(__VA_ARGS__)
+#define NSRailsUseConfig(...) CAT(_NSR_Config,N_ARGS(__VA_ARGS__))(__VA_ARGS__)
 #define NSRailsUseDefaultConfig \
 + (NSRConfig *) NSRailsSetConfigAuth { return [NSRConfig defaultConfig]; }
 #define _NSR_Config1(x) \
