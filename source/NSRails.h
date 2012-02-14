@@ -107,14 +107,15 @@
 
 
 //clever macro trick to allow "overloading" macro functions thanks to orj's gist: https://gist.github.com/985501
-#define CAT(a, b) a##b
+#define CAT(a, b) _PRIMITIVE_CAT(a, b)
+#define _PRIMITIVE_CAT(a, b) a##b
 #define N_ARGS(...) N_ARGS_1(__VA_ARGS__, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
-#define N_ARGS_1(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, n, ...) n
+#define N_ARGS_1(...) N_ARGS_2(__VA_ARGS__)
+#define N_ARGS_2(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, n, ...) n
 
 #define NSRStringFromCString(cstr)	[NSString stringWithCString:cstr encoding:NSUTF8StringEncoding]
 // adding a # before va_args will simply make its contents a cstring
 #define _MAKE_STR(...)	NSRStringFromCString(#__VA_ARGS__)
-
 
 //macro definitions
 #define NSRailsify(...) \
