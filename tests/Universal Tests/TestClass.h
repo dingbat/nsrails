@@ -10,4 +10,9 @@
 
 @interface TestClass : NSRailsModel
 
+@property (nonatomic) int primitiveAttr;
+@property (nonatomic, strong) NSString *myID;
+@property (nonatomic, strong) NSString *attr1;
+@property (nonatomic, strong) NSString *attr2;
+
 @end

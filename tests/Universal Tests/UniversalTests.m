@@ -92,6 +92,11 @@
 	NSRailsAssertProperties(@"modelID, r_gchild_rAttr", [STRebelliousGrandchildOfRebellious class]);
 }
 
+- (void) test_invalid_railsify
+{
+	NSRailsAssertProperties(@"modelID, attr1", [TestClass class]);
+}
+
 #define NSRTestRelevantConfigURL(x,y) GHAssertEqualStrings([NSRailsModel getRelevantConfig].appURL, x, y)
 
 - (void) test_nested_config_contexts

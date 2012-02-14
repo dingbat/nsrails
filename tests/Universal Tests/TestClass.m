@@ -9,5 +9,7 @@
 #import "TestClass.h"
 
 @implementation TestClass
+@synthesize primitiveAttr, myID, attr1, attr2;
+NSRailsify (primitiveAttr, modelID -x, myID=id, nonexistent, attr1=hello, attr2=hello)
 
 @end
