@@ -1,4 +1,6 @@
-h2. NSRails
+!http://i.imgur.com/a74KO.png(NSRails)!:https://github.com/dingbat/nsrails/wiki/Getting-Started
+
+***
 
 Welcome! NSRails is a light-weight Objective-C library to make interfacing with a Rails back-end easy.
 
