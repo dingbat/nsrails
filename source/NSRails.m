@@ -19,6 +19,8 @@
 //tie modelID to rails property id
 #define NSRAILS_BASE_PROPS @"modelID=id"
 
+//this will be the marker for the propertyEquivalents dictionary if there's no explicit equivalence set
+#define NSRNoEquivalentMarker @""
 
 @interface NSRailsModel (internal)
 
@@ -102,7 +104,7 @@
 	return finalProperties;
 }
 
-//purely for testing purposes
+//purely for testing purposes - never used otherwise
 - (NSString *) listOfSendableProperties
 {
 	NSMutableString *str = [NSMutableString string];
@@ -171,6 +173,41 @@
 	else
 	{
 		return [NSRConfig defaultConfig];
+	}
+}
+
+- (void) addPropertyAsSendable:(NSString *)prop equivalent:(NSString *)equivalent
+{
+	//for sendable, we can only have ONE property which per Rails attribute which is marked as sendable
+	//  (otherwise, which property's value should we stick in the json?)
+	
+	//so, see if there are any other properties defined so far with the same Rails equivalent that are marked as sendable
+	NSArray *objs = [propertyEquivalents allKeysForObject:equivalent];
+	NSMutableArray *sendables = [NSMutableArray arrayWithObject:prop];
+	for (NSString *sendable in objs)
+	{
+		if ([sendableProperties indexOfObject:sendable] != NSNotFound)
+			[sendables addObject:sendable];
+	}
+	//greater than 1 cause we're including this property
+	if (equivalent && sendables.count > 1)
+	{
+		if ([equivalent isEqualToString:@"id"])
+		{
+#ifdef NSRLogErrors
+			NSLog(@"NSR Warning: Obj-C property %@ (class %@) found to set equivalence with 'id'. This is fine for retrieving but should not be marked as sendable. Ignoring this property on send.", prop, NSStringFromClass([self class]));
+#endif
+		}
+		else
+		{
+#ifdef NSRLogErrors
+			NSLog(@"NSR Warning: Multiple Obj-C properties marked as sendable (%@) found pointing to the same Rails attribute ('%@'). Only using data from the first Obj-C property listed. Please fix by only having one sendable property per Rails attribute (you can make the others retrieve-only with the -r flag).", sendables, equivalent);
+#endif
+		}
+	}
+	else
+	{
+		[sendableProperties addObject:prop];
 	}
 }
 
@@ -261,7 +298,7 @@
 				NSString *str = [elements objectAtIndex:i];
 				//remove any whitespace along with trailing NSRNoCarryFromSuper's to not screw anything up
 				NSString *prop = [[str stringByTrimmingCharactersInSet:wn] stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
-				
+								
 				if (prop.length > 0)
 				{
 					if ([prop rangeOfString:@"*"].location != NSNotFound)
@@ -288,6 +325,15 @@
 						continue;
 					}
 					
+					NSString *options = [opSplit lastObject];
+					//if it was marked exclude, add to exclude list in case * was declared, and skip over anything else
+					if (opSplit.count > 1 && [options rangeOfString:@"x"].location != NSNotFound)
+					{
+						[exclude addObject:prop];
+						continue;
+					}
+					
+					//check to see if the listed property even exists
 					NSString *ivarType = [self getPropertyType:prop];
 					if (!ivarType)
 					{
@@ -297,6 +343,7 @@
 						continue;
 					}
 					
+					//make sure that the property type is not a primitive
 					NSString *primitive = [self propertyIsPrimitive:prop];
 					if (primitive)
 					{
@@ -306,32 +353,40 @@
 						continue;
 					}
 					
-					NSString *options = [opSplit lastObject];
+					//see if there are any = declared
+					NSString *equivalent = nil;
+					if (eqSplit.count > 1)
+					{
+						//set the equivalence to the last element after the =
+						equivalent = [[eqSplit lastObject] stringByTrimmingCharactersInSet:wn];
+						
+						[propertyEquivalents setObject:equivalent forKey:prop];
+					}
+					else
+					{
+						//if no property explicitly set, make it NSRNoEquivalentMarker
+						//later on we'll see if automaticallyCamelize is on for the config and get the equivalence accordingly
+						[propertyEquivalents setObject:NSRNoEquivalentMarker forKey:prop];
+					}
+					
 					if (opSplit.count > 1)
 					{
-						//if it was marked exclude, add to exclude list in case * was declared
-						if ([options rangeOfString:@"x"].location != NSNotFound)
-						{
-							[exclude addObject:prop];
-							continue;
-						}
-						
 						//if any of these flags exist, add to appropriate category
-						if ([options rangeOfString:@"s"].location != NSNotFound)
-							[sendableProperties addObject:prop];
 						if ([options rangeOfString:@"r"].location != NSNotFound)
 							[retrievableProperties addObject:prop];
 						if ([options rangeOfString:@"e"].location != NSNotFound)
 							[encodeProperties addObject:prop];
 						if ([options rangeOfString:@"d"].location != NSNotFound)
 							[decodeProperties addObject:prop];
+						if ([options rangeOfString:@"s"].location != NSNotFound)
+							[self addPropertyAsSendable:prop equivalent:equivalent];
 					}
 					
 					//if no options are defined or some are but neither -s nor -r are defined, by default add sendable+retrievable
 					if (opSplit.count == 1 ||
 						([options rangeOfString:@"s"].location == NSNotFound && [options rangeOfString:@"r"].location == NSNotFound))
 					{
-						[sendableProperties addObject:prop];
+						[self addPropertyAsSendable:prop equivalent:equivalent];
 						[retrievableProperties addObject:prop];
 					}
 					
@@ -386,22 +441,6 @@
 							}
 						}
 					}
-					
-					//see if there are any = declared
-					NSString *equivalent = prop;
-					if (eqSplit.count > 1)
-					{
-						//set the equivalence to the last element after the =
-						equivalent = [[eqSplit lastObject] stringByTrimmingCharactersInSet:wn];
-						
-						[propertyEquivalents setObject:equivalent forKey:prop];
-					}
-					else
-					{
-						//if no property explicitly set, make it blank
-						//later on we'll see if automaticallyCamelize is on for the config and get the equivalence accordingly
-						[propertyEquivalents setObject:@"" forKey:prop];
-					}
 				}
 			}
 
@@ -442,11 +481,15 @@
 #pragma mark -
 #pragma mark Internal NSR stuff
 
+//overload NSObject's description method to be a bit more, hm... descriptive
+//will return the latest Rails dictionary (hash) retrieved
 - (NSString *) description
 {
 	return [attributes description];
 }
 
+//overloads the JSON NSObject category -- will turn it into a JSON string
+//includes any nested models (which the json framework can't do)
 - (NSString *) JSONRepresentation
 {
 	return [self JSONRepresentation:nil];
@@ -467,7 +510,7 @@
 
 - (id) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
 {
-	//make a new class to be entered for this property/array (we can assume it subclasses RM)
+	//make a new class to be entered for this property/array (we can assume it subclasses NSRailsModel)
 	NSRailsModel *model = [[NSClassFromString(classN) alloc] init];
 	if (!model)
 	{
@@ -597,7 +640,7 @@
 	for (NSString *objcProperty in retrievableProperties)
 	{
 		NSString *railsEquivalent = [propertyEquivalents objectForKey:objcProperty];
-		if (railsEquivalent.length == 0)
+		if ([railsEquivalent isEqualToString:NSRNoEquivalentMarker])
 		{
 			//means there was no equivalence defined.
 			//if config supports underscoring and camelizing, guess the rails equivalent by underscoring
@@ -625,7 +668,7 @@
 			if (val)
 			{
 				NSString *nestedClass = [[nestedModelProperties objectForKey:objcProperty] toClassName];
-				//instantiate it as the class specified in NSRailsProperties
+				//instantiate it as the class specified in NSRailsify
 				if (nestedClass)
 				{
 					//if the JSON conversion returned an array for the value, instantiate each element
@@ -639,7 +682,7 @@
 						}
 						val = array;
 					}
-					//if it's not an arry and just a dict, make a new class based on that dict
+					//if it's not an array and just a dict, make a new class based on that dict
 					else
 					{
 						val = [self makeRelevantModelFromClass:nestedClass basedOn:[dict objectForKey:railsEquivalent]];
@@ -665,7 +708,7 @@
 		NSString *railsEquivalent = [propertyEquivalents objectForKey:objcProperty];
 		
 		//if the equivalence is blank, means there was none explicitly set
-		if (railsEquivalent.length == 0)
+		if ([railsEquivalent isEqualToString:NSRNoEquivalentMarker])
 		{
 			//if automaticallyUnderscoreAndCamelize for this config, use underscore+lowercase'd version of it
 			if ([[self class] getRelevantConfig].automaticallyUnderscoreAndCamelize)
@@ -699,23 +742,9 @@
 		{
 			if ([nestedModelProperties objectForKey:objcProperty] && !null) //if its null/empty(for arrays), dont append _attributes
 				railsEquivalent = [railsEquivalent stringByAppendingString:@"_attributes"];
+			
 			//check to see if it was already set (ie, there are multiple properties pointing to the same rails attr)
-			if ([dict objectForKey:railsEquivalent])
-			{
-				if ([railsEquivalent isEqualToString:@"id"])
-				{
-#ifdef NSRLogErrors
-					NSLog(@"NSR Warning: Obj-C property %@ (class %@) found to set equivalence with 'id'. this is fine for retrieving but should not be marked as sendable. Ignoring this property on send.", objcProperty, NSStringFromClass([self class]));
-#endif
-				}
-				else
-				{
-#ifdef NSRLogErrors
-					NSLog(@"NSR Warning: Multiple Obj-C properties found pointing to the same Rails attribute (%@). Only using data from the first Obj-C property listed. Please fix by only having one sendable property per Rails attribute (you can make the others retrieve-only with the -r flag).", railsEquivalent);
-#endif
-				}
-			}
-			else
+			if (![dict objectForKey:railsEquivalent])
 			{
 				[dict setObject:val forKey:railsEquivalent];
 			}
@@ -734,7 +763,7 @@
 {
 	if (!json)
 	{
-		NSLog(@"NSR Warning: Can't set attributes to nil JSON");
+		NSLog(@"NSR Warning: Can't set attributes to nil JSON.");
 		return NO;
 	}
 	
