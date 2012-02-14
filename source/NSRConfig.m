@@ -174,6 +174,10 @@ static NSMutableArray *overrideConfigStack = nil;
 				 //get result from response data
 				 NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
 				 
+#ifndef NSRCompileWithARC
+				 [rawResult autorelease];
+#endif
+				 
 				 //see if there's an error from this response using this helper method
 				 NSError *railsError = [self errorForResponse:rawResult statusCode:[(NSHTTPURLResponse *)response statusCode]];
 				 
@@ -203,6 +207,10 @@ static NSMutableArray *overrideConfigStack = nil;
 		//get result from response data
 		NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
 		
+#ifndef NSRCompileWithARC
+		[rawResult autorelease];
+#endif
+		
 		//see if there's an error from this response using this helper method
 		NSError *railsError = [self errorForResponse:rawResult statusCode:[(NSHTTPURLResponse *)response statusCode]];
 		if (railsError)
@@ -219,7 +227,7 @@ static NSMutableArray *overrideConfigStack = nil;
 }
 
 
-- (NSError *) errorForResponse:(NSString *)response statusCode:(int)statusCode
+- (NSError *) errorForResponse:(NSString *)response statusCode:(NSInteger)statusCode
 {
 	BOOL err = (statusCode < 0 || statusCode >= 400);
 	
@@ -310,6 +318,11 @@ static NSMutableArray *overrideConfigStack = nil;
 		
 		[request setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];
  	}
+	
+#ifndef NSRCompileWithARC
+	[request autorelease];
+#endif
+	
 	return request;
 }
 
@@ -342,7 +355,7 @@ static NSMutableArray *overrideConfigStack = nil;
 - (void) end
 {
 	//start at the end of the stack
-	for (int i = overrideConfigStack.count-1; i >= 0; i--)
+	for (NSInteger i = overrideConfigStack.count-1; i >= 0; i--)
 	{
 		//see if any element matches this config
 		NSRConfigStackElement *c = [overrideConfigStack objectAtIndex:i];

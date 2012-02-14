@@ -58,7 +58,7 @@
 //Highly recommended that you use this on your result string to check for errors
 //You can also override this on its own if you have server-specific errors you want handled
 
-- (NSError *) errorForResponse:(NSString *)response statusCode:(int)statusCode;
+- (NSError *) errorForResponse:(NSString *)response statusCode:(NSInteger)statusCode;
 
 
 //Will return an NSURLRequest object with the given params

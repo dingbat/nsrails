@@ -983,8 +983,8 @@
 
 #pragma mark Get specific object (class-level)
 
-+ (id) getRemoteObjectWithID:(int)mID	{ return [self getRemoteObjectWithID:mID error:nil]; }
-+ (id) getRemoteObjectWithID:(int)mID error:(NSError **)error
++ (id) getRemoteObjectWithID:(NSInteger)mID	{ return [self getRemoteObjectWithID:mID error:nil]; }
++ (id) getRemoteObjectWithID:(NSInteger)mID error:(NSError **)error
 {
 	//instantiate the class
 	NSRailsModel *obj = [[[self class] alloc] init];
@@ -1002,7 +1002,7 @@
 
 	return obj;
 }
-+ (void) getRemoteObjectWithID:(int)mID async:(void (^)(id object, NSError *error))completionBlock
++ (void) getRemoteObjectWithID:(NSInteger)mID async:(void (^)(id object, NSError *error))completionBlock
 {
 	//see comments for previous method
 	NSRailsModel *obj = [[[self class] alloc] init];

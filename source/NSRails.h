@@ -47,7 +47,7 @@
 - (BOOL) destroyRemote;
 
 + (NSArray *) getAllRemote;
-+ (id) getRemoteObjectWithID:(int)mID;
++ (id) getRemoteObjectWithID:(NSInteger)mID;
 
 /////////////////////////
 //sync
@@ -57,7 +57,7 @@
 - (BOOL) destroyRemote:(NSError **)error;
 
 + (NSArray *) getAllRemote:(NSError **)error;
-+ (id) getRemoteObjectWithID:(int)mID error:(NSError **)error;
++ (id) getRemoteObjectWithID:(NSInteger)mID error:(NSError **)error;
 
 ///////////////////////////
 //async
@@ -67,7 +67,7 @@
 - (void) destroyRemoteAsync:(void(^)(NSError *error))completionBlock;
 
 + (void) getAllRemoteAsync:(void(^)(NSArray *allRemote, NSError *error))completionBlock;
-+ (void) getRemoteObjectWithID:(int)mID async:(void(^)(id object, NSError *error))completionBlock;
++ (void) getRemoteObjectWithID:(NSInteger)mID async:(void(^)(id object, NSError *error))completionBlock;
 
 
 ///////////////////////////////////////

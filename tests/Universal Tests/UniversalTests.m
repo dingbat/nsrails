@@ -1,12 +1,11 @@
 //
-//  MyTest.m
+//  UniversalTests.m
 //  NSRails
 //
 //  Created by Dan Hassin on 1/29/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
-
-#import <GHUnitIOS/GHUnit.h> 
+ 
 #import "NSRConfig.h"
 #import "NSRails.h"
 #import "InheritanceTestClasses.h"
@@ -29,10 +28,10 @@
 
 @end
 
-@interface Test : GHTestCase
+@interface UniversalTests : GHTestCase
 @end
 
-@implementation Test
+@implementation UniversalTests
 
 - (void) test_model_and_config_inheritance
 {

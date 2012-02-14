@@ -4,12 +4,12 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>NSRails.xcscheme</key>
+		<key>Mac OS Tests.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>2</integer>
 		</dict>
-		<key>Tests.xcscheme</key>
+		<key>iPhone Tests.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>1</integer>
@@ -17,6 +17,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>5914244014EAFCEE00481815</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>59E3187314E9CD8700B0FC39</key>
 		<dict>
 			<key>primary</key>

@@ -149,7 +149,7 @@ static char encodingTable[64] = {
 #pragma mark -
 
 - (BOOL) hasPrefix:(NSData *) prefix {
-	unsigned int length = [prefix length];
+	unsigned int length = (UInt32)[prefix length];
 	if( ! prefix || ! length || [self length] < length ) return NO;
 	return ( memcmp( [self bytes], [prefix bytes], length ) == 0 );
 }
