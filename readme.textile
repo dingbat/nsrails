@@ -5,10 +5,10 @@ Welcome! NSRails is a light-weight Objective-C library to make interfacing with 
 
 h3. What can NSRails do?
 
-NSRails builds ActiveResource support straight into your Objective-C models, meaning CRUD operations and others can be called seamlessly via Objective-C methods.
+NSRails builds ActiveResource support straight into your Objective-C models, meaning CRUD operations and others can be called seamlessly via Objective-C methods. For example, all it takes to create a new user from Objective-C is <code>[user createRemote];</code> (after setting, say, a <code>username</code> property) and it'll go straight to your Rails server.
 
 It's extremely simple to use but also flexible and powerful. Some features:
-* Keep properties of your choice in-sync with Rails
+* Keep models and properties of your choice in-sync with Rails
 * Support for nested models
 * Support for basic HTTP authentication
 * Asynchronous requests
@@ -20,10 +20,8 @@ Add the source folder into your Xcode project, and follow these "three easy step
 
 For more details:
 * See the "Wiki":https://github.com/dingbat/nsrails/wiki
-* Documentation and screencast coming soon (promise!)
+* Screencase and formal documentation coming soon (promise!)
 
 h3. What's in the sources?
 
-The main class in NSRails is "NSRailsModel":https://github.com/dingbat/nsrails/wiki/NSRailsModel (defined in NSRails.h). Also included is an "NSRConfig":https://github.com/dingbat/nsrails/wiki/NSRConfig class for global settings.
-
-NSRails also makes use of the Objective-C JSON framework. The "ObjectiveResource":https://github.com/yfactorial/objectiveresource library was largely the inspiration for NSRails, and it was sad to see it lose support.
+The main class in NSRails is "NSRailsModel":https://github.com/dingbat/nsrails/wiki/NSRailsModel (defined in NSRails.h). Also included is the "NSRConfig":https://github.com/dingbat/nsrails/wiki/NSRConfig class for server settings. NSRails also makes use of a Objective-C JSON framework. And finally, I have to give credit to "ObjectiveResource":https://github.com/yfactorial/objectiveresource, whose library was largely the inspiration for NSRails.
