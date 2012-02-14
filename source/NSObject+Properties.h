@@ -22,4 +22,8 @@
 //returns SEL for the getter of given property
 - (SEL) getPropertyGetter:(NSString *)property;
 
+//returns nil if property is not primitive
+//otherwise, returns property type (int, double, float, etc)
+- (NSString *) propertyIsPrimitive:(NSString *)property;
+
 @end

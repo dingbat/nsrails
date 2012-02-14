@@ -25,6 +25,8 @@
 
 + (NSRConfig *) getRelevantConfig;
 
+- (NSString *) listOfRelevantProperties;
+
 @end
 
 @interface Test : GHTestCase
@@ -60,32 +62,35 @@
 	GHAssertEqualStrings(@"r_gchild_r", [STRebelliousGrandchildOfRebellious getModelName], nil);
 }
 
+#define NSRailsAssertProperties(props, class)	GHAssertEqualStrings(props,[[class new] listOfRelevantProperties], nil)
+
 - (void) test_property_inheritance
 {
 	//this is just normal
-	GHAssertEqualStrings(@"modelID=id, parent attributes", [STParent railsProperties], nil);
+	NSRailsAssertProperties(@"modelID, parentAttr", [STParent class]);
 	
 	
 	//complacent child
 	//is complacent (doesn't explicitly define NSRNoCarryFromSuper), so will inherit parent's attributes too
-	GHAssertEqualStrings(@"modelID=id, child attributes, parent attributes", [STChild railsProperties], nil);
+	//this is simultaneously a test that the "*" from Parent isn't carried over - child has 2 properties and only one is defined
+	NSRailsAssertProperties(@"modelID, childAttr1, parentAttr", [STChild class]);
 	
 	//is complacent, so should inherit everything! (parent+child), as well as its own
-	GHAssertEqualStrings(@"modelID=id, gchild attributes, child attributes, parent attributes", [STGrandchild railsProperties], nil);
+	NSRailsAssertProperties(@"modelID, childAttr1, gchildAttr, parentAttr", [STGrandchild class]);
 	
 	//is rebellious, so should inherit nothing! (only its own)
-	GHAssertEqualStrings(@"modelID=id, _NSR_NO_SUPER_, r_gchild attributes", [STRebelliousGrandchild railsProperties], nil);
+	NSRailsAssertProperties(@"modelID, r_gchildAttr", [STRebelliousGrandchild class]);
 	
 	
 	//rebellious child
 	//is rebellious, so should inherit nothing (only be using whatever attributes defined by itself)
-	GHAssertEqualStrings(@"modelID=id, _NSR_NO_SUPER_, r_child attributes", [STRebelliousChild railsProperties], nil);
+	NSRailsAssertProperties(@"modelID, r_childAttr", [STRebelliousChild class]);
 	
 	//is complacent, so should inherit everything until it sees the _NSR_NO_SUPER_ (which it omits), meaning won't inherit Parent
-	GHAssertEqualStrings(@"modelID=id, gchild_r attributes, , r_child attributes", [STGrandchildOfRebellious railsProperties], nil);
+	NSRailsAssertProperties(@"modelID, gchild_rAttr, r_childAttr", [STGrandchildOfRebellious class]);
 	
 	//is rebellious, so should inherit nothing (only be using whatever attributes defined by itself)
-	GHAssertEqualStrings(@"modelID=id, _NSR_NO_SUPER_, r_gchild_r attributes", [STRebelliousGrandchildOfRebellious railsProperties], nil);
+	NSRailsAssertProperties(@"modelID, r_gchild_rAttr", [STRebelliousGrandchildOfRebellious class]);
 }
 
 #define NSRTestRelevantConfigURL(x,y) GHAssertEqualStrings([NSRailsModel getRelevantConfig].appURL, x, y)

@@ -102,6 +102,17 @@
 	return finalProperties;
 }
 
+//purely for testing purposes
+- (NSString *) listOfRelevantProperties
+{
+	NSMutableString *str = [NSMutableString string];
+	for (NSString *property in sendableProperties)
+	{
+		[str appendFormat:@"%@, ",property];
+	}
+	return [str substringToIndex:str.length-2];
+}
+
 + (NSString *) getModelName
 {
 	//if defined through NSRailsModelName() then use that instead
@@ -277,6 +288,24 @@
 						continue;
 					}
 					
+					NSString *ivarType = [self getPropertyType:prop];
+					if (!ivarType)
+					{
+#ifdef NSRLogErrors
+						NSLog(@"NSR Warning: Property '%@' declared in NSRailsify for class %@ was not found in this class or in superclasses. Please fix this; element ignored.", prop, NSStringFromClass([self class]));
+#endif
+						continue;
+					}
+					
+					NSString *primitive = [self propertyIsPrimitive:prop];
+					if (primitive)
+					{
+#ifdef NSRLogErrors
+						NSLog(@"NSR Warning: Property '%@' declared in NSRailsify for class %@ was found to be of primitive type '%@' - please use NSNumber*. Element ignored.", prop, NSStringFromClass([self class]), primitive);
+#endif
+						continue;
+					}
+					
 					NSString *options = [opSplit lastObject];
 					if (opSplit.count > 1)
 					{
@@ -333,7 +362,6 @@
 					else
 					{
 						//if no : was declared for this property, check to see if we should link it anyway
-						NSString *ivarType = [self getPropertyType:prop];
 						
 						if ([ivarType isEqualToString:@"NSArray"] ||
 							[ivarType isEqualToString:@"NSMutableArray"])

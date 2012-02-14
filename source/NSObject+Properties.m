@@ -35,17 +35,47 @@
 	return nil;
 }
 
-- (NSString *) getPropertyType:(NSString *)prop
+- (NSString *) getType:(NSString *)prop
 {
 	//get class's ivar for the property
 	Ivar var = class_getInstanceVariable([self class], [prop UTF8String]);
 	if (!var)
 		return nil;
 	
-	NSString *ret = [NSString stringWithCString:ivar_getTypeEncoding(var) encoding:NSUTF8StringEncoding];
+	return [NSString stringWithCString:ivar_getTypeEncoding(var) encoding:NSUTF8StringEncoding];
+}
+
+- (NSString *) propertyIsPrimitive:(NSString *)prop
+{
+	NSDictionary *primitives = [NSDictionary dictionaryWithObjectsAndKeys:
+								@"int", @"i",
+								@"double", @"d",
+								@"float", @"f",
+								@"long", @"l",
+								@"long long", @"q",
+								@"char", @"c",
+								@"short", @"s",
+								@"bool", @"b", nil];
 	
-	//ret will be like @"NSString", so strip "s and @s
-	return [[ret stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
+	//get property type
+	NSString *propType = [self getType:prop];
+	
+	//see if any object comes back for that property type (then it would be a primitive)
+	NSString *primitiveType = [primitives objectForKey:propType];
+	
+	//if nothing, check uppercase too
+	if (!primitiveType)
+		primitiveType = [primitives objectForKey:[propType uppercaseString]];
+
+	return primitiveType;
+}
+
+- (NSString *) getPropertyType:(NSString *)prop
+{
+	NSString *type = [self getType:prop];	
+	
+	//type will be like @"NSString", so strip "s and @s
+	return [[type stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
 }
 
 - (SEL) getProperty:(NSString *)prop attributePrefix:(NSString *)str
