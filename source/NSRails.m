@@ -65,35 +65,41 @@
 
 + (NSString *) railsProperties
 {
-	NSString *base = NSRAILS_BASE_PROPS;
+	//this will be a master list of properties, including all superclasses
+	//start it off with the NSRails base ("modelID=id")
+	NSString *finalProperties = NSRAILS_BASE_PROPS;
 	
-	if ([[self NSRailsProperties] rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
+	BOOL stopInheriting = NO;
+
+	//go up the class hierarchy, starting at self, adding the property list from each class
+	for (Class c = self; (c != [NSRailsModel class] && !stopInheriting); c = [c superclass])
 	{
-		//always want to keep base (modelID) even if nosuper
-		return [base stringByAppendingFormat:@", %@",[self NSRailsProperties]];
-	}
-	else
-	{
-		//go up the class hierarchy, adding the property list from each class
-		for (Class c = self; c != [NSRailsModel class]; c = [c superclass])
-		{
-			if ([c respondsToSelector:@selector(NSRailsProperties)])
+		if ([c respondsToSelector:@selector(NSRailsProperties)])
+		{			
+			//get that class's railsify string (properties)
+			NSString *railsifyString = [c NSRailsProperties];
+			
+			//if that class defines NSRNoCarryFromSuper, mark that we should stop rising classes
+			if ([railsifyString rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
 			{
-				//get those properties and tack them on to our growing string
-				NSString *props = [c NSRailsProperties];
-				base = [base stringByAppendingFormat:@", %@", props];
+				//the for loop condition will fail
+				stopInheriting = YES;
 				
-				//if that class defines NSRNoCarryFromSuper, stop rising classes right there
-				if ([props rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
+				//we strip the flag so that later on, we'll know exactly WHICH class defined the flag.
+				//	otherwise, it'd be tacked on to every subclass.
+				//this is why if this class is evaluating itself here, it shouldn't strip it, to signify that IT defined it
+				if (c != self)
 				{
-					break;
+					railsifyString = [railsifyString stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
 				}
 			}
+
+			//tack the properties for that class onto our big list
+			finalProperties = [finalProperties stringByAppendingFormat:@", %@", railsifyString];
 		}
-		//make sure none of the superclasses this inherited from declared a NSRNoCarryFromSuper
-		//(otherwise it'll screw up the check to see if THIS class wants to do a nosuper)
-		return [base stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
 	}
+	
+	return finalProperties;
 }
 
 + (NSString *) getModelName
