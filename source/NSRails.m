@@ -103,7 +103,7 @@
 }
 
 //purely for testing purposes
-- (NSString *) listOfRelevantProperties
+- (NSString *) listOfSendableProperties
 {
 	NSMutableString *str = [NSMutableString string];
 	for (NSString *property in sendableProperties)

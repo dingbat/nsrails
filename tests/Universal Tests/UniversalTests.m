@@ -24,7 +24,7 @@
 
 + (NSRConfig *) getRelevantConfig;
 
-- (NSString *) listOfRelevantProperties;
+- (NSString *) listOfSendableProperties;
 
 @end
 
@@ -61,7 +61,7 @@
 	GHAssertEqualStrings(@"r_gchild_r", [STRebelliousGrandchildOfRebellious getModelName], nil);
 }
 
-#define NSRailsAssertProperties(props, class)	GHAssertEqualStrings(props,[[class new] listOfRelevantProperties], nil)
+#define NSRailsAssertProperties(props, class)	GHAssertEqualStrings(props,[[class new] listOfSendableProperties], nil)
 
 - (void) test_property_inheritance
 {
