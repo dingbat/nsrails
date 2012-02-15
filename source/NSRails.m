@@ -900,7 +900,7 @@
 - (BOOL) createRemote:(NSError **)error
 {
 	NSString *jsonBody = [self JSONRepresentation:error];
-	if (*error)
+	if (!jsonBody)
 		return NO;
 	
 	NSString *jsonResponse = [[self class] makeRequest:@"POST" requestBody:jsonBody method:nil error:error];
@@ -936,7 +936,7 @@
 		return NO;
 	
 	NSString *jsonBody = [self JSONRepresentation:error];
-	if (*error)
+	if (!jsonBody)
 		return NO;
 	
 	//makeRequest will actually return a result string, return if it's not nil (!! = not nil, nifty way to turn object to BOOL)
