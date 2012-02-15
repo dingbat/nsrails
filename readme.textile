@@ -4,7 +4,7 @@
 
 Welcome!
 
-NSRails is a light-weight Objective-C library to make interfacing with a Rails back-end easy.
+NSRails is a light-weight Objective-C library to make interfacing with a Rails server incredibly easy.
 
 
 h3. What can NSRails do?
