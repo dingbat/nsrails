@@ -57,11 +57,11 @@ static NSMutableArray *overrideConfigStack = nil;
 	//singleton
 	
 	if (!defaultConfig) 
-		[self setDefaultConfig:[[NSRConfig alloc] init]];
+		[self setAsDefaultConfig:[[NSRConfig alloc] init]];
 	return defaultConfig;
 }
 
-+ (void) setDefaultConfig:(NSRConfig *)config
++ (void) setAsDefaultConfig:(NSRConfig *)config
 {
 	defaultConfig = config;
 }

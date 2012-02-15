@@ -31,7 +31,7 @@
 @property (nonatomic) BOOL automaticallyUnderscoreAndCamelize;
 
 + (NSRConfig *) defaultConfig;
-+ (void) setDefaultConfig:(NSRConfig *)config;
++ (void) setAsDefaultConfig:(NSRConfig *)config;
 
 - (id) initWithAppURL:(NSString *)url;
 
