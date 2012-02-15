@@ -837,11 +837,11 @@
 
 - (NSString *) makeGETRequestWithMethod:(NSString *)method error:(NSError **)error
 {
-	return [self makeRequest:@"GET" requestBody:nil method:[self routeForInstanceMethod:method] error:error];
+	return [self makeRequest:@"GET" requestBody:nil method:method error:error];
 }
 - (void) makeGETRequestWithMethod:(NSString *)method async:(void(^)(NSString *result, NSError *error))completionBlock
 {
-	[self makeRequest:@"GET" requestBody:nil method:[self routeForInstanceMethod:method] async:completionBlock];
+	[self makeRequest:@"GET" requestBody:nil method:method async:completionBlock];
 }
 
 
