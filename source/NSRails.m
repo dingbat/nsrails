@@ -72,7 +72,7 @@
 	NSString *finalProperties = NSRAILS_BASE_PROPS;
 	
 	BOOL stopInheriting = NO;
-
+	
 	//go up the class hierarchy, starting at self, adding the property list from each class
 	for (Class c = self; (c != [NSRailsModel class] && !stopInheriting); c = [c superclass])
 	{
@@ -95,7 +95,7 @@
 					railsifyString = [railsifyString stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
 				}
 			}
-
+			
 			//tack the properties for that class onto our big list
 			finalProperties = [finalProperties stringByAppendingFormat:@", %@", railsifyString];
 		}
@@ -298,7 +298,7 @@
 				NSString *str = [elements objectAtIndex:i];
 				//remove any whitespace along with trailing NSRNoCarryFromSuper's to not screw anything up
 				NSString *prop = [[str stringByTrimmingCharactersInSet:wn] stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
-								
+				
 				if (prop.length > 0)
 				{
 					if ([prop rangeOfString:@"*"].location != NSNotFound)
@@ -443,23 +443,23 @@
 					}
 				}
 			}
-
+			
 			//if markedAll (a * was encountered somewhere), loop again one more time to add all properties not already listed (*)
 			if (markedAll)
 				onStarIteration = YES;
 		} 
 		while (onStarIteration);
 		
-	// for testing's sake
-//		NSLog(@"-------- %@ ----------",[[self class] getModelName]);
-//		NSLog(@"list: %@",props);
-//		NSLog(@"sendable: %@",sendableProperties);
-//		NSLog(@"retrievable: %@",retrievableProperties);
-//		NSLog(@"NMP: %@",nestedModelProperties);
-//		NSLog(@"eqiuvalents: %@",propertyEquivalents);
-//		NSLog(@"\n");
+		// for testing's sake
+		//		NSLog(@"-------- %@ ----------",[[self class] getModelName]);
+		//		NSLog(@"list: %@",props);
+		//		NSLog(@"sendable: %@",sendableProperties);
+		//		NSLog(@"retrievable: %@",retrievableProperties);
+		//		NSLog(@"NMP: %@",nestedModelProperties);
+		//		NSLog(@"eqiuvalents: %@",propertyEquivalents);
+		//		NSLog(@"\n");
 	}
-
+	
 	return self;
 }
 
@@ -498,7 +498,7 @@
 - (NSString *) JSONRepresentation:(NSError **)e
 {
 	// enveloped meaning with the model name out front, {"user"=>{"name"=>"x", "password"=>"y"}}
-
+	
 	NSDictionary *enveloped = [NSDictionary dictionaryWithObject:[self dictionaryOfRelevantProperties]
 														  forKey:[[self class] getModelName]];
 	
@@ -528,17 +528,76 @@
 	return model;
 }
 
+- (id) getCustomEnDecoding:(BOOL)YESforEncodingNOforDecoding forProperty:(NSString *)prop value:(id)val
+{
+	//check to see the prop is an array
+	BOOL isArray = ([[self getPropertyType:prop] isEqualToString:@"NSArray"] || 
+					[[self getPropertyType:prop] isEqualToString:@"NSMutableArray"]);
+	
+	//if prop is an array, add "Element", so it'll be encodeArrayElement: , otherwise, encodeWhatever:
+	NSString *sel = [NSString stringWithFormat:@"%@%@%@:",YESforEncodingNOforDecoding ? @"encode" : @"decode",[prop toClassName], isArray ? @"Element" : @""];
+	
+	SEL selector = NSSelectorFromString(sel);
+	if ([self respondsToSelector:selector])
+	{
+		id obj = [self performSelector:selector withObject:val];
+		
+		if (YESforEncodingNOforDecoding)
+		{
+			//if encoding, make sure that the result is a JSON-PARSABLE!
+			if (![obj isKindOfClass:[NSArray class]] &&
+				![obj isKindOfClass:[NSDictionary class]] &&
+				![obj isKindOfClass:[NSString class]] &&
+				![obj isKindOfClass:[NSNumber class]])
+			{
+#ifdef NSRLogErrors
+				NSLog(@"NSR Warning: Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return an NSDictionary, NSArray, NSString, or NSNumber here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop, NSStringFromClass([self class]),sel);
+#endif
+			}
+		}
+		
+		//only send back an NSNull object instead of nil if it's on ENcode, since we'll be ENcoding it into JSON, where that's relevant
+		if (!obj && YESforEncodingNOforDecoding)
+		{
+			return [NSNull null];
+		}
+		return obj;
+	}
+	else
+	{
+		//try a "did you mean" without the plurality - maybe user forgot plurality
+		NSString *didYouMean = [NSString stringWithFormat:@"%@%@%@:",YESforEncodingNOforDecoding ? @"encode" : @"decode",[[prop toClassName] substringToIndex:prop.length-1], isArray ? @"Element" : @""];
+		if ([self respondsToSelector:NSSelectorFromString(didYouMean)])
+		{
+#ifdef NSRLogErrors
+			NSLog(@"NSR Warning: Trying to %@code property '%@' in class '%@'. Found selector %@ but this isn't the right format. Make sure it's exactly \"%@code\"+\"property name ('%@')\" + \"Element:\", ie, proper format is %@. Please fix.",YESforEncodingNOforDecoding ? @"en" : @"de", prop, NSStringFromClass([self class]),didYouMean,YESforEncodingNOforDecoding ? @"en" : @"de",prop,sel);
+#endif
+		}
+	}
+	return nil;
+}
+
 - (id) objectForProperty:(NSString *)prop representation:(id)rep
 {
 	//if object is marked as decodable, use the decode method
 	if ([decodeProperties indexOfObject:prop] != NSNotFound)
 	{
-		NSString *sel = [NSString stringWithFormat:@"decode%@:",[prop toClassName]];
-		SEL selector = NSSelectorFromString(sel);
-		if ([self respondsToSelector:selector])
+		//if object is an array, go through each and do decodable
+		if ([rep isKindOfClass:[NSArray class]])
 		{
-			id obj = [self performSelector:selector withObject:rep];
-			return obj;
+			NSMutableArray *newArray = [NSMutableArray array];
+			for (id object in rep)
+			{
+				id decodedElement = [self getCustomEnDecoding:NO forProperty:prop value:object];
+				if (decodedElement)
+					[newArray addObject:decodedElement];
+			}
+			return newArray;
+		}
+		//otherwise, return whatever is in decodable
+		else
+		{
+			return [self getCustomEnDecoding:NO forProperty:prop value:rep];
 		}
 	}
 	//if the object is of class NSDate and the representation in JSON is a string, automatically convert it to string
@@ -551,7 +610,7 @@
 		[formatter setDateFormat:format];
 		
 		NSDate *date = [formatter dateFromString:rep];
-
+		
 		if (!date)
 		{
 #ifdef NSRLogErrors
@@ -575,6 +634,8 @@
 	SEL sel = [self getPropertyGetter:prop];
 	if ([self respondsToSelector:sel])
 	{
+		BOOL encodable = [encodeProperties indexOfObject:prop] != NSNotFound;
+		
 		id val = [self performSelector:sel];
 		
 		//see if this property actually links to a custom NSRailsModel subclass
@@ -587,30 +648,34 @@
 				//go through every nested object in the array
 				for (int i = 0; i < [val count]; i++)
 				{
-					//use the NSRailsModel instance method -dictionaryOfRelevantProperties to get that object back in dictionary form
-					id obj = [[val objectAtIndex:i] dictionaryOfRelevantProperties];
-					if (!obj)
+					id element = [val objectAtIndex:i];
+					
+					id encodedObj;
+					//if array is defined as encodable, encode each element
+					if (encodable)
 					{
-						obj = [NSNull null];
+						encodedObj = [self getCustomEnDecoding:YES forProperty:prop value:element];
 					}
-					[new addObject:obj];
+					//otherwise, use the NSRailsModel dictionaryOfRelevantProperties method to get that object in dictionary form
+					if (!encodable || !encodedObj)
+					{
+						encodedObj = [element dictionaryOfRelevantProperties];
+					}
+					
+					[new addObject:encodedObj];
 				}
 				return new;
 			}
 			//otherwise, make that nested object a dictionary through NSRailsModel
 			return [val dictionaryOfRelevantProperties];
 		}
-				
+		
 		//if NOT linked property, if its declared as encodable, return encoded version
-		if ([encodeProperties indexOfObject:prop] != NSNotFound)
+		if (encodable)
 		{
-			NSString *sel = [NSString stringWithFormat:@"encode%@:",[prop toClassName]];
-			SEL selector = NSSelectorFromString(sel);
-			if ([self respondsToSelector:selector])
-			{
-				id obj = [self performSelector:selector withObject:val];
+			id obj = [self getCustomEnDecoding:YES forProperty:prop value:val];
+			if (obj)
 				return obj;
-			}
 		}
 		//if the object is of class NSDate, we need to automatically convert it to string for the JSON framework to handle correctly
 		else if ([val isKindOfClass:[NSDate class]])
@@ -668,8 +733,8 @@
 			if (val)
 			{
 				NSString *nestedClass = [[nestedModelProperties objectForKey:objcProperty] toClassName];
-				//instantiate it as the class specified in NSRailsify
-				if (nestedClass)
+				//instantiate it as the class specified in NSRailsify if it hadn't already been custom-decoded
+				if (nestedClass && [decodeProperties indexOfObject:objcProperty] == NSNotFound)
 				{
 					//if the JSON conversion returned an array for the value, instantiate each element
 					if ([val isKindOfClass:[NSArray class]])
@@ -725,8 +790,9 @@
 		id val = [self representationOfObjectForProperty:objcProperty];
 		BOOL null = !val;
 		if (!val && ![railsEquivalent isEqualToString:@"id"]) 
-			//if ID is null, simply bypass it, don't stick in "null" - it could be for create
+			//if it's a nil value but ID is null, simply bypass it, don't stick in "null" - it could be for create
 		{
+			//this is if the value is nil
 			NSString *string = [self getPropertyType:objcProperty];
 			if ([string isEqualToString:@"NSArray"] || [string isEqualToString:@"NSMutableArray"])
 			{
@@ -740,6 +806,19 @@
 		}
 		if (val)
 		{
+			//if it's an array, remove any null values (wouldn't make sense)
+			if ([val isKindOfClass:[NSArray class]])
+			{
+				for (int i = 0; i < [val count]; i++)
+				{
+					if ([[val objectAtIndex:i] isKindOfClass:[NSNull class]])
+					{
+						[val removeObjectAtIndex:i];
+						i--;
+					}
+				}
+			}
+			
 			if ([nestedModelProperties objectForKey:objcProperty] && !null) //if its null/empty(for arrays), dont append _attributes
 				railsEquivalent = [railsEquivalent stringByAppendingString:@"_attributes"];
 			
@@ -755,7 +834,7 @@
 	{
 		[dict setObject:[NSNumber numberWithBool:destroyOnNesting] forKey:@"_destroy"];
 	}
-
+	
 	return dict;
 }
 
@@ -808,7 +887,6 @@
 		//eg, ([NSRailsModel makeGET:@"hello"] => myapp.com/hello)
 		route = method;
 	}
-	
 	return route;
 }
 
@@ -890,7 +968,7 @@
 		[NSRConfig crashWithError:e];
 		return NO;
 	}
-
+	
 	return YES;
 }
 
@@ -919,11 +997,11 @@
 	else
 	{
 		[[self class] makeRequest:@"POST" requestBody:jsonBody method:nil async:^(NSString *result, NSError *error) 
-		{
-			if (result)
-				[self setAttributesAsPerJSON:result];
-			completionBlock(error);
-		}];
+		 {
+			 if (result)
+				 [self setAttributesAsPerJSON:result];
+			 completionBlock(error);
+		 }];
 	}
 }
 
@@ -960,9 +1038,9 @@
 		else
 		{
 			[self makeRequest:@"PUT" requestBody:jsonBody method:nil async:^(NSString *result, NSError *error) 
-			{
-				completionBlock(error);
-			}];
+			 {
+				 completionBlock(error);
+			 }];
 		}
 	}
 }
@@ -1003,11 +1081,11 @@
 - (void) getRemoteLatestAsync:(void (^)(NSError *error))completionBlock
 {
 	[self makeGETRequestWithMethod:nil async:^(NSString *result, NSError *error) 
-	{
-		if (result)
-			[self setAttributesAsPerJSON:result];
-		completionBlock(error);
-	}];
+	 {
+		 if (result)
+			 [self setAttributesAsPerJSON:result];
+		 completionBlock(error);
+	 }];
 }
 
 #pragma mark Get specific object (class-level)
@@ -1028,7 +1106,7 @@
 #ifndef NSRCompileWithARC
 	[obj autorelease];
 #endif
-
+	
 	return obj;
 }
 + (void) getRemoteObjectWithID:(NSInteger)mID async:(void (^)(id object, NSError *error))completionBlock
@@ -1116,18 +1194,18 @@
 + (void) getAllRemoteAsync:(void (^)(NSArray *, NSError *))completionBlock
 {
 	[self makeGETRequestWithMethod:nil async:^(NSString *result, NSError *error) 
-	{
-		if (error || !result)
-		{
-			completionBlock(nil, error);
-		}
-		else
-		{
-			//make an array from the result returned async, and we can reuse the same error dereference (since we know it's nil)
-			NSArray *array = [self arrayOfModelsFromJSON:result error:&error];
-			completionBlock(array,error);
-		}
-	}];
+	 {
+		 if (error || !result)
+		 {
+			 completionBlock(nil, error);
+		 }
+		 else
+		 {
+			 //make an array from the result returned async, and we can reuse the same error dereference (since we know it's nil)
+			 NSArray *array = [self arrayOfModelsFromJSON:result error:&error];
+			 completionBlock(array,error);
+		 }
+	 }];
 }
 
 
