@@ -36,60 +36,60 @@
 - (void) test_model_and_config_inheritance
 {
 	//was explicitly set to "parent"
-	GHAssertEqualStrings(@"parent", [STParent getModelName], nil);
+	GHAssertEqualStrings(@"parent", [Parent getModelName], nil);
 	
 	
 	//complacent child
 	//is complacent (doesn't explicitly set NSRailsUseModelName or NSRailsUseDefaultModelName), so will inherit the "parent" from Parent
-	GHAssertEqualStrings(@"parent", [STChild getModelName], nil);
+	GHAssertEqualStrings(@"parent", [Child getModelName], nil);
 	
 	//is complacent (doesn't explicitly set NSRailsUseModelName or NSRailsUseDefaultModelName), so will inherit the "parent" from Child
-	GHAssertEqualStrings(@"parent", [STGrandchild getModelName], nil);
+	GHAssertEqualStrings(@"parent", [Grandchild getModelName], nil);
 	
 	//is not complacent (defines NSRailsUseModelName), as set to "r_grandchild"
-	GHAssertEqualStrings(@"r_gchild", [STRebelliousGrandchild getModelName], nil);
+	GHAssertEqualStrings(@"r_gchild", [RebelliousGrandchild getModelName], nil);
 	
 	
 	//rebellious child
 	//is rebellious (explicitly defines NSRailsUseDefaultModelName for itself, so should be default behavior)
-	GHAssertEqualStrings(@"s_t_rebellious_child", [STRebelliousChild getModelName], nil);
+	GHAssertEqualStrings(@"rebellious_child", [RebelliousChild getModelName], nil);
 	
 	//is complacent (doesn't explicitly set), BUT will inherit default behavior from R.Child, so default behavior
-	GHAssertEqualStrings(@"s_t_grandchild_of_rebellious", [STGrandchildOfRebellious getModelName], nil);
+	GHAssertEqualStrings(@"grandchild_of_rebellious", [GrandchildOfRebellious getModelName], nil);
 	
 	//is rebellious (defines NSRailsUseModelName as"r_r_grandchild"), so it'll use that name
-	GHAssertEqualStrings(@"r_gchild_r", [STRebelliousGrandchildOfRebellious getModelName], nil);
+	GHAssertEqualStrings(@"r_gchild_r", [RebelliousGrandchildOfRebellious getModelName], nil);
 }
 
-#define NSRailsAssertProperties(props, class)	GHAssertEqualStrings(props,[[class new] listOfSendableProperties], nil)
+#define NSRailsAssertProperties(props, class)	GHAssertEqualStrings(props,[[class new] listOfSendableProperties], @"%@ inheritance failed.", NSStringFromClass(class))
 
 - (void) test_property_inheritance
 {
 	//this is just normal
-	NSRailsAssertProperties(@"modelID, parentAttr", [STParent class]);
-	
+	NSRailsAssertProperties(@"modelID, parentAttr", [Parent class]);
 	
 	//complacent child
 	//is complacent (doesn't explicitly define NSRNoCarryFromSuper), so will inherit parent's attributes too
 	//this is simultaneously a test that the "*" from Parent isn't carried over - child has 2 properties and only one is defined
-	NSRailsAssertProperties(@"modelID, childAttr1, parentAttr", [STChild class]);
+	//this will also test to see if Railsifying "parentAttr2" is allowed (attribute in parent class not Railsified by parent class)
+	NSRailsAssertProperties(@"modelID, childAttr1, parentAttr2, parentAttr", [Child class]);
 	
 	//is complacent, so should inherit everything! (parent+child), as well as its own
-	NSRailsAssertProperties(@"modelID, childAttr1, gchildAttr, parentAttr", [STGrandchild class]);
+	NSRailsAssertProperties(@"modelID, childAttr1, gchildAttr, parentAttr", [Grandchild class]);
 	
 	//is rebellious, so should inherit nothing! (only its own)
-	NSRailsAssertProperties(@"modelID, r_gchildAttr", [STRebelliousGrandchild class]);
+	NSRailsAssertProperties(@"modelID, r_gchildAttr", [RebelliousGrandchild class]);
 	
 	
 	//rebellious child
 	//is rebellious, so should inherit nothing (only be using whatever attributes defined by itself)
-	NSRailsAssertProperties(@"modelID, r_childAttr", [STRebelliousChild class]);
+	NSRailsAssertProperties(@"modelID, r_childAttr", [RebelliousChild class]);
 	
 	//is complacent, so should inherit everything until it sees the _NSR_NO_SUPER_ (which it omits), meaning won't inherit Parent
-	NSRailsAssertProperties(@"modelID, gchild_rAttr, r_childAttr", [STGrandchildOfRebellious class]);
+	NSRailsAssertProperties(@"modelID, gchild_rAttr, r_childAttr", [GrandchildOfRebellious class]);
 	
 	//is rebellious, so should inherit nothing (only be using whatever attributes defined by itself)
-	NSRailsAssertProperties(@"modelID, r_gchild_rAttr", [STRebelliousGrandchildOfRebellious class]);
+	NSRailsAssertProperties(@"modelID, r_gchild_rAttr", [RebelliousGrandchildOfRebellious class]);
 }
 
 - (void) test_invalid_railsify

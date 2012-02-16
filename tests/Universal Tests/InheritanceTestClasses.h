@@ -8,32 +8,33 @@
 
 #import "NSRails.h"
 
-@interface STParent : NSRailsModel
+@interface Parent : NSRailsModel
 @property (nonatomic, strong) id parentAttr;
+@property (nonatomic, strong) id parentAttr2;
 @end
 
-	@interface STChild : STParent
+	@interface Child : Parent
 	@property (nonatomic, strong) id childAttr1;
 	@property (nonatomic, strong) id childAttr2;
 	@end
 
-		@interface STGrandchild : STChild
+		@interface Grandchild : Child
 		@property (nonatomic, strong) id gchildAttr;
 		@end
 
-		@interface STRebelliousGrandchild : STChild
+		@interface RebelliousGrandchild : Child
 		@property (nonatomic, strong) id r_gchildAttr;
 		@end
 
 
-	@interface STRebelliousChild : STParent
+	@interface RebelliousChild : Parent
 	@property (nonatomic, strong) id r_childAttr;
 	@end
 
-		@interface STGrandchildOfRebellious : STRebelliousChild
+		@interface GrandchildOfRebellious : RebelliousChild
 		@property (nonatomic, strong) id gchild_rAttr;
 		@end
 
-		@interface STRebelliousGrandchildOfRebellious : STRebelliousChild
+		@interface RebelliousGrandchildOfRebellious : RebelliousChild
 		@property (nonatomic, strong) id r_gchild_rAttr;
 		@end

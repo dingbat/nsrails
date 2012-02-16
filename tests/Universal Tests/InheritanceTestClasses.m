@@ -8,44 +8,44 @@
 
 #import "InheritanceTestClasses.h"
 
-@implementation STParent
-@synthesize parentAttr;
-NSRailsify (*)
+@implementation Parent
+@synthesize parentAttr, parentAttr2;
+NSRailsify (parentAttr)
 NSRailsUseModelName(@"parent")
 @end
 
-	@implementation STChild
+	@implementation Child
 	@synthesize childAttr1, childAttr2;
-	NSRailsify (childAttr1) //absent NSRNoCarryFromSuper -> will inherit from parent
+	NSRailsify (childAttr1, parentAttr2) //absent NSRNoCarryFromSuper -> will inherit from parent
 	//absent model name -> will inherit "parent"
 	@end
 
-		@implementation STGrandchild
+		@implementation Grandchild
 		@synthesize gchildAttr;
-		NSRailsify(*) //absent NSRNoCarryFromSuper -> will inherit from parent
+		NSRailsify(*, parentAttr2 -x) //absent NSRNoCarryFromSuper -> will inherit from parent, but ignored parentAttr2 as test
 		//absent model name -> will inherit "parent"
 		@end
 
-		@implementation STRebelliousGrandchild
+		@implementation RebelliousGrandchild
 		@synthesize r_gchildAttr;
 		NSRailsify(NSRNoCarryFromSuper *) //NSRNoCarryFromSuper present -> won't inherit anything
 		NSRailsUseModelName(@"r_gchild") //will override Parent's modelname -> will use "r_grandchild"
 		@end
 
 
-	@implementation STRebelliousChild
+	@implementation RebelliousChild
 	@synthesize r_childAttr;
 	NSRailsify(* NSRNoCarryFromSuper) //NSRNoCarryFromSuper present -> won't inherit anything
 	NSRailsUseDefaultModelName //will override Parent's modelname in favor of default behavior -> will use default behavior
 	@end
 
-		@implementation STGrandchildOfRebellious
+		@implementation GrandchildOfRebellious
 		@synthesize gchild_rAttr;
 		NSRailsify(*) //absent NSRNoCarryFromSuper -> will inherit from r.child, BUT inheritance will stop @ R.Child 
 		//absent model name BUT will inherit his parent's NSRailsUseDefaultModelName, meaning default behavior will occur
 		@end
 
-		@implementation STRebelliousGrandchildOfRebellious
+		@implementation RebelliousGrandchildOfRebellious
 		@synthesize r_gchild_rAttr;
 		NSRailsify(NSRNoCarryFromSuper, *) //NSRNoCarryFromSuper present -> won't inherit anything
 		NSRailsUseModelName(@"r_gchild_r") //will override R.Child's modelname -> will use "r_r_gchild"
