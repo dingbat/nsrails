@@ -100,7 +100,11 @@
 ///////////////////////////////////////////
 
 - (NSString *) JSONRepresentation;
+- (NSDictionary *) dictionaryOfRelevantProperties;
+
 - (BOOL) setAttributesAsPerJSON:(NSString *)json;
+- (void) setAttributesAsPerDictionary:(NSDictionary *)dict;
+- (id) initWithRailsAttributesDictionary:(NSDictionary *)railsDict;
 
 //manual railsify string for instances
 - (id) initWithRailsifyString:(NSString *)str;

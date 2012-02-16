@@ -26,9 +26,6 @@
 
 + (NSRConfig *) getRelevantConfig;
 
-- (void) setAttributesAsPerDictionary:(NSDictionary *)dict;
-- (NSDictionary *) dictionaryOfRelevantProperties;
-
 + (NSString *) railsProperties;
 + (NSString *) getModelName;
 + (NSString *) getPluralModelName;
@@ -470,6 +467,7 @@
 	
 	if ((self = [self initWithRailsifyString:props]))
 	{
+		//nothing special...
 	}
 	return self;
 }
@@ -696,6 +694,15 @@
 		return val;
 	}
 	return nil;
+}
+
+- (id) initWithRailsAttributesDictionary:(NSDictionary *)railsDict
+{
+	if ((self = [self init]))
+	{
+		[self setAttributesAsPerDictionary:railsDict];
+	}
+	return self;
 }
 
 - (void) setAttributesAsPerDictionary:(NSDictionary *)dict
