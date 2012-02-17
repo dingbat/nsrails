@@ -60,11 +60,15 @@
 
 - (NSError *) errorForResponse:(NSString *)response statusCode:(NSInteger)statusCode;
 
-
 //Will return an NSURLRequest object with the given params
 //Should only be used if you're overriding the makeRequestType:requestBody:route:sync:orAsync: method above
 
 - (NSURLRequest *) HTTPRequestForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route;
+
+//Will log stuff for you
+
+- (void) logRequest:(NSString *)requestStr httpVerb:(NSString *)httpVerb url:(NSString *)url;
+- (void) logResponse:(NSString *)response statusCode:(NSInteger)code;
 
 
 @end

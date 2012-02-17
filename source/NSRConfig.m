@@ -143,29 +143,20 @@ static NSMutableArray *overrideConfigStack = nil;
 		return nil;
 	}
 	
-	//log relevant stuff
-#if NSRLog > 0
-	NSLog(@" ");
-	NSLog(@"%@ to %@/%@",type,appURL,route);
-#if NSRLog > 1
-	NSLog(@"OUT===> %@",requestStr);
-#endif
-#endif
-	
 	//If you want to override handling the connection, override this method
 	NSString *result = [self makeRequestType:type requestBody:requestStr route:route sync:error orAsync:completionBlock];
 	return result;
 }
 
-//Overide THIS method if necessary (for SSL etc)
-- (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock
-{	
-	//helper method to get an NSURLRequest object based on above params
-	NSURLRequest *request = [self HTTPRequestForRequestType:type requestBody:requestStr route:route];
-	
-	//send request using HTTP!
-	NSString *result = [self makeHTTPRequestWithRequest:request sync:error orAsync:completionBlock];
-	return result;
+- (void) logRequest:(NSString *)requestStr httpVerb:(NSString *)httpVerb url:(NSString *)url
+{
+#if NSRLog > 0
+	NSLog(@" ");
+	NSLog(@"%@ to %@",httpVerb,url);
+#if NSRLog > 1
+	NSLog(@"OUT===> %@",requestStr);
+#endif
+#endif
 }
 
 - (void) logResponse:(NSString *)response statusCode:(NSInteger)code
@@ -174,6 +165,20 @@ static NSMutableArray *overrideConfigStack = nil;
 	NSLog(@"IN<=== Code %d; %@\n\n",code,((code < 0 || code >= 400) ? @"[see ERROR]" : response));
 	NSLog(@" ");
 #endif
+}
+
+//Overide THIS method if necessary (for SSL etc)
+- (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock
+{	
+	//helper method to get an NSURLRequest object based on above params
+	NSURLRequest *request = [self HTTPRequestForRequestType:type requestBody:requestStr route:route];
+	
+	//log relevant stuff
+	[self logRequest:requestStr httpVerb:type url:[[request URL] absoluteString]];
+	
+	//send request using HTTP!
+	NSString *result = [self makeHTTPRequestWithRequest:request sync:error orAsync:completionBlock];
+	return result;
 }
 
 - (NSString *) makeHTTPRequestWithRequest:(NSURLRequest *)request sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock
