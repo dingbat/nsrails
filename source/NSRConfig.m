@@ -143,8 +143,18 @@ static NSMutableArray *overrideConfigStack = nil;
 		return nil;
 	}
 	
+	//log relevant stuff
+#if NSRLog > 0
+	NSLog(@" ");
+	NSLog(@"%@ to %@/%@",type,appURL,route);
+#if NSRLog > 1
+	NSLog(@"OUT===> %@",requestStr);
+#endif
+#endif
+	
 	//If you want to override handling the connection, override this method
-	return [self makeRequestType:type requestBody:requestStr route:route sync:error orAsync:completionBlock];
+	NSString *result = [self makeRequestType:type requestBody:requestStr route:route sync:error orAsync:completionBlock];
+	return result;
 }
 
 //Overide THIS method if necessary (for SSL etc)
@@ -154,7 +164,16 @@ static NSMutableArray *overrideConfigStack = nil;
 	NSURLRequest *request = [self HTTPRequestForRequestType:type requestBody:requestStr route:route];
 	
 	//send request using HTTP!
-	return [self makeHTTPRequestWithRequest:request sync:error orAsync:completionBlock];
+	NSString *result = [self makeHTTPRequestWithRequest:request sync:error orAsync:completionBlock];
+	return result;
+}
+
+- (void) logResponse:(NSString *)response statusCode:(NSInteger)code
+{
+#if NSRLog > 1
+	NSLog(@"IN<=== Code %d; %@\n\n",code,((code < 0 || code >= 400) ? @"[see ERROR]" : response));
+	NSLog(@" ");
+#endif
 }
 
 - (NSString *) makeHTTPRequestWithRequest:(NSURLRequest *)request sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock
@@ -171,6 +190,8 @@ static NSMutableArray *overrideConfigStack = nil;
 			 }
 			 else
 			 {
+				 NSInteger code = [(NSHTTPURLResponse *)response statusCode];
+				 
 				 //get result from response data
 				 NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
 				 
@@ -178,8 +199,10 @@ static NSMutableArray *overrideConfigStack = nil;
 				 [rawResult autorelease];
 #endif
 				 
+				 [self logResponse:rawResult statusCode:code];
+				 
 				 //see if there's an error from this response using this helper method
-				 NSError *railsError = [self errorForResponse:rawResult statusCode:[(NSHTTPURLResponse *)response statusCode]];
+				 NSError *railsError = [self errorForResponse:rawResult statusCode:code];
 				 
 				 if (railsError)
 					 completionBlock(nil, railsError);
@@ -204,6 +227,8 @@ static NSMutableArray *overrideConfigStack = nil;
 			return nil;
 		}
 		
+		NSInteger code = [(NSHTTPURLResponse *)response statusCode];
+
 		//get result from response data
 		NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
 		
@@ -211,6 +236,8 @@ static NSMutableArray *overrideConfigStack = nil;
 		[rawResult autorelease];
 #endif
 		
+		[self logResponse:rawResult statusCode:code];
+
 		//see if there's an error from this response using this helper method
 		NSError *railsError = [self errorForResponse:rawResult statusCode:[(NSHTTPURLResponse *)response statusCode]];
 		if (railsError)
@@ -230,11 +257,6 @@ static NSMutableArray *overrideConfigStack = nil;
 - (NSError *) errorForResponse:(NSString *)response statusCode:(NSInteger)statusCode
 {
 	BOOL err = (statusCode < 0 || statusCode >= 400);
-	
-#if NSRLog > 1
-	NSLog(@"IN<=== Code %d; %@\n\n",statusCode,(err ? @"[see ERROR]" : response));
-	NSLog(@" ");
-#endif
 	
 	if (err)
 	{
@@ -280,15 +302,6 @@ static NSMutableArray *overrideConfigStack = nil;
 {
 	//generate url based on base URL + route given
 	NSString *url = [NSString stringWithFormat:@"%@/%@",appURL,route];
-	
-	//log relevant stuff
-#if NSRLog > 0
-	NSLog(@" ");
-	NSLog(@"%@ to %@",type,url);
-#if NSRLog > 1
-	NSLog(@"OUT===> %@",requestStr);
-#endif
-#endif
 	
 	NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
 	

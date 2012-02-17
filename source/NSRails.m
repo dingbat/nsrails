@@ -915,12 +915,12 @@
 
 - (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error
 {
-	return [[[self class] getRelevantConfig] makeRequestType:httpVerb requestBody:requestStr route:[self routeForInstanceMethod:method] sync:error orAsync:nil];
+	return [[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:requestStr route:[self routeForInstanceMethod:method] sync:error orAsync:nil];
 }
 
 - (void) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method async:(void(^)(NSString *result, NSError *error))block
 {
-	[[[self class] getRelevantConfig] makeRequestType:httpVerb requestBody:requestStr route:[self routeForInstanceMethod:method] sync:nil orAsync:block];
+	[[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:requestStr route:[self routeForInstanceMethod:method] sync:nil orAsync:block];
 }
 
 //these are really just convenience methods that'll call the above method with pre-built "GET" and no body
@@ -940,11 +940,11 @@
 
 + (void) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method async:(void (^)(NSString *result, NSError *))block
 { 
-	[[self getRelevantConfig] makeRequestType:httpVerb requestBody:requestStr route:[self routeForMethod:method] sync:nil orAsync:block];
+	[[self getRelevantConfig] resultForRequestType:httpVerb requestBody:requestStr route:[self routeForMethod:method] sync:nil orAsync:block];
 }
 + (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error
 { 
-	return [[self getRelevantConfig] makeRequestType:httpVerb requestBody:requestStr route:[self routeForMethod:method] sync:error orAsync:nil];
+	return [[self getRelevantConfig] resultForRequestType:httpVerb requestBody:requestStr route:[self routeForMethod:method] sync:error orAsync:nil];
 }
 
 //these are really just convenience methods that'll call the above method with pre-built "GET" and no body
