@@ -9,7 +9,7 @@
 //  OPTIONS
 // for documentation on these, see https://github.com/dingbat/nsrails/wiki/Compile-config
 
-#define NSRLog 3
+#define NSRLog 2
 #define NSRCompileWithARC
 #define NSRSuccinctErrorMessages
 //#define NSRCrashOnError

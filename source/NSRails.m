@@ -423,7 +423,7 @@
 						if ([ivarType isEqualToString:@"NSArray"] ||
 							[ivarType isEqualToString:@"NSMutableArray"])
 						{
-#if NSRLog > 2
+#ifdef NSRLogErrors
 							NSLog(@"NSR Warning: Property '%@' in class %@ was found to be an array, but no nesting model was set. Note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved Rails attributes will be set. If NSDictionaries are desired, to suppress this warning, simply add a colon with nothing following to the property in NSRailsify... '%@:'",prop,NSStringFromClass([self class]),str);
 #endif
 						}
