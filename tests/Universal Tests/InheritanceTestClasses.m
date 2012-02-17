@@ -10,7 +10,7 @@
 
 @implementation Parent
 @synthesize parentAttr, parentAttr2;
-NSRailsify (parentAttr)
+NSRailsify (*, parentAttr2 -x)
 NSRailsUseModelName(@"parent")
 @end
 

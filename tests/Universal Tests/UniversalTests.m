@@ -75,6 +75,7 @@
 	NSRailsAssertProperties(@"modelID, childAttr1, parentAttr2, parentAttr", [Child class]);
 	
 	//is complacent, so should inherit everything! (parent+child), as well as its own
+	//however, excludes parentAttr2 as a test
 	NSRailsAssertProperties(@"modelID, childAttr1, gchildAttr, parentAttr", [Grandchild class]);
 	
 	//is rebellious, so should inherit nothing! (only its own)
