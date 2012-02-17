@@ -278,8 +278,8 @@
 				//go through all the ivars we found
 				for (NSString *ivar in relevantIvars)
 				{
-					//if it hasn't been declared as -x or declared at all (from the first run), add it to the list we have to process
-					if (![exclude containsObject:ivar] && ![propertyEquivalents objectForKey:ivar])
+					//if it hasn't been previously declared (from the first run), add it to the list we have to process
+					if (![propertyEquivalents objectForKey:ivar])
 					{
 						[elements addObject:ivar];
 					}
@@ -301,7 +301,12 @@
 					if ([prop rangeOfString:@"*"].location != NSNotFound)
 					{
 						//if there's a * in this piece, skip it (we already accounted for stars above)
-						
+						continue;
+					}
+					
+					if ([exclude containsObject:prop])
+					{
+						//if it's been marked with '-x' flag previously, ignore it
 						continue;
 					}
 					
