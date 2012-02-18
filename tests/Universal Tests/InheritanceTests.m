@@ -10,30 +10,12 @@
 #import "NSRails.h"
 #import "InheritanceTestClasses.h"
 #import "TestClass.h"
+#import "NSRAsserts.h"
 
-@interface NSRailsModel (internal)
-
-+ (NSRConfig *) getRelevantConfig;
-
-- (void) setAttributesAsPerDictionary:(NSDictionary *)dict;
-- (NSDictionary *) dictionaryOfRelevantProperties;
-
-+ (NSString *) railsProperties;
-+ (NSString *) getModelName;
-+ (NSString *) getPluralModelName;
-
-+ (NSRConfig *) getRelevantConfig;
-
-- (NSString *) listOfSendableProperties;
-
+@interface InheritanceTests : GHTestCase
 @end
 
-@interface UniversalTests : GHTestCase
-@end
-
-@implementation UniversalTests
-
-#define NSRAssertClassModelName(mname, class)	GHAssertEqualStrings([class getModelName], mname, @"%@ model name inheritance failed.", NSStringFromClass(class))
+@implementation InheritanceTests
 
 - (void) test_model_name_inheritance
 {
@@ -62,8 +44,6 @@
 	//is rebellious (defines NSRailsUseModelName as "r_gchild_r"), so it'll use that name
 	NSRAssertClassModelName(@"r_gchild_r", [RebelliousGrandchildOfRebellious class]);
 }
-
-#define NSRAssertClassConfig(config, class)	GHAssertEqualStrings([class getRelevantConfig].appURL, config, @"%@ config inheritance failed.", NSStringFromClass(class))
 
 - (void) test_config_inheritance
 {
@@ -94,8 +74,6 @@
 	NSRAssertClassConfig(@"http://r_gchild_r", [RebelliousGrandchildOfRebellious class]);
 }
 
-#define NSRAssertClassProperties(props, class)	GHAssertEqualStrings([[class new] listOfSendableProperties], props, @"%@ property inheritance failed.", NSStringFromClass(class))
-
 - (void) test_property_inheritance
 {
 	//this is just normal
@@ -124,55 +102,6 @@
 	
 	//is rebellious, so should inherit nothing (only be using whatever attributes defined by itself)
 	NSRAssertClassProperties(@"modelID, r_gchild_rAttr", [RebelliousGrandchildOfRebellious class]);
-}
-
-- (void) test_invalid_railsify
-{
-	NSRAssertClassProperties(@"modelID, attr1", [TestClass class]);
-}
-
-#define NSRAssertRelevantConfigURL(x,y) GHAssertEqualStrings([NSRailsModel getRelevantConfig].appURL, x, y)
-
-- (void) test_nested_config_contexts
-{
-	[[NSRConfig defaultConfig] setAppURL:@"http://Default"];
-	
-	NSRAssertRelevantConfigURL(@"http://Default",nil);
-	
-	[[NSRConfig defaultConfig] useIn:^
-	 {
-		 NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"http://Nested"];
-		 [c use];
-		 
-		 NSRAssertRelevantConfigURL(@"http://Nested", nil);
-
-		 [[NSRConfig defaultConfig] useIn:^
-		  {
-			  NSRAssertRelevantConfigURL(@"http://Default", nil);
-
-			  [c useIn:^
-			  {
-				  NSRAssertRelevantConfigURL(@"http://Nested", nil);
-			  }];
-		  }];
-		 
-		 [c end];
-		 
-		 NSRAssertRelevantConfigURL(@"http://Default", nil);
-	 }];
-	
-	GHAssertEqualStrings(@"test_class", [TestClass getModelName], @"auto-underscoring");
-
-	NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"http://NoAuto"];
-	c.automaticallyUnderscoreAndCamelize = NO;
-	[c useIn:
-	 ^{
-		 NSRAssertRelevantConfigURL(@"http://NoAuto", nil);
-
-		 GHAssertEqualStrings(@"TestClass", [TestClass getModelName], @"No auto-underscoring");
-	 }];
-	
-	NSRAssertRelevantConfigURL(@"http://Default", nil);
 }
 
 - (void)setUpClass {

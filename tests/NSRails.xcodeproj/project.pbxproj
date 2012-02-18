@@ -33,11 +33,13 @@
 		591424B514EAFF9800481815 /* InheritanceTestClasses.m in Sources */ = {isa = PBXBuildFile; fileRef = 591424B014EAFF9800481815 /* InheritanceTestClasses.m */; };
 		591424B614EAFF9800481815 /* TestClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 591424B214EAFF9800481815 /* TestClass.m */; };
 		591424B714EAFF9800481815 /* TestClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 591424B214EAFF9800481815 /* TestClass.m */; };
-		591424B814EAFF9800481815 /* UniversalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 591424B314EAFF9800481815 /* UniversalTests.m */; };
-		591424B914EAFF9800481815 /* UniversalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 591424B314EAFF9800481815 /* UniversalTests.m */; };
+		591424B814EAFF9800481815 /* GeneralTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 591424B314EAFF9800481815 /* GeneralTests.m */; };
+		591424B914EAFF9800481815 /* GeneralTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 591424B314EAFF9800481815 /* GeneralTests.m */; };
 		591424C514EB098600481815 /* GHUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 591424C414EB098600481815 /* GHUnit.framework */; };
 		591424C714EB0A1900481815 /* GHUnit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 591424C414EB098600481815 /* GHUnit.framework */; };
 		591424C914EB0A9700481815 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 591424C814EB0A9700481815 /* Cocoa.framework */; };
+		59A6822714F0080400E4B489 /* InheritanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A6822614F0080400E4B489 /* InheritanceTests.m */; };
+		59A6822814F0080400E4B489 /* InheritanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A6822614F0080400E4B489 /* InheritanceTests.m */; };
 		59E318B114E9CDC500B0FC39 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E3187814E9CD8700B0FC39 /* UIKit.framework */; };
 		59E318B214E9CDC500B0FC39 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E3187A14E9CD8700B0FC39 /* Foundation.framework */; };
 		59E318B314E9CDC500B0FC39 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E3187C14E9CD8700B0FC39 /* CoreGraphics.framework */; };
@@ -90,11 +92,13 @@
 		591424B014EAFF9800481815 /* InheritanceTestClasses.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InheritanceTestClasses.m; sourceTree = "<group>"; };
 		591424B114EAFF9800481815 /* TestClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestClass.h; sourceTree = "<group>"; };
 		591424B214EAFF9800481815 /* TestClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestClass.m; sourceTree = "<group>"; };
-		591424B314EAFF9800481815 /* UniversalTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UniversalTests.m; sourceTree = "<group>"; };
+		591424B314EAFF9800481815 /* GeneralTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneralTests.m; sourceTree = "<group>"; };
 		591424BB14EAFFD200481815 /* iPhone Tests-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "iPhone Tests-Prefix.pch"; sourceTree = "<group>"; };
 		591424BD14EB002C00481815 /* iPhone Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iPhone Tests-Info.plist"; sourceTree = "<group>"; };
 		591424C414EB098600481815 /* GHUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GHUnit.framework; path = "Mac OS Tests/GHUnit.framework"; sourceTree = "<group>"; };
 		591424C814EB0A9700481815 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = SDKs/MacOSX10.6.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		59A6822614F0080400E4B489 /* InheritanceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InheritanceTests.m; sourceTree = "<group>"; };
+		59A6822A14F0085F00E4B489 /* NSRAsserts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSRAsserts.h; path = "Universal Tests/NSRAsserts.h"; sourceTree = "<group>"; };
 		59E3187814E9CD8700B0FC39 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		59E3187A14E9CD8700B0FC39 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		59E3187C14E9CD8700B0FC39 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -218,6 +222,7 @@
 		591424AD14EAFE7400481815 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				59A6822A14F0085F00E4B489 /* NSRAsserts.h */,
 				591424AE14EAFF9800481815 /* Universal Tests */,
 				5914244914EAFCEF00481815 /* Mac OS Tests */,
 				5914248214EAFD3200481815 /* iPhone Tests */,
@@ -232,7 +237,8 @@
 				591424B014EAFF9800481815 /* InheritanceTestClasses.m */,
 				591424B114EAFF9800481815 /* TestClass.h */,
 				591424B214EAFF9800481815 /* TestClass.m */,
-				591424B314EAFF9800481815 /* UniversalTests.m */,
+				59A6822614F0080400E4B489 /* InheritanceTests.m */,
+				591424B314EAFF9800481815 /* GeneralTests.m */,
 			);
 			path = "Universal Tests";
 			sourceTree = "<group>";
@@ -370,7 +376,8 @@
 				5914248114EAFD0F00481815 /* NSRConfig.m in Sources */,
 				591424B514EAFF9800481815 /* InheritanceTestClasses.m in Sources */,
 				591424B714EAFF9800481815 /* TestClass.m in Sources */,
-				591424B914EAFF9800481815 /* UniversalTests.m in Sources */,
+				591424B914EAFF9800481815 /* GeneralTests.m in Sources */,
+				59A6822814F0080400E4B489 /* InheritanceTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -389,7 +396,8 @@
 				5914249114EAFD3200481815 /* main.m in Sources */,
 				591424B414EAFF9800481815 /* InheritanceTestClasses.m in Sources */,
 				591424B614EAFF9800481815 /* TestClass.m in Sources */,
-				591424B814EAFF9800481815 /* UniversalTests.m in Sources */,
+				591424B814EAFF9800481815 /* GeneralTests.m in Sources */,
+				59A6822714F0080400E4B489 /* InheritanceTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -574,6 +582,7 @@
 				5914245D14EAFCEF00481815 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		59E3186E14E9CD8700B0FC39 /* Build configuration list for PBXProject "NSRails" */ = {
 			isa = XCConfigurationList;
