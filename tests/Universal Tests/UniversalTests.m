@@ -3,7 +3,7 @@
 //  NSRails
 //
 //  Created by Dan Hassin on 1/29/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
  
 #import "NSRConfig.h"
@@ -33,97 +33,132 @@
 
 @implementation UniversalTests
 
-- (void) test_model_and_config_inheritance
+#define NSRAssertClassModelName(mname, class)	GHAssertEqualStrings([class getModelName], mname, @"%@ model name inheritance failed.", NSStringFromClass(class))
+
+- (void) test_model_name_inheritance
 {
 	//was explicitly set to "parent"
-	GHAssertEqualStrings(@"parent", [Parent getModelName], nil);
+	NSRAssertClassModelName(@"parent", [Parent class]);
 	
 	
 	//complacent child
 	//is complacent (doesn't explicitly set NSRailsUseModelName or NSRailsUseDefaultModelName), so will inherit the "parent" from Parent
-	GHAssertEqualStrings(@"parent", [Child getModelName], nil);
+	NSRAssertClassModelName(@"parent", [Child class]);
 	
 	//is complacent (doesn't explicitly set NSRailsUseModelName or NSRailsUseDefaultModelName), so will inherit the "parent" from Child
-	GHAssertEqualStrings(@"parent", [Grandchild getModelName], nil);
+	NSRAssertClassModelName(@"parent", [Grandchild class]);
 	
 	//is not complacent (defines NSRailsUseModelName), as set to "r_grandchild"
-	GHAssertEqualStrings(@"r_gchild", [RebelliousGrandchild getModelName], nil);
+	NSRAssertClassModelName(@"r_gchild", [RebelliousGrandchild class]);
 	
 	
 	//rebellious child
 	//is rebellious (explicitly defines NSRailsUseDefaultModelName for itself, so should be default behavior)
-	GHAssertEqualStrings(@"rebellious_child", [RebelliousChild getModelName], nil);
+	NSRAssertClassModelName(@"rebellious_child", [RebelliousChild class]);
 	
 	//is complacent (doesn't explicitly set), BUT will inherit default behavior from R.Child, so default behavior
-	GHAssertEqualStrings(@"grandchild_of_rebellious", [GrandchildOfRebellious getModelName], nil);
+	NSRAssertClassModelName(@"grandchild_of_rebellious", [GrandchildOfRebellious class]);
 	
-	//is rebellious (defines NSRailsUseModelName as"r_r_grandchild"), so it'll use that name
-	GHAssertEqualStrings(@"r_gchild_r", [RebelliousGrandchildOfRebellious getModelName], nil);
+	//is rebellious (defines NSRailsUseModelName as "r_gchild_r"), so it'll use that name
+	NSRAssertClassModelName(@"r_gchild_r", [RebelliousGrandchildOfRebellious class]);
 }
 
-#define NSRailsAssertProperties(props, class)	GHAssertEqualStrings(props,[[class new] listOfSendableProperties], @"%@ inheritance failed.", NSStringFromClass(class))
+#define NSRAssertClassConfig(config, class)	GHAssertEqualStrings([class getRelevantConfig].appURL, config, @"%@ config inheritance failed.", NSStringFromClass(class))
+
+- (void) test_config_inheritance
+{
+	[[NSRConfig defaultConfig] setAppURL:@"http://Default"];
+
+	//was explicitly set to "parent"
+	NSRAssertClassConfig(@"http://parent", [Parent class]);
+	
+	//complacent child
+	//is complacent (doesn't explicitly set NSRailsUseConfig or NSRailsUseDefaultConfig), so will inherit the "parent" from Parent
+	NSRAssertClassConfig(@"http://parent", [Child class]);
+	
+	//is complacent (doesn't explicitly set NSRailsUseConfig or NSRailsUseDefaultConfig), so will inherit the "parent" from Child
+	NSRAssertClassConfig(@"http://parent", [Grandchild class]);
+	
+	//is not complacent (defines NSRailsUseConfig), as set to "r_grandchild"
+	NSRAssertClassConfig(@"http://r_gchild", [RebelliousGrandchild class]);
+	
+	
+	//rebellious child
+	//is rebellious (explicitly defines NSRailsUseDefaultConfig for itself, so should be defaultConfig returned)
+	NSRAssertClassConfig(@"http://Default", [RebelliousChild class]);
+	
+	//is complacent (doesn't explicitly set), BUT will inherit default behavior from R.Child, so default behavior
+	NSRAssertClassConfig(@"http://Default", [GrandchildOfRebellious class]);
+	
+	//is rebellious (defines NSRailsUseConfig as "r_gchild_r"), so it'll use that name
+	NSRAssertClassConfig(@"http://r_gchild_r", [RebelliousGrandchildOfRebellious class]);
+}
+
+#define NSRAssertClassProperties(props, class)	GHAssertEqualStrings([[class new] listOfSendableProperties], props, @"%@ property inheritance failed.", NSStringFromClass(class))
 
 - (void) test_property_inheritance
 {
 	//this is just normal
-	NSRailsAssertProperties(@"modelID, parentAttr", [Parent class]);
+	NSRAssertClassProperties(@"modelID, parentAttr", [Parent class]);
 	
 	//complacent child
 	//is complacent (doesn't explicitly define NSRNoCarryFromSuper), so will inherit parent's attributes too
 	//this is simultaneously a test that the "*" from Parent isn't carried over - child has 2 properties and only one is defined
-	//this will also test to see if Railsifying "parentAttr2" is allowed (attribute in parent class not Railsified by parent class)
-	NSRailsAssertProperties(@"modelID, childAttr1, parentAttr2, parentAttr", [Child class]);
+	//this will also test to see if syncing "parentAttr2" is allowed (attribute in parent class not synced by parent class)
+	NSRAssertClassProperties(@"modelID, childAttr1, parentAttr2, parentAttr", [Child class]);
 	
 	//is complacent, so should inherit everything! (parent+child), as well as its own
 	//however, excludes parentAttr2 as a test
-	NSRailsAssertProperties(@"modelID, childAttr1, gchildAttr, parentAttr", [Grandchild class]);
+	NSRAssertClassProperties(@"modelID, childAttr1, gchildAttr, parentAttr", [Grandchild class]);
 	
 	//is rebellious, so should inherit nothing! (only its own)
-	NSRailsAssertProperties(@"modelID, r_gchildAttr", [RebelliousGrandchild class]);
+	NSRAssertClassProperties(@"modelID, r_gchildAttr", [RebelliousGrandchild class]);
 	
 	
 	//rebellious child
 	//is rebellious, so should inherit nothing (only be using whatever attributes defined by itself)
-	NSRailsAssertProperties(@"modelID, r_childAttr", [RebelliousChild class]);
+	NSRAssertClassProperties(@"modelID, r_childAttr", [RebelliousChild class]);
 	
 	//is complacent, so should inherit everything until it sees the _NSR_NO_SUPER_ (which it omits), meaning won't inherit Parent
-	NSRailsAssertProperties(@"modelID, gchild_rAttr, r_childAttr", [GrandchildOfRebellious class]);
+	NSRAssertClassProperties(@"modelID, gchild_rAttr, r_childAttr", [GrandchildOfRebellious class]);
 	
 	//is rebellious, so should inherit nothing (only be using whatever attributes defined by itself)
-	NSRailsAssertProperties(@"modelID, r_gchild_rAttr", [RebelliousGrandchildOfRebellious class]);
+	NSRAssertClassProperties(@"modelID, r_gchild_rAttr", [RebelliousGrandchildOfRebellious class]);
 }
 
 - (void) test_invalid_railsify
 {
-	NSRailsAssertProperties(@"modelID, attr1", [TestClass class]);
+	NSRAssertClassProperties(@"modelID, attr1", [TestClass class]);
 }
 
-#define NSRTestRelevantConfigURL(x,y) GHAssertEqualStrings([NSRailsModel getRelevantConfig].appURL, x, y)
+#define NSRAssertRelevantConfigURL(x,y) GHAssertEqualStrings([NSRailsModel getRelevantConfig].appURL, x, y)
 
 - (void) test_nested_config_contexts
 {
 	[[NSRConfig defaultConfig] setAppURL:@"http://Default"];
+	
+	NSRAssertRelevantConfigURL(@"http://Default",nil);
 	
 	[[NSRConfig defaultConfig] useIn:^
 	 {
 		 NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"http://Nested"];
 		 [c use];
 		 
-		 NSRTestRelevantConfigURL(@"http://Nested", nil);
+		 NSRAssertRelevantConfigURL(@"http://Nested", nil);
 
 		 [[NSRConfig defaultConfig] useIn:^
 		  {
-			  NSRTestRelevantConfigURL(@"http://Default", nil);
+			  NSRAssertRelevantConfigURL(@"http://Default", nil);
 
 			  [c useIn:^
 			  {
-				  NSRTestRelevantConfigURL(@"http://Nested", nil);
+				  NSRAssertRelevantConfigURL(@"http://Nested", nil);
 			  }];
 		  }];
 		 
 		 [c end];
 		 
-		 NSRTestRelevantConfigURL(@"http://Default", nil);
+		 NSRAssertRelevantConfigURL(@"http://Default", nil);
 	 }];
 	
 	GHAssertEqualStrings(@"test_class", [TestClass getModelName], @"auto-underscoring");
@@ -132,12 +167,12 @@
 	c.automaticallyUnderscoreAndCamelize = NO;
 	[c useIn:
 	 ^{
-		 NSRTestRelevantConfigURL(@"http://NoAuto", nil);
+		 NSRAssertRelevantConfigURL(@"http://NoAuto", nil);
 
 		 GHAssertEqualStrings(@"TestClass", [TestClass getModelName], @"No auto-underscoring");
 	 }];
 	
-	NSRTestRelevantConfigURL(@"http://Default", nil);
+	NSRAssertRelevantConfigURL(@"http://Default", nil);
 }
 
 - (void)setUpClass {
