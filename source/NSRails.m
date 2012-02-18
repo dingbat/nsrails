@@ -15,7 +15,7 @@
 // if it's too intimidating, remember that you can navigate this file quickly in xcode with #pragma marks
 
 
-//this will be the NSRailsProperties for NSRailsModel
+//this will be the NSRailsSync for NSRailsModel
 //tie modelID to rails property id
 #define NSRAILS_BASE_PROPS @"modelID=id"
 
@@ -46,9 +46,6 @@
 
 
 
-
-
-
 #pragma mark -
 #pragma mark Meta-NSR stuff
 
@@ -57,7 +54,7 @@
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 
 
-+ (NSString *) NSRailsProperties
++ (NSString *) NSRailsSync
 {
 	return NSRAILS_BASE_PROPS;
 }
@@ -73,13 +70,13 @@
 	//go up the class hierarchy, starting at self, adding the property list from each class
 	for (Class c = self; (c != [NSRailsModel class] && !stopInheriting); c = [c superclass])
 	{
-		if ([c respondsToSelector:@selector(NSRailsProperties)])
+		if ([c respondsToSelector:@selector(NSRailsSync)])
 		{			
-			//get that class's railsify string (properties)
-			NSString *railsifyString = [c NSRailsProperties];
+			//get that class's property sync string
+			NSString *syncString = [c NSRailsSync];
 			
 			//if that class defines NSRNoCarryFromSuper, mark that we should stop rising classes
-			if ([railsifyString rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
+			if ([syncString rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
 			{
 				//the for loop condition will fail
 				stopInheriting = YES;
@@ -89,12 +86,12 @@
 				//this is why if this class is evaluating itself here, it shouldn't strip it, to signify that IT defined it
 				if (c != self)
 				{
-					railsifyString = [railsifyString stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
+					syncString = [syncString stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
 				}
 			}
 			
 			//tack the properties for that class onto our big list
-			finalProperties = [finalProperties stringByAppendingFormat:@", %@", railsifyString];
+			finalProperties = [finalProperties stringByAppendingFormat:@", %@", syncString];
 		}
 	}
 	
@@ -114,8 +111,10 @@
 
 + (NSString *) getModelName
 {
-	//if defined through NSRailsModelName() then use that instead
-	SEL sel = @selector(NSRailsModelName);
+	//if defined through NSRailsUseModelName() then use that instead
+	SEL sel = @selector(NSRailsUseModelName);
+	
+	//check to see if responds, then check to see if not nil (nil signifies that it's a UseDefault definition)
 	if ([self respondsToSelector:sel] && [self performSelector:sel])
 	{
 		return [self performSelector:sel];
@@ -134,8 +133,8 @@
 
 + (NSString *) getPluralModelName
 {
-	//if defined through NSRailsModelNameWithPlural(), use that instead
-	SEL sel = @selector(NSRailsModelNameWithPlural);
+	//if defined through NSRailsUseModelNameWithPlural(), use that instead
+	SEL sel = @selector(NSRailsUseModelNameWithPlural);
 	if ([self respondsToSelector:sel] && [self performSelector:sel])
 	{
 		return [self performSelector:sel];
@@ -155,15 +154,11 @@
 		return [NSRConfig overrideConfig];
 	}
 	
-	//if this class defines NSRailsSetConfigAuth, use it over whatever NSRailsSetConfig (no auth) is defined
-	//moreover, if a subclass implements NSRailsUseDefaultConfig, it'll implement this method and simply return the default, as to override whatever a parents may declare this to be
-	else if ([[self class] respondsToSelector:@selector(NSRailsSetConfigAuth)])
+	//if this class defines NSRailsUseConfig, use it over the default
+	//could also be return the defaultConfig
+	else if ([[self class] respondsToSelector:@selector(NSRailsUseConfig)])
 	{
-		return [[self class] performSelector:@selector(NSRailsSetConfigAuth)];
-	}
-	else if ([[self class] respondsToSelector:@selector(NSRailsSetConfig)])
-	{
-		return [[self class] performSelector:@selector(NSRailsSetConfig)];
+		return [[self class] performSelector:@selector(NSRailsUseConfig)];
 	} 
 	
 	//otherwise, use the default config
@@ -208,7 +203,7 @@
 	}
 }
 
-- (id) initWithRailsifyString:(NSString *)props
+- (id) initWithSyncProperties:(NSString *)props
 {
 	if ((self = [super init]))
 	{
@@ -225,7 +220,7 @@
 		
 		destroyOnNesting = NO;
 		
-		//here begins the code used for parsing the NSRailsify param string
+		//here begins the code used for parsing the NSRailsSync param string
 		
 		//character set that'll be used later on
 		NSCharacterSet *wn = [NSCharacterSet whitespaceAndNewlineCharacterSet];
@@ -259,7 +254,7 @@
 				while (c != [NSRailsModel class])
 				{
 					//get the property list for that specific class
-					NSString *properties = [c NSRailsProperties];
+					NSString *properties = [c NSRailsSync];
 					
 					//if there's a *, add all ivars from that class
 					if ([properties rangeOfString:@"*"].location != NSNotFound)
@@ -322,7 +317,7 @@
 					if ([prop isEqualToString:@"modelID"] && i > 0)
 					{
 #ifdef NSRLogErrors
-						NSLog(@"NSR Warning: Found attempt to define 'modelID' in NSRailsify for class %@. This property is reserved by the NSRailsModel superclass and should not be modified. Please fix this; element ignored.", NSStringFromClass([self class]));
+						NSLog(@"NSR Warning: Found attempt to define 'modelID' in NSRailsSync for class %@. This property is reserved by the NSRailsModel superclass and should not be modified. Please fix this; element ignored.", NSStringFromClass([self class]));
 #endif
 						continue;
 					}
@@ -340,7 +335,7 @@
 					if (!ivarType)
 					{
 #ifdef NSRLogErrors
-						NSLog(@"NSR Warning: Property '%@' declared in NSRailsify for class %@ was not found in this class or in superclasses. Please fix this; element ignored.", prop, NSStringFromClass([self class]));
+						NSLog(@"NSR Warning: Property '%@' declared in NSRailsSync for class %@ was not found in this class or in superclasses. Please fix this; element ignored.", prop, NSStringFromClass([self class]));
 #endif
 						continue;
 					}
@@ -350,7 +345,7 @@
 					if (primitive)
 					{
 #ifdef NSRLogErrors
-						NSLog(@"NSR Warning: Property '%@' declared in NSRailsify for class %@ was found to be of primitive type '%@' - please use NSNumber*. Element ignored.", prop, NSStringFromClass([self class]), primitive);
+						NSLog(@"NSR Warning: Property '%@' declared in NSRailsSync for class %@ was found to be of primitive type '%@' - please use NSNumber*. Element ignored.", prop, NSStringFromClass([self class]), primitive);
 #endif
 						continue;
 					}
@@ -424,7 +419,7 @@
 							[ivarType isEqualToString:@"NSMutableArray"])
 						{
 #ifdef NSRLogErrors
-							NSLog(@"NSR Warning: Property '%@' in class %@ was found to be an array, but no nesting model was set. Note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved Rails attributes will be set. If NSDictionaries are desired, to suppress this warning, simply add a colon with nothing following to the property in NSRailsify... '%@:'",prop,NSStringFromClass([self class]),str);
+							NSLog(@"NSR Warning: Property '%@' in class %@ was found to be an array, but no nesting model was set. Note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved Rails attributes will be set. If NSDictionaries are desired, to suppress this warning, simply add a colon with nothing following to the property in NSRailsSync... '%@:'",prop,NSStringFromClass([self class]),str);
 #endif
 						}
 						else if (!([ivarType isEqualToString:@"NSString"] ||
@@ -467,10 +462,10 @@
 
 - (id) init
 {
-	//read in properties defined through NSRailsProperties
+	//read in properties defined through NSRailsSync
 	NSString *props = [[self class] railsProperties];
 	
-	if ((self = [self initWithRailsifyString:props]))
+	if ((self = [self initWithSyncProperties:props]))
 	{
 		//nothing special...
 	}
@@ -745,7 +740,7 @@
 			if (val)
 			{
 				NSString *nestedClass = [[nestedModelProperties objectForKey:objcProperty] toClassName];
-				//instantiate it as the class specified in NSRailsify if it hadn't already been custom-decoded
+				//instantiate it as the class specified in NSRailsSync if it hadn't already been custom-decoded
 				if (nestedClass && [decodeProperties indexOfObject:objcProperty] == NSNotFound)
 				{
 					//if the JSON conversion returned an array for the value, instantiate each element

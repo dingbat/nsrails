@@ -10,6 +10,6 @@
 
 @implementation Person
 @synthesize name, age, brain;
-NSRailsify (*)
+NSRailsSync(name, age, brain)
 
 @end

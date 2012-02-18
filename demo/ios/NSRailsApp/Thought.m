@@ -10,6 +10,6 @@
 
 @implementation Thought
 @synthesize content;
-NSRailsify (*)
+NSRailsSync(content)
 
 @end

@@ -106,9 +106,14 @@
 - (void) setAttributesAsPerDictionary:(NSDictionary *)dict;
 - (id) initWithRailsAttributesDictionary:(NSDictionary *)railsDict;
 
-//manual railsify string for instances
-- (id) initWithRailsifyString:(NSString *)str;
+//manual sync properties string, specific for that instance
+- (id) initWithSyncProperties:(NSString *)str;
 
+
+
+///////////////////
+//macro definitions
+///////////////////
 
 //clever macro trick to allow "overloading" macro functions thanks to orj's gist: https://gist.github.com/985501
 #define CAT(a, b) _PRIMITIVE_CAT(a, b)
@@ -117,32 +122,54 @@
 #define N_ARGS_1(...) N_ARGS_2(__VA_ARGS__)
 #define N_ARGS_2(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, n, ...) n
 
+//maco to convert cstring to NSString
 #define NSRStringFromCString(cstr)	[NSString stringWithCString:cstr encoding:NSUTF8StringEncoding]
-// adding a # before va_args will simply make its contents a cstring
+//adding a # before va_args will simply make its contents a cstring
 #define _MAKE_STR(...)	NSRStringFromCString(#__VA_ARGS__)
 
-//macro definitions
-#define NSRailsify(...) \
-+ (NSString*) NSRailsProperties { return _MAKE_STR(__VA_ARGS__); }
+//NSRails macros
 
+//////////////
+//NSRailsSync
+//define NSRailsSync to create a method called NSRailsSync, which returns the entire param list
+#define NSRailsSync(...) \
++ (NSString*) NSRailsSync { return _MAKE_STR(__VA_ARGS__); }
+
+//define NSRNoCarryFromSuper as "_NSR_NO_SUPER" - not a string, since it's placed directly in the macro
 #define NSRNoCarryFromSuper			_NSR_NO_SUPER_
+
+//returns the string version of NSRNoCarryFromSuper so we can find it when evaluating NSRailsSync string
 #define _NSRNoCarryFromSuper_STR	_MAKE_STR(_NSR_NO_SUPER_)
 
+////////////
+//NSRailsUseModelName
+//define NSRailsUseModelName to concat either _NSR_Name1(x) or _NSR_Name2(x,y), depending on the number of args passed in
 #define NSRailsUseModelName(...) CAT(_NSR_Name,N_ARGS(__VA_ARGS__))(__VA_ARGS__)
+
+//using default is the same thing as passing nil for both model name + plural name
 #define NSRailsUseDefaultModelName _NSR_Name2(nil,nil)
+
+//_NSR_Name1 (only with 1 parameter, ie, custom model name but default plurality), creates NSRailsUseModelName method that returns param
 #define _NSR_Name1(x) \
-+ (NSString*) NSRailsModelName { return x; }
++ (NSString*) NSRailsUseModelName { return x; }
+
+//_NSR_Name2 (2 parameters, ie, custom model name and custom plurality), creates NSRailsUseModelName and NSRailsUsePluralName
 #define _NSR_Name2(x,y)  \
-+ (NSString*) NSRailsModelName { return x; } \
-+ (NSString*) NSRailsModelNameWithPlural { return y; }
++ (NSString*) NSRailsUseModelName { return x; } \
++ (NSString*) NSRailsUsePluralName { return y; }
+
+/////////////
+//NSRailsUseConfig
+
+//works the same way as NSRailsUseModelName
 
 #define NSRailsUseConfig(...) CAT(_NSR_Config,N_ARGS(__VA_ARGS__))(__VA_ARGS__)
 #define NSRailsUseDefaultConfig \
-+ (NSRConfig *) NSRailsSetConfigAuth { return [NSRConfig defaultConfig]; }
++ (NSRConfig *) NSRailsUseConfig { return [NSRConfig defaultConfig]; }
 #define _NSR_Config1(x) \
-+ (NSRConfig *) NSRailsSetConfig { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = x; return config; }
++ (NSRConfig *) NSRailsUseConfig { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = x; return config; }
 #define _NSR_Config3(x,y,z)  \
-+ (NSRConfig *) NSRailsSetConfigAuth { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = x; config.appUsername = y; config.appPassword = z; return config; }
++ (NSRConfig *) NSRailsUseConfig { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = x; config.appUsername = y; config.appPassword = z; return config; }
 
 
 @end

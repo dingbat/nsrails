@@ -10,6 +10,6 @@
 
 @implementation Brain
 @synthesize size, thoughts;
-NSRailsify (*, thoughts:Thought)
+NSRailsSync(size, thoughts:Thought)
 
 @end
