@@ -11,7 +11,7 @@
 @implementation Parent
 @synthesize parentAttr, parentAttr2;
 NSRailsSync (*, parentAttr2 -x)
-NSRailsUseModelName(@"parent")
+NSRailsUseModelName(@"parent", @"parentS")
 NSRailsUseConfig(@"http://parent")
 @end
 
@@ -51,7 +51,7 @@ NSRailsUseConfig(@"http://parent")
 		@implementation RebelliousGrandchildOfRebellious
 		@synthesize r_gchild_rAttr;
 		NSRailsSync(NSRNoCarryFromSuper, *) //NSRNoCarryFromSuper present -> won't inherit anything
-		NSRailsUseModelName(@"r_gchild_r") //will override R.Child's modelname -> will use "r_r_gchild"
+		NSRailsUseModelName(@"r_gchild_r", @"r_gchild_rS") //will override R.Child's modelname -> will use "r_r_gchild"
 		NSRailsUseConfig(@"http://r_gchild_r") //will override R.Child's config -> will use "http://r_r_gchild"
 		@end
 

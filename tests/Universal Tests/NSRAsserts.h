@@ -27,6 +27,8 @@
 
 #define NSRAssertClassModelName(mname, class)	GHAssertEqualStrings([class getModelName], mname, @"%@ model name failed.", NSStringFromClass(class))
 
+#define NSRAssertClassPluralName(mname, class)	GHAssertEqualStrings([class getPluralModelName], mname, @"%@ model name failed.", NSStringFromClass(class))
+
 #define NSRAssertClassConfig(config, class)	GHAssertEqualStrings([class getRelevantConfig].appURL, config, @"%@ config failed.", NSStringFromClass(class))
 
 #define NSRAssertClassProperties(props, class)	GHAssertEqualStrings([[class new] listOfSendableProperties], props, @"%@ properties failed.", NSStringFromClass(class))

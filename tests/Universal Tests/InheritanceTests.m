@@ -21,28 +21,34 @@
 {
 	//was explicitly set to "parent"
 	NSRAssertClassModelName(@"parent", [Parent class]);
-	
+	NSRAssertClassPluralName(@"parentS", [Parent class]);
 	
 	//complacent child
 	//is complacent (doesn't explicitly set NSRailsUseModelName or NSRailsUseDefaultModelName), so will inherit the "parent" from Parent
 	NSRAssertClassModelName(@"parent", [Child class]);
+	NSRAssertClassPluralName(@"parentS", [Child class]); //explicit plural set
 	
 	//is complacent (doesn't explicitly set NSRailsUseModelName or NSRailsUseDefaultModelName), so will inherit the "parent" from Child
 	NSRAssertClassModelName(@"parent", [Grandchild class]);
+	NSRAssertClassPluralName(@"parentS", [Grandchild class]);
 	
 	//is not complacent (defines NSRailsUseModelName), as set to "r_grandchild"
 	NSRAssertClassModelName(@"r_gchild", [RebelliousGrandchild class]);
+	NSRAssertClassPluralName(@"r_gchilds", [RebelliousGrandchild class]); //no explicit plural set
 	
 	
 	//rebellious child
 	//is rebellious (explicitly defines NSRailsUseDefaultModelName for itself, so should be default behavior)
 	NSRAssertClassModelName(@"rebellious_child", [RebelliousChild class]);
-	
+	NSRAssertClassPluralName(@"rebellious_child", [RebelliousChild class]); //default plural set
+
 	//is complacent (doesn't explicitly set), BUT will inherit default behavior from R.Child, so default behavior
 	NSRAssertClassModelName(@"grandchild_of_rebellious", [GrandchildOfRebellious class]);
-	
+	NSRAssertClassPluralName(@"grandchild_of_rebellious", [GrandchildOfRebellious class]); //inherits default
+
 	//is rebellious (defines NSRailsUseModelName as "r_gchild_r"), so it'll use that name
 	NSRAssertClassModelName(@"r_gchild_r", [RebelliousGrandchildOfRebellious class]);
+	NSRAssertClassPluralName(@"r_gchild_rS", [Parent class]); //explicitly set
 }
 
 - (void) test_config_inheritance
