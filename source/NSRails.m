@@ -133,8 +133,8 @@
 
 + (NSString *) getPluralModelName
 {
-	//if defined through NSRailsUseModelNameWithPlural(), use that instead
-	SEL sel = @selector(NSRailsUseModelNameWithPlural);
+	//if defined through NSRailsUseModelName() as second parameter, use that instead
+	SEL sel = @selector(NSRailsUsePluralName);
 	if ([self respondsToSelector:sel] && [self performSelector:sel])
 	{
 		return [self performSelector:sel];

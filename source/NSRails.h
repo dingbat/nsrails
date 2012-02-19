@@ -153,9 +153,10 @@
 //using default is the same thing as passing nil for both model name + plural name
 #define NSRailsUseDefaultModelName _NSR_Name2(nil,nil)
 
-//_NSR_Name1 (only with 1 parameter, ie, custom model name but default plurality), creates NSRailsUseModelName method that returns param
+//_NSR_Name1 (only with 1 parameter, ie, custom model name but default plurality), creates NSRailsUseModelName method that returns param, return nil for plural to make it go to default
 #define _NSR_Name1(x) \
-+ (NSString*) NSRailsUseModelName { return x; }
++ (NSString*) NSRailsUseModelName { return x; } \
++ (NSString*) NSRailsUsePluralName { return nil; }
 
 //_NSR_Name2 (2 parameters, ie, custom model name and custom plurality), creates NSRailsUseModelName and NSRailsUsePluralName
 #define _NSR_Name2(x,y)  \
