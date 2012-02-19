@@ -203,7 +203,7 @@
 	}
 }
 
-- (id) initWithSyncProperties:(NSString *)props
+- (id) initWithRailsSyncProperties:(NSString *)props
 {
 	if ((self = [super init]))
 	{
@@ -465,7 +465,7 @@
 	//read in properties defined through NSRailsSync
 	NSString *props = [[self class] railsProperties];
 	
-	if ((self = [self initWithSyncProperties:props]))
+	if ((self = [self initWithRailsSyncProperties:props]))
 	{
 		//nothing special...
 	}
@@ -486,24 +486,25 @@
 	return [attributes description];
 }
 
-//overloads the JSON NSObject category -- will turn it into a JSON string
-//includes any nested models (which the json framework can't do)
-- (NSString *) JSONRepresentation
-{
-	return [self JSONRepresentation:nil];
-}
-
-- (NSString *) JSONRepresentation:(NSError **)e
+- (NSString *) railsJSONRepresentation:(NSError **)e
 {
 	// enveloped meaning with the model name out front, {"user"=>{"name"=>"x", "password"=>"y"}}
 	
-	NSDictionary *enveloped = [NSDictionary dictionaryWithObject:[self dictionaryOfRelevantProperties]
+	NSDictionary *enveloped = [NSDictionary dictionaryWithObject:[self dictionaryOfRailsRelevantProperties]
 														  forKey:[[self class] getModelName]];
 	
 	NSString *json = [enveloped JSONRepresentation:e];
 	if (!json)
 		[NSRConfig crashWithError:*e];
 	return json;
+}
+
+
+//will turn it into a JSON string
+//includes any nested models (which the json framework can't do)
+- (NSString *) railsJSONRepresentation
+{
+	return [self railsJSONRepresentation:nil];
 }
 
 - (id) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
@@ -522,7 +523,7 @@
 #endif
 	
 	//populate the new class with attributes specified
-	[model setAttributesAsPerDictionary:dict];
+	[model setAttributesAsPerRailsDictionary:dict];
 	return model;
 }
 
@@ -654,10 +655,10 @@
 					{
 						encodedObj = [self getCustomEnDecoding:YES forProperty:prop value:element];
 					}
-					//otherwise, use the NSRailsModel dictionaryOfRelevantProperties method to get that object in dictionary form
+					//otherwise, use the NSRailsModel dictionaryOfRailsRelevantProperties method to get that object in dictionary form
 					if (!encodable || !encodedObj)
 					{
-						encodedObj = [element dictionaryOfRelevantProperties];
+						encodedObj = [element dictionaryOfRailsRelevantProperties];
 					}
 					
 					[new addObject:encodedObj];
@@ -665,7 +666,7 @@
 				return new;
 			}
 			//otherwise, make that nested object a dictionary through NSRailsModel
-			return [val dictionaryOfRelevantProperties];
+			return [val dictionaryOfRailsRelevantProperties];
 		}
 		
 		//if NOT linked property, if its declared as encodable, return encoded version
@@ -700,12 +701,12 @@
 {
 	if ((self = [self init]))
 	{
-		[self setAttributesAsPerDictionary:railsDict];
+		[self setAttributesAsPerRailsDictionary:railsDict];
 	}
 	return self;
 }
 
-- (void) setAttributesAsPerDictionary:(NSDictionary *)dict
+- (void) setAttributesAsPerRailsDictionary:(NSDictionary *)dict
 {
 	attributes = dict;
 	
@@ -771,7 +772,7 @@
 	}
 }
 
-- (NSDictionary *) dictionaryOfRelevantProperties
+- (NSDictionary *) dictionaryOfRailsRelevantProperties
 {
 	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 	//loop through all properties marked as sendable
@@ -845,7 +846,7 @@
 	return dict;
 }
 
-- (BOOL) setAttributesAsPerJSON:(NSString *)json
+- (BOOL) setAttributesAsPerRailsJSON:(NSString *)json
 {
 	if (!json)
 	{
@@ -862,7 +863,7 @@
 		return NO;
 	}
 	
-	[self setAttributesAsPerDictionary:dict];
+	[self setAttributesAsPerRailsDictionary:dict];
 	
 	return YES;
 }
@@ -899,6 +900,16 @@
 
 - (NSString *) routeForInstanceMethod:(NSString *)method
 {
+	if (!self.modelID)
+	{
+#ifdef NSRLogErrors
+#ifdef NSRWarnOnInstanceRequestsWithNilModelID
+		NSLog(@"NSR Warning: You tried making a request with an instance of %@ but its modelID is nil. Calling this method on its controller, %@.",NSStringFromClass([self class]),[[self class] getPluralModelName]);
+#endif
+#endif
+		return [[self class] routeForMethod:method];
+	}
+	
 	//make request on instance, so set "method" for above method to be "1", or "1/method" if there's a method included
 	NSString *idAndMethod = [NSString stringWithFormat:@"%@%@",self.modelID,(method ? [@"/" stringByAppendingString:method] : @"")];
 	
@@ -908,6 +919,7 @@
 
 #pragma mark Performing actions on instances
 
+
 - (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error
 {
 	return [[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:requestStr route:[self routeForInstanceMethod:method] sync:error orAsync:nil];
@@ -916,6 +928,24 @@
 - (void) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method async:(void(^)(NSString *result, NSError *error))block
 {
 	[[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:requestStr route:[self routeForInstanceMethod:method] sync:nil orAsync:block];
+}
+
+- (NSString *) makeRequest:(NSString *)httpVerb method:(NSString *)method error:(NSError **)error
+{
+	NSString *json = [self railsJSONRepresentation:error];
+	if (json)
+		return [self makeRequest:httpVerb requestBody:json method:method error:error];
+	return nil;
+}
+
+- (void) makeRequest:(NSString *)httpVerb method:(NSString *)method async:(void(^)(NSString *result, NSError *error))block
+{
+	NSError *e;
+	NSString *json = [self railsJSONRepresentation:&e];
+	if (json)
+		[self makeRequest:httpVerb requestBody:json method:method async:block];
+	else
+		block(nil, e);
 }
 
 //these are really just convenience methods that'll call the above method with pre-built "GET" and no body
@@ -984,19 +1014,19 @@
 - (BOOL) createRemote {	return [self createRemote:nil];	}
 - (BOOL) createRemote:(NSError **)error
 {
-	NSString *jsonBody = [self JSONRepresentation:error];
+	NSString *jsonBody = [self railsJSONRepresentation:error];
 	if (!jsonBody)
 		return NO;
 	
 	NSString *jsonResponse = [[self class] makeRequest:@"POST" requestBody:jsonBody method:nil error:error];
 	
 	//check to see if json exists, and if it does, set all of my attributes to it (like to add the new ID), and return if it worked
-	return (jsonResponse && [self setAttributesAsPerJSON:jsonResponse]);
+	return (jsonResponse && [self setAttributesAsPerRailsJSON:jsonResponse]);
 }
 - (void) createRemoteAsync:(void (^)(NSError *))completionBlock
 {
 	NSError *jsonError;
-	NSString *jsonBody = [self JSONRepresentation:&jsonError];
+	NSString *jsonBody = [self railsJSONRepresentation:&jsonError];
 	if (!jsonBody)
 	{
 		completionBlock(jsonError);
@@ -1006,7 +1036,7 @@
 		[[self class] makeRequest:@"POST" requestBody:jsonBody method:nil async:^(NSString *result, NSError *error) 
 		 {
 			 if (result)
-				 [self setAttributesAsPerJSON:result];
+				 [self setAttributesAsPerRailsJSON:result];
 			 completionBlock(error);
 		 }];
 	}
@@ -1020,7 +1050,7 @@
 	if (![self checkForNilID:error])
 		return NO;
 	
-	NSString *jsonBody = [self JSONRepresentation:error];
+	NSString *jsonBody = [self railsJSONRepresentation:error];
 	if (!jsonBody)
 		return NO;
 	
@@ -1037,7 +1067,7 @@
 	else
 	{
 		NSError *jsonError;
-		NSString *jsonBody = [self JSONRepresentation:&jsonError];
+		NSString *jsonBody = [self railsJSONRepresentation:&jsonError];
 		if (!jsonBody)
 		{
 			completionBlock(jsonError);
@@ -1083,14 +1113,14 @@
 - (BOOL) getRemoteLatest:(NSError **)error
 {
 	NSString *json = [self makeGETRequestWithMethod:nil error:error];
-	return (json && [self setAttributesAsPerJSON:json]); //will return true/false if conversion worked
+	return (json && [self setAttributesAsPerRailsJSON:json]); //will return true/false if conversion worked
 }
 - (void) getRemoteLatestAsync:(void (^)(NSError *error))completionBlock
 {
 	[self makeGETRequestWithMethod:nil async:^(NSString *result, NSError *error) 
 	 {
 		 if (result)
-			 [self setAttributesAsPerJSON:result];
+			 [self setAttributesAsPerRailsJSON:result];
 		 completionBlock(error);
 	 }];
 }
@@ -1174,7 +1204,7 @@
 		NSRailsModel *obj = [[[self class] alloc] init];	
 		
 		//and set its properties as per the dictionary defined in the json
-		[obj setAttributesAsPerDictionary:dict];
+		[obj setAttributesAsPerRailsDictionary:dict];
 		
 		[objects addObject:obj];
 		

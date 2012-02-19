@@ -9,7 +9,6 @@
 #import "NSRConfig.h"
 
 #import "NSData+Additions.h"
-#import "JSONFramework.h"
 
 //NSRConfigStackElement implementation
 

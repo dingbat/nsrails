@@ -13,10 +13,13 @@
 #define NSRCompileWithARC
 #define NSRSuccinctErrorMessages
 //#define NSRCrashOnError
+//#define NSRWarnOnInstanceRequestsWithNilModelID
 
 #define NSRValidationErrorsKey	@"validation errors"
 
 
+
+#import "JSONFramework.h"
 
 @interface NSRConfig : NSObject
 {

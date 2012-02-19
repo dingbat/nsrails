@@ -77,6 +77,10 @@
 - (NSString *)	makeGETRequestWithMethod:(NSString *)method error:(NSError **)error;
 - (void)		makeGETRequestWithMethod:(NSString *)method async:(void(^)(NSString *result, NSError *error))completionBlock;
 
+//will send itself as requestBody
+- (NSString *)	makeRequest:(NSString *)httpVerb method:(NSString *)method error:(NSError **)error;
+- (void)		makeRequest:(NSString *)httpVerb method:(NSString *)method async:(void(^)(NSString *result, NSError *error))completionBlock;
+
 - (NSString *)	makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error;
 - (void)		makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method async:(void(^)(NSString *result, NSError *error))completionBlock;
 
@@ -99,15 +103,15 @@
 //will use whatever inputted in NSRailsProperties()
 ///////////////////////////////////////////
 
-- (NSString *) JSONRepresentation;
-- (NSDictionary *) dictionaryOfRelevantProperties;
+- (NSString *) railsJSONRepresentation;
+- (NSDictionary *) dictionaryOfRailsRelevantProperties;
 
-- (BOOL) setAttributesAsPerJSON:(NSString *)json;
-- (void) setAttributesAsPerDictionary:(NSDictionary *)dict;
+- (BOOL) setAttributesAsPerRailsJSON:(NSString *)json;
+- (void) setAttributesAsPerRailsDictionary:(NSDictionary *)dict;
 - (id) initWithRailsAttributesDictionary:(NSDictionary *)railsDict;
 
 //manual sync properties string, specific for that instance
-- (id) initWithSyncProperties:(NSString *)str;
+- (id) initWithRailsSyncProperties:(NSString *)str;
 
 
 
