@@ -16,7 +16,7 @@
 @interface NSRailsModel : NSObject
 {
 	NSNumber *modelID;
-	NSDictionary *attributes;
+	NSDictionary *railsAttributes;
 	
 	NSMutableArray *sendableProperties;
 	NSMutableArray *retrievableProperties;
@@ -31,7 +31,7 @@
 }
 
 @property (nonatomic, strong) NSNumber *modelID;
-@property (nonatomic, strong, readonly) NSDictionary *attributes;
+@property (nonatomic, strong, readonly) NSDictionary *railsAttributes;
 
 @property (nonatomic) BOOL destroyOnNesting;
 

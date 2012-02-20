@@ -42,7 +42,7 @@
 
 
 @implementation NSRailsModel
-@synthesize modelID, attributes, destroyOnNesting;
+@synthesize modelID, destroyOnNesting, railsAttributes;
 
 
 
@@ -483,7 +483,7 @@
 //will return the latest Rails dictionary (hash) retrieved
 - (NSString *) description
 {
-	return [attributes description];
+	return [railsAttributes description];
 }
 
 - (NSString *) railsJSONRepresentation:(NSError **)e
@@ -708,7 +708,7 @@
 
 - (void) setAttributesAsPerRailsDictionary:(NSDictionary *)dict
 {
-	attributes = dict;
+	railsAttributes = dict;
 	
 	for (NSString *objcProperty in retrievableProperties)
 	{
