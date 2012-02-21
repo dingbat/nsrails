@@ -65,7 +65,7 @@
 	NSRAssertRelevantConfigURL(@"http://Default", nil);
 }
 
-- (void) test_crud
+- (void) test_crud_sync
 {
 	///////////////////
 	//TEST NIL APP URL
@@ -74,7 +74,7 @@
 	[[NSRConfig defaultConfig] setAppURL:nil];	
 	
 	NSError *e;
-	TestPersonClass *person = [TestPersonClass getRemoteObjectWithID:1 error:&e];
+	TestPersonClass *person = [TestPersonClass remoteObjectWithID:1 error:&e];
 	
 	GHAssertNotNil(e, @"Should fail on no app URL set in config, where's the error?");
 	GHAssertNil(person, @"Person should be nil because no connection could be made");
@@ -87,7 +87,7 @@
 	//point app to localhost as it should be
 	[[NSRConfig defaultConfig] setAppURL:@"localhost:3000"];
 	
-	NSArray *allPeople = [TestPersonClass getAllRemote:&e];
+	NSArray *allPeople = [TestPersonClass remoteAll:&e];
 	
 	//must be that the server isn't running
 	if ([[e domain] isEqualToString:@"NSURLErrorDomain"])
@@ -95,7 +95,7 @@
 		GHFail(@"It doesn't look like you're running the demo Rails app. This makes the CRUD tests useless. To set up the test DB: 'cd demo/server; rake db:create db:migrate'. To run the app: 'rails s'");
 	}
 	
-	GHAssertNil(e, @"getAllRemote on Person should have worked.'");
+	GHAssertNil(e, @"remoteAll on Person should have worked.'");
 	GHAssertNotNil(allPeople, @"No errors, allPeople should not be nil.");
 
 	e = nil;
@@ -104,20 +104,19 @@
 	//TEST READ BY ID
 	
 	//try to retrieve ID = -1, obviously error
-	person = [TestPersonClass getRemoteObjectWithID:-1 error:&e];
+	person = [TestPersonClass remoteObjectWithID:-1 error:&e];
 	
 	GHAssertNotNil(e, @"Obviously no one with ID -1, where's the error?");
-	GHAssertNil(person, @"There was an error on getRemoteObjectWithID, person should be nil.");
+	GHAssertNil(person, @"There was an error on remoteObjectWithID, person should be nil.");
 	
 	e = nil;
 	
 	/////////////////
 	//TEST CREATE
 		
-	//this should fail on validation b/c no name
+	//this should fail on validation b/c no author
 	TestPersonClass *failedPerson = [[TestPersonClass alloc] init];
-	failedPerson.age = [NSNumber numberWithInt:10];
-	[failedPerson createRemote:&e];
+	[failedPerson remoteCreate:&e];
 	
 	GHAssertNotNil(e, @"Person should have failed validation b/c no name... where is error?");
 	GHAssertNotNil(failedPerson, @"Person did fail but object should not be nil.");
@@ -127,9 +126,8 @@
 
 	//this should go through
 	TestPersonClass *newPerson = [[TestPersonClass alloc] init];
-	newPerson.name = @"Name";
-	newPerson.age = [NSNumber numberWithInt:10];
-	[newPerson createRemote:&e];
+	newPerson.name = @"Dan";
+	[newPerson remoteCreate:&e];
 	
 	GHAssertNil(e, @"New person should've been created fine, there should be no error.");
 	GHAssertNotNil(newPerson.modelID, @"New person was just created, modelID shouldn't be nil.");
@@ -140,7 +138,7 @@
 	/////////////////
 	//TEST READ BY ID (again)
 	
-	TestPersonClass *retrievedPerson = [TestPersonClass getRemoteObjectWithID:[newPerson.modelID integerValue] error:&e];
+	TestPersonClass *retrievedPerson = [TestPersonClass remoteObjectWithID:[newPerson.modelID integerValue] error:&e];
 	
 	GHAssertNil(e, @"Retrieving person we just made, should be no errors.");
 	GHAssertNotNil(retrievedPerson, @"No errors retrieving person we just made, he should not be nil.");
@@ -152,8 +150,8 @@
 	//TEST UPDATE
 	
 	//update should go through
-	newPerson.name = @"Name 2";
-	[newPerson updateRemote:&e];
+	newPerson.name = @"Dan 2";
+	[newPerson remoteUpdate:&e];
 	
 	GHAssertNil(e, @"Update should've gone through, there should be no error");
 	
@@ -161,7 +159,7 @@
 
 	NSNumber *personID = newPerson.modelID;
 	newPerson.modelID = nil;
-	[newPerson updateRemote:&e];
+	[newPerson remoteUpdate:&e];
 	
 	//test to see that it'll fail on trying to update instance with nil ID
 	GHAssertNotNil(e, @"Tried to update an instance with a nil ID, where's the error?");
@@ -171,7 +169,7 @@
 	
 	//update should fail validation b/c no name
 	newPerson.name = nil;
-	[newPerson updateRemote:&e];
+	[newPerson remoteUpdate:&e];
 
 	GHAssertNotNil(e, @"New person should've failed, there should be an error.");
 	GHAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"There was an error by validation, so validation error dictionary should be present.");
@@ -182,7 +180,7 @@
 	///////////////////////
 	//TEST READ (RETRIVE)
 	
-	[newPerson getRemoteLatest:&e];
+	[newPerson remoteGetLatest:&e];
 	
 	GHAssertNil(e, @"Should be no error retrieving a value.");
 	//see if it correctly set the info on the server (still there after failed validation) to overwrite the local name (set to nil)
@@ -192,7 +190,7 @@
 	
 	//see if there's an error if trying to retrieve with a nil ID
 	newPerson.modelID = nil;
-	[newPerson getRemoteLatest:&e];
+	[newPerson remoteGetLatest:&e];
 
 	GHAssertNotNil(e, @"Tried to retrieve an instance with a nil ID, where's the error?");
 	
@@ -202,20 +200,20 @@
 	//TEST DESTROY
 	
 	//test trying to destroy instance with nil ID
-	[newPerson destroyRemote:&e];
+	[newPerson remoteDestroy:&e];
 	GHAssertNotNil(e, @"Tried to delete an instance with a nil ID, where's the error?");
 	newPerson.modelID = personID;
 
 	e = nil;
 	
 	//should work
-	[newPerson destroyRemote:&e];
+	[newPerson remoteDestroy:&e];
 	GHAssertNil(e, @"Deleting new person should have worked, but got back an error.");
 	
 	e = nil;
 	
 	//should get back an error cause there shouldn't be a person with its ID anymore
-	[newPerson destroyRemote:&e];
+	[newPerson remoteDestroy:&e];
 	GHAssertNotNil(e, @"Deleting new person for a second time shouldn't have worked, where's the error?");
 }
 

@@ -11,6 +11,5 @@
 @interface TestPersonClass : NSRailsModel
 
 @property (nonatomic, strong) NSString *name;
-@property (nonatomic, strong) NSNumber *age;
 
 @end

@@ -9,7 +9,7 @@
 #import "TestPersonClass.h"
 
 @implementation TestPersonClass
-@synthesize name, age;
+@synthesize name;
 NSRailsSync(*)
 NSRailsUseModelName(@"person")
 

@@ -342,7 +342,7 @@
 					if (!ivarType)
 					{
 #ifdef NSRLogErrors
-						NSLog(@"NSR Warning: Property '%@' declared in NSRailsSync for class %@ was not found in this class or in superclasses. Please fix this; element ignored.", prop, NSStringFromClass([self class]));
+						NSLog(@"NSR Warning: Property '%@' declared in NSRailsSync for class %@ was not found in this class or in superclasses. Maybe you forgot to @synthesize it? Element ignored.", prop, NSStringFromClass([self class]));
 #endif
 						continue;
 					}
@@ -404,14 +404,14 @@
 							if (!NSClassFromString(otherModel))
 							{
 #ifdef NSRLogErrors
-								NSLog(@"NSR Warning: Failed to find class for nested model %@ (declared for property %@ of class %@) - please fix this. Nesting relation not set. ",otherModel,prop,NSStringFromClass([self class]));
+								NSLog(@"NSR Warning: Failed to find class '%@', declared as class for nested property '%@' of class '%@'. Nesting relation not set. ",otherModel,prop,NSStringFromClass([self class]));
 #endif
 							}
 							//class entered is not a subclass of NSRailsModel
 							else if (![NSClassFromString(otherModel) isSubclassOfClass:[NSRailsModel class]])
 							{
 #ifdef NSRLogErrors
-								NSLog(@"NSR Warning: %@ was declared for the nested model property %@ of class %@, but %@ is not a subclass of NSRailsModel - please fix this. Nesting relation not set.",otherModel,prop, NSStringFromClass([self class]),otherModel);
+								NSLog(@"NSR Warning: '%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel. Nesting relation not set.",otherModel,prop, NSStringFromClass([self class]),otherModel);
 #endif
 							}
 							else
@@ -884,125 +884,23 @@
 #pragma mark -
 #pragma mark HTTP Request stuff
 
-+ (NSString *) routeForMethod:(NSString *)method
++ (NSString *) routeForControllerRoute:(NSString *)route
 {
-	NSString *route;
 	NSString *controller = [self getPluralModelName];
 	if (controller)
 	{
-		//this means this method was called on a RailsMethod _subclass_, so appropriately point the method to its controller
+		//this means this method was called on an NSRailsMethod _subclass_, so appropriately point the method to its controller
 		//eg, ([User makeGET:@"hello"] => myapp.com/users/hello)
-		route = controller;
-		if (method)
-			route = [route stringByAppendingFormat:@"/%@", method];
-	}
-	else
-	{
-		//this means this method was called on NSRailsModel (to access a "root method")
+		route = [NSString stringWithFormat:@"%@%@",controller, (route ? [@"/" stringByAppendingString:route] : @"")];
+		
+		//otherwise, if it was called on NSRailsModel (to access a "root method"), don't modify the route:
 		//eg, ([NSRailsModel makeGET:@"hello"] => myapp.com/hello)
-		route = method;
 	}
 	return route;
 }
 
-- (NSString *) routeForInstanceMethod:(NSString *)method
+- (NSString *) routeForInstanceRoute:(NSString *)route error:(NSError **)error
 {
-	if (!self.modelID)
-	{
-#ifdef NSRLogErrors
-#ifdef NSRWarnOnInstanceRequestsWithNilModelID
-		NSLog(@"NSR Warning: You tried making a request with an instance of %@ but its modelID is nil. Calling this method on its controller, %@.",NSStringFromClass([self class]),[[self class] getPluralModelName]);
-#endif
-#endif
-		return [[self class] routeForMethod:method];
-	}
-	
-	//make request on instance, so set "method" for above method to be "1", or "1/method" if there's a method included
-	NSString *idAndMethod = [NSString stringWithFormat:@"%@%@",self.modelID,(method ? [@"/" stringByAppendingString:method] : @"")];
-	
-	return [[self class] routeForMethod:idAndMethod];
-}
-
-
-#pragma mark Performing actions on instances
-
-
-- (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error
-{
-	return [[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:requestStr route:[self routeForInstanceMethod:method] sync:error orAsync:nil];
-}
-
-- (void) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method async:(void(^)(NSString *result, NSError *error))block
-{
-	[[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:requestStr route:[self routeForInstanceMethod:method] sync:nil orAsync:block];
-}
-
-- (NSString *) makeRequest:(NSString *)httpVerb method:(NSString *)method error:(NSError **)error
-{
-	NSString *json = [self railsJSONRepresentation:error];
-	if (json)
-		return [self makeRequest:httpVerb requestBody:json method:method error:error];
-	return nil;
-}
-
-- (void) makeRequest:(NSString *)httpVerb method:(NSString *)method async:(void(^)(NSString *result, NSError *error))block
-{
-	NSError *e;
-	NSString *json = [self railsJSONRepresentation:&e];
-	if (json)
-		[self makeRequest:httpVerb requestBody:json method:method async:block];
-	else
-		block(nil, e);
-}
-
-//these are really just convenience methods that'll call the above method with pre-built "GET" and no body
-
-- (NSString *) makeGETRequestWithMethod:(NSString *)method error:(NSError **)error
-{
-	return [self makeRequest:@"GET" requestBody:nil method:method error:error];
-}
-- (void) makeGETRequestWithMethod:(NSString *)method async:(void(^)(NSString *result, NSError *error))completionBlock
-{
-	[self makeRequest:@"GET" requestBody:nil method:method async:completionBlock];
-}
-
-
-#pragma mark Performing actions on classes
-
-
-+ (void) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method async:(void (^)(NSString *result, NSError *))block
-{ 
-	[[self getRelevantConfig] resultForRequestType:httpVerb requestBody:requestStr route:[self routeForMethod:method] sync:nil orAsync:block];
-}
-+ (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error
-{ 
-	return [[self getRelevantConfig] resultForRequestType:httpVerb requestBody:requestStr route:[self routeForMethod:method] sync:error orAsync:nil];
-}
-
-//these are really just convenience methods that'll call the above method with pre-built "GET" and no body
-
-+ (void) makeGETRequestWithMethod:(NSString *)method async:(void (^)(NSString *result, NSError *))completionBlock
-{ 
-	[self makeRequest:@"GET" requestBody:nil method:method async:completionBlock];
-}
-+ (NSString *) makeGETRequestWithMethod:(NSString *)method error:(NSError **)error
-{ 
-	return [self makeRequest:@"GET" requestBody:nil method:method error:error];
-} 
-
-
-
-
-
-
-
-#pragma mark -
-#pragma mark External stuff (CRUD)
-
-- (BOOL) checkForNilID:(NSError **)error
-{
-	//used as a helper for update/create
-	//if no ID for this model, return error.
 	if (!self.modelID)
 	{
 		NSError *e = [NSError errorWithDomain:@"NSRails" code:0 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Attempted to update or delete an object with no ID. (Instance of %@)",NSStringFromClass([self class])] forKey:NSLocalizedDescriptionKey]];
@@ -1010,131 +908,191 @@
 			*error = e;
 		
 		[NSRConfig crashWithError:e];
-		return NO;
+		return nil;
 	}
 	
-	return YES;
+	//make request on an instance, so make route "id", or "id/route" if there's an additional route included (1/edit)
+	NSString *idAndMethod = [NSString stringWithFormat:@"%@%@",self.modelID,(route ? [@"/" stringByAppendingString:route] : @"")];
+	
+	return [[self class] routeForControllerRoute:idAndMethod];
 }
+
+
+#pragma mark Performing actions on instances
+
+
+- (NSString *) remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route error:(NSError **)error
+{
+	route = [self routeForInstanceRoute:route error:error];
+	if (route)
+		return [[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:error orAsync:nil];
+	return nil;
+}
+
+- (void) remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock
+{
+	NSError *error;
+	route = [self routeForInstanceRoute:route error:&error];
+	if (route)
+		[[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
+	else
+		completionBlock(nil, error);
+}
+
+//these are really just convenience methods that'll call the above method sending the object data as request body
+
+- (NSString *) remoteMakeRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route error:(NSError **)error
+{
+	NSString *json = [self railsJSONRepresentation:error];
+	if (json)
+		return [self remoteMakeRequest:httpVerb requestBody:json route:route error:error];
+	return nil;
+}
+
+- (void) remoteMakeRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock
+{
+	NSError *e;
+	NSString *json = [self railsJSONRepresentation:&e];
+	if (json)
+		[self remoteMakeRequest:httpVerb requestBody:json route:route async:completionBlock];
+	else
+		completionBlock(nil, e);
+}
+
+//these are really just convenience methods that'll call the above method with pre-built "GET" and no body
+
+- (NSString *) remoteMakeGETRequestWithRoute:(NSString *)route error:(NSError **)error
+{
+	return [self remoteMakeRequest:@"GET" requestBody:nil route:route error:error];
+}
+
+- (void) remoteMakeGETRequestWithRoute:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock
+{
+	[self remoteMakeRequest:@"GET" requestBody:nil route:route async:completionBlock];
+}
+
+
+#pragma mark Performing actions on classes
+
+
++ (NSString *)	remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route error:(NSError **)error
+{
+	route = [self routeForControllerRoute:route];
+	return [[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:error orAsync:nil];
+}
+
++ (void) remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock
+{
+	route = [self routeForControllerRoute:route];
+	[[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
+}
+
+
+//these are really just convenience methods that'll call the above method with the JSON representation of the object
+
++ (NSString *) remoteMakeRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route error:(NSError **)error
+{
+	NSString *json = [obj railsJSONRepresentation:error];
+	if (json)
+		return [self remoteMakeRequest:httpVerb requestBody:json route:route error:error];
+	return nil;
+}
+
++ (void) remoteMakeRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock
+{
+	NSError *e;
+	NSString *json = [obj railsJSONRepresentation:&e];
+	if (json)
+		[self remoteMakeRequest:httpVerb requestBody:json route:route async:completionBlock];
+	else
+		completionBlock(nil, e);
+}
+
+
+//these are really just convenience methods that'll call the above method with pre-built "GET" and no body
+
++ (NSString *) remoteMakeGETRequestWithRoute:(NSString *)route error:(NSError **)error
+{
+	return [self remoteMakeRequest:@"GET" requestBody:nil route:route error:error];
+}
+
++ (void) remoteMakeGETRequestWithRoute:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock
+{
+	[self remoteMakeRequest:@"GET" requestBody:nil route:route async:completionBlock];
+}
+
+
+
+#pragma mark -
+#pragma mark External stuff (CRUD)
 
 #pragma mark Create
 
-- (BOOL) createRemote {	return [self createRemote:nil];	}
-- (BOOL) createRemote:(NSError **)error
+- (BOOL) remoteCreate {	return [self remoteCreate:nil];	}
+- (BOOL) remoteCreate:(NSError **)error
 {
-	NSString *jsonBody = [self railsJSONRepresentation:error];
-	if (!jsonBody)
-		return NO;
-	
-	NSString *jsonResponse = [[self class] makeRequest:@"POST" requestBody:jsonBody method:nil error:error];
+	NSString *jsonResponse = [[self class] remoteMakeRequest:@"POST" sendObject:self route:nil error:error];
 	
 	//check to see if json exists, and if it does, set all of my attributes to it (like to add the new ID), and return if it worked
 	return (jsonResponse && [self setAttributesAsPerRailsJSON:jsonResponse]);
 }
-- (void) createRemoteAsync:(void (^)(NSError *))completionBlock
+- (void) remoteCreateAsync:(void (^)(NSError *))completionBlock
 {
-	NSError *jsonError;
-	NSString *jsonBody = [self railsJSONRepresentation:&jsonError];
-	if (!jsonBody)
-	{
-		completionBlock(jsonError);
-	}
-	else
-	{
-		[[self class] makeRequest:@"POST" requestBody:jsonBody method:nil async:^(NSString *result, NSError *error) 
-		 {
-			 if (result)
-				 [self setAttributesAsPerRailsJSON:result];
-			 completionBlock(error);
-		 }];
-	}
+	[[self class] remoteMakeRequest:@"POST" sendObject:self route:nil async:
+	 
+	 ^(NSString *result, NSError *error) {
+		 if (result)
+			 [self setAttributesAsPerRailsJSON:result];
+		 completionBlock(error);
+	 }];
 }
 
 #pragma mark Update
 
-- (BOOL) updateRemote {	return [self updateRemote:nil];	}
-- (BOOL) updateRemote:(NSError **)error
+- (BOOL) remoteUpdate {	return [self remoteUpdate:nil];	}
+- (BOOL) remoteUpdate:(NSError **)error
 {
-	if (![self checkForNilID:error])
-		return NO;
-	
-	NSString *jsonBody = [self railsJSONRepresentation:error];
-	if (!jsonBody)
-		return NO;
-	
 	//makeRequest will actually return a result string, return if it's not nil (!! = not nil, nifty way to turn object to BOOL)
-	return !![self makeRequest:@"PUT" requestBody:jsonBody method:nil error:error];
+	return !![self remoteMakeRequestSendingSelf:@"PUT" route:nil error:error];
 }
-- (void) updateRemoteAsync:(void (^)(NSError *))completionBlock
+- (void) remoteUpdateAsync:(void (^)(NSError *))completionBlock
 {
-	NSError *error;
-	if (![self checkForNilID:&error])
-	{
-		completionBlock(error);
-	}
-	else
-	{
-		NSError *jsonError;
-		NSString *jsonBody = [self railsJSONRepresentation:&jsonError];
-		if (!jsonBody)
-		{
-			completionBlock(jsonError);
-		}
-		else
-		{
-			[self makeRequest:@"PUT" requestBody:jsonBody method:nil async:^(NSString *result, NSError *error) 
-			 {
-				 completionBlock(error);
-			 }];
-		}
-	}
+	[self remoteMakeRequestSendingSelf:@"PUT" route:nil async:
+	 
+	 ^(NSString *result, NSError *error) {
+		 completionBlock(error);
+	 }];
 }
 
 #pragma mark Destroy
 
-- (BOOL) destroyRemote { return [self destroyRemote:nil]; }
-- (BOOL) destroyRemote:(NSError **)error
+- (BOOL) remoteDestroy { return [self remoteDestroy:nil]; }
+- (BOOL) remoteDestroy:(NSError **)error
 {
-	if (![self checkForNilID:error])
-		return NO;
-	
-	return (!![self makeRequest:@"DELETE" requestBody:nil method:nil error:error]);
+	return (!![self remoteMakeRequest:@"DELETE" requestBody:nil route:nil error:error]);
 }
-- (void) destroyRemoteAsync:(void (^)(NSError *))completionBlock
+- (void) remoteDestroyAsync:(void (^)(NSError *))completionBlock
 {
-	NSError *error;
-	if (![self checkForNilID:&error])
-	{
+	[self remoteMakeRequest:@"DELETE" requestBody:nil route:nil async:
+	 
+	 ^(NSString *result, NSError *error) {
 		completionBlock(error);
-	}
-	else
-	{
-		[self makeRequest:@"DELETE" requestBody:nil method:nil async:^(NSString *result, NSError *error) {
-			completionBlock(error);
-		}];
-	}
+	}];
 }
 
 #pragma mark Get latest
 
-- (BOOL) getRemoteLatest {	return [self getRemoteLatest:nil]; }
-- (BOOL) getRemoteLatest:(NSError **)error
+- (BOOL) remoteGetLatest {	return [self remoteGetLatest:nil]; }
+- (BOOL) remoteGetLatest:(NSError **)error
 {
-	if (![self checkForNilID:error])
-		return NO;
-	
-	NSString *json = [self makeGETRequestWithMethod:nil error:error];
+	NSString *json = [self remoteMakeGETRequestWithRoute:nil error:error];
 	return (json && [self setAttributesAsPerRailsJSON:json]); //will return true/false if conversion worked
 }
-- (void) getRemoteLatestAsync:(void (^)(NSError *error))completionBlock
+- (void) remoteGetLatestAsync:(void (^)(NSError *error))completionBlock
 {
-	NSError *e;
-	if (![self checkForNilID:&e])
-	{
-		completionBlock(e);
-		return;
-	}
-	
-	[self makeGETRequestWithMethod:nil async:^(NSString *result, NSError *error) 
+	[self remoteMakeGETRequestWithRoute:nil async:
+	 
+	 ^(NSString *result, NSError *error) 
 	 {
 		 if (result)
 			 [self setAttributesAsPerRailsJSON:result];
@@ -1144,8 +1102,8 @@
 
 #pragma mark Get specific object (class-level)
 
-+ (id) getRemoteObjectWithID:(NSInteger)mID	{ return [self getRemoteObjectWithID:mID error:nil]; }
-+ (id) getRemoteObjectWithID:(NSInteger)mID error:(NSError **)error
++ (id) remoteObjectWithID:(NSInteger)mID	{ return [self remoteObjectWithID:mID error:nil]; }
++ (id) remoteObjectWithID:(NSInteger)mID error:(NSError **)error
 {
 	//instantiate the class
 	NSRailsModel *obj = [[[self class] alloc] init];
@@ -1154,7 +1112,7 @@
 	obj.modelID = [NSDecimalNumber numberWithInt:mID];
 	
 	//if the getRemote didn't work, make it nil
-	if (![obj getRemoteLatest:error])
+	if (![obj remoteGetLatest:error])
 		obj = nil;
 	
 #ifndef NSRCompileWithARC
@@ -1163,7 +1121,7 @@
 	
 	return obj;
 }
-+ (void) getRemoteObjectWithID:(NSInteger)mID async:(void (^)(id object, NSError *error))completionBlock
++ (void) remoteObjectWithID:(NSInteger)mID async:(void (^)(id object, NSError *error))completionBlock
 {
 	//see comments for previous method
 	NSRailsModel *obj = [[[self class] alloc] init];
@@ -1173,7 +1131,9 @@
 	[obj autorelease];
 #endif
 	
-	[obj getRemoteLatestAsync:^(NSError *error) {
+	[obj remoteGetLatestAsync:
+	 
+	 ^(NSError *error) {
 		if (error)
 			completionBlock(nil, error);
 		else
@@ -1196,7 +1156,7 @@
 		return nil;
 	}
 	
-	//helper method for both sync+async for getAllRemote
+	//helper method for both sync+async for remoteAll
 	if (![arr isKindOfClass:[NSArray class]])
 	{
 		NSError *e = [NSError errorWithDomain:@"NSRails" 
@@ -1233,11 +1193,11 @@
 	return objects;
 }
 
-+ (NSArray *) getAllRemote {	return [self getAllRemote:nil]; }
-+ (NSArray *) getAllRemote:(NSError **)error
++ (NSArray *) remoteAll {	return [self remoteAll:nil]; }
++ (NSArray *) remoteAll:(NSError **)error
 {
 	//make a class GET call (so just the controller - myapp.com/users)
-	NSString *json = [self makeGETRequestWithMethod:nil error:error];
+	NSString *json = [self remoteMakeGETRequestWithRoute:nil error:error];
 	if (!json)
 	{
 		return nil;
@@ -1245,9 +1205,10 @@
 	return [self arrayOfModelsFromJSON:json error:error];
 }
 
-+ (void) getAllRemoteAsync:(void (^)(NSArray *, NSError *))completionBlock
++ (void) remoteAllAsync:(void (^)(NSArray *, NSError *))completionBlock
 {
-	[self makeGETRequestWithMethod:nil async:^(NSString *result, NSError *error) 
+	[self remoteMakeGETRequestWithRoute:nil async:
+	 ^(NSString *result, NSError *error) 
 	 {
 		 if (error || !result)
 		 {

@@ -41,48 +41,48 @@
 
 /////////////////////////
 //sync, no error retrieval
-- (BOOL) getRemoteLatest;
-- (BOOL) updateRemote;
-- (BOOL) createRemote;
-- (BOOL) destroyRemote;
+- (BOOL) remoteGetLatest;
+- (BOOL) remoteUpdate;
+- (BOOL) remoteCreate;
+- (BOOL) remoteDestroy;
 
-+ (NSArray *) getAllRemote;
-+ (id) getRemoteObjectWithID:(NSInteger)mID;
++ (NSArray *) remoteAll;
++ (id) remoteObjectWithID:(NSInteger)mID;
 
 /////////////////////////
 //sync
-- (BOOL) getRemoteLatest:(NSError **)error;
-- (BOOL) updateRemote:(NSError **)error;
-- (BOOL) createRemote:(NSError **)error;
-- (BOOL) destroyRemote:(NSError **)error;
+- (BOOL) remoteGetLatest:(NSError **)error;
+- (BOOL) remoteUpdate:(NSError **)error;
+- (BOOL) remoteCreate:(NSError **)error;
+- (BOOL) remoteDestroy:(NSError **)error;
 
-+ (NSArray *) getAllRemote:(NSError **)error;
-+ (id) getRemoteObjectWithID:(NSInteger)mID error:(NSError **)error;
++ (NSArray *) remoteAll:(NSError **)error;
++ (id) remoteObjectWithID:(NSInteger)mID error:(NSError **)error;
 
 ///////////////////////////
 //async
-- (void) getRemoteLatestAsync:(void(^)(NSError *error))completionBlock;
-- (void) updateRemoteAsync:(void(^)(NSError *error))completionBlock;
-- (void) createRemoteAsync:(void(^)(NSError *error))completionBlock;
-- (void) destroyRemoteAsync:(void(^)(NSError *error))completionBlock;
+- (void) remoteGetLatestAsync:(void(^)(NSError *error))completionBlock;
+- (void) remoteUpdateAsync:(void(^)(NSError *error))completionBlock;
+- (void) remoteCreateAsync:(void(^)(NSError *error))completionBlock;
+- (void) remoteDestroyAsync:(void(^)(NSError *error))completionBlock;
 
-+ (void) getAllRemoteAsync:(void(^)(NSArray *allRemote, NSError *error))completionBlock;
-+ (void) getRemoteObjectWithID:(NSInteger)mID async:(void(^)(id object, NSError *error))completionBlock;
++ (void) remoteAllAsync:(void(^)(NSArray *allRemote, NSError *error))completionBlock;
++ (void) remoteObjectWithID:(NSInteger)mID async:(void(^)(id object, NSError *error))completionBlock;
 
 
 ///////////////////////////////////////
 //custom methods (not CRUD) on instance
 ///////////////////////////////////////
 
-- (NSString *)	makeGETRequestWithMethod:(NSString *)method error:(NSError **)error;
-- (void)		makeGETRequestWithMethod:(NSString *)method async:(void(^)(NSString *result, NSError *error))completionBlock;
+- (NSString *)	remoteMakeGETRequestWithRoute:(NSString *)route error:(NSError **)error;
+- (void)		remoteMakeGETRequestWithRoute:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock;
 
 //will send itself as requestBody
-- (NSString *)	makeRequest:(NSString *)httpVerb method:(NSString *)method error:(NSError **)error;
-- (void)		makeRequest:(NSString *)httpVerb method:(NSString *)method async:(void(^)(NSString *result, NSError *error))completionBlock;
+- (NSString *)	remoteMakeRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route error:(NSError **)error;
+- (void)		remoteMakeRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock;
 
-- (NSString *)	makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error;
-- (void)		makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method async:(void(^)(NSString *result, NSError *error))completionBlock;
+- (NSString *)	remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route error:(NSError **)error;
+- (void)		remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock;
 
 
 ///////////////////////////////////////
@@ -91,16 +91,19 @@
 //if called on NSRailsModel, will direct it to the app's root ([NSRailsModel makeGET:@"hello"] => myapp.com/hello)
 ///////////////////////////////////////
 
-+ (NSString *)	makeGETRequestWithMethod:(NSString *)method error:(NSError **)error;
-+ (void)		makeGETRequestWithMethod:(NSString *)method async:(void(^)(NSString *result, NSError *error))completionBlock;
++ (NSString *)	remoteMakeGETRequestWithRoute:(NSString *)httpVerb error:(NSError **)error;
++ (void)		remoteMakeGETRequestWithRoute:(NSString *)httpVerb async:(void(^)(NSString *result, NSError *error))completionBlock;
 
-+ (NSString *)	makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method error:(NSError **)error;
-+ (void)		makeRequest:(NSString *)httpVerb requestBody:(NSString *)requestStr method:(NSString *)method async:(void(^)(NSString *result, NSError *error))completionBlock;
++ (NSString *)	remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route error:(NSError **)error;
++ (void)		remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock;
+
++ (NSString *)	remoteMakeRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route error:(NSError **)error;
++ (void)		remoteMakeRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock;
 
 
 ///////////////////////////////////////////
 //manual json encoding/decoding
-//will use whatever inputted in NSRailsProperties()
+//will use whatever inputted in NSRailsSync()
 ///////////////////////////////////////////
 
 - (NSString *) railsJSONRepresentation;
