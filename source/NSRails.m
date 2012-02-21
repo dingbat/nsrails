@@ -287,9 +287,16 @@
 			}
 			for (int i = 0; i < elements.count; i++)
 			{
-				NSString *str = [elements objectAtIndex:i];
-				//remove any whitespace along with trailing NSRNoCarryFromSuper's to not screw anything up
-				NSString *prop = [[str stringByTrimmingCharactersInSet:wn] stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
+				NSString *element = [[elements objectAtIndex:i] stringByTrimmingCharactersInSet:wn];
+				
+				//skip if there's no NSRailsSync definition (not the first time through (which would be NSRailsModel) and same as base)
+				if ([element isEqualToString:NSRAILS_BASE_PROPS] && i != 0)
+				{
+					continue;
+				}
+				
+				//remove any NSRNoCarryFromSuper's to not screw anything up
+				NSString *prop = [element stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
 				
 				if (prop.length > 0)
 				{
@@ -314,7 +321,7 @@
 					prop = [[eqSplit objectAtIndex:0] stringByTrimmingCharactersInSet:wn];
 					
 					//check to see if a class is redefining modelID (modelID from NSRailsModel is the first property checked - if it's not the first, give a warning)
-					if ([prop isEqualToString:@"modelID"] && i > 0)
+					if ([prop isEqualToString:@"modelID"] && i != 0)
 					{
 #ifdef NSRLogErrors
 						NSLog(@"NSR Warning: Found attempt to define 'modelID' in NSRailsSync for class %@. This property is reserved by the NSRailsModel superclass and should not be modified. Please fix this; element ignored.", NSStringFromClass([self class]));
@@ -419,7 +426,7 @@
 							[ivarType isEqualToString:@"NSMutableArray"])
 						{
 #ifdef NSRLogErrors
-							NSLog(@"NSR Warning: Property '%@' in class %@ was found to be an array, but no nesting model was set. Note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved Rails attributes will be set. If NSDictionaries are desired, to suppress this warning, simply add a colon with nothing following to the property in NSRailsSync... '%@:'",prop,NSStringFromClass([self class]),str);
+							NSLog(@"NSR Warning: Property '%@' in class %@ was found to be an array, but no nesting model was set. Note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved Rails attributes will be set. If NSDictionaries are desired, to suppress this warning, simply add a colon with nothing following to the property in NSRailsSync... '%@:'",prop,NSStringFromClass([self class]),element);
 #endif
 						}
 						else if (!([ivarType isEqualToString:@"NSString"] ||
