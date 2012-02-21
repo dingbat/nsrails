@@ -40,6 +40,7 @@
 		591424C914EB0A9700481815 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 591424C814EB0A9700481815 /* Cocoa.framework */; };
 		59A6822714F0080400E4B489 /* InheritanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A6822614F0080400E4B489 /* InheritanceTests.m */; };
 		59A6822814F0080400E4B489 /* InheritanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A6822614F0080400E4B489 /* InheritanceTests.m */; };
+		59C21EFA14F320CD00B7DFA8 /* TestPersonClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C21EF914F320CD00B7DFA8 /* TestPersonClass.m */; };
 		59E318B114E9CDC500B0FC39 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E3187814E9CD8700B0FC39 /* UIKit.framework */; };
 		59E318B214E9CDC500B0FC39 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E3187A14E9CD8700B0FC39 /* Foundation.framework */; };
 		59E318B314E9CDC500B0FC39 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59E3187C14E9CD8700B0FC39 /* CoreGraphics.framework */; };
@@ -99,6 +100,8 @@
 		591424C814EB0A9700481815 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = SDKs/MacOSX10.6.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		59A6822614F0080400E4B489 /* InheritanceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InheritanceTests.m; sourceTree = "<group>"; };
 		59A6822A14F0085F00E4B489 /* NSRAsserts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSRAsserts.h; path = "Universal Tests/NSRAsserts.h"; sourceTree = "<group>"; };
+		59C21EF814F320CD00B7DFA8 /* TestPersonClass.h */ = {isa = PBXFileReference; fileEncoding = 4; path = TestPersonClass.h; sourceTree = "<group>"; };
+		59C21EF914F320CD00B7DFA8 /* TestPersonClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestPersonClass.m; sourceTree = "<group>"; };
 		59E3187814E9CD8700B0FC39 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		59E3187A14E9CD8700B0FC39 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		59E3187C14E9CD8700B0FC39 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -235,6 +238,8 @@
 			children = (
 				591424AF14EAFF9800481815 /* InheritanceTestClasses.h */,
 				591424B014EAFF9800481815 /* InheritanceTestClasses.m */,
+				59C21EF814F320CD00B7DFA8 /* TestPersonClass.h */,
+				59C21EF914F320CD00B7DFA8 /* TestPersonClass.m */,
 				591424B114EAFF9800481815 /* TestClass.h */,
 				591424B214EAFF9800481815 /* TestClass.m */,
 				59A6822614F0080400E4B489 /* InheritanceTests.m */,
@@ -398,6 +403,7 @@
 				591424B614EAFF9800481815 /* TestClass.m in Sources */,
 				591424B814EAFF9800481815 /* GeneralTests.m in Sources */,
 				59A6822714F0080400E4B489 /* InheritanceTests.m in Sources */,
+				59C21EFA14F320CD00B7DFA8 /* TestPersonClass.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
