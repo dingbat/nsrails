@@ -67,11 +67,11 @@
 
 - (void) test_crud
 {
+	///////////////////
+	//TEST NIL APP URL
+	
 	//point app to nil at first to test
 	[[NSRConfig defaultConfig] setAppURL:nil];	
-	
-	/////////////////
-	//TEST READ BY ID
 	
 	NSError *e;
 	TestPersonClass *person = [TestPersonClass getRemoteObjectWithID:1 error:&e];
@@ -81,8 +81,27 @@
 	
 	e = nil;
 	
+	/////////////////
+	//TEST READ ALL
+	
 	//point app to localhost as it should be
 	[[NSRConfig defaultConfig] setAppURL:@"localhost:3000"];
+	
+	NSArray *allPeople = [TestPersonClass getAllRemote:&e];
+	
+	//must be that the server isn't running
+	if ([[e domain] isEqualToString:@"NSURLErrorDomain"])
+	{
+		GHFail(@"It doesn't look like you're running the demo Rails app. This makes the CRUD tests useless. To set up the test DB: 'cd demo/server; rake db:create db:migrate'. To run the app: 'rails s'");
+	}
+	
+	GHAssertNil(e, @"getAllRemote on Person should have worked.'");
+	GHAssertNotNil(allPeople, @"No errors, allPeople should not be nil.");
+
+	e = nil;
+	
+	/////////////////
+	//TEST READ BY ID
 	
 	//try to retrieve ID = -1, obviously error
 	person = [TestPersonClass getRemoteObjectWithID:-1 error:&e];
