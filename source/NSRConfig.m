@@ -91,6 +91,12 @@ static NSMutableArray *overrideConfigStack = nil;
 
 - (void) setAppURL:(NSString *)str
 {
+	if (!str)
+	{
+		appURL = nil;
+		return;
+	}
+	
 	//get rid of trailing / if it's there
 	if (str.length > 0 && [[str substringFromIndex:str.length-1] isEqualToString:@"/"])
 		str = [str substringToIndex:str.length-1];
