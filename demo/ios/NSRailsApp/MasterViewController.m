@@ -22,7 +22,7 @@
 	[self updateAttributesFromUI];
 	
 	NSError *e;
-	if ([person createRemote:&e]) ///<------------------ create (will return boolean for whether it was successful)
+	if ([person remoteCreate:&e]) ///<------------------ create (will return boolean for whether it was successful)
 	{
 		[people addObject:person];
 		
@@ -41,18 +41,19 @@
 	[self updateAttributesFromUI];
 	
 	NSError *e;
-	if (![person updateRemote:&e]) ///<------------------ update to server (will return boolean for whether it was successful)
+	if (![person remoteUpdate:&e]) ///<------------------ update to server (will return boolean for whether it was successful)
 	{
 		[self alertForError:e];
 	}
 	
+	[person remoteGetLatest];
 	[self updateUI];
 }
 
 - (IBAction) destroy
 {
 	NSError *e;
-	if ([person destroyRemote:&e])  ///<------------------ destroy (will return boolean for whether it was successful)
+	if ([person remoteDestroy:&e])  ///<------------------ destroy (will return boolean for whether it was successful)
 	{
 		int personIndex = [people indexOfObject:person];
 		[people removeObjectIdenticalTo:person];
@@ -79,11 +80,11 @@
 
 - (IBAction) refresh
 {
-	people = [NSMutableArray arrayWithArray:[Person getAllRemote]]; ///<------- getAll (index) - will return an array of People
+	people = [NSMutableArray arrayWithArray:[Person remoteAll]]; ///<------- getAll (index) - will return an array of People
 	
 	if (person.modelID)
 	{
-		[person getRemoteLatest];  ///<------------------ get (read/retrieve) will update this instance's attributes to match server
+		[person remoteGetLatest];  ///<------------------ get (read/retrieve) will update this instance's attributes to match server
 	}
 	
 	[self updateUI];
@@ -154,12 +155,9 @@
 {
 	person.name = nameField.text;
 	person.age = [NSNumber numberWithInt:[ageField.text intValue]];
-	if (brainSizeField.text.length > 0)
-	{
-		if (!person.brain)
-			person.brain = [[Brain alloc] init];
-		person.brain.size = brainSizeField.text;
-	}
+	if (!person.brain)
+		person.brain = [[Brain alloc] init];
+	person.brain.size = brainSizeField.text;
 }
 
 

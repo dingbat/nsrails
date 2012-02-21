@@ -355,7 +355,7 @@
 				<reference key="NSNextKeyView" ref="705889865"/>
 				<object class="NSColor" key="IBUIBackgroundColor">
 					<int key="NSColorSpace">3</int>
-					<bytes key="NSWhite">MC45NTI1NTQ3NDQ1AA</bytes>
+					<bytes key="NSWhite">MC45NQA</bytes>
 				</object>
 				<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 			</object>

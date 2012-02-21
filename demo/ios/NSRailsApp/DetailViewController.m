@@ -19,7 +19,7 @@
 
 - (void) refresh
 {
-	[brain getRemoteLatest]; ///<------------------ get (read/retrieve) will update this instance's attributes to match server
+	[brain remoteGetLatest]; ///<------------------ get (read/retrieve) will update this instance's attributes to match server
 	
 	[self.tableView reloadData];
 }
@@ -77,7 +77,7 @@
 		{
 			t.destroyOnNesting = YES;  ///<------------------ mark each Thought for delete on the nested update later
 		}
-		[brain updateRemote];  ///<------------------ update to server (will return boolean for whether it was successful)
+		[brain remoteUpdate];  ///<------------------ update to server (will return boolean for whether it was successful)
 		
 		[brain.thoughts removeAllObjects];
 		[tableView reloadData];
