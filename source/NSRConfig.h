@@ -9,6 +9,10 @@
 //  OPTIONS
 // for documentation on these, see https://github.com/dingbat/nsrails/wiki/Compile-config
 
+#import "JSONFramework.h"
+
+typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
+
 #define NSRLog 2
 #define NSRCompileWithARC
 #define NSRSuccinctErrorMessages
@@ -16,10 +20,6 @@
 //#define NSRWarnOnInstanceRequestsWithNilModelID
 
 #define NSRValidationErrorsKey	@"validation errors"
-
-
-
-#import "JSONFramework.h"
 
 @interface NSRConfig : NSObject
 {
@@ -51,7 +51,7 @@
 //If you wish to define your own method of making a connection that's not HTTP (SSL, etc)
 //this is the method to override:
 
-- (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock;
+- (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock;
 
 ///////////////////////////////////////////////////////
 //Some helper methods that could be useful

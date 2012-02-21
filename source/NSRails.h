@@ -7,11 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "NSRConfig.h"
 #import "JSONFramework.h"
+#import "NSRConfig.h"
 
 //log NSR errors by default
 #define NSRLogErrors
+
+typedef void(^NSRBasicCompletionBlock)(NSError *error);
+typedef void(^NSRGetAllCompletionBlock)(NSArray *allRemote, NSError *error);
+typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 
 @interface NSRailsModel : NSObject
 {
@@ -61,13 +65,13 @@
 
 ///////////////////////////
 //async
-- (void) remoteGetLatestAsync:(void(^)(NSError *error))completionBlock;
-- (void) remoteUpdateAsync:(void(^)(NSError *error))completionBlock;
-- (void) remoteCreateAsync:(void(^)(NSError *error))completionBlock;
-- (void) remoteDestroyAsync:(void(^)(NSError *error))completionBlock;
+- (void) remoteGetLatestAsync:(NSRBasicCompletionBlock)completionBlock;
+- (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock;
+- (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock;
+- (void) remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock;
 
-+ (void) remoteAllAsync:(void(^)(NSArray *allRemote, NSError *error))completionBlock;
-+ (void) remoteObjectWithID:(NSInteger)mID async:(void(^)(id object, NSError *error))completionBlock;
++ (void) remoteAllAsync:(NSRGetAllCompletionBlock)completionBlock;
++ (void) remoteObjectWithID:(NSInteger)mID async:(NSRGetObjectCompletionBlock)completionBlock;
 
 
 ///////////////////////////////////////
@@ -75,14 +79,14 @@
 ///////////////////////////////////////
 
 - (NSString *)	remoteMakeGETRequestWithRoute:(NSString *)route error:(NSError **)error;
-- (void)		remoteMakeGETRequestWithRoute:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock;
+- (void)		remoteMakeGETRequestWithRoute:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock;
 
 //will send itself as requestBody
 - (NSString *)	remoteMakeRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route error:(NSError **)error;
-- (void)		remoteMakeRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock;
+- (void)		remoteMakeRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock;
 
 - (NSString *)	remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route error:(NSError **)error;
-- (void)		remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock;
+- (void)		remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock;
 
 
 ///////////////////////////////////////
@@ -92,13 +96,13 @@
 ///////////////////////////////////////
 
 + (NSString *)	remoteMakeGETRequestWithRoute:(NSString *)httpVerb error:(NSError **)error;
-+ (void)		remoteMakeGETRequestWithRoute:(NSString *)httpVerb async:(void(^)(NSString *result, NSError *error))completionBlock;
++ (void)		remoteMakeGETRequestWithRoute:(NSString *)httpVerb async:(NSRHTTPCompletionBlock)completionBlock;
 
 + (NSString *)	remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route error:(NSError **)error;
-+ (void)		remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock;
++ (void)		remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock;
 
 + (NSString *)	remoteMakeRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route error:(NSError **)error;
-+ (void)		remoteMakeRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock;
++ (void)		remoteMakeRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock;
 
 
 ///////////////////////////////////////////

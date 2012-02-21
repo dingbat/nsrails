@@ -38,7 +38,7 @@
 
 + (NSRConfig *) overrideConfig;
 + (void) crashWithError:(NSError *)error;
-- (NSString *) resultForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock;
+- (NSString *) resultForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock;
 
 @end
 
@@ -978,7 +978,7 @@
 	return nil;
 }
 
-- (void) remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock
+- (void) remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
 {
 	NSError *error;
 	route = [self routeForInstanceRoute:route error:&error];
@@ -998,7 +998,7 @@
 	return nil;
 }
 
-- (void) remoteMakeRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock
+- (void) remoteMakeRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
 {
 	NSError *e;
 	NSString *json = [self railsJSONRepresentation:&e];
@@ -1015,7 +1015,7 @@
 	return [self remoteMakeRequest:@"GET" requestBody:nil route:route error:error];
 }
 
-- (void) remoteMakeGETRequestWithRoute:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock
+- (void) remoteMakeGETRequestWithRoute:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
 {
 	[self remoteMakeRequest:@"GET" requestBody:nil route:route async:completionBlock];
 }
@@ -1030,7 +1030,7 @@
 	return [[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:error orAsync:nil];
 }
 
-+ (void) remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock
++ (void) remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
 {
 	route = [self routeForControllerRoute:route];
 	[[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
@@ -1047,7 +1047,7 @@
 	return nil;
 }
 
-+ (void) remoteMakeRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock
++ (void) remoteMakeRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
 {
 	NSError *e;
 	NSString *json = [obj railsJSONRepresentation:&e];
@@ -1065,7 +1065,7 @@
 	return [self remoteMakeRequest:@"GET" requestBody:nil route:route error:error];
 }
 
-+ (void) remoteMakeGETRequestWithRoute:(NSString *)route async:(void(^)(NSString *result, NSError *error))completionBlock
++ (void) remoteMakeGETRequestWithRoute:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
 {
 	[self remoteMakeRequest:@"GET" requestBody:nil route:route async:completionBlock];
 }
@@ -1085,7 +1085,7 @@
 	//check to see if json exists, and if it does, set all of my attributes to it (like to add the new ID), and return if it worked
 	return (jsonResponse && [self setAttributesAsPerRailsJSON:jsonResponse]);
 }
-- (void) remoteCreateAsync:(void (^)(NSError *))completionBlock
+- (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock
 {
 	[[self class] remoteMakeRequest:@"POST" sendObject:self route:nil async:
 	 
@@ -1104,7 +1104,7 @@
 	//makeRequest will actually return a result string, return if it's not nil (!! = not nil, nifty way to turn object to BOOL)
 	return !![self remoteMakeRequestSendingSelf:@"PUT" route:nil error:error];
 }
-- (void) remoteUpdateAsync:(void (^)(NSError *))completionBlock
+- (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock
 {
 	[self remoteMakeRequestSendingSelf:@"PUT" route:nil async:
 	 
@@ -1120,7 +1120,7 @@
 {
 	return (!![self remoteMakeRequest:@"DELETE" requestBody:nil route:nil error:error]);
 }
-- (void) remoteDestroyAsync:(void (^)(NSError *))completionBlock
+- (void) remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock
 {
 	[self remoteMakeRequest:@"DELETE" requestBody:nil route:nil async:
 	 
@@ -1137,7 +1137,7 @@
 	NSString *json = [self remoteMakeGETRequestWithRoute:nil error:error];
 	return (json && [self setAttributesAsPerRailsJSON:json]); //will return true/false if conversion worked
 }
-- (void) remoteGetLatestAsync:(void (^)(NSError *error))completionBlock
+- (void) remoteGetLatestAsync:(NSRBasicCompletionBlock)completionBlock
 {
 	[self remoteMakeGETRequestWithRoute:nil async:
 	 
@@ -1170,7 +1170,7 @@
 	
 	return obj;
 }
-+ (void) remoteObjectWithID:(NSInteger)mID async:(void (^)(id object, NSError *error))completionBlock
++ (void) remoteObjectWithID:(NSInteger)mID async:(NSRGetObjectCompletionBlock)completionBlock
 {
 	//see comments for previous method
 	NSRailsModel *obj = [[[self class] alloc] init];
@@ -1254,7 +1254,7 @@
 	return [self arrayOfModelsFromJSON:json error:error];
 }
 
-+ (void) remoteAllAsync:(void (^)(NSArray *, NSError *))completionBlock
++ (void) remoteAllAsync:(NSRGetAllCompletionBlock)completionBlock
 {
 	[self remoteMakeGETRequestWithRoute:nil async:
 	 ^(NSString *result, NSError *error) 

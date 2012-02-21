@@ -38,7 +38,7 @@
 
 @interface NSRConfig (private) 
 
-- (NSString *) makeHTTPRequestWithRequest:(NSURLRequest *)request sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock;
+- (NSString *) makeHTTPRequestWithRequest:(NSURLRequest *)request sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock;
 
 @end
 
@@ -132,7 +132,7 @@ static NSMutableArray *overrideConfigStack = nil;
 }
 
 //Do not override this method - it includes a check to see if there's no AppURL specified
-- (NSString *) resultForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock
+- (NSString *) resultForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock
 {
 	//make sure the app URL is set
 	if (!self.appURL)
@@ -173,7 +173,7 @@ static NSMutableArray *overrideConfigStack = nil;
 }
 
 //Overide THIS method if necessary (for SSL etc)
-- (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock
+- (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock
 {	
 	//helper method to get an NSURLRequest object based on above params
 	NSURLRequest *request = [self HTTPRequestForRequestType:type requestBody:requestStr route:route];
@@ -186,7 +186,7 @@ static NSMutableArray *overrideConfigStack = nil;
 	return result;
 }
 
-- (NSString *) makeHTTPRequestWithRequest:(NSURLRequest *)request sync:(NSError **)error orAsync:(void(^)(NSString *result, NSError *error))completionBlock
+- (NSString *) makeHTTPRequestWithRequest:(NSURLRequest *)request sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock
 {
 	if (completionBlock)
 	{
