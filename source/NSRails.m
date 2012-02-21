@@ -1112,11 +1112,21 @@
 - (BOOL) getRemoteLatest {	return [self getRemoteLatest:nil]; }
 - (BOOL) getRemoteLatest:(NSError **)error
 {
+	if (![self checkForNilID:error])
+		return NO;
+	
 	NSString *json = [self makeGETRequestWithMethod:nil error:error];
 	return (json && [self setAttributesAsPerRailsJSON:json]); //will return true/false if conversion worked
 }
 - (void) getRemoteLatestAsync:(void (^)(NSError *error))completionBlock
 {
+	NSError *e;
+	if (![self checkForNilID:&e])
+	{
+		completionBlock(e);
+		return;
+	}
+	
 	[self makeGETRequestWithMethod:nil async:^(NSString *result, NSError *error) 
 	 {
 		 if (result)
