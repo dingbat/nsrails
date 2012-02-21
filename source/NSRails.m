@@ -22,6 +22,8 @@
 //this will be the marker for the propertyEquivalents dictionary if there's no explicit equivalence set
 #define NSRNoEquivalentMarker @""
 
+#define NSRBelongsToKeyForProperty(prop) [prop stringByAppendingString:@", belongs_to"]
+
 @interface NSRailsModel (internal)
 
 + (NSRConfig *) getRelevantConfig;
@@ -376,14 +378,25 @@
 					if (opSplit.count > 1)
 					{
 						//if any of these flags exist, add to appropriate category
+						//retrievable
 						if ([options rangeOfString:@"r"].location != NSNotFound)
 							[retrievableProperties addObject:prop];
-						if ([options rangeOfString:@"e"].location != NSNotFound)
-							[encodeProperties addObject:prop];
-						if ([options rangeOfString:@"d"].location != NSNotFound)
-							[decodeProperties addObject:prop];
+						
+						//sendable
 						if ([options rangeOfString:@"s"].location != NSNotFound)
 							[self addPropertyAsSendable:prop equivalent:equivalent];
+						
+						//encodable
+						if ([options rangeOfString:@"e"].location != NSNotFound)
+							[encodeProperties addObject:prop];
+						
+						//decodable
+						if ([options rangeOfString:@"d"].location != NSNotFound)
+							[decodeProperties addObject:prop];
+						
+						//belongs_to association
+						if ([options rangeOfString:@"b"].location != NSNotFound)
+							[nestedModelProperties setObject:[NSNumber numberWithBool:YES] forKey:NSRBelongsToKeyForProperty(prop)];
 					}
 					
 					//if no options are defined or some are but neither -s nor -r are defined, by default add sendable+retrievable
@@ -415,7 +428,9 @@
 #endif
 							}
 							else
+							{
 								[nestedModelProperties setObject:otherModel forKey:prop];
+							}
 						}
 					}
 					else
@@ -665,6 +680,10 @@
 					//otherwise, use the NSRailsModel dictionaryOfRailsRelevantProperties method to get that object in dictionary form
 					if (!encodable || !encodedObj)
 					{
+						//but first make sure it's an NSRailsModel subclass
+						if (![element isKindOfClass:[NSRailsModel class]])
+							continue;
+						
 						encodedObj = [element dictionaryOfRailsRelevantProperties];
 					}
 					
@@ -672,7 +691,12 @@
 				}
 				return new;
 			}
+			
 			//otherwise, make that nested object a dictionary through NSRailsModel
+			//first make sure it's an NSRailsModel subclass
+			if (![val isKindOfClass:[NSRailsModel class]])
+				return nil;
+			
 			return [val dictionaryOfRailsRelevantProperties];
 		}
 		
@@ -803,6 +827,7 @@
 		}
 		
 		id val = [self representationOfObjectForProperty:objcProperty];
+		
 		BOOL null = !val;
 		if (!val && ![railsEquivalent isEqualToString:@"id"]) 
 			//if it's a nil value but ID is null, simply bypass it, don't stick in "null" - it could be for create
@@ -821,8 +846,10 @@
 		}
 		if (val)
 		{
+			BOOL isArray = [val isKindOfClass:[NSArray class]];
+			
 			//if it's an array, remove any null values (wouldn't make sense)
-			if ([val isKindOfClass:[NSArray class]])
+			if (isArray)
 			{
 				for (int i = 0; i < [val count]; i++)
 				{
@@ -833,9 +860,31 @@
 					}
 				}
 			}
-			
-			if ([nestedModelProperties objectForKey:objcProperty] && !null) //if its null/empty(for arrays), dont append _attributes
-				railsEquivalent = [railsEquivalent stringByAppendingString:@"_attributes"];
+			else if ([nestedModelProperties objectForKey:objcProperty] && !null)
+			{
+				BOOL belongsToAndNotCreate = NO;
+				if ([nestedModelProperties objectForKey:NSRBelongsToKeyForProperty(objcProperty)])
+				{
+					//if it's a belongs_to association, the nested object has an id, and we have NO id, it must mean we want to link ourselves to this object, and that's it
+					
+					NSNumber *nestedID = [val objectForKey:@"id"];
+					if (nestedID)
+					{
+						belongsToAndNotCreate = YES;
+						railsEquivalent = [railsEquivalent stringByAppendingString:@"_id"];
+						
+						//set the value to be the actual ID
+						val = nestedID;
+					}
+				}
+				
+				//append "_attributes" if not null (if not empty for arrays) and if we didn't just set it to "x_id" above
+				if (!null && !belongsToAndNotCreate)
+				{
+					railsEquivalent = [railsEquivalent stringByAppendingString:@"_attributes"];
+				}
+			}
+				
 			
 			//check to see if it was already set (ie, there are multiple properties pointing to the same rails attr)
 			if (![dict objectForKey:railsEquivalent])
