@@ -9,7 +9,7 @@ NSRails is a light-weight Objective-C library to make interfacing with a Rails s
 
 h3. What can NSRails do?
 
-NSRails builds ActiveResource support straight into your Objective-C models, meaning CRUD operations and others can be called seamlessly via Objective-C methods. For example, all it takes to create a new user from Objective-C is <code>[user createRemote];</code> (after setting, say, a <code>username</code> property) and it'll go straight to your Rails server.
+NSRails builds ActiveResource support straight into your Objective-C models, meaning CRUD operations and others can be called seamlessly via Objective-C methods. For example, all it takes to create a new user from Objective-C is <code>[user remoteCreate];</code> (after setting, say, a <code>username</code> property) and it'll go straight to your Rails server.
 
 It's extremely simple to use but also flexible and powerful. Some features include:
 * Keep models and properties of your choice "in-sync":https://github.com/dingbat/nsrails/wiki/NSRailsify with Rails
@@ -17,6 +17,8 @@ It's extremely simple to use but also flexible and powerful. Some features inclu
 * Support for "basic HTTP authentication":https://github.com/dingbat/nsrails/wiki/NSRConfig
 * "Asynchronous":https://github.com/dingbat/nsrails/wiki/NSRailsModel requests
 * And tons more...
+
+The included demo iPhone app goes straight to the live Rails app "http://NSRails.com":http://nsrails.com, so you won't even have to launch a server to get started. Have fun and be civil!
 
 h3. How do I get started?
 
