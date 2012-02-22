@@ -103,6 +103,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+		cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     
 	Response *resp = [post.responses objectAtIndex:indexPath.row];
