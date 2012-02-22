@@ -6,6 +6,9 @@
 //  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
+#import "NSRails.h"
+#import "NSRConfig.h"
+
 //Make some private methods accessible
 @interface NSRailsModel (internal)
 
@@ -21,6 +24,9 @@
 + (NSRConfig *) getRelevantConfig;
 
 - (NSString *) listOfSendableProperties;
+
+- (NSString *) routeForInstanceRoute:(NSString *)route error:(NSError **)error;
++ (NSString *) routeForControllerRoute:(NSString *)route;
 
 @end
 
