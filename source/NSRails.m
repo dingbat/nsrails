@@ -394,7 +394,7 @@
 						if ([options rangeOfString:@"d"].location != NSNotFound)
 							[decodeProperties addObject:prop];
 						
-						//belongs_to association
+						//belongs_to association - add a special marker in nestedModelProperties dict
 						if ([options rangeOfString:@"b"].location != NSNotFound)
 							[nestedModelProperties setObject:[NSNumber numberWithBool:YES] forKey:NSRBelongsToKeyForProperty(prop)];
 					}
@@ -505,7 +505,9 @@
 //will return the latest Rails dictionary (hash) retrieved
 - (NSString *) description
 {
-	return [railsAttributes description];
+	if (railsAttributes)
+		return [railsAttributes description];
+	return [super description];
 }
 
 - (NSString *) railsJSONRepresentation:(NSError **)e
@@ -515,6 +517,8 @@
 	NSDictionary *enveloped = [NSDictionary dictionaryWithObject:[self dictionaryOfRailsRelevantProperties]
 														  forKey:[[self class] getModelName]];
 	
+	NSDictionary *dict = [enveloped objectForKey:[[self class] getModelName]];
+	NSLog(@"made dictionary: %@, inside envelope is %@, %@",enveloped, NSStringFromClass([dict class]), dict);
 	NSError *error;
 	NSString *json = [enveloped JSONRepresentation:&error];
 	if (!json)
@@ -663,12 +667,13 @@
 		BOOL encodable = [encodeProperties indexOfObject:prop] != NSNotFound;
 		
 		id val = [self performSelector:sel];
+		BOOL isArray = [val isKindOfClass:[NSArray class]];
 		
-		//see if this property actually links to a custom NSRailsModel subclass
-		if ([nestedModelProperties objectForKey:prop])
+		//see if this property actually links to a custom NSRailsModel subclass, or it WASN'T declared, but is an array
+		if ([nestedModelProperties objectForKey:prop] || isArray)
 		{
 			//if the ivar is an array, we need to make every element into JSON and then put them back in the array
-			if ([val isKindOfClass:[NSArray class]])
+			if (isArray)
 			{
 				NSMutableArray *new = [NSMutableArray arrayWithCapacity:[val count]];
 				//go through every nested object in the array
@@ -865,31 +870,23 @@
 					}
 				}
 			}
-			else if ([nestedModelProperties objectForKey:objcProperty] && !null)
-			{
-				BOOL belongsToAndNotCreate = NO;
-				if ([nestedModelProperties objectForKey:NSRBelongsToKeyForProperty(objcProperty)])
-				{
-					//if it's a belongs_to association, the nested object has an id, and we have NO id, it must mean we want to link ourselves to this object, and that's it
-					
-					NSNumber *nestedID = [val objectForKey:@"id"];
-					if (nestedID)
-					{
-						belongsToAndNotCreate = YES;
-						railsEquivalent = [railsEquivalent stringByAppendingString:@"_id"];
-						
-						//set the value to be the actual ID
-						val = nestedID;
-					}
-				}
+			
+			//if not array && declared as belongs_to && exists && relation ID exists, THEN, we should use _id instead of _attributes
+			if (!isArray && 
+				[nestedModelProperties objectForKey:NSRBelongsToKeyForProperty(objcProperty)] && 
+				!null &&
+				[val objectForKey:@"id"])
+			{				
+				railsEquivalent = [railsEquivalent stringByAppendingString:@"_id"];
 				
-				//append "_attributes" if not null (if not empty for arrays) and if we didn't just set it to "x_id" above
-				if (!null && !belongsToAndNotCreate)
-				{
-					railsEquivalent = [railsEquivalent stringByAppendingString:@"_attributes"];
-				}
+				//set the value to be the actual ID
+				val = [val objectForKey:@"id"];
 			}
-				
+			//otherwise, if it's included in nestedModelProperties OR it's an array, append "_attributes" if not null (if not empty for arrays)
+			else if (([nestedModelProperties objectForKey:objcProperty] || isArray) && !null)
+			{
+				railsEquivalent = [railsEquivalent stringByAppendingString:@"_attributes"];
+			}
 			
 			//check to see if it was already set (ie, there are multiple properties pointing to the same rails attr)
 			if (![dict objectForKey:railsEquivalent])
