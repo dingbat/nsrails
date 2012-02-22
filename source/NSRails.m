@@ -515,9 +515,14 @@
 	NSDictionary *enveloped = [NSDictionary dictionaryWithObject:[self dictionaryOfRailsRelevantProperties]
 														  forKey:[[self class] getModelName]];
 	
-	NSString *json = [enveloped JSONRepresentation:e];
+	NSError *error;
+	NSString *json = [enveloped JSONRepresentation:&error];
 	if (!json)
-		[NSRConfig crashWithError:*e];
+	{
+		if (e)
+			*e = error;
+		[NSRConfig crashWithError:error];
+	}
 	return json;
 }
 
