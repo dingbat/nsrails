@@ -1,16 +1,16 @@
 //
-//  TestPersonClass.m
+//  TestPostClass.m
 //  NSRails
 //
 //  Created by Dan Hassin on 2/20/12.
 //  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
-#import "TestPersonClass.h"
+#import "TestPostClass.h"
 
-@implementation TestPersonClass
-@synthesize name;
+@implementation TestPostClass
+@synthesize author, body;
 NSRailsSync(*)
-NSRailsUseModelName(@"person")
+NSRailsUseModelName(@"post")
 
 @end

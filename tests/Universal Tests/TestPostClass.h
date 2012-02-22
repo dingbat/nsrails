@@ -1,5 +1,5 @@
 //
-//  TestPersonClass.h
+//  TestPostClass.h
 //  NSRails
 //
 //  Created by Dan Hassin on 2/20/12.
@@ -8,8 +8,8 @@
 
 #import "NSRails.h"
 
-@interface TestPersonClass : NSRailsModel
+@interface TestPostClass : NSRailsModel
 
-@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *author, *body;
 
 @end
