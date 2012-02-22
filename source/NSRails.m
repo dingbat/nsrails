@@ -209,6 +209,12 @@
 {
 	if ((self = [super init]))
 	{
+		//if was called manually and doesn't include the NSRails base sync properties, add them now
+		if ([props rangeOfString:NSRAILS_BASE_PROPS].location == NSNotFound)
+		{
+			props = [NSRAILS_BASE_PROPS stringByAppendingFormat:@", %@",props];
+		}
+		
 		//log on param string for testing
 		//NSLog(@"found props %@",props);
 		
@@ -517,8 +523,6 @@
 	NSDictionary *enveloped = [NSDictionary dictionaryWithObject:[self dictionaryOfRailsRelevantProperties]
 														  forKey:[[self class] getModelName]];
 	
-	NSDictionary *dict = [enveloped objectForKey:[[self class] getModelName]];
-	NSLog(@"made dictionary: %@, inside envelope is %@, %@",enveloped, NSStringFromClass([dict class]), dict);
 	NSError *error;
 	NSString *json = [enveloped JSONRepresentation:&error];
 	if (!json)
