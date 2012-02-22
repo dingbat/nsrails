@@ -65,7 +65,7 @@
 	NSRAssertRelevantConfigURL(@"http://Default", nil);
 }
 
-- (void) test_crud_sync
+- (void) test_crud
 {
 	///////////////////
 	//TEST NIL APP URL
