@@ -4,7 +4,7 @@
 			.shadow
 				.comment
 					.comment_date
-						=post.created_at.localtime.strftime("%b %e %Y at %l:%M %p")
+						=post.created_at.strftime("%b %e, %Y")
 					%span{:class=>"comment_poster"}
 						=post.author
 					said,
@@ -17,12 +17,6 @@
 					.response
 						.comment
 							-post.responses.reverse.each do |response|
-								-if response.created_at.day == post.created_at.day
-									-date_format = "%l:%M %p"
-								-else
-									-date_format = "%m/%d/%y %l:%M %p"
-								.comment_date
-									=response.created_at.localtime.strftime(date_format)
 								%span{:class=>"comment_poster"}
 									=response.author
 								replied,
