@@ -18,13 +18,12 @@ It's extremely simple to use but also flexible and powerful. Some features inclu
 * "Asynchronous":https://github.com/dingbat/nsrails/wiki/NSRailsModel requests
 * And tons more...
 
-The included demo iPhone app goes straight to the live Rails app "http://NSRails.com":http://nsrails.com, so you won't even have to launch a server to get started. Have fun and be civil!
-
 h3. How do I get started?
 
 Add the source folder into your Xcode project, and follow these "three easy steps":https://github.com/dingbat/nsrails/wiki/Getting-Started.
 
 For more details:
+* See the included demo iPhone app - it goes straight to a live Rails app at "nsrails.com":http://nsrails.com, so you won't even have to launch a server to get started. The source for this site is also included. Have fun and be civil!
 * See the "Wiki":https://github.com/dingbat/nsrails/wiki
 * Screencast and formal documentation coming soon (promise!)
 
