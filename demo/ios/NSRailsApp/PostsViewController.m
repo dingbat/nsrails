@@ -29,7 +29,7 @@
 
 - (void) refresh
 {
-	posts = [Post remoteAll];
+	posts = [NSMutableArray arrayWithArray:[Post remoteAll]];
 	
 	[self.tableView reloadData];
 }
@@ -105,6 +105,7 @@
 	{
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
 	Post *post = [posts objectAtIndex:indexPath.row];
@@ -112,6 +113,15 @@
 	cell.detailTextLabel.text = post.author;
 	
 	return cell;
+}
+
+- (void) tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	Post *post = [posts objectAtIndex:indexPath.row];
+	[post remoteDestroy];
+	[posts removeObject:post];
+	
+	[tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

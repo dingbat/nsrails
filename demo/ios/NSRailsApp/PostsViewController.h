@@ -10,7 +10,7 @@
 
 @interface PostsViewController : UITableViewController
 {
-	NSArray *posts;
+	NSMutableArray *posts;
 }
 
 @end

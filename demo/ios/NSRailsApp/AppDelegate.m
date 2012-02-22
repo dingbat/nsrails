@@ -19,8 +19,12 @@
 
 - (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+	//[[NSRConfig defaultConfig] setAppURL:@"http://nsrails.com/"];
+	
+	//for local server:
 	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
 	
+	//authentication
 	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
 	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
 	
@@ -37,17 +41,28 @@
 - (void) alertForError:(NSError *)e
 {
 	int errors = 0;
-	NSString *errorString = @"";
+	NSMutableString *errorString = [NSMutableString string];
 	NSString *errorTitle = @"Error";
 	NSDictionary *validationErrors = [[e userInfo] objectForKey:NSRValidationErrorsKey];
 	if (validationErrors)
 	{
+		BOOL profanity = NO;
 		for (NSString *property in validationErrors)
 		{
 			for (NSString *message in [validationErrors objectForKey:property])
 			{
-				NSString *properCase = [[[property substringToIndex:1] uppercaseString] stringByAppendingString:[property substringFromIndex:1]];
-				errorString = [errorString stringByAppendingFormat:@"%@ %@. ",properCase,message];
+				if ([message isEqualToString:@"profanity"])
+				{
+					if (profanity)
+						continue;
+					[errorString appendString:@"No profanity please! "];
+					profanity = YES;
+				}
+				else
+				{
+					NSString *properCase = [[[property substringToIndex:1] uppercaseString] stringByAppendingString:[property substringFromIndex:1]];
+					[errorString appendFormat:@"%@ %@. ",properCase,message];
+				}
 				errors++;
 			}
 		}
@@ -56,7 +71,7 @@
 	}
 	else
 	{
-		errorString = [e localizedDescription];
+		errorString = (NSMutableString *)[e localizedDescription];
 	}
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:errorTitle message:errorString delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
 	[alert show];

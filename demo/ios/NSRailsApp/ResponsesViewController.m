@@ -112,4 +112,13 @@
     return cell;
 }
 
+- (void) tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	Response *resp = [post.responses objectAtIndex:indexPath.row];
+	[resp remoteDestroy];
+	[post.responses removeObject:resp];
+	
+	[tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
 @end
