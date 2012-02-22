@@ -41,7 +41,7 @@ class ResponsesController < ApplicationController
 
     respond_to do |format|
       if @response.save
-        format.json { render :json => @response, :status => :created, :location => @response }
+        format.json { render :json => @response.to_json(:include => :post), :status => :created, :location => @response }
       else
         format.json { render :json => @response.errors, :status => :unprocessable_entity }
       end
