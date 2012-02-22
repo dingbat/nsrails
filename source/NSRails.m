@@ -423,14 +423,14 @@
 							if (!NSClassFromString(otherModel))
 							{
 #ifdef NSRLogErrors
-								NSLog(@"NSR Warning: Failed to find class '%@', declared as class for nested property '%@' of class '%@'. Nesting relation not set. ",otherModel,prop,NSStringFromClass([self class]));
+								NSLog(@"NSR Warning: Failed to find class '%@', declared as class for nested property '%@' of class '%@'. Nesting relation not set - will still send any NSRailsModel subclasses correctly but will always retrieve as NSDictionaries. ",otherModel,prop,NSStringFromClass([self class]));
 #endif
 							}
 							//class entered is not a subclass of NSRailsModel
 							else if (![NSClassFromString(otherModel) isSubclassOfClass:[NSRailsModel class]])
 							{
 #ifdef NSRLogErrors
-								NSLog(@"NSR Warning: '%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel. Nesting relation not set.",otherModel,prop, NSStringFromClass([self class]),otherModel);
+								NSLog(@"NSR Warning: '%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel. Nesting relation not set - won't be able to send or retrieve this property.",otherModel,prop, NSStringFromClass([self class]),otherModel);
 #endif
 							}
 							else
