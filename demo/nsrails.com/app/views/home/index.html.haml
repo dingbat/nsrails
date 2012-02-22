@@ -11,9 +11,9 @@
 					.comment_body
 						=surround("\"") do
 							=post.body
-				.responseDivider
-					%hr
 				-if post.responses.count > 0
+					.responseDivider
+						%hr
 					.response
 						.comment
 							-post.responses.reverse.each do |response|
