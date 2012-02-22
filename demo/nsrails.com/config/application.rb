@@ -13,8 +13,10 @@ end
 module NsrailsCom
   class Application < Rails::Application
     
-    #Throttle to 1 request per second
-    config.middleware.use Rack::Throttle::Interval
+    if Rails.env == "production"
+      #Throttle to 1 request per second
+      config.middleware.use Rack::Throttle::Interval
+    end
     
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
