@@ -2,75 +2,65 @@
 //  AppDelegate.m
 //  NSRailsApp
 //
-//  Created by Dan Hassin on 1/29/12.
+//  Created by Dan Hassin on 2/20/12.
 //  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
 #import "AppDelegate.h"
 
+#import "PostsViewController.h"
+
 #import "NSRConfig.h"
-#import "MasterViewController.h"
 
 @implementation AppDelegate
 
 @synthesize window = _window;
 @synthesize navigationController = _navigationController;
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+- (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
-
+	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
+	
+	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
+	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
+	
+	
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
 
-	MasterViewController *masterViewController = [[MasterViewController alloc] initWithNibName:@"MasterViewController" bundle:nil];
+	PostsViewController *masterViewController = [[PostsViewController alloc] initWithNibName:@"PostsViewController" bundle:nil];
 	self.navigationController = [[UINavigationController alloc] initWithRootViewController:masterViewController];
-	self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-	
-	masterViewController.navigationItem.backBarButtonItem.title = @"People";
-	
 	self.window.rootViewController = self.navigationController;
     [self.window makeKeyAndVisible];
     return YES;
 }
 
-- (void)applicationWillResignActive:(UIApplication *)application
+- (void) alertForError:(NSError *)e
 {
-	/*
-	 Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-	 Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-	 */
+	int errors = 0;
+	NSString *errorString = @"";
+	NSString *errorTitle = @"Error";
+	NSDictionary *validationErrors = [[e userInfo] objectForKey:NSRValidationErrorsKey];
+	if (validationErrors)
+	{
+		for (NSString *property in validationErrors)
+		{
+			for (NSString *message in [validationErrors objectForKey:property])
+			{
+				NSString *properCase = [[[property substringToIndex:1] uppercaseString] stringByAppendingString:[property substringFromIndex:1]];
+				errorString = [errorString stringByAppendingFormat:@"%@ %@. ",properCase,message];
+				errors++;
+			}
+		}
+		if (errors > 1)
+			errorTitle = [NSString stringWithFormat:@"%d Errors",errors];
+	}
+	else
+	{
+		errorString = [e localizedDescription];
+	}
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:errorTitle message:errorString delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+	[alert show];
 }
 
-- (void)applicationDidEnterBackground:(UIApplication *)application
-{
-	/*
-	 Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
-	 If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-	 */
-}
-
-- (void)applicationWillEnterForeground:(UIApplication *)application
-{
-	/*
-	 Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-	 */
-}
-
-- (void)applicationDidBecomeActive:(UIApplication *)application
-{
-	/*
-	 Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-	 */
-}
-
-- (void)applicationWillTerminate:(UIApplication *)application
-{
-	/*
-	 Called when the application is about to terminate.
-	 Save data if appropriate.
-	 See also applicationDidEnterBackground:.
-	 */
-}
 
 @end
