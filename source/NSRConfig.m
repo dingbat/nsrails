@@ -196,6 +196,8 @@ static NSMutableArray *overrideConfigStack = nil;
 			 //if there's an error from the request there must have been an issue connecting to the server.
 			 if (appleError)
 			 {
+				 [[self class] crashWithError:appleError];
+
 				 completionBlock(nil,appleError);
 			 }
 			 else
@@ -230,6 +232,8 @@ static NSMutableArray *overrideConfigStack = nil;
 		//if there's an error here there must have been an issue connecting to the server.
 		if (appleError)
 		{
+			[[self class] crashWithError:appleError];
+
 			//if there was a dereferenced error passed in, set it to Apple's
 			if (error)
 				*error = appleError;
