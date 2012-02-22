@@ -1,5 +1,5 @@
 class Post < ActiveRecord::Base
-  has_many :responses
+  has_many :responses, :dependent => :destroy
   
   validates_presence_of :body
   validates_presence_of :author
@@ -10,11 +10,8 @@ class Post < ActiveRecord::Base
   
   private
   def deny_profanity
-    if ProfanityFilter::Base.profane?(body)
-      errors.add :body, 'profanity'
-    end
-    if ProfanityFilter::Base.profane?(author)
-      errors.add :author, 'profanity'
+    if ProfanityFilter::Base.profane?(body) || ProfanityFilter::Base.profane?(author)
+      errors.add :base, 'profanity'
     end
   end
 end
