@@ -36,11 +36,11 @@
 - (void) save
 {
 	NSString *author = authorField.text;
-	//blank if still on placeholder
-	NSString *message = (contentField.tag == 0 ? @"" : contentField.text);
+	NSString *message = (contentField.tag == 0 ? @"" : contentField.text); //blank if still on placeholder (tag 0)
 	
 	//if the block returned true (it worked), we should dismiss
-	if (block(author, message))
+	BOOL shouldDismiss = block(author, message);
+	if (shouldDismiss)
 		[self dismissModalViewControllerAnimated:YES];
 }
 
@@ -49,6 +49,10 @@
 
 - (void)viewDidLoad
 {
+	///////////////
+	//boring UI stuff
+	///////////////
+	
 	headerLabel.text = header;
 	
 	//focus on authorField
@@ -76,6 +80,7 @@
 
 /////////////
 //everything below is code for the placeholder in the message textview, which isn't built-in into iOS
+///////////
 
 - (void) placehold
 {

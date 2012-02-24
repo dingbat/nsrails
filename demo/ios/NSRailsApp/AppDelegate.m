@@ -19,6 +19,8 @@
 
 - (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+	//set app URL for defaultConfig -> will apply globally to all NSRails methods
+	
 	[[NSRConfig defaultConfig] setAppURL:@"http://nsrails.com/"];
 	
 	//for local server:
@@ -40,40 +42,47 @@
 
 - (void) alertForError:(NSError *)e
 {
-	int errors = 0;
+	//common method to display an alert given an NSRails error
+	
 	NSMutableString *errorString = [NSMutableString string];
-	NSString *errorTitle = @"Error";
+	
+	//get the dictionary of validation errors from the userInfo of the NSError with key NSRValidationErrorsKey
 	NSDictionary *validationErrors = [[e userInfo] objectForKey:NSRValidationErrorsKey];
 	if (validationErrors)
 	{
-		BOOL profanity = NO;
+		//this dictionary has failed property as keys. iterate through each failed property...
 		for (NSString *property in validationErrors)
 		{
+			//for each key, it contains an array of reasons that key failed. now iterate through each reason
 			for (NSString *message in [validationErrors objectForKey:property])
 			{
 				if ([message isEqualToString:@"profanity"])
 				{
-					if (profanity)
-						continue;
+					//if it's profanity, it's profanity. shame!
 					[errorString appendString:@"No profanity please! "];
-					profanity = YES;
 				}
 				else
 				{
+					//otherwise, proper-case it (it'll come like "name")
 					NSString *properCase = [[[property substringToIndex:1] uppercaseString] stringByAppendingString:[property substringFromIndex:1]];
+					
+					//and add it to the string - message is like "can't be blank", so it'll be something like "name can't be blank"
 					[errorString appendFormat:@"%@ %@. ",properCase,message];
 				}
-				errors++;
 			}
 		}
-		if (errors > 1)
-			errorTitle = [NSString stringWithFormat:@"%d Errors",errors];
 	}
 	else
 	{
+		//if it's not a validation error, display the error
 		errorString = (NSMutableString *)[e localizedDescription];
 	}
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:errorTitle message:errorString delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+	
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+													message:errorString 
+												   delegate:nil 
+										  cancelButtonTitle:@"OK" 
+										  otherButtonTitles:nil];
 	[alert show];
 }
 

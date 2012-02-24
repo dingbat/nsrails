@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+//needs to resolve to a BOOL (whether or not we should dismiss the VC)
+//provides the two strings the user entered
 typedef BOOL (^PostInputBlock)(NSString *author, NSString *content);
 
 @interface InputViewController : UIViewController <UITextViewDelegate>
@@ -21,6 +23,8 @@ typedef BOOL (^PostInputBlock)(NSString *author, NSString *content);
 
 @property (nonatomic, retain) NSString *header, *messagePlaceholder;
 
+//when the user hits "save", we'll execute this block
+//this just makes everything easier to visualize since all the relevant code is in the same VC
 - (id) initWithCompletionHandler:(PostInputBlock)completionBlock;
 
 - (IBAction) save;

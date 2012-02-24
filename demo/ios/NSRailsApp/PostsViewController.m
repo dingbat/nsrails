@@ -25,17 +25,25 @@
     return self;
 }
 
-#pragma mark - View lifecycle
+#pragma mark - View lifecycle (relevant NSRails stuff!)
+
 
 - (void) refresh
 {
-	posts = [NSMutableArray arrayWithArray:[Post remoteAll]];
+	//when the refresh button is hit, get latest array of posts with [Post remoteAll]
+	NSArray *allPosts = [Post remoteAll];
+	
+	//set it to our ivar
+	posts = [NSMutableArray arrayWithArray:allPosts];
 	
 	[self.tableView reloadData];
 }
 
 - (void) addPost
 {
+	//when the + button is hit, display an InputViewController (this is the shared input view for both posts and responses)
+	//it has an init method that accepts a completion block - this block of code will be executed when the user hits "save"
+	
 	InputViewController *newPostVC = [[InputViewController alloc] initWithCompletionHandler:
 										  ^BOOL (NSString *author, NSString *content) 
 										  {
@@ -45,12 +53,17 @@
 											  newPost.author = author;
 											  newPost.body = content;
 											  
-											  if ([newPost remoteCreate:&error])
+											  //create the object remotely using NSRails, and retrieve any error
+											  [newPost remoteCreate:&error];
+											  
+											  if (!error)
 											  {
+												  //if there was no error, refresh our table and dismiss the InputViewController
 												  [self refresh];
 												  return YES;
 											  }
 											  
+											  //this means there was an error - alert it in the delegate
 											  [(AppDelegate *)[UIApplication sharedApplication].delegate alertForError:error];
 											  
 											  return NO;
@@ -77,9 +90,9 @@
     [super viewDidLoad];
 }
 
+
 #pragma mark - Table view data source
 
-// Customize the number of sections in the table view.
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
 	return 1;
@@ -95,7 +108,6 @@
 	return posts.count;
 }
 
-// Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
@@ -116,6 +128,8 @@
 
 - (void) tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
+	//here, on the delete, we're calling remoteDestroy to destroy our object remotely. remember to remove it from our local array, too.
+	
 	Post *post = [posts objectAtIndex:indexPath.row];
 	[post remoteDestroy];
 	[posts removeObject:post];

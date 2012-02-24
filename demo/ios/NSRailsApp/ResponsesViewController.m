@@ -30,19 +30,41 @@
 										  ^BOOL (NSString *author, NSString *content) 
 										  {
 											  NSError *error;
-											  
+											  											  
 											  Response *newResp = [[Response alloc] init];
 											  newResp.author = author;
 											  newResp.body = content;
 											  newResp.post = post;
 											  
-											  if ([newResp remoteCreate:&error])
+											  //check that last line out - we're setting the post object itself, but NSRails knows to only send "post_id" instead of an entire "post" hash, which Rails would reject.
+											  //this will only work if the "post" property of Response is set as belongs_to with the "-b" flag (which it is)
+											  
+											  
+											  [newResp remoteCreate:&error];
+
+											  
+											  /* 
+											   Instead of line 40 (the belongs_to trick), you could also add the new response to the post's "responses" array and then update it:
+											   
+											     [post.responses addObject:newResp];
+											     [post remoteUpdate:&error];
+											   
+											   Doing this may be better for your structure since it'd already be in post's "responses" array.
+											   However, you have to take into account the case where the response validation fails and you'd have to remove it from your array. Also, creating the response rather than updating the post will set newResp's modelID! And, doing it this way will demonstrate that doing a [post remoteGetLatest]; in the next line will update that very array.
+											  */
+											  
+											  
+											  if (!error)
 											  {
+												  //since it's not part of our post.responses array yet, let's remoteGetLatest
+												  //(we could also just do a simple [post.responses addObject:newResp])
+												  
 												  [post remoteGetLatest];
 												  
 												  [self.tableView reloadData];
 												  return YES;
 											  }
+											  
 											  [(AppDelegate *)[UIApplication sharedApplication].delegate alertForError:error];
 
 											  return NO;
@@ -64,6 +86,8 @@
 	
     [super viewDidLoad];
 }
+
+
 
 #pragma mark - Table view data source
 
@@ -115,6 +139,8 @@
 
 - (void) tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
+	//here, on the delete, we're calling remoteDestroy to destroy our object remotely. remember to remove it from our local array, too.
+
 	Response *resp = [post.responses objectAtIndex:indexPath.row];
 	[resp remoteDestroy];
 	[post.responses removeObject:resp];
