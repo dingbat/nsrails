@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "SBJson.h"
 
-//just adds an error handlers for these two methods
+//just adds error handlers for these two methods
 
 
 @interface NSObject (NSObject_SBJsonWriting_NSR)
