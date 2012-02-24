@@ -34,10 +34,7 @@
 											  Response *newResp = [[Response alloc] init];
 											  newResp.author = author;
 											  newResp.body = content;
-											  newResp.post = post;
-											  
-											  //check that last line out - we're setting the post object itself, but NSRails knows to only send "post_id" instead of an entire "post" hash, which Rails would reject.
-											  //this will only work if the "post" property of Response is set as belongs_to with the "-b" flag (which it is)
+											  newResp.post = post;      //check out Response.m for more detail on this line
 											  
 											  
 											  [newResp remoteCreate:&error];
@@ -50,7 +47,7 @@
 											     [post remoteUpdate:&error];
 											   
 											   Doing this may be better for your structure since it'd already be in post's "responses" array.
-											   However, you have to take into account the case where the response validation fails and you'd have to remove it from your array. Also, creating the response rather than updating the post will set newResp's modelID! And, doing it this way will demonstrate that doing a [post remoteGetLatest]; in the next line will update that very array.
+											   However, you have to take into account the case where the Response validation fails and you'd have to remove it from the array. Also, creating the Response rather than updating the Post will set newResp's modelID! And, doing it this way will demonstrate that doing a [post remoteGetLatest]; in the next line will update post.responses.
 											  */
 											  
 											  

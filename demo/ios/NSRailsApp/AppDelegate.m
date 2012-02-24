@@ -21,6 +21,7 @@
 {
 	//set app URL for defaultConfig -> will apply globally to all NSRails methods
 	
+	//live app! check it out
 	[[NSRConfig defaultConfig] setAppURL:@"http://nsrails.com/"];
 	
 	//for local server:
@@ -32,7 +33,7 @@
 	
 	
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-
+	
 	PostsViewController *masterViewController = [[PostsViewController alloc] initWithNibName:@"PostsViewController" bundle:nil];
 	self.navigationController = [[UINavigationController alloc] initWithRootViewController:masterViewController];
 	self.window.rootViewController = self.navigationController;
@@ -46,35 +47,36 @@
 	
 	NSMutableString *errorString = [NSMutableString string];
 	
-	//get the dictionary of validation errors from the userInfo of the NSError with key NSRValidationErrorsKey
+	//get the dictionary of validation errors, if any
 	NSDictionary *validationErrors = [[e userInfo] objectForKey:NSRValidationErrorsKey];
+	
 	if (validationErrors)
 	{
-		//this dictionary has failed property as keys. iterate through each failed property...
-		for (NSString *property in validationErrors)
+		//iterate through each property in dict (keys)
+		for (NSString *failedProperty in validationErrors)
 		{
-			//for each key, it contains an array of reasons that key failed. now iterate through each reason
-			for (NSString *message in [validationErrors objectForKey:property])
+			//for each key, it contains an array of reasons that property failed
+			for (NSString *reason in [validationErrors objectForKey:failedProperty])
 			{
-				if ([message isEqualToString:@"profanity"])
+				if ([reason isEqualToString:@"profanity"])
 				{
 					//if it's profanity, it's profanity. shame!
 					[errorString appendString:@"No profanity please! "];
 				}
 				else
 				{
-					//otherwise, proper-case it (it'll come like "name")
-					NSString *properCase = [[[property substringToIndex:1] uppercaseString] stringByAppendingString:[property substringFromIndex:1]];
+					//otherwise, proper-case the property (it's currently something like "name")
+					NSString *properCase = [[[failedProperty substringToIndex:1] uppercaseString] stringByAppendingString:[failedProperty substringFromIndex:1]];
 					
-					//and add it to the string - message is like "can't be blank", so it'll be something like "name can't be blank"
-					[errorString appendFormat:@"%@ %@. ",properCase,message];
+					//and add it to the string. message is something like "can't be blank"
+					[errorString appendFormat:@"%@ %@. ",properCase,reason];
 				}
 			}
 		}
 	}
 	else
 	{
-		//if it's not a validation error, display the error
+		//if it's not a validation error, just display the error
 		errorString = (NSMutableString *)[e localizedDescription];
 	}
 	
