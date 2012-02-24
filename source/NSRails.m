@@ -12,16 +12,32 @@
 #import "NSData+Additions.h"
 #import "NSObject+Properties.h"
 
-// if it's too intimidating, remember that you can navigate this file quickly in xcode with #pragma marks
+  ///////////////////////////////////////////////////////////////
+
+     ///   //   //////   //////      /////   //  //      //////
+    ////  //  //        //   //    //   //  //  //     //
+   // // //    ////    //////     //   //  //  //       ////
+  //  ////       //   //  //     ///////  //  //          //
+ //   ///   /////    //    ///  //   //  //  /////// /////
+
+/////////////////////////////////////////////////////////////
+
+/* 
+    If this file is too intimidating, 
+ remember that you can navigate it
+ quickly in Xcode using #pragma marks.
+									*/
 
 
-//this will be the NSRailsSync for NSRailsModel
-//tie modelID to rails property id
+//this will be the NSRailsSync for NSRailsModel, basis for all subclasses
+//use modelID as equivalent for rails property id
 #define NSRAILS_BASE_PROPS @"modelID=id"
 
-//this will be the marker for the propertyEquivalents dictionary if there's no explicit equivalence set
+//this is the marker for the propertyEquivalents dictionary if there's no explicit equivalence set
 #define NSRNoEquivalentMarker @""
 
+//this will be the marker for any property that has the "-b flag"
+//this gonna go in the nestedModelProperties (properties can never have a comma/space in them so we're safe from any conflicts)
 #define NSRBelongsToKeyForProperty(prop) [prop stringByAppendingString:@", belongs_to"]
 
 @interface NSRailsModel (internal)
@@ -63,7 +79,6 @@
 
 + (NSString *) railsProperties
 {
-	//this will be a master list of properties, including all superclasses
 	//start it off with the NSRails base ("modelID=id")
 	NSString *finalProperties = NSRAILS_BASE_PROPS;
 	
@@ -74,13 +89,11 @@
 	{
 		if ([c respondsToSelector:@selector(NSRailsSync)])
 		{			
-			//get that class's property sync string
 			NSString *syncString = [c NSRailsSync];
 			
 			//if that class defines NSRNoCarryFromSuper, mark that we should stop rising classes
 			if ([syncString rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
 			{
-				//the for loop condition will fail
 				stopInheriting = YES;
 				
 				//we strip the flag so that later on, we'll know exactly WHICH class defined the flag.
@@ -92,7 +105,6 @@
 				}
 			}
 			
-			//tack the properties for that class onto our big list
 			finalProperties = [finalProperties stringByAppendingFormat:@", %@", syncString];
 		}
 	}
@@ -113,10 +125,9 @@
 
 + (NSString *) getModelName
 {
-	//if defined through NSRailsUseModelName() then use that instead
 	SEL sel = @selector(NSRailsUseModelName);
 	
-	//check to see if responds, then check to see if not nil (nil signifies that it's a UseDefault definition)
+	//check to see if mname defined manually, then check to see if not nil (nil signifies that it's a UseDefault definition)
 	if ([self respondsToSelector:sel] && [self performSelector:sel])
 	{
 		return [self performSelector:sel];
@@ -135,7 +146,7 @@
 
 + (NSString *) getPluralModelName
 {
-	//if defined through NSRailsUseModelName() as second parameter, use that instead
+	//if defined through NSRailsUseModelName as second parameter, use that instead
 	SEL sel = @selector(NSRailsUsePluralName);
 	if ([self respondsToSelector:sel] && [self performSelector:sel])
 	{
@@ -230,10 +241,9 @@
 		
 		//here begins the code used for parsing the NSRailsSync param string
 		
-		//character set that'll be used later on
 		NSCharacterSet *wn = [NSCharacterSet whitespaceAndNewlineCharacterSet];
 		
-		//exclude array for any properties declared as -x (will later remove properties from * definition)
+		//exclusion array for any properties declared as -x (will later remove properties from * definition)
 		NSMutableArray *exclude = [NSMutableArray array];
 		
 		//check to see if we should even consider *
@@ -246,7 +256,7 @@
 		do
 		{
 			NSMutableArray *elements;
-			//if we're on the * run,
+
 			if (onStarIteration)
 			{
 				//make sure we don't loop again
@@ -255,13 +265,10 @@
 				
 				NSMutableArray *relevantIvars = [NSMutableArray array];
 				
-				//start with the current class
-				Class c = [self class];
-				
-				//loop going up the class hierarchy all the way up to NSRailsModel
+				//go up the class hierarchy
+				Class c = [self class];				
 				while (c != [NSRailsModel class])
 				{
-					//get the property list for that specific class
 					NSString *properties = [c NSRailsSync];
 					
 					//if there's a *, add all ivars from that class
@@ -272,7 +279,6 @@
 					if ([properties rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
 						break;
 					
-					//move up in the hierarchy for next iteration
 					c = [c superclass];
 				}
 				
@@ -297,7 +303,7 @@
 			{
 				NSString *element = [[elements objectAtIndex:i] stringByTrimmingCharactersInSet:wn];
 				
-				//skip if there's no NSRailsSync definition (not the first time through (which would be NSRailsModel) and same as base)
+				//skip if there's no NSRailsSync definition (ie, it just inherited NSRailsModel's, so it's not the first time through but it's the same thing as NSRailsModel's)
 				if ([element isEqualToString:NSRAILS_BASE_PROPS] && i != 0)
 				{
 					continue;
@@ -383,24 +389,19 @@
 					
 					if (opSplit.count > 1)
 					{
-						//if any of these flags exist, add to appropriate category
-						//retrievable
 						if ([options rangeOfString:@"r"].location != NSNotFound)
 							[retrievableProperties addObject:prop];
 						
-						//sendable
 						if ([options rangeOfString:@"s"].location != NSNotFound)
 							[self addPropertyAsSendable:prop equivalent:equivalent];
 						
-						//encodable
 						if ([options rangeOfString:@"e"].location != NSNotFound)
 							[encodeProperties addObject:prop];
 						
-						//decodable
 						if ([options rangeOfString:@"d"].location != NSNotFound)
 							[decodeProperties addObject:prop];
 						
-						//belongs_to association - add a special marker in nestedModelProperties dict
+						//add a special marker in nestedModelProperties dict
 						if ([options rangeOfString:@"b"].location != NSNotFound)
 							[nestedModelProperties setObject:[NSNumber numberWithBool:YES] forKey:NSRBelongsToKeyForProperty(prop)];
 					}
@@ -490,7 +491,6 @@
 
 - (id) init
 {
-	//read in properties defined through NSRailsSync
 	NSString *props = [[self class] railsProperties];
 	
 	if ((self = [self initWithRailsSyncProperties:props]))
@@ -545,26 +545,17 @@
 - (id) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
 {
 	//make a new class to be entered for this property/array (we can assume it subclasses NSRailsModel)
-	NSRailsModel *model = [[NSClassFromString(classN) alloc] init];
-	if (!model)
-	{
-#ifdef NSRLogErrors
-		NSLog(@"NSR Warning: Could not find %@ class to nest into class %@; leaving property null.",classN, NSStringFromClass([self class]));
-#endif
-		return nil;
-	}
+	NSRailsModel *model = [[NSClassFromString(classN) alloc] initWithRailsAttributesDictionary:dict];
+	
 #ifndef NSRCompileWithARC
 	[model autorelease];
 #endif
 	
-	//populate the new class with attributes specified
-	[model setAttributesAsPerRailsDictionary:dict];
 	return model;
 }
 
 - (id) getCustomEnDecoding:(BOOL)YESforEncodingNOforDecoding forProperty:(NSString *)prop value:(id)val
 {
-	//check to see the prop is an array
 	BOOL isArray = ([[self getPropertyType:prop] isEqualToString:@"NSArray"] || 
 					[[self getPropertyType:prop] isEqualToString:@"NSMutableArray"]);
 	
@@ -578,7 +569,7 @@
 		
 		if (YESforEncodingNOforDecoding)
 		{
-			//if encoding, make sure that the result is a JSON-PARSABLE!
+			//if encoding, make sure that the result is a JSON PARSE-ABLE!
 			if (![obj isKindOfClass:[NSArray class]] &&
 				![obj isKindOfClass:[NSDictionary class]] &&
 				![obj isKindOfClass:[NSString class]] &&
@@ -599,7 +590,7 @@
 	}
 	else
 	{
-		//try a "did you mean" without the plurality - maybe user forgot plurality
+		//try a "did you mean" without the plurality - maybe user mistyped
 		NSString *didYouMean = [NSString stringWithFormat:@"%@%@%@:",YESforEncodingNOforDecoding ? @"encode" : @"decode",[[prop toClassName] substringToIndex:prop.length-1], isArray ? @"Element" : @""];
 		if ([self respondsToSelector:NSSelectorFromString(didYouMean)])
 		{
@@ -648,7 +639,7 @@
 		if (!date)
 		{
 #ifdef NSRLogErrors
-			NSLog(@"NSR Warning: Attempted to convert date string returned by Rails (%@) into an NSDate* object for the property '%@' in class %@, but conversion failed. Please check your config's dateFormat (using format \"%@\" for this operation).",rep,prop,NSStringFromClass([self class]),format);
+			NSLog(@"NSR Warning: Attempted to convert date string returned by Rails (\"%@\") into an NSDate* object for the property '%@' in class %@, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation).",rep,prop,NSStringFromClass([self class]),format);
 #endif
 		}
 		
@@ -664,7 +655,6 @@
 
 - (id) representationOfObjectForProperty:(NSString *)prop
 {
-	//get the value of the property
 	SEL sel = [self getPropertyGetter:prop];
 	if ([self respondsToSelector:sel])
 	{
@@ -680,7 +670,7 @@
 			if (isArray)
 			{
 				NSMutableArray *new = [NSMutableArray arrayWithCapacity:[val count]];
-				//go through every nested object in the array
+
 				for (int i = 0; i < [val count]; i++)
 				{
 					id element = [val objectAtIndex:i];
@@ -820,20 +810,18 @@
 - (NSDictionary *) dictionaryOfRailsRelevantProperties
 {
 	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-	//loop through all properties marked as sendable
+
 	for (NSString *objcProperty in sendableProperties)
 	{
 		NSString *railsEquivalent = [propertyEquivalents objectForKey:objcProperty];
 		
-		//if the equivalence is blank, means there was none explicitly set
+		//check to see if we should auto_underscore if no equivalence set
 		if ([railsEquivalent isEqualToString:NSRNoEquivalentMarker])
 		{
-			//if automaticallyUnderscoreAndCamelize for this config, use underscore+lowercase'd version of it
 			if ([[self class] getRelevantConfig].automaticallyUnderscoreAndCamelize)
 			{
 				railsEquivalent = [[objcProperty underscore] lowercaseString];
 			}
-			//otherwise, use exactly the property name
 			else
 			{			
 				railsEquivalent = objcProperty;
@@ -843,14 +831,15 @@
 		id val = [self representationOfObjectForProperty:objcProperty];
 		
 		BOOL null = !val;
-		if (!val && ![railsEquivalent isEqualToString:@"id"]) 
-			//if it's a nil value but ID is null, simply bypass it, don't stick in "null" - it could be for create
+		
+		//if we got back nil, we want to change that to the [NSNull null] object so it'll show up in the JSON
+		//but only do it for non-ID properties - we want to omit ID if it's null (could be for create)
+		if (!val && ![railsEquivalent isEqualToString:@"id"])
 		{
-			//this is if the value is nil
 			NSString *string = [self getPropertyType:objcProperty];
 			if ([string isEqualToString:@"NSArray"] || [string isEqualToString:@"NSMutableArray"])
 			{
-				//there's an array, and because the value is nil, make it an empty array (rails will get angry if you send nil)
+				//there's an array, and because the value is nil, make it an empty array (rails will get angry if you send null)
 				val = [NSArray array];
 			}
 			else
@@ -862,7 +851,7 @@
 		{
 			BOOL isArray = [val isKindOfClass:[NSArray class]];
 			
-			//if it's an array, remove any null values (wouldn't make sense)
+			//if it's an array, remove any null values (wouldn't make sense in the array)
 			if (isArray)
 			{
 				for (int i = 0; i < [val count]; i++)
@@ -875,7 +864,9 @@
 				}
 			}
 			
-			//if not array && declared as belongs_to && exists && relation ID exists, THEN, we should use _id instead of _attributes
+			//this is the belongs_to trick
+			//if "-b" declared and it's not NSNull and the relation's modelID exists, THEN, we should use _id instead of _attributes
+
 			if (!isArray && 
 				[nestedModelProperties objectForKey:NSRBelongsToKeyForProperty(objcProperty)] && 
 				!null &&
@@ -886,20 +877,21 @@
 				//set the value to be the actual ID
 				val = [val objectForKey:@"id"];
 			}
-			//otherwise, if it's included in nestedModelProperties OR it's an array, append "_attributes" if not null (if not empty for arrays)
+			
+			//otherwise, if it's included in nestedModelProperties OR it's an array, use "_attributes" if not null (/empty for arrays)
 			else if (([nestedModelProperties objectForKey:objcProperty] || isArray) && !null)
 			{
 				railsEquivalent = [railsEquivalent stringByAppendingString:@"_attributes"];
 			}
 			
-			//check to see if it was already set (ie, there are multiple properties pointing to the same rails attr)
+			//check to see if it was already set (ie, ignore if there are multiple properties pointing to the same rails attr)
 			if (![dict objectForKey:railsEquivalent])
 			{
 				[dict setObject:val forKey:railsEquivalent];
 			}
 		}
 	}
-	//if object is marked as destroy for nesting, add "_destroy"=>true to hash 
+
 	if (destroyOnNesting)
 	{
 		[dict setObject:[NSNumber numberWithBool:destroyOnNesting] forKey:@"_destroy"];
@@ -1088,7 +1080,7 @@
 {
 	NSString *jsonResponse = [[self class] remoteMakeRequest:@"POST" sendObject:self route:nil error:error];
 	
-	//check to see if json exists, and if it does, set all of my attributes to it (like to add the new ID), and return if it worked
+	//check to see if json exists, and if it does, set obj's attributes to it (ie, set modelID), and return if it worked
 	return (jsonResponse && [self setAttributesAsPerRailsJSON:jsonResponse]);
 }
 - (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock
@@ -1107,7 +1099,7 @@
 - (BOOL) remoteUpdate {	return [self remoteUpdate:nil];	}
 - (BOOL) remoteUpdate:(NSError **)error
 {
-	//makeRequest will actually return a result string, return if it's not nil (!! = not nil, nifty way to turn object to BOOL)
+	//makeRequest will actually return a result string, so return if it's not nil (!! = not nil, nifty way to turn object to BOOL)
 	return !![self remoteMakeRequestSendingSelf:@"PUT" route:nil error:error];
 }
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock
@@ -1160,13 +1152,9 @@
 + (id) remoteObjectWithID:(NSInteger)mID	{ return [self remoteObjectWithID:mID error:nil]; }
 + (id) remoteObjectWithID:(NSInteger)mID error:(NSError **)error
 {
-	//instantiate the class
 	NSRailsModel *obj = [[[self class] alloc] init];
-	
-	//set the ID to whatever was passed in - this will indicate where NSR should look on the server
 	obj.modelID = [NSDecimalNumber numberWithInteger:mID];
 	
-	//if the getRemote didn't work, make it nil
 	if (![obj remoteGetLatest:error])
 		obj = nil;
 	
@@ -1198,6 +1186,7 @@
 
 #pragma mark Get all objects (class-level)
 
+//helper method for both sync+async for remoteAll
 + (NSArray *) arrayOfModelsFromJSON:(NSString *)json error:(NSError **)error
 {
 	NSError *jsonError;
@@ -1211,7 +1200,6 @@
 		return nil;
 	}
 	
-	//helper method for both sync+async for remoteAll
 	if (![arr isKindOfClass:[NSArray class]])
 	{
 		NSError *e = [NSError errorWithDomain:@"NSRails" 
@@ -1227,16 +1215,14 @@
 		return nil;
 	}
 	
+	//here comes actually making the array to return
+	
 	NSMutableArray *objects = [NSMutableArray array];
 	
 	//iterate through every object returned by Rails (as dicts)
 	for (NSDictionary *dict in arr)
 	{
-		//make a new instance of this class for each dict,
-		NSRailsModel *obj = [[[self class] alloc] init];	
-		
-		//and set its properties as per the dictionary defined in the json
-		[obj setAttributesAsPerRailsDictionary:dict];
+		NSRailsModel *obj = [[[self class] alloc] initWithRailsAttributesDictionary:dict];	
 		
 		[objects addObject:obj];
 		
@@ -1288,7 +1274,7 @@
 - (void) dealloc
 {
 	[modelID release];
-	[attributes release];
+	[railsAttributes release];
 	
 	[sendableProperties release];
 	[retrievableProperties release];

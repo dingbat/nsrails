@@ -73,7 +73,7 @@ typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
 
 //Will log stuff for you
 
-- (void) logRequest:(NSString *)requestStr httpVerb:(NSString *)httpVerb url:(NSString *)url;
+- (void) logRequestWithBody:(NSString *)requestStr httpVerb:(NSString *)httpVerb url:(NSString *)url;
 - (void) logResponse:(NSString *)response statusCode:(int)code;
 
 

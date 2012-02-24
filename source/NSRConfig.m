@@ -153,7 +153,7 @@ static NSMutableArray *overrideConfigStack = nil;
 	return result;
 }
 
-- (void) logRequest:(NSString *)requestStr httpVerb:(NSString *)httpVerb url:(NSString *)url
+- (void) logRequestWithBody:(NSString *)requestStr httpVerb:(NSString *)httpVerb url:(NSString *)url
 {
 #if NSRLog > 0
 	NSLog(@" ");
@@ -179,7 +179,7 @@ static NSMutableArray *overrideConfigStack = nil;
 	NSURLRequest *request = [self HTTPRequestForRequestType:type requestBody:requestStr route:route];
 	
 	//log relevant stuff
-	[self logRequest:requestStr httpVerb:type url:[[request URL] absoluteString]];
+	[self logRequestWithBody:requestStr httpVerb:type url:[[request URL] absoluteString]];
 	
 	//send request using HTTP!
 	NSString *result = [self makeHTTPRequestWithRequest:request sync:error orAsync:completionBlock];
@@ -188,6 +188,7 @@ static NSMutableArray *overrideConfigStack = nil;
 
 - (NSString *) makeHTTPRequestWithRequest:(NSURLRequest *)request sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock
 {
+	//ASYNC
 	if (completionBlock)
 	{
 		[NSURLConnection sendAsynchronousRequest:request queue:asyncOperationQueue completionHandler:
@@ -204,7 +205,6 @@ static NSMutableArray *overrideConfigStack = nil;
 			 {
 				 NSInteger code = [(NSHTTPURLResponse *)response statusCode];
 				 
-				 //get result from response data
 				 NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
 				 
 #ifndef NSRCompileWithARC
@@ -224,6 +224,7 @@ static NSMutableArray *overrideConfigStack = nil;
 			 }
 		 }];
 	}
+	//SYNC
 	else
 	{
 		NSError *appleError = nil;
@@ -235,7 +236,6 @@ static NSMutableArray *overrideConfigStack = nil;
 		{
 			[[self class] crashWithError:appleError];
 
-			//if there was a dereferenced error passed in, set it to Apple's
 			if (error)
 				*error = appleError;
 			
@@ -244,7 +244,6 @@ static NSMutableArray *overrideConfigStack = nil;
 		
 		NSInteger code = [(NSHTTPURLResponse *)response statusCode];
 
-		//get result from response data
 		NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
 		
 #ifndef NSRCompileWithARC
@@ -258,7 +257,6 @@ static NSMutableArray *overrideConfigStack = nil;
 		NSError *railsError = [self errorForResponse:rawResult statusCode:[(NSHTTPURLResponse *)response statusCode]];
 		if (railsError)
 		{
-			//if there is, set it to the dereferenced error
 			if (error)
 				*error = railsError;
 			
@@ -291,15 +289,15 @@ static NSMutableArray *overrideConfigStack = nil;
 		}
 #endif
 		
-		//make a new error
 		NSMutableDictionary *inf = [NSMutableDictionary dictionaryWithObject:response
 																	  forKey:NSLocalizedDescriptionKey];
 		
-		//means there was a validation error - the specific errors were sent in JSON
+		//422 means there was a validation error
 		if (statusCode == 422)
 		{
-			//make them into a dictionary and stick it into the key with constant NSRValidationErrorsKey
-			[inf setObject:[response JSONValue] forKey:NSRValidationErrorsKey];
+			NSDictionary *validationErrors = [response JSONValue];
+			if (validationErrors)
+				[inf setObject:validationErrors forKey:NSRValidationErrorsKey];
 		}
 		
 		NSError *statusError = [NSError errorWithDomain:@"Rails"
@@ -316,17 +314,14 @@ static NSMutableArray *overrideConfigStack = nil;
 				
 - (NSURLRequest *) HTTPRequestForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route
 {
-	//generate url based on base URL + route given
 	NSString *url = [NSString stringWithFormat:@"%@/%@",appURL,route];
 	
 	NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
 	
 	[request setHTTPMethod:type];
 	[request setHTTPShouldHandleCookies:NO];
-	//set for json content
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 	
-	//if username & password set, assume basic HTTP authentication
 	if (self.appUsername && self.appPassword)
 	{
 		//add auth header encoded in base64
@@ -337,7 +332,6 @@ static NSMutableArray *overrideConfigStack = nil;
 		[request setValue:authHeader forHTTPHeaderField:@"Authorization"]; 
 	}
 	
-	//if there's an actual request, add the body
 	if (requestStr)
 	{
 		NSData *requestData = [NSData dataWithBytes:[requestStr UTF8String] length:[requestStr length]];
@@ -360,7 +354,7 @@ static NSMutableArray *overrideConfigStack = nil;
 
 + (NSRConfig *) overrideConfig
 {
-	//return the last config on the stack
+	//return the last config on the stack (last in first out)
 	//if stack is nil or empty, this will be nil, signifying that there's no overriding context
 	
 	return [[overrideConfigStack lastObject] config];
@@ -369,15 +363,13 @@ static NSMutableArray *overrideConfigStack = nil;
 - (void) use
 {
 	//this will signal the beginning of a config context block
-	//if the stack doesn't exist yet, create it.
 	
 	if (!overrideConfigStack)
 		overrideConfigStack = [[NSMutableArray alloc] init];
 	
-	// make a new stack element for this config (explained above)
+	// make a new stack element for this config (explained at top of the file)
 	NSRConfigStackElement *c = [NSRConfigStackElement elementForConfig:self];
 	
-	//push to the "stack"
 	[overrideConfigStack addObject:c];
 }
 
@@ -390,7 +382,6 @@ static NSMutableArray *overrideConfigStack = nil;
 		NSRConfigStackElement *c = [overrideConfigStack objectAtIndex:i];
 		if (c.config == self)
 		{
-			//remove it
 			[overrideConfigStack removeObjectAtIndex:i];
 			break;
 		}
@@ -399,8 +390,6 @@ static NSMutableArray *overrideConfigStack = nil;
 
 - (void) useIn:(void (^)(void))block
 {
-	//self-explanatory
-	
 	[self use];
 	block();
 	[self end];
