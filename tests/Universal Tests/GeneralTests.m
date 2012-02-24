@@ -72,7 +72,7 @@
 	//point app to nil at first to test
 	[[NSRConfig defaultConfig] setAppURL:nil];
 	
-	NSError *e;
+	NSError *e = nil;
 	Post *post = [Post remoteObjectWithID:1 error:&e];
 	
 	GHAssertNotNil(e, @"Should fail on no app URL set in config, where's the error?");
@@ -237,7 +237,7 @@
 	post.body = @"Test";
 	post.responses = nil;
 	
-	NSError *e;
+	NSError *e = nil;
 	
 	[post remoteCreate:&e];
 	
@@ -345,17 +345,16 @@
 		/////////////
 		//test with unreliable NSRailsSync strings
 		
-		//first time around, it won't be able to find class 'Response', so good send but NSDictionary retrieve
-		//second time, ":" declared, so good send but NSDictionary retrieve
-		//third time, nothing, so good send but NSDictionary retrieve
-		//fourth time, non-NSRailsModel subclass, so nothing
-		NSString *sync = @"*, responses:TheResponseClass";
+		
+		//in all of these cases (besides the last), sending will work fine (cause the Response object is in the array), but retrieving should return NSDictionaries.
+		
+		NSString *sync = @"*, responses:TheResponseClass"; //won't be able to find class 'TheResponseClass' (will log warning)
 		if (i == 1)
-			sync = @"*, responses:";
+			sync = @"*, responses:"; //explicitly defined to use NSDictionaries (all OK)
 		if (i == 2)
-			sync = @"*, responses";
+			sync = @"*, responses"; //no nested model definition - will use NSDictionaries (will log warning)
 		if (i == 3)
-			sync = @"*, responses:BadResponse";
+			sync = @"*, responses:BadResponse"; //won't work at all, since BadResponse doesnt inherit from NSRM
 		
 		Post *missingClassPost = [[Post alloc] initWithRailsSyncProperties:sync];
 		missingClassPost.author = @"author";
@@ -375,19 +374,23 @@
 		[missingClassPost remoteCreate:&e];
 		GHAssertNil(e, @"Should be no error, even though can't find class Response");
 		GHAssertNotNil(missingClassPost.modelID, @"Model ID should be present if there was no error on create...");
+		
+		e = nil;
+		
+		//BadResponse run (doesn't inherit from NSRailsModel)
 		if (i == 3)
 		{
 			GHAssertTrue(missingClassPost.responses.count == 0, @"BadResponse shouldn't have been sent since it's not an NSRailsModel subclass");
 		}
 		else
 		{
+			//All of these runs should make NSRails assume to use NSDictionaries
+			
 			GHAssertTrue(missingClassPost.responses.count == 1, @"Should have one response returned from Post create");
 			
 			//now, as the retrieve part of the create, it won't know what to stick in the array and put NSDictionaries in instead
 			GHAssertTrue([[missingClassPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Couldn't find what to put into the array, so should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[missingClassPost.responses objectAtIndex:0] class]));
-			
-			e = nil;
-			
+						
 			//same applies for retrieve
 			[missingClassPost remoteGetLatest:&e];
 			GHAssertNil(e, @"There should've been no errors on the retrieve, even if no nested model defined.");
@@ -422,7 +425,7 @@
 	////////
 	//root
 	NSString *rootAction = [NSRailsModel routeForControllerRoute:@"action"];
-	GHAssertEqualStrings(controllerAction, @"action", @"Root route failed");	
+	GHAssertEqualStrings(rootAction, @"action", @"Root route failed");	
 	
 	
 	/////////////////////
@@ -438,7 +441,7 @@
 	//instance
 	Post *post = [[Post alloc] init];
 	
-	NSError *e;
+	NSError *e = nil;
 	
 	//should fail, since post has nil ID
 	NSString *failure = [post routeForInstanceRoute:nil error:&e];

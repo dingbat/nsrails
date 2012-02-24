@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
+#import "NSRails+SBJson.h"
+
 /////////////////////////////
 //  OPTIONS
 // for documentation on these, see https://github.com/dingbat/nsrails/wiki/Compile-config
@@ -17,8 +19,6 @@
 
 //NSRConfig.h
 /////////////////////////////
-
-#import "JSONFramework.h"
 
 typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
 
@@ -74,7 +74,7 @@ typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
 //Will log stuff for you
 
 - (void) logRequest:(NSString *)requestStr httpVerb:(NSString *)httpVerb url:(NSString *)url;
-- (void) logResponse:(NSString *)response statusCode:(NSInteger)code;
+- (void) logResponse:(NSString *)response statusCode:(int)code;
 
 
 @end

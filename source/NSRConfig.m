@@ -164,7 +164,7 @@ static NSMutableArray *overrideConfigStack = nil;
 #endif
 }
 
-- (void) logResponse:(NSString *)response statusCode:(NSInteger)code
+- (void) logResponse:(NSString *)response statusCode:(int)code
 {
 #if NSRLog > 1
 	NSLog(@"IN<=== Code %d; %@\n\n",code,((code < 0 || code >= 400) ? @"[see ERROR]" : response));
@@ -211,7 +211,8 @@ static NSMutableArray *overrideConfigStack = nil;
 				 [rawResult autorelease];
 #endif
 				 
-				 [self logResponse:rawResult statusCode:code];
+				 //int casting done to suppress Mac OS precision loss warnings
+				 [self logResponse:rawResult statusCode:(int)code];
 				 
 				 //see if there's an error from this response using this helper method
 				 NSError *railsError = [self errorForResponse:rawResult statusCode:code];
@@ -225,7 +226,7 @@ static NSMutableArray *overrideConfigStack = nil;
 	}
 	else
 	{
-		NSError *appleError;
+		NSError *appleError = nil;
 		NSURLResponse *response = nil;
 		NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&appleError];
 		
@@ -250,7 +251,8 @@ static NSMutableArray *overrideConfigStack = nil;
 		[rawResult autorelease];
 #endif
 		
-		[self logResponse:rawResult statusCode:code];
+		//int casting done to suppress Mac OS precision loss warnings
+		[self logResponse:rawResult statusCode:(int)code];
 
 		//see if there's an error from this response using this helper method
 		NSError *railsError = [self errorForResponse:rawResult statusCode:[(NSHTTPURLResponse *)response statusCode]];

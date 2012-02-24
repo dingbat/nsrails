@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JSONFramework.h"
 #import "NSRConfig.h"
 
 //log NSR errors by default

@@ -1164,7 +1164,7 @@
 	NSRailsModel *obj = [[[self class] alloc] init];
 	
 	//set the ID to whatever was passed in - this will indicate where NSR should look on the server
-	obj.modelID = [NSDecimalNumber numberWithInt:mID];
+	obj.modelID = [NSDecimalNumber numberWithInteger:mID];
 	
 	//if the getRemote didn't work, make it nil
 	if (![obj remoteGetLatest:error])
@@ -1180,7 +1180,7 @@
 {
 	//see comments for previous method
 	NSRailsModel *obj = [[[self class] alloc] init];
-	obj.modelID = [NSDecimalNumber numberWithInt:mID];
+	obj.modelID = [NSDecimalNumber numberWithInteger:mID];
 	
 #ifndef NSRCompileWithARC
 	[obj autorelease];
