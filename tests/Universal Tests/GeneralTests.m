@@ -419,6 +419,12 @@
 
 - (void) test_custom_requests
 {
+	////////
+	//root
+	NSString *rootAction = [NSRailsModel routeForControllerRoute:@"action"];
+	GHAssertEqualStrings(controllerAction, @"action", @"Root route failed");	
+	
+	
 	/////////////////////
 	//controller (class)
 	NSString *getAll = [Post routeForControllerRoute:nil];
