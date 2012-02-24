@@ -6,18 +6,21 @@
 //  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
+/////////////////////////////
 //  OPTIONS
 // for documentation on these, see https://github.com/dingbat/nsrails/wiki/Compile-config
-
-#import "JSONFramework.h"
-
-typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
 
 #define NSRLog 2
 #define NSRCompileWithARC
 #define NSRSuccinctErrorMessages
 //#define NSRCrashOnError
-//#define NSRWarnOnInstanceRequestsWithNilModelID
+
+//NSRConfig.h
+/////////////////////////////
+
+#import "JSONFramework.h"
+
+typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
 
 #define NSRValidationErrorsKey	@"validation errors"
 
