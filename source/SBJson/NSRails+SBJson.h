@@ -3,7 +3,7 @@
 //  NSRails
 //
 //  Created by Dan Hassin on 2/24/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,11 +11,13 @@
 
 //just adds an error handlers for these two methods
 
+
 @interface NSObject (NSObject_SBJsonWriting_NSR)
 
 - (NSString *)JSONRepresentation:(NSError **)error;
 
 @end
+
 
 @interface NSString (NSString_SBJsonParsing_NSR)
 
