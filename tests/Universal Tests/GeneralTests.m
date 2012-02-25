@@ -19,7 +19,7 @@
 
 - (void) test_invalid_sync_params
 {
-	NSRAssertClassProperties(@"modelID, attr1", [TestClass class]);
+	NSRAssertClassProperties(@"remoteID, attr1", [TestClass class]);
 }
 
 - (void) test_nested_config_contexts
@@ -154,7 +154,7 @@
 	[newPost remoteCreate:&e];
 	
 	GHAssertNil(e, @"New post should've been created fine, there should be no error.");
-	GHAssertNotNil(newPost.modelID, @"New post was just created, modelID shouldn't be nil.");
+	GHAssertNotNil(newPost.remoteID, @"New post was just created, remoteID shouldn't be nil.");
 	GHAssertNotNil(newPost.remoteAttributes, @"New post was just created, remoteAttributes shouldn't be nil.");
 	
 	e = nil;
@@ -162,11 +162,11 @@
 	/////////////////
 	//TEST READ BY ID (again)
 	
-	Post *retrievedPost = [Post remoteObjectWithID:[newPost.modelID integerValue] error:&e];
+	Post *retrievedPost = [Post remoteObjectWithID:[newPost.remoteID integerValue] error:&e];
 	
 	GHAssertNil(e, @"Retrieving post we just made, should be no errors.");
 	GHAssertNotNil(retrievedPost, @"No errors retrieving post we just made, he should not be nil.");
-	GHAssertEqualObjects(retrievedPost.modelID, newPost.modelID, @"Retrieved post should have same modelID as created post");
+	GHAssertEqualObjects(retrievedPost.remoteID, newPost.remoteID, @"Retrieved post should have same remoteID as created post");
 	
 	e = nil;
 
@@ -181,13 +181,13 @@
 	
 	e = nil;
 
-	NSNumber *postID = newPost.modelID;
-	newPost.modelID = nil;
+	NSNumber *postID = newPost.remoteID;
+	newPost.remoteID = nil;
 	[newPost remoteUpdate:&e];
 	
 	//test to see that it'll fail on trying to update instance with nil ID
 	GHAssertNotNil(e, @"Tried to update an instance with a nil ID, where's the error?");
-	newPost.modelID = postID;
+	newPost.remoteID = postID;
 	
 	e = nil;
 	
@@ -213,7 +213,7 @@
 	e = nil;
 	
 	//see if there's an error if trying to retrieve with a nil ID
-	newPost.modelID = nil;
+	newPost.remoteID = nil;
 	[newPost remoteGetLatest:&e];
 
 	GHAssertNotNil(e, @"Tried to retrieve an instance with a nil ID, where's the error?");
@@ -226,7 +226,7 @@
 	//test trying to destroy instance with nil ID
 	[newPost remoteDestroy:&e];
 	GHAssertNotNil(e, @"Tried to delete an instance with a nil ID, where's the error?");
-	newPost.modelID = postID;
+	newPost.remoteID = postID;
 
 	e = nil;
 	
@@ -288,13 +288,13 @@
 
 	e = nil;
 	
-	//now try retrieving post and see if modelID exists
-	Post *retrievedPost = [Post remoteObjectWithID:post.modelID.integerValue error:&e];
+	//now try retrieving post and see if remoteID exists
+	Post *retrievedPost = [Post remoteObjectWithID:post.remoteID.integerValue error:&e];
 	GHAssertNil(e, @"There should be no errors in post retrieval");
 	GHAssertTrue(retrievedPost.responses.count == 1, @"The retrieved post should have one response (we just made it)");
-	GHAssertNotNil([[retrievedPost.responses objectAtIndex:0] modelID], @"The response inside post's response should have a present modelID (we just made it)");
+	GHAssertNotNil([[retrievedPost.responses objectAtIndex:0] remoteID], @"The response inside post's response should have a present remoteID (we just made it)");
 	
-	NSNumber *responseID = response.modelID;
+	NSNumber *responseID = response.remoteID;
 	response.destroyOnNesting = YES;
 	[post remoteUpdate:&e];
 
@@ -317,7 +317,7 @@
 	
 	[newResponse remoteCreate:&e];
 	GHAssertNotNil(e, @"Tried to send Rails a 'post_attributes' key in belongs_to association, where's the error?");
-	GHAssertNil(newResponse.modelID, @"newResponse's ID should be nil - there was an error in create.");
+	GHAssertNil(newResponse.remoteID, @"newResponse's ID should be nil - there was an error in create.");
 
 	e = nil;
 	
@@ -330,14 +330,14 @@
 	[belongsTo remoteCreate:&e];
 	
 	GHAssertNil(e, @"There should be no error with sending response marked with 'belongs_to' - 'post_id' should've been used instead of _attributes");
-	GHAssertNotNil(belongsTo.modelID, @"belongsTo response's ID should exist - there was no error in create.");
+	GHAssertNotNil(belongsTo.remoteID, @"belongsTo response's ID should exist - there was no error in create.");
 	
 	e = nil;
 	
 	[belongsTo remoteGetLatest:&e];
 	
 	GHAssertNil(e, @"There should be no error in retrieving response.");
-	GHAssertEqualObjects(belongsTo.post.modelID, post.modelID, @"The Post modelID coming from the newly created Response should be the same as the post object under which we made it.");
+	GHAssertEqualObjects(belongsTo.post.remoteID, post.remoteID, @"The Post remoteID coming from the newly created Response should be the same as the post object under which we made it.");
 	
 	e = nil;
 	
@@ -384,7 +384,7 @@
 		
 		[missingClassPost remoteCreate:&e];
 		GHAssertNil(e, @"Should be no error, even though can't find class Response");
-		GHAssertNotNil(missingClassPost.modelID, @"Model ID should be present if there was no error on create...");
+		GHAssertNotNil(missingClassPost.remoteID, @"Model ID should be present if there was no error on create...");
 		
 		e = nil;
 		
@@ -417,7 +417,7 @@
 			e = nil;
 			
 			//now, let's manually add it from the dictionary and destroy
-			testResponse.modelID = [[missingClassPost.responses objectAtIndex:0] objectForKey:@"id"];
+			testResponse.remoteID = [[missingClassPost.responses objectAtIndex:0] objectForKey:@"id"];
 			[testResponse remoteDestroy:&e];	
 			GHAssertNil(e, @"testResponse object should've been destroyed fine after manually setting ID from dictionary (nothing to do with nesting, just cleaning up)");
 			
@@ -456,21 +456,21 @@
 	
 	//should fail, since post has nil ID
 	NSString *failure = [post routeForInstanceRoute:nil error:&e];
-	GHAssertNotNil(e, @"Should have been an error when trying to get an instance route on instance with nil modelID");
-	GHAssertNil(failure, @"Route should be nil when there was an error forming it (no modelID for instance)");
+	GHAssertNotNil(e, @"Should have been an error when trying to get an instance route on instance with nil remoteID");
+	GHAssertNil(failure, @"Route should be nil when there was an error forming it (no remoteID for instance)");
 	
-	post.modelID = [NSNumber numberWithInt:1];
+	post.remoteID = [NSNumber numberWithInt:1];
 	
 	e = nil;
 	
 	NSString *get = [post routeForInstanceRoute:nil error:&e];
-	GHAssertNil(e, @"Route should have been formed correctly - modelID is present");
+	GHAssertNil(e, @"Route should have been formed correctly - remoteID is present");
 	GHAssertEqualStrings(get, @"posts/1", @"Nil instance route failed");
 	
 	e = nil;
 	
 	NSString *instanceAction = [post routeForInstanceRoute:@"action" error:&e];
-	GHAssertNil(e, @"Route should have been formed correctly - modelID is present");
+	GHAssertNil(e, @"Route should have been formed correctly - remoteID is present");
 	GHAssertEqualStrings(instanceAction, @"posts/1/action", @"Instance route failed");
 }
 

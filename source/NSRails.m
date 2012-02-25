@@ -30,8 +30,8 @@
 
 
 //this will be the NSRailsSync for NSRailsModel, basis for all subclasses
-//use modelID as equivalent for rails property id
-#define NSRAILS_BASE_PROPS @"modelID=id"
+//use remoteID as equivalent for rails property id
+#define NSRAILS_BASE_PROPS @"remoteID=id"
 
 //this is the marker for the propertyEquivalents dictionary if there's no explicit equivalence set
 #define NSRNoEquivalentMarker @""
@@ -60,7 +60,7 @@
 
 
 @implementation NSRailsModel
-@synthesize modelID, destroyOnNesting, remoteAttributes;
+@synthesize remoteID, destroyOnNesting, remoteAttributes;
 
 
 
@@ -79,7 +79,7 @@
 
 + (NSString *) railsProperties
 {
-	//start it off with the NSRails base ("modelID=id")
+	//start it off with the NSRails base ("remoteID=id")
 	NSString *finalProperties = NSRAILS_BASE_PROPS;
 	
 	BOOL stopInheriting = NO;
@@ -334,11 +334,11 @@
 					
 					prop = [[eqSplit objectAtIndex:0] stringByTrimmingCharactersInSet:wn];
 					
-					//check to see if a class is redefining modelID (modelID from NSRailsModel is the first property checked - if it's not the first, give a warning)
-					if ([prop isEqualToString:@"modelID"] && i != 0)
+					//check to see if a class is redefining remoteID (remoteID from NSRailsModel is the first property checked - if it's not the first, give a warning)
+					if ([prop isEqualToString:@"remoteID"] && i != 0)
 					{
 #ifdef NSRLogErrors
-						NSLog(@"NSR Warning: Found attempt to define 'modelID' in NSRailsSync for class %@. This property is reserved by the NSRailsModel superclass and should not be modified. Please fix this; element ignored.", NSStringFromClass([self class]));
+						NSLog(@"NSR Warning: Found attempt to define 'remoteID' in NSRailsSync for class %@. This property is reserved by the NSRailsModel superclass and should not be modified. Please fix this; element ignored.", NSStringFromClass([self class]));
 #endif
 						continue;
 					}
@@ -865,7 +865,7 @@
 			}
 			
 			//this is the belongs_to trick
-			//if "-b" declared and it's not NSNull and the relation's modelID exists, THEN, we should use _id instead of _attributes
+			//if "-b" declared and it's not NSNull and the relation's remoteID exists, THEN, we should use _id instead of _attributes
 
 			if (!isArray && 
 				[nestedModelProperties objectForKey:NSRBelongsToKeyForProperty(objcProperty)] && 
@@ -948,7 +948,7 @@
 
 - (NSString *) routeForInstanceRoute:(NSString *)route error:(NSError **)error
 {
-	if (!self.modelID)
+	if (!self.remoteID)
 	{
 		NSError *e = [NSError errorWithDomain:@"NSRails" code:0 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Attempted to update or delete an object with no ID. (Instance of %@)",NSStringFromClass([self class])] forKey:NSLocalizedDescriptionKey]];
 		if (error)
@@ -959,7 +959,7 @@
 	}
 	
 	//make request on an instance, so make route "id", or "id/route" if there's an additional route included (1/edit)
-	NSString *idAndMethod = [NSString stringWithFormat:@"%@%@",self.modelID,(route ? [@"/" stringByAppendingString:route] : @"")];
+	NSString *idAndMethod = [NSString stringWithFormat:@"%@%@",self.remoteID,(route ? [@"/" stringByAppendingString:route] : @"")];
 	
 	return [[self class] routeForControllerRoute:idAndMethod];
 }
@@ -1080,7 +1080,7 @@
 {
 	NSString *jsonResponse = [[self class] remoteMakeRequest:@"POST" sendObject:self route:nil error:error];
 	
-	//check to see if json exists, and if it does, set obj's attributes to it (ie, set modelID), and return if it worked
+	//check to see if json exists, and if it does, set obj's attributes to it (ie, set remoteID), and return if it worked
 	return (jsonResponse && [self setAttributesAsPerRemoteJSON:jsonResponse]);
 }
 - (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock
@@ -1153,7 +1153,7 @@
 + (id) remoteObjectWithID:(NSInteger)mID error:(NSError **)error
 {
 	NSRailsModel *obj = [[[self class] alloc] init];
-	obj.modelID = [NSDecimalNumber numberWithInteger:mID];
+	obj.remoteID = [NSDecimalNumber numberWithInteger:mID];
 	
 	if (![obj remoteGetLatest:error])
 		obj = nil;
@@ -1168,7 +1168,7 @@
 {
 	//see comments for previous method
 	NSRailsModel *obj = [[[self class] alloc] init];
-	obj.modelID = [NSDecimalNumber numberWithInteger:mID];
+	obj.remoteID = [NSDecimalNumber numberWithInteger:mID];
 	
 #ifndef NSRCompileWithARC
 	[obj autorelease];
@@ -1272,7 +1272,7 @@
 {
 	if (self = [super init])
 	{
-		self.modelID = [aDecoder decodeObjectForKey:@"modelID"];
+		self.remoteID = [aDecoder decodeObjectForKey:@"remoteID"];
 		remoteAttributes = [aDecoder decodeObjectForKey:@"remoteAttributes"];
 		self.destroyOnNesting = [aDecoder decodeBoolForKey:@"destroyOnNesting"];
 		
@@ -1288,7 +1288,7 @@
 
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
-	[aCoder encodeObject:modelID forKey:@"modelID"];
+	[aCoder encodeObject:remoteID forKey:@"remoteID"];
 	[aCoder encodeObject:remoteAttributes forKey:@"remoteAttributes"];
 	[aCoder encodeBool:destroyOnNesting forKey:@"destroyOnNesting"];
 	
@@ -1306,7 +1306,7 @@
 
 - (void) dealloc
 {
-	[modelID release];
+	[remoteID release];
 	[remoteAttributes release];
 	
 	[sendableProperties release];

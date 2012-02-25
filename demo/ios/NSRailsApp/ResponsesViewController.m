@@ -47,7 +47,7 @@
 											     [post remoteUpdate:&error];
 											   
 											   Doing this may be better for your structure since it'd already be in post's "responses" array.
-											   However, you have to take into account the case where the Response validation fails and you'd have to remove it from the array. Also, creating the Response rather than updating the Post will set newResp's modelID! And, doing it this way will demonstrate that doing a [post remoteGetLatest]; in the next line will update post.responses.
+											   However, you have to take into account the case where the Response validation fails and you'd have to remove it from the array. Also, creating the Response rather than updating the Post will set newResp's remoteID! And, doing it this way will demonstrate that doing a [post remoteGetLatest]; in the next line will update post.responses.
 											  */
 											  
 											  
@@ -75,7 +75,7 @@
 
 - (void)viewDidLoad
 {	
-	self.title = [NSString stringWithFormat:@"Post #%@",post.modelID];
+	self.title = [NSString stringWithFormat:@"Post #%@",post.remoteID];
 	
 	//add the + button
 	UIBarButtonItem *new = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemReply target:self action:@selector(addResponse)];

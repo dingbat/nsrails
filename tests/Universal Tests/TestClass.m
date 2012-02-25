@@ -10,6 +10,6 @@
 
 @implementation TestClass
 @synthesize primitiveAttr, myID, attr1, attr2;
-NSRailsSync(primitiveAttr, modelID -x, myID=id, nonexistent, attr1=hello, attr2=hello)
+NSRailsSync(primitiveAttr, remoteID -x, myID=id, nonexistent, attr1=hello, attr2=hello)
 
 @end

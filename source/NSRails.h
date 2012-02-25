@@ -18,7 +18,7 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 
 @interface NSRailsModel : NSObject <NSCoding> //NSCoding is supported for serialization
 {
-	NSNumber *modelID;
+	NSNumber *remoteID;
 	NSDictionary *remoteAttributes;
 	
 	NSMutableArray *sendableProperties;
@@ -33,7 +33,7 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 	BOOL destroyOnNesting;
 }
 
-@property (nonatomic, strong) NSNumber *modelID;
+@property (nonatomic, strong) NSNumber *remoteID;
 @property (nonatomic, strong, readonly) NSDictionary *remoteAttributes;
 
 @property (nonatomic) BOOL destroyOnNesting;

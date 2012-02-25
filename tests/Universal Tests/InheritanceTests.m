@@ -83,31 +83,31 @@
 - (void) test_property_inheritance
 {
 	//this is just normal
-	NSRAssertClassProperties(@"modelID, parentAttr", [Parent class]);
+	NSRAssertClassProperties(@"remoteID, parentAttr", [Parent class]);
 	
 	//complacent child
 	//is complacent (doesn't explicitly define NSRNoCarryFromSuper), so will inherit parent's attributes too
 	//this is simultaneously a test that the "*" from Parent isn't carried over - child has 2 properties and only one is defined
 	//this will also test to see if syncing "parentAttr2" is allowed (attribute in parent class not synced by parent class)
-	NSRAssertClassProperties(@"modelID, childAttr1, parentAttr2, parentAttr", [Child class]);
+	NSRAssertClassProperties(@"remoteID, childAttr1, parentAttr2, parentAttr", [Child class]);
 	
 	//is complacent, so should inherit everything! (parent+child), as well as its own
 	//however, excludes parentAttr2 as a test
-	NSRAssertClassProperties(@"modelID, childAttr1, gchildAttr, parentAttr", [Grandchild class]);
+	NSRAssertClassProperties(@"remoteID, childAttr1, gchildAttr, parentAttr", [Grandchild class]);
 	
 	//is rebellious, so should inherit nothing! (only its own)
-	NSRAssertClassProperties(@"modelID, r_gchildAttr", [RebelliousGrandchild class]);
+	NSRAssertClassProperties(@"remoteID, r_gchildAttr", [RebelliousGrandchild class]);
 	
 	
 	//rebellious child
 	//is rebellious, so should inherit nothing (only be using whatever attributes defined by itself)
-	NSRAssertClassProperties(@"modelID, r_childAttr", [RebelliousChild class]);
+	NSRAssertClassProperties(@"remoteID, r_childAttr", [RebelliousChild class]);
 	
 	//is complacent, so should inherit everything until it sees the _NSR_NO_SUPER_ (which it omits), meaning won't inherit Parent
-	NSRAssertClassProperties(@"modelID, gchild_rAttr, r_childAttr", [GrandchildOfRebellious class]);
+	NSRAssertClassProperties(@"remoteID, gchild_rAttr, r_childAttr", [GrandchildOfRebellious class]);
 	
 	//is rebellious, so should inherit nothing (only be using whatever attributes defined by itself)
-	NSRAssertClassProperties(@"modelID, r_gchild_rAttr", [RebelliousGrandchildOfRebellious class]);
+	NSRAssertClassProperties(@"remoteID, r_gchild_rAttr", [RebelliousGrandchildOfRebellious class]);
 }
 
 - (void)setUpClass {
