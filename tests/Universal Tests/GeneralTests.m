@@ -103,7 +103,10 @@
 	//if error, and it's NSURL domain, must be that the server isn't running
 	if ([[e domain] isEqualToString:@"NSURLErrorDomain"])
 	{
-		GHFail(@"It doesn't look like you're running the demo Rails app. This makes the CRUD and nesting tests useless. To run the app: 'cd demo/server; rails s'. If your DB isn't set up: 'rake db:create db:migrate'.");
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Server not running" message:@"It doesn't look the test Rails app is running locally. The CRUD and nesting tests can't run without it.\n\nTo run the app: 'cd demo/nsrails.com; rails s'.\nIf your DB isn't set up: 'rake db:create db:migrate'." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+		[alert show];
+		
+		GHFail(@"Test app not running. Run 'rails s'.");
 	}
 	
 	GHAssertNil(e, @"remoteAll on Post should have worked.'");
