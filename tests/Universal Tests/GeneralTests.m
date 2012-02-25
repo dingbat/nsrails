@@ -322,7 +322,7 @@
 	e = nil;
 	
 	//now try with -b flag
-	Response *belongsTo = [[Response alloc] initWithRailsSyncProperties:@"*, post -b"];
+	Response *belongsTo = [[Response alloc] initWithSyncProperties:@"*, post -b"];
 	belongsTo.body = @"Test";
 	belongsTo.author = @"Test";
 	belongsTo.post = post;
@@ -367,7 +367,7 @@
 		if (i == 3)
 			sync = @"*, responses:BadResponse"; //won't work at all, since BadResponse doesnt inherit from NSRM
 		
-		Post *missingClassPost = [[Post alloc] initWithRailsSyncProperties:sync];
+		Post *missingClassPost = [[Post alloc] initWithSyncProperties:sync];
 		missingClassPost.author = @"author";
 		missingClassPost.body = @"body";
 		missingClassPost.responses = [NSMutableArray array];

@@ -117,7 +117,7 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 - (id) initWithRemoteAttributesDictionary:(NSDictionary *)railsDict;
 
 //manual sync properties string, specific for that instance
-- (id) initWithRailsSyncProperties:(NSString *)str;
+- (id) initWithSyncProperties:(NSString *)str;
 
 
 

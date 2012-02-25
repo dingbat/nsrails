@@ -216,7 +216,7 @@
 	}
 }
 
-- (id) initWithRailsSyncProperties:(NSString *)props
+- (id) initWithSyncProperties:(NSString *)props
 {
 	if ((self = [super init]))
 	{
@@ -493,7 +493,7 @@
 {
 	NSString *props = [[self class] railsProperties];
 	
-	if ((self = [self initWithRailsSyncProperties:props]))
+	if ((self = [self initWithSyncProperties:props]))
 	{
 		//nothing special...
 	}
