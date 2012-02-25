@@ -12,10 +12,10 @@ h3. What can NSRails do?
 Simply model your Objective-C classes after your structure in Rails and NSRails will provide native ActiveResource-like support, meaning CRUD and other operations can be called seamlessly via Objective-C methods. For instance, saving a new article remotely is as easy as calling @remoteCreate@ on your Objective-C @article@ object, and it and its properties will created via the Rails server.
 
 The framework is very simple to use but also powerful and flexible. Some features include:
-- Keeping models and properties of your choice "in-sync":https://github.com/dingbat/nsrails/wiki/NSRailsify with those of Rails
-- "Nesting":https://github.com/dingbat/nsrails/wiki/Nesting your related models (has-many, etc)
-- Support for "basic HTTP authentication":https://github.com/dingbat/nsrails/wiki/NSRConfig
-- "Asynchronous":https://github.com/dingbat/nsrails/wiki/NSRailsModel requests
+* Keeping models and properties of your choice "in-sync":https://github.com/dingbat/nsrails/wiki/NSRailsify with those of Rails
+* "Nesting":https://github.com/dingbat/nsrails/wiki/Nesting your related models (has-many, etc)
+* Support for "basic HTTP authentication":https://github.com/dingbat/nsrails/wiki/NSRConfig
+* "Asynchronous":https://github.com/dingbat/nsrails/wiki/NSRailsModel requests
 And tons more...
 
 h3. How do I get started?
