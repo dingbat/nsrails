@@ -527,7 +527,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
-					"\"$(SRCROOT)/../../../../Downloads/gabriel-gh-unit-fea526d/Examples/MyTestable-MacOSX/Frameworks\"",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Mac OS Tests\"",
 				);
@@ -556,7 +555,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
-					"\"$(SRCROOT)/../../../../Downloads/gabriel-gh-unit-fea526d/Examples/MyTestable-MacOSX/Frameworks\"",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Mac OS Tests\"",
 				);

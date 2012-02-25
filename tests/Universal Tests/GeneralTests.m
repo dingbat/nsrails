@@ -103,8 +103,16 @@
 	//if error, and it's NSURL domain, must be that the server isn't running
 	if ([[e domain] isEqualToString:@"NSURLErrorDomain"])
 	{
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Server not running" message:@"It doesn't look the test Rails app is running locally. The CRUD and nesting tests can't run without it.\n\nTo run the app: 'cd demo/nsrails.com; rails s'.\nIf your DB isn't set up: 'rake db:create db:migrate'." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+		NSString *title = @"Server not running";
+		NSString *text = @"It doesn't look the test Rails app is running locally. The CRUD and nesting tests can't run without it.\n\nTo run the app:\n\"$ cd demo/nsrails.com; rails s\".\nIf your DB isn't set up:\n\"$ rake db:migrate\".";
+		
+#if TARGET_OS_IPHONE
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:text delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
 		[alert show];
+#else
+		NSAlert *alert = [NSAlert alertWithMessageText:title defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:text];
+		[alert runModal];
+#endif
 		
 		GHFail(@"Test app not running. Run 'rails s'.");
 	}
