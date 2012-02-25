@@ -60,7 +60,7 @@
 
 
 @implementation NSRailsModel
-@synthesize remoteID, destroyOnNesting, remoteAttributes;
+@synthesize remoteID, remoteDestroyOnNesting, remoteAttributes;
 
 
 
@@ -237,7 +237,7 @@
 		encodeProperties = [[NSMutableArray alloc] init];
 		decodeProperties = [[NSMutableArray alloc] init];
 		
-		destroyOnNesting = NO;
+		remoteDestroyOnNesting = NO;
 		
 		//here begins the code used for parsing the NSRailsSync param string
 		
@@ -892,9 +892,9 @@
 		}
 	}
 
-	if (destroyOnNesting)
+	if (remoteDestroyOnNesting)
 	{
-		[dict setObject:[NSNumber numberWithBool:destroyOnNesting] forKey:@"_destroy"];
+		[dict setObject:[NSNumber numberWithBool:remoteDestroyOnNesting] forKey:@"_destroy"];
 	}
 	
 	return dict;
@@ -1274,7 +1274,7 @@
 	{
 		self.remoteID = [aDecoder decodeObjectForKey:@"remoteID"];
 		remoteAttributes = [aDecoder decodeObjectForKey:@"remoteAttributes"];
-		self.destroyOnNesting = [aDecoder decodeBoolForKey:@"destroyOnNesting"];
+		self.remoteDestroyOnNesting = [aDecoder decodeBoolForKey:@"remoteDestroyOnNesting"];
 		
 		sendableProperties = [aDecoder decodeObjectForKey:@"sendableProperties"];
 		retrievableProperties = [aDecoder decodeObjectForKey:@"retrievableProperties"];
@@ -1290,7 +1290,7 @@
 {
 	[aCoder encodeObject:remoteID forKey:@"remoteID"];
 	[aCoder encodeObject:remoteAttributes forKey:@"remoteAttributes"];
-	[aCoder encodeBool:destroyOnNesting forKey:@"destroyOnNesting"];
+	[aCoder encodeBool:remoteDestroyOnNesting forKey:@"remoteDestroyOnNesting"];
 	
 	[aCoder encodeObject:sendableProperties forKey:@"sendableProperties"];
 	[aCoder encodeObject:retrievableProperties forKey:@"retrievableProperties"];

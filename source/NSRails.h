@@ -30,13 +30,13 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 	
 	//for nested models
 	//remember that rails-side needs to implement ":allow_destroy => true" on accepts_nested_attributes_for
-	BOOL destroyOnNesting;
+	BOOL remoteDestroyOnNesting;
 }
 
 @property (nonatomic, strong) NSNumber *remoteID;
 @property (nonatomic, strong, readonly) NSDictionary *remoteAttributes;
 
-@property (nonatomic) BOOL destroyOnNesting;
+@property (nonatomic) BOOL remoteDestroyOnNesting;
 
 ///////
 //CRUD

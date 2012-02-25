@@ -295,7 +295,7 @@
 	GHAssertNotNil([[retrievedPost.responses objectAtIndex:0] remoteID], @"The response inside post's response should have a present remoteID (we just made it)");
 	
 	NSNumber *responseID = response.remoteID;
-	response.destroyOnNesting = YES;
+	response.remoteDestroyOnNesting = YES;
 	[post remoteUpdate:&e];
 
 	GHAssertNil(e, @"There should be no error nesting Response deletion");
