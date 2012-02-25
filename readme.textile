@@ -4,16 +4,16 @@
 
 Welcome!
 
-NSRails is a light-weight Objective-C library to make interfacing with a Rails server incredibly easy.
+NSRails is a light-weight Objective-C framework to make interfacing with a Rails server incredibly easy.
 
 
 h3. What can NSRails do?
 
-NSRails builds ActiveResource support straight into your Objective-C models, meaning CRUD operations and others can be called seamlessly via Objective-C methods. For example, all it takes to create a new user from Objective-C is <code>[user remoteCreate];</code> (after setting, say, a <code>username</code> property) and it'll go straight to your Rails server.
+NSRails builds ActiveResource support straight into your Objective-C models, meaning CRUD operations and others can be called seamlessly via Objective-C methods. For example, all it takes to create a new user from Objective-C is @[user remoteCreate];@ (after setting, say, a @username@ property) and it'll go straight to your Rails server.
 
-It's extremely simple to use but also flexible and powerful. Some features include:
+It's very simple to use but also flexible, powerful, and customizable. Some features include:
 * Keep models and properties of your choice "in-sync":https://github.com/dingbat/nsrails/wiki/NSRailsify with Rails
-* Support for "nested":https://github.com/dingbat/nsrails/wiki/Nesting models
+* Support for "nesting":https://github.com/dingbat/nsrails/wiki/Nesting models
 * Support for "basic HTTP authentication":https://github.com/dingbat/nsrails/wiki/NSRConfig
 * "Asynchronous":https://github.com/dingbat/nsrails/wiki/NSRailsModel requests
 * And tons more...
@@ -29,6 +29,6 @@ For more details:
 
 h3. What's in the sources?
 
-The main class in NSRails is "NSRailsModel":https://github.com/dingbat/nsrails/wiki/NSRailsModel (defined in NSRails.h). Also included is the "NSRConfig":https://github.com/dingbat/nsrails/wiki/NSRConfig class for server settings.
+The main class (and the one from which to derive your classes) is "NSRailsModel":https://github.com/dingbat/nsrails/wiki/NSRailsModel (defined in NSRails.h). Also included is the "NSRConfig":https://github.com/dingbat/nsrails/wiki/NSRConfig class for server settings.
 
-As per external frameworks, NSRails makes great use of the "SBJSON framework":https://github.com/stig/json-framework. And finally, I have to give a lot of credit to "ObjectiveResource":https://github.com/yfactorial/objectiveresource, whose library was largely the inspiration for NSRails.
+As per external frameworks, NSRails makes great use of the "SBJSON framework":https://github.com/stig/json-framework. And finally, I have to give a lot of credit to "ObjectiveResource":https://github.com/yfactorial/objectiveresource, whose framework was largely the inspiration for NSRails.
