@@ -23,10 +23,12 @@ h3. How do I get started?
 Add the source folder into your Xcode project, and follow these "three easy steps":https://github.com/dingbat/nsrails/wiki/Getting-Started.
 
 For more details:
-* See the included demo iPhone app - it goes straight to a live Rails app at "nsrails.com":http://nsrails.com, so you won't even have to launch a server to get started. The source for this site is also included. Have fun and be civil!
+* Watch the "screencast":http://vimeo.com/37418882
+* Browse the included demo iPhone app - it goes straight to a live Rails app at "nsrails.com":http://nsrails.com, so you won't even have to launch a server to get started. The source for this site is also included. Have fun and be civil!
 * See the "Wiki":https://github.com/dingbat/nsrails/wiki
-* Screencast and formal documentation coming soon (promise!)
 
 h3. What's in the sources?
 
-The main class in NSRails is "NSRailsModel":https://github.com/dingbat/nsrails/wiki/NSRailsModel (defined in NSRails.h). Also included is the "NSRConfig":https://github.com/dingbat/nsrails/wiki/NSRConfig class for server settings. NSRails also makes use of an Objective-C JSON framework. And finally, I have to give credit to "ObjectiveResource":https://github.com/yfactorial/objectiveresource, whose library was largely the inspiration for NSRails.
+The main class in NSRails is "NSRailsModel":https://github.com/dingbat/nsrails/wiki/NSRailsModel (defined in NSRails.h). Also included is the "NSRConfig":https://github.com/dingbat/nsrails/wiki/NSRConfig class for server settings.
+
+As per external frameworks, NSRails makes great use of the "SBJSON framework":https://github.com/stig/json-framework. And finally, I have to give a lot of credit to "ObjectiveResource":https://github.com/yfactorial/objectiveresource, whose library was largely the inspiration for NSRails.
