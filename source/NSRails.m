@@ -1265,7 +1265,40 @@
 }
 
 
+#pragma mark -
+#pragma NSCoding
 
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+	if (self = [super init])
+	{
+		self.modelID = [aDecoder decodeObjectForKey:@"modelID"];
+		remoteAttributes = [aDecoder decodeObjectForKey:@"remoteAttributes"];
+		self.destroyOnNesting = [aDecoder decodeBoolForKey:@"destroyOnNesting"];
+		
+		sendableProperties = [aDecoder decodeObjectForKey:@"sendableProperties"];
+		retrievableProperties = [aDecoder decodeObjectForKey:@"retrievableProperties"];
+		encodeProperties = [aDecoder decodeObjectForKey:@"encodeProperties"];
+		decodeProperties = [aDecoder decodeObjectForKey:@"decodeProperties"];
+		nestedModelProperties = [aDecoder decodeObjectForKey:@"nestedModelProperties"];
+		propertyEquivalents = [aDecoder decodeObjectForKey:@"propertyEquivalents"];
+	}
+	return self;
+}
+
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+	[aCoder encodeObject:modelID forKey:@"modelID"];
+	[aCoder encodeObject:remoteAttributes forKey:@"remoteAttributes"];
+	[aCoder encodeBool:destroyOnNesting forKey:@"destroyOnNesting"];
+	
+	[aCoder encodeObject:sendableProperties forKey:@"sendableProperties"];
+	[aCoder encodeObject:retrievableProperties forKey:@"retrievableProperties"];
+	[aCoder encodeObject:encodeProperties forKey:@"encodeProperties"];
+	[aCoder encodeObject:decodeProperties forKey:@"decodeProperties"];
+	[aCoder encodeObject:nestedModelProperties forKey:@"nestedModelProperties"];
+	[aCoder encodeObject:propertyEquivalents forKey:@"propertyEquivalents"];
+}
 
 #pragma mark -
 #pragma mark Dealloc for non-ARC

@@ -16,7 +16,7 @@ typedef void(^NSRBasicCompletionBlock)(NSError *error);
 typedef void(^NSRGetAllCompletionBlock)(NSArray *allRemote, NSError *error);
 typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 
-@interface NSRailsModel : NSObject
+@interface NSRailsModel : NSObject <NSCoding> //NSCoding is supported for serialization
 {
 	NSNumber *modelID;
 	NSDictionary *remoteAttributes;
