@@ -19,7 +19,7 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 @interface NSRailsModel : NSObject
 {
 	NSNumber *modelID;
-	NSDictionary *railsAttributes;
+	NSDictionary *remoteAttributes;
 	
 	NSMutableArray *sendableProperties;
 	NSMutableArray *retrievableProperties;
@@ -34,7 +34,7 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 }
 
 @property (nonatomic, strong) NSNumber *modelID;
-@property (nonatomic, strong, readonly) NSDictionary *railsAttributes;
+@property (nonatomic, strong, readonly) NSDictionary *remoteAttributes;
 
 @property (nonatomic) BOOL destroyOnNesting;
 
@@ -109,12 +109,12 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 //will use whatever inputted in NSRailsSync()
 ///////////////////////////////////////////
 
-- (NSString *) railsJSONRepresentation;
-- (NSDictionary *) dictionaryOfRailsRelevantProperties;
+- (NSString *) remoteJSONRepresentation;
+- (NSDictionary *) dictionaryOfRemoteProperties;
 
-- (BOOL) setAttributesAsPerRailsJSON:(NSString *)json;
-- (void) setAttributesAsPerRailsDictionary:(NSDictionary *)dict;
-- (id) initWithRailsAttributesDictionary:(NSDictionary *)railsDict;
+- (BOOL) setAttributesAsPerRemoteJSON:(NSString *)json;
+- (void) setAttributesAsPerRemoteDictionary:(NSDictionary *)dict;
+- (id) initWithRemoteAttributesDictionary:(NSDictionary *)railsDict;
 
 //manual sync properties string, specific for that instance
 - (id) initWithRailsSyncProperties:(NSString *)str;

@@ -144,7 +144,7 @@
 	
 	GHAssertNil(e, @"New post should've been created fine, there should be no error.");
 	GHAssertNotNil(newPost.modelID, @"New post was just created, modelID shouldn't be nil.");
-	GHAssertNotNil(newPost.railsAttributes, @"New post was just created, railsAttributes shouldn't be nil.");
+	GHAssertNotNil(newPost.remoteAttributes, @"New post was just created, remoteAttributes shouldn't be nil.");
 	
 	e = nil;
 	

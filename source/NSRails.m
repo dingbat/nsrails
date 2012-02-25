@@ -60,7 +60,7 @@
 
 
 @implementation NSRailsModel
-@synthesize modelID, destroyOnNesting, railsAttributes;
+@synthesize modelID, destroyOnNesting, remoteAttributes;
 
 
 
@@ -511,16 +511,16 @@
 //will return the latest Rails dictionary (hash) retrieved
 - (NSString *) description
 {
-	if (railsAttributes)
-		return [railsAttributes description];
+	if (remoteAttributes)
+		return [remoteAttributes description];
 	return [super description];
 }
 
-- (NSString *) railsJSONRepresentation:(NSError **)e
+- (NSString *) remoteJSONRepresentation:(NSError **)e
 {
 	// enveloped meaning with the model name out front, {"user"=>{"name"=>"x", "password"=>"y"}}
 	
-	NSDictionary *enveloped = [NSDictionary dictionaryWithObject:[self dictionaryOfRailsRelevantProperties]
+	NSDictionary *enveloped = [NSDictionary dictionaryWithObject:[self dictionaryOfRemoteProperties]
 														  forKey:[[self class] getModelName]];
 	
 	NSError *error;
@@ -537,15 +537,15 @@
 
 //will turn it into a JSON string
 //includes any nested models (which the json framework can't do)
-- (NSString *) railsJSONRepresentation
+- (NSString *) remoteJSONRepresentation
 {
-	return [self railsJSONRepresentation:nil];
+	return [self remoteJSONRepresentation:nil];
 }
 
 - (id) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
 {
 	//make a new class to be entered for this property/array (we can assume it subclasses NSRailsModel)
-	NSRailsModel *model = [[NSClassFromString(classN) alloc] initWithRailsAttributesDictionary:dict];
+	NSRailsModel *model = [[NSClassFromString(classN) alloc] initWithRemoteAttributesDictionary:dict];
 	
 #ifndef NSRCompileWithARC
 	[model autorelease];
@@ -681,14 +681,14 @@
 					{
 						encodedObj = [self getCustomEnDecoding:YES forProperty:prop value:element];
 					}
-					//otherwise, use the NSRailsModel dictionaryOfRailsRelevantProperties method to get that object in dictionary form
+					//otherwise, use the NSRailsModel dictionaryOfRemoteProperties method to get that object in dictionary form
 					if (!encodable || !encodedObj)
 					{
 						//but first make sure it's an NSRailsModel subclass
 						if (![element isKindOfClass:[NSRailsModel class]])
 							continue;
 						
-						encodedObj = [element dictionaryOfRailsRelevantProperties];
+						encodedObj = [element dictionaryOfRemoteProperties];
 					}
 					
 					[new addObject:encodedObj];
@@ -701,7 +701,7 @@
 			if (![val isKindOfClass:[NSRailsModel class]])
 				return nil;
 			
-			return [val dictionaryOfRailsRelevantProperties];
+			return [val dictionaryOfRemoteProperties];
 		}
 		
 		//if NOT linked property, if its declared as encodable, return encoded version
@@ -732,18 +732,18 @@
 	return nil;
 }
 
-- (id) initWithRailsAttributesDictionary:(NSDictionary *)railsDict
+- (id) initWithRemoteAttributesDictionary:(NSDictionary *)railsDict
 {
 	if ((self = [self init]))
 	{
-		[self setAttributesAsPerRailsDictionary:railsDict];
+		[self setAttributesAsPerRemoteDictionary:railsDict];
 	}
 	return self;
 }
 
-- (void) setAttributesAsPerRailsDictionary:(NSDictionary *)dict
+- (void) setAttributesAsPerRemoteDictionary:(NSDictionary *)dict
 {
-	railsAttributes = dict;
+	remoteAttributes = dict;
 	
 	for (NSString *objcProperty in retrievableProperties)
 	{
@@ -807,7 +807,7 @@
 	}
 }
 
-- (NSDictionary *) dictionaryOfRailsRelevantProperties
+- (NSDictionary *) dictionaryOfRemoteProperties
 {
 	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 
@@ -900,7 +900,7 @@
 	return dict;
 }
 
-- (BOOL) setAttributesAsPerRailsJSON:(NSString *)json
+- (BOOL) setAttributesAsPerRemoteJSON:(NSString *)json
 {
 	if (!json)
 	{
@@ -917,7 +917,7 @@
 		return NO;
 	}
 	
-	[self setAttributesAsPerRailsDictionary:dict];
+	[self setAttributesAsPerRemoteDictionary:dict];
 	
 	return YES;
 }
@@ -990,7 +990,7 @@
 
 - (NSString *) remoteMakeRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route error:(NSError **)error
 {
-	NSString *json = [self railsJSONRepresentation:error];
+	NSString *json = [self remoteJSONRepresentation:error];
 	if (json)
 		return [self remoteMakeRequest:httpVerb requestBody:json route:route error:error];
 	return nil;
@@ -999,7 +999,7 @@
 - (void) remoteMakeRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
 {
 	NSError *e;
-	NSString *json = [self railsJSONRepresentation:&e];
+	NSString *json = [self remoteJSONRepresentation:&e];
 	if (json)
 		[self remoteMakeRequest:httpVerb requestBody:json route:route async:completionBlock];
 	else
@@ -1039,7 +1039,7 @@
 
 + (NSString *) remoteMakeRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route error:(NSError **)error
 {
-	NSString *json = [obj railsJSONRepresentation:error];
+	NSString *json = [obj remoteJSONRepresentation:error];
 	if (json)
 		return [self remoteMakeRequest:httpVerb requestBody:json route:route error:error];
 	return nil;
@@ -1048,7 +1048,7 @@
 + (void) remoteMakeRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
 {
 	NSError *e;
-	NSString *json = [obj railsJSONRepresentation:&e];
+	NSString *json = [obj remoteJSONRepresentation:&e];
 	if (json)
 		[self remoteMakeRequest:httpVerb requestBody:json route:route async:completionBlock];
 	else
@@ -1081,7 +1081,7 @@
 	NSString *jsonResponse = [[self class] remoteMakeRequest:@"POST" sendObject:self route:nil error:error];
 	
 	//check to see if json exists, and if it does, set obj's attributes to it (ie, set modelID), and return if it worked
-	return (jsonResponse && [self setAttributesAsPerRailsJSON:jsonResponse]);
+	return (jsonResponse && [self setAttributesAsPerRemoteJSON:jsonResponse]);
 }
 - (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock
 {
@@ -1089,7 +1089,7 @@
 	 
 	 ^(NSString *result, NSError *error) {
 		 if (result)
-			 [self setAttributesAsPerRailsJSON:result];
+			 [self setAttributesAsPerRemoteJSON:result];
 		 completionBlock(error);
 	 }];
 }
@@ -1133,7 +1133,7 @@
 - (BOOL) remoteGetLatest:(NSError **)error
 {
 	NSString *json = [self remoteMakeGETRequestWithRoute:nil error:error];
-	return (json && [self setAttributesAsPerRailsJSON:json]); //will return true/false if conversion worked
+	return (json && [self setAttributesAsPerRemoteJSON:json]); //will return true/false if conversion worked
 }
 - (void) remoteGetLatestAsync:(NSRBasicCompletionBlock)completionBlock
 {
@@ -1142,7 +1142,7 @@
 	 ^(NSString *result, NSError *error) 
 	 {
 		 if (result)
-			 [self setAttributesAsPerRailsJSON:result];
+			 [self setAttributesAsPerRemoteJSON:result];
 		 completionBlock(error);
 	 }];
 }
@@ -1222,7 +1222,7 @@
 	//iterate through every object returned by Rails (as dicts)
 	for (NSDictionary *dict in arr)
 	{
-		NSRailsModel *obj = [[[self class] alloc] initWithRailsAttributesDictionary:dict];	
+		NSRailsModel *obj = [[[self class] alloc] initWithRemoteAttributesDictionary:dict];	
 		
 		[objects addObject:obj];
 		
@@ -1274,7 +1274,7 @@
 - (void) dealloc
 {
 	[modelID release];
-	[railsAttributes release];
+	[remoteAttributes release];
 	
 	[sendableProperties release];
 	[retrievableProperties release];
