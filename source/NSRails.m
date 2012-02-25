@@ -1266,7 +1266,7 @@
 
 
 #pragma mark -
-#pragma NSCoding
+#pragma mark NSCoding
 
 - (id) initWithCoder:(NSCoder *)aDecoder
 {
