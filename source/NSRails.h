@@ -18,8 +18,7 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 
 @interface NSRailsModel : NSObject <NSCoding> //NSCoding is supported for serialization
 {
-	NSNumber *remoteID;
-	NSDictionary *remoteAttributes;
+	//internal NSRails stuff - categories of sync properties
 	
 	NSMutableArray *sendableProperties;
 	NSMutableArray *retrievableProperties;
@@ -27,16 +26,15 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 	NSMutableArray *decodeProperties;
 	NSMutableDictionary *nestedModelProperties;
 	NSMutableDictionary *propertyEquivalents;
-	
-	//for nested models
-	//remember that rails-side needs to implement ":allow_destroy => true" on accepts_nested_attributes_for
-	BOOL remoteDestroyOnNesting;
 }
 
 @property (nonatomic, strong) NSNumber *remoteID;
 @property (nonatomic, strong, readonly) NSDictionary *remoteAttributes;
 
+//for nested models
+//remember that rails-side needs to implement ":allow_destroy => true" on accepts_nested_attributes_for
 @property (nonatomic) BOOL remoteDestroyOnNesting;
+
 
 ///////
 //CRUD
