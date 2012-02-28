@@ -36,23 +36,30 @@
 	[NSRConfig setCurrentEnvironment:NSRConfigEnvironmentProduction];
 	GHAssertEqualStrings([NSRConfig currentEnvironment], NSRConfigEnvironmentProduction, @"Should've set environment to Prod");
 	GHAssertNil([NSRConfig defaultConfig].appURL, @"App URL for Prod environment never set, should be nil.");
-
+	
 	[[NSRConfig defaultConfig] setAppURL:@"Prod"];
 	GHAssertEqualStrings([NSRConfig currentEnvironment], NSRConfigEnvironmentProduction, @"Environment should still be Prod from before");
-	NSRAssertRelevantConfigURL(@"Prod", @"Default URL set while in Prod, shoud have stuck");
+	NSRAssertRelevantConfigURL(@"Prod", @"Default URL set while in Prod, should have stuck");
 	
-	NSRConfig *testEnv = [[NSRConfig alloc] initWithAppURL:@"Test"];
-	[NSRConfig setConfig:testEnv asDefaultForEnvironment:@"test"];
+	NSRConfig *testConfig = [NSRConfig configForEnvironment:@"test"];
+	testConfig.appURL = @"TestURL";
 	GHAssertEqualStrings([NSRConfig currentEnvironment], NSRConfigEnvironmentProduction, @"Environment still be Prod");
+	NSRAssertRelevantConfigURL(@"Prod", @"Default URL set while in Prod, should have stuck");
+	GHAssertNotNil(testConfig, @"Calling configForEnvironment: should generate a new config if non-existent");
 
 	[NSRConfig setCurrentEnvironment:@"test"];
 	GHAssertEqualStrings([NSRConfig currentEnvironment], @"test", @"Environment should be test");
-	NSRAssertRelevantConfigURL(@"Test", @"Default URL should be one set for test");
+	NSRAssertRelevantConfigURL(@"TestURL", @"Default URL should be one set for test");
 
-	NSRConfig *testEnv2 = [[NSRConfig alloc] initWithAppURL:@"Test2"];
-	[NSRConfig setAsDefaultConfig:testEnv2];
+	NSRConfig *newProd = [[NSRConfig alloc] initWithAppURL:@"NewProdURL"];
+	[NSRConfig setConfig:newProd asDefaultForEnvironment:NSRConfigEnvironmentProduction];
 	GHAssertEqualStrings([NSRConfig currentEnvironment], @"test", @"Environment should still be test");
-	NSRAssertRelevantConfigURL(@"Test2", @"Default URL should be one set for test after re-setting default config");
+	NSRAssertRelevantConfigURL(@"TestURL", @"Default URL should be one set for test");
+	NSRAssertEqualConfigs([NSRConfig configForEnvironment:NSRConfigEnvironmentProduction], @"NewProdURL", @"Production environment config should change after overwriting its default", nil);
+	
+	//set it default for current env too (test)
+	[NSRConfig setConfigAsDefault:newProd];
+	NSRAssertRelevantConfigURL(@"NewProdURL", @"Default URL should be the new one set for prod");
 	
 	[NSRConfig setCurrentEnvironment:NSRConfigEnvironmentDevelopment];
 	GHAssertEqualStrings([NSRConfig currentEnvironment], NSRConfigEnvironmentDevelopment, @"Environment should have been set to Dev");

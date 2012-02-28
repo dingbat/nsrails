@@ -40,7 +40,7 @@ typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
 @property (nonatomic) BOOL automaticallyUnderscoreAndCamelize;
 
 + (NSRConfig *) defaultConfig;
-+ (void) setAsDefaultConfig:(NSRConfig *)config;
++ (void) setConfigAsDefault:(NSRConfig *)config;
 + (void) setConfig:(NSRConfig *)config asDefaultForEnvironment:(NSString *)environment;
 
 + (NSRConfig *) configForEnvironment: (NSString *)environment;

@@ -63,18 +63,18 @@ static NSString *currentEnvironment = NSRConfigEnvironmentDevelopment;
 
 + (NSRConfig *) configForEnvironment: (NSString *)environment
 {
-	return [configEnvironments objectForKey:environment];
+	NSRConfig *config = [configEnvironments objectForKey:environment];
+	if (!config)
+	{
+		config = [[NSRConfig alloc] init];
+		[self setConfig:config asDefaultForEnvironment:environment];
+	}
+	return config;
 }
 
 + (NSRConfig *) defaultConfig
 {
-	NSRConfig *config = [self configForEnvironment:currentEnvironment];
-	if (!config)
-	{
-		config = [[NSRConfig alloc] init];
-		[self setConfig:config asDefaultForEnvironment:currentEnvironment];
-	}
-	return config;
+	return [self configForEnvironment:currentEnvironment];
 }
 
 + (void) setConfig:(NSRConfig *)config asDefaultForEnvironment:(NSString *)environment
@@ -85,7 +85,7 @@ static NSString *currentEnvironment = NSRConfigEnvironmentDevelopment;
 		[configEnvironments setObject:config forKey:environment];
 }
 
-+ (void) setAsDefaultConfig:(NSRConfig *)config
++ (void) setConfigAsDefault:(NSRConfig *)config
 {
 	[self setConfig:config asDefaultForEnvironment:currentEnvironment];
 }
