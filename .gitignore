@@ -1,16 +1,16 @@
-# Ignore Xcode build folder
+# Ignore Xcode build folders
 
-demo/ios/.DS_Store
-demo/ios/DerivedData/
+demo/iOS/.DS_Store
+demo/iOS/DerivedData/
 
-tests/DerivedData/
-tests/.DS_Store
+test/.DS_Store
+test/DerivedData/
 
 
 # Ignore Xcode UI files
 
-demo/ios/NSRailsApp.xcodeproj/project.xcworkspace/xcuserdata/
-demo/ios/NSRailsApp.xcodeproj/xcuserdata/
+demo/iOS/NSRailsApp.xcodeproj/project.xcworkspace/xcuserdata/
+demo/iOS/NSRailsApp.xcodeproj/xcuserdata/
 
-tests/NSRails.xcodeproj/project.xcworkspace/xcuserdata/
-tests/NSRails.xcodeproj/xcuserdata/
+test/NSRails.xcodeproj/project.xcworkspace/xcuserdata/
+test/NSRails.xcodeproj/xcuserdata/

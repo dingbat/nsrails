@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+%head
+	%title NSRails
+	= stylesheet_link_tag    "application"
+	= javascript_include_tag "application"
+	= csrf_meta_tags
+
+#head
+	#logo
+		NSRails		
+	%p
+		.incenter
+			.link
+				=link_to "Wiki", "https://github.com/dingbat/nsrails/wiki"
+				&nbsp;
+				&nbsp;
+				&nbsp;
+				&nbsp;
+				&nbsp;
+				&nbsp;
+				&nbsp;
+				&nbsp;
+				=link_to "Source", "https://github.com/dingbat/nsrails"
+
+%body
+	.incenter
+		-#		.divider
+		-#			%hr
+		=yield
+		
+%footer
