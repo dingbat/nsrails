@@ -11,7 +11,7 @@ h3. What can NSRails do?
 
 Create Objective-C classes based on your model structure in Rails and NSRails will provide native ActiveResource-like support, meaning CRUD and other operations can be called seamlessly via Objective-C methods:
 
-``` objc
+``` ruby
 Article *myArticle = [[Article alloc] init];
 myArticle.title = @"This article and its properties will be created right on your Rails server...";
 myArticle.content = @"All we need to do is create it remotely:";
