@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "NSRConfig.h"
 
+@class NSRPropertyCollection;
+
 //log NSR errors by default
 #define NSRLogErrors
 
@@ -18,14 +20,8 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 
 @interface NSRailsModel : NSObject <NSCoding> //NSCoding is supported for serialization
 {
-	//internal NSRails stuff - categories of sync properties
-	
-	NSMutableArray *sendableProperties;
-	NSMutableArray *retrievableProperties;
-	NSMutableArray *encodeProperties;
-	NSMutableArray *decodeProperties;
-	NSMutableDictionary *nestedModelProperties;
-	NSMutableDictionary *propertyEquivalents;
+	//used if instance is made with custom sync properties (and not from NSRailsSync in its class)
+	NSRPropertyCollection *customProperties;
 }
 
 @property (nonatomic, strong) NSNumber *remoteID;

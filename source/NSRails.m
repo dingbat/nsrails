@@ -8,6 +8,8 @@
 
 #import "NSRails.h"
 
+#import "NSRPropertyCollection.h"
+
 #import "NSString+InflectionSupport.h"
 #import "NSData+Additions.h"
 #import "NSObject+Properties.h"
@@ -26,7 +28,7 @@
     If this file is too intimidating, 
  remember that you can navigate it
  quickly in Xcode using #pragma marks.
-									*/
+								    	*/
 
 
 //this will be the NSRailsSync for NSRailsModel, basis for all subclasses
@@ -48,6 +50,8 @@
 + (NSString *) getModelName;
 + (NSString *) getPluralModelName;
 
++ (NSRPropertyCollection *) propertyCollection;
+
 @end
 
 @interface NSRConfig (access)
@@ -62,7 +66,7 @@
 @implementation NSRailsModel
 @synthesize remoteID, remoteDestroyOnNesting, remoteAttributes;
 
-
+static NSMutableDictionary *propertyCollections = nil;
 
 #pragma mark -
 #pragma mark Meta-NSR stuff
@@ -75,6 +79,20 @@
 + (NSString *) NSRailsSync
 {
 	return NSRAILS_BASE_PROPS;
+}
+
++ (NSRPropertyCollection *) propertyCollection
+{
+	if (!propertyCollections)
+		propertyCollections = [[NSMutableDictionary alloc] init];
+	
+	NSRPropertyCollection *collection = [propertyCollections objectForKey:NSStringFromClass([self class])];
+	if (!collection)
+	{
+		collection = [NSRPropertyCollection collectionForClass:[self class]];
+	}
+	
+	return collection;
 }
 
 + (NSString *) railsProperties

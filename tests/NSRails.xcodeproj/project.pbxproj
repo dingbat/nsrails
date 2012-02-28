@@ -28,6 +28,8 @@
 		591424C514EB098600481815 /* GHUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 591424C414EB098600481815 /* GHUnit.framework */; };
 		591424C714EB0A1900481815 /* GHUnit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 591424C414EB098600481815 /* GHUnit.framework */; };
 		591424C914EB0A9700481815 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 591424C814EB0A9700481815 /* Cocoa.framework */; };
+		5977320F14FCBC8B000F61DA /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5977320E14FCBC8B000F61DA /* NSRPropertyCollection.m */; };
+		5977321014FCBC8B000F61DA /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5977320E14FCBC8B000F61DA /* NSRPropertyCollection.m */; };
 		59A6822714F0080400E4B489 /* InheritanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A6822614F0080400E4B489 /* InheritanceTests.m */; };
 		59A6822814F0080400E4B489 /* InheritanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A6822614F0080400E4B489 /* InheritanceTests.m */; };
 		59C8B77314F816C500105108 /* NSObject+SBJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C8B75914F816C500105108 /* NSObject+SBJson.m */; };
@@ -108,6 +110,8 @@
 		591424BD14EB002C00481815 /* iPhone Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iPhone Tests-Info.plist"; sourceTree = "<group>"; };
 		591424C414EB098600481815 /* GHUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GHUnit.framework; path = "Mac OS Tests/GHUnit.framework"; sourceTree = "<group>"; };
 		591424C814EB0A9700481815 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = SDKs/MacOSX10.6.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		5977320D14FCBC8B000F61DA /* NSRPropertyCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRPropertyCollection.h; sourceTree = "<group>"; };
+		5977320E14FCBC8B000F61DA /* NSRPropertyCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRPropertyCollection.m; sourceTree = "<group>"; };
 		59A6822614F0080400E4B489 /* InheritanceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InheritanceTests.m; sourceTree = "<group>"; };
 		59A6822A14F0085F00E4B489 /* NSRAsserts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSRAsserts.h; path = "Universal Tests/NSRAsserts.h"; sourceTree = "<group>"; };
 		59C8B75814F816C500105108 /* NSObject+SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJson.h"; sourceTree = "<group>"; };
@@ -212,6 +216,8 @@
 				5914246F14EAFD0F00481815 /* NSRails.m */,
 				5914247014EAFD0F00481815 /* NSRConfig.h */,
 				5914247114EAFD0F00481815 /* NSRConfig.m */,
+				5977320D14FCBC8B000F61DA /* NSRPropertyCollection.h */,
+				5977320E14FCBC8B000F61DA /* NSRPropertyCollection.m */,
 			);
 			name = NSRails;
 			path = ../source;
@@ -455,6 +461,7 @@
 				59C8B9CB14F96E1300105108 /* NSObject+Properties.m in Sources */,
 				59C8B9CD14F96E1300105108 /* NSRails+SBJson.m in Sources */,
 				59C8B9CF14F96E1300105108 /* NSString+InflectionSupport.m in Sources */,
+				5977321014FCBC8B000F61DA /* NSRPropertyCollection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -486,6 +493,7 @@
 				59C8B9CA14F96E1300105108 /* NSObject+Properties.m in Sources */,
 				59C8B9CC14F96E1300105108 /* NSRails+SBJson.m in Sources */,
 				59C8B9CE14F96E1300105108 /* NSString+InflectionSupport.m in Sources */,
+				5977320F14FCBC8B000F61DA /* NSRPropertyCollection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
