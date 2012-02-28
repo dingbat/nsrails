@@ -10,7 +10,7 @@ NSRails is a light-weight Objective-C framework (iOS or OS X) for simple but pow
 What can NSRails do?
 ========
 
-Create Objective-C classes based on your model structure in Rails and NSRails will provide native ActiveResource-like support, meaning CRUD and other operations can be called seamlessly via Objective-C methods:
+Once you've created Objective-C to match your model structure in Rails, NSRails provides native ActiveResource-like support. This means CRUD and other operations can be called seamlessly via Objective-C methods:
 
 ``` objc
 Article *myArticle = [[Article alloc] init];
@@ -19,7 +19,7 @@ myArticle.content = @"All we need to do is create it remotely with the following
 [myArticle remoteCreate];
 ```
 
-Saving a corresponding Rails object remotely entails only a single call to @remoteCreate@ on your Objective-C instance.
+Saving a corresponding Rails object remotely entails only a single call to `remoteCreate` on your Objective-C instance.
 
 The framework is can be very flexible to fit the needs of your Rails (or RESTful) server. Some features include:
 
@@ -27,8 +27,7 @@ The framework is can be very flexible to fit the needs of your Rails (or RESTful
 * [Nesting](https://github.com/dingbat/nsrails/wiki/Nesting) your related models (has-many, etc)
 * Support for [basic HTTP authentication](https://github.com/dingbat/nsrails/wiki/NSRConfig)
 * [Asynchronous](https://github.com/dingbat/nsrails/wiki/NSRailsModel) requests
-
-And tons more...
+* A lot more...
 
 How do I get started?
 ========
