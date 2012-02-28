@@ -9,19 +9,19 @@
 #import "NestingTestClasses.h"
 
 @implementation Post
-@synthesize author, body, responses;
+@synthesize author, content, responses;
 NSRailsSync(*, responses:Response)
 
 @end
 
 @implementation Response
-@synthesize post, body, author;
+@synthesize post, content, author;
 NSRailsSync(*)
 
 @end
 
 @implementation BadResponse
-@synthesize post, body, author;
+@synthesize post, content, author;
 NSRailsSync(*)
 
 @end

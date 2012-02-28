@@ -11,6 +11,6 @@
 @interface Post : NSRailsModel
 
 @property (nonatomic, strong) NSMutableArray *responses;
-@property (nonatomic, strong) NSString *author, *body;
+@property (nonatomic, strong) NSString *author, *content;
 
 @end

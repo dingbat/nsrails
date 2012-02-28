@@ -178,7 +178,7 @@
 	failedPost.author = @"Fail";
 	[failedPost remoteCreate:&e];
 	
-	GHAssertNotNil(e, @"Post should have failed validation b/c no body... where is error?");
+	GHAssertNotNil(e, @"Post should have failed validation b/c no content... where is error?");
 	GHAssertNotNil(failedPost, @"Post did fail but object should not be nil.");
 	GHAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"There was an error by validation, so validation error dictionary should be present.");
 	
@@ -187,7 +187,7 @@
 	//this should go through
 	Post *newPost = [[Post alloc] init];
 	newPost.author = @"Dan";
-	newPost.body = @"Test";
+	newPost.content = @"Test";
 	[newPost remoteCreate:&e];
 	
 	GHAssertNil(e, @"New post should've been created fine, there should be no error.");
@@ -286,7 +286,7 @@
 	
 	Post *post = [[Post alloc] init];
 	post.author = @"Dan";
-	post.body = @"Test";
+	post.content = @"Test";
 	post.responses = nil;
 	
 	NSError *e = nil;
@@ -312,13 +312,13 @@
 	
 	[post remoteUpdate:&e];
 	
-	GHAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"Should've been a validation error in sending reponse without body/author.");
+	GHAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"Should've been a validation error in sending reponse without content/author.");
 	GHAssertTrue(post.responses.count == 1, @"Local array should still have response even though wasn't created properly.");
 	GHAssertNotNil(response, @"Validation failed on nested create but local object should still be there (external)");
 	
 	e = nil;
 	
-	response.body = @"Response body";
+	response.content = @"Response content";
 	response.author = @"Response author";
 	
 	[post remoteUpdate:&e];
@@ -352,7 +352,7 @@
 	
 	//test nest-creation via RESPONSE-side, meaning we set its post variable (this should fail without the -b flag)
 	Response *newResponse = [[Response alloc] init];
-	newResponse.body = @"Test";
+	newResponse.content = @"Test";
 	newResponse.author = @"Test";
 	newResponse.post = post;
 	
@@ -364,7 +364,7 @@
 	
 	//now try with -b flag
 	Response *belongsTo = [[Response alloc] initWithCustomSyncProperties:@"*, post -b"];
-	belongsTo.body = @"Test";
+	belongsTo.content = @"Test";
 	belongsTo.author = @"Test";
 	belongsTo.post = post;
 	
@@ -410,7 +410,7 @@
 		
 		Post *missingClassPost = [[Post alloc] initWithCustomSyncProperties:sync];
 		missingClassPost.author = @"author";
-		missingClassPost.body = @"body";
+		missingClassPost.content = @"content";
 		missingClassPost.responses = [NSMutableArray array];
 		
 		Response *testResponse;
@@ -419,7 +419,7 @@
 		else
 			testResponse = [[Response alloc] init];
 		testResponse.author = @"Test";
-		testResponse.body = @"Test";
+		testResponse.content = @"Test";
 		
 		[missingClassPost.responses addObject:testResponse];
 		

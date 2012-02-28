@@ -10,7 +10,7 @@
 					said,
 					.comment_body
 						=surround("\"") do
-							=post.body
+							=post.content
 				-if post.responses.count > 0
 					.responseDivider
 						%hr
@@ -22,5 +22,5 @@
 								replied,
 								.comment_body
 									=surround("\"") do
-										=response.body
+										=response.content
 								%br

@@ -33,7 +33,7 @@
 											  											  
 											  Response *newResp = [[Response alloc] init];
 											  newResp.author = author;
-											  newResp.body = content;
+											  newResp.content = content;
 											  newResp.post = post;      //check out Response.m for more detail on this line
 											  
 											  
@@ -114,7 +114,7 @@
 
 - (NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-	return [NSString stringWithFormat:@"\"%@\"",post.body];
+	return [NSString stringWithFormat:@"\"%@\"",post.content];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -128,7 +128,7 @@
     }
     
 	Response *resp = [post.responses objectAtIndex:indexPath.row];
-	cell.textLabel.text = [NSString stringWithFormat:@"\"%@\"",resp.body];
+	cell.textLabel.text = [NSString stringWithFormat:@"\"%@\"",resp.content];
 	cell.detailTextLabel.text = resp.author;
     
     return cell;

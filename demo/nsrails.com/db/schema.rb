@@ -16,14 +16,14 @@ ActiveRecord::Schema.define(:version => 20120221032404) do
   create_table "posts", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "body"
+    t.text     "content"
     t.string   "author"
   end
 
   create_table "responses", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "body"
+    t.text     "content"
     t.string   "author"
     t.integer  "post_id"
   end

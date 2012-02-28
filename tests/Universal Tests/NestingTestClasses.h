@@ -10,7 +10,7 @@
 
 @interface Post : NSRailsModel
 
-@property (nonatomic, strong) NSString *author, *body;
+@property (nonatomic, strong) NSString *author, *content;
 @property (nonatomic, strong) NSMutableArray *responses;
 
 @end
@@ -18,7 +18,7 @@
 
 @interface Response : NSRailsModel
 
-@property (nonatomic, strong) NSString *body, *author;
+@property (nonatomic, strong) NSString *content, *author;
 @property (nonatomic, strong) Post *post;
 
 @end
@@ -27,7 +27,7 @@
 //bad because doesn't inherit from NSRailsModel
 @interface BadResponse : NSObject
 
-@property (nonatomic, strong) NSString *body, *author;
+@property (nonatomic, strong) NSString *content, *author;
 @property (nonatomic, strong) Post *post;
 
 @end

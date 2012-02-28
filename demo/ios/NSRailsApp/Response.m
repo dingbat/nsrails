@@ -9,10 +9,10 @@
 #import "Response.h"
 
 @implementation Response
-@synthesize body, author, post;
+@synthesize content, author, post;
 NSRailsSync(*, post -b)
 
-// Sync up all properties, and specially define the property "post"
+// Sync up all properties, and specially define the property "post" as belongs_to
 
 
 
@@ -28,7 +28,7 @@ NSRailsSync(*, post -b)
 /*
  Response *newResp = [[Response alloc] init];
  newResp.author = author;
- newResp.body = content;
+ newResp.content = content;
  newResp.post = preExistingPost;      //<------ this line
  
  

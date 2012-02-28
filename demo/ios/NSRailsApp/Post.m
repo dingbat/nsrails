@@ -9,10 +9,10 @@
 #import "Post.h"
 
 @implementation Post
-@synthesize body, author, responses;
-NSRailsSync(body, author, responses:Response)
+@synthesize content, author, responses;
+NSRailsSync(content, author, responses:Response)
 
-// Sync up body, author, and responses
+// Sync up content, author, and responses
 //                             ---For responses, since it's an array, the ":" is required to define an association with another class.
 //									In this case, the class of objects we want to fill our "responses" array with is Response
 //									(The class here must be an NSRailsModel subclass)

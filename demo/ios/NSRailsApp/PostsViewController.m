@@ -51,7 +51,7 @@
 											  
 											  Post *newPost = [[Post alloc] init];
 											  newPost.author = author;
-											  newPost.body = content;
+											  newPost.content = content;
 											  
 											  //create the object remotely using NSRails, and retrieve any error
 											  [newPost remoteCreate:&error];
@@ -120,7 +120,7 @@
     }
 
 	Post *post = [posts objectAtIndex:indexPath.row];
-	cell.textLabel.text = post.body;
+	cell.textLabel.text = post.content;
 	cell.detailTextLabel.text = post.author;
 	
 	return cell;
