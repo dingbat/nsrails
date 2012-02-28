@@ -30,6 +30,12 @@
 
 @end
 
+@interface NSRConfig (internal)
+
++ (void) resetConfigs;
+
+@end
+
 
 #define NSRAssertClassModelName(mname, class)	GHAssertEqualStrings([class getModelName], mname, @"%@ model name failed.", NSStringFromClass(class))
 

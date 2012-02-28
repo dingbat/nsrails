@@ -52,6 +52,15 @@ static NSMutableDictionary *configEnvironments = nil;
 static NSMutableArray *overrideConfigStack = nil;
 static NSString *currentEnvironment = NSRConfigEnvironmentDevelopment;
 
+//purely for test purposes
++ (void) resetConfigs
+{
+	//taken from static definitions above ^
+	configEnvironments = nil;
+	overrideConfigStack = nil;
+	currentEnvironment = NSRConfigEnvironmentDevelopment;
+}
+
 + (NSRConfig *) configForEnvironment: (NSString *)environment
 {
 	return [configEnvironments objectForKey:environment];

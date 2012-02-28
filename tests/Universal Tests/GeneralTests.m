@@ -23,7 +23,9 @@
 }
 
 - (void) test_config_environments
-{	
+{
+	[NSRConfig resetConfigs];
+	
 	NSRConfig *defaultDev = [NSRConfig defaultConfig];
 	GHAssertNotNil(defaultDev, @"Calling defaultConfig should generate config if nil");
 	
@@ -524,6 +526,7 @@
 - (void)setUp
 {
 	// Run before each test method
+	[NSRConfig resetConfigs];
 }
 
 - (void)tearDown {
