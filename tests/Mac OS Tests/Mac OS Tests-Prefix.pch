@@ -1,8 +1,0 @@
-//
-// Prefix header for all source files of the 'Mac OS Tests' target in the 'Mac OS Tests' project
-//
-
-#ifdef __OBJC__
-	#import <Cocoa/Cocoa.h>
-	#import <GHUnit/GHUnit.h>
-#endif
