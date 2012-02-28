@@ -27,7 +27,7 @@ Article *articleNumber1 = [Article remoteObjectWithID:1];
 ```
 
 
-The framework is very flexible to fit the specific needs of your Rails (or RESTful) server. Some features include:
+The framework is very flexible and can fit the specific needs of your Rails (or RESTful) server. Some features include:
 
 * Keeping models and properties of your choice [in-sync](https://github.com/dingbat/nsrails/wiki/NSRailsSync) with those of Rails
 * [Nesting](https://github.com/dingbat/nsrails/wiki/Nesting) your related models (has-many, etc)
