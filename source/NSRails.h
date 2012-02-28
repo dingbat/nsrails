@@ -111,9 +111,9 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 - (id) initWithRemoteAttributesDictionary:(NSDictionary *)railsDict;
 
 //manual sync properties string, specific for that instance
-- (id) initWithSyncProperties:(NSString *)str;
+- (id) initWithCustomSyncProperties:(NSString *)str;
 
-
+@end
 
 ///////////////////
 //macro definitions
@@ -176,6 +176,7 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 #define _NSR_Config3(x,y,z)  \
 + (NSRConfig *) NSRailsUseConfig { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = x; config.appUsername = y; config.appPassword = z; return config; }
 
-
-@end
+//this will be the NSRailsSync for NSRailsModel, basis for all subclasses
+//use remoteID as equivalent for rails property id
+#define NSRAILS_BASE_PROPS @"remoteID=id"
 

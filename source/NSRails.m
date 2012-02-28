@@ -31,17 +31,6 @@
 								    	*/
 
 
-//this will be the NSRailsSync for NSRailsModel, basis for all subclasses
-//use remoteID as equivalent for rails property id
-#define NSRAILS_BASE_PROPS @"remoteID=id"
-
-//this is the marker for the propertyEquivalents dictionary if there's no explicit equivalence set
-#define NSRNoEquivalentMarker @""
-
-//this will be the marker for any property that has the "-b flag"
-//this gonna go in the nestedModelProperties (properties can never have a comma/space in them so we're safe from any conflicts)
-#define NSRBelongsToKeyForProperty(prop) [prop stringByAppendingString:@", belongs_to"]
-
 @interface NSRailsModel (internal)
 
 + (NSRConfig *) getRelevantConfig;
@@ -86,28 +75,47 @@ static NSMutableDictionary *propertyCollections = nil;
 	if (!propertyCollections)
 		propertyCollections = [[NSMutableDictionary alloc] init];
 	
-	NSRPropertyCollection *collection = [propertyCollections objectForKey:NSStringFromClass([self class])];
+	NSString *class = NSStringFromClass(self);
+	NSRPropertyCollection *collection = [propertyCollections objectForKey:class];
 	if (!collection)
 	{
-		collection = [NSRPropertyCollection collectionForClass:[self class]];
+		collection = [[NSRPropertyCollection alloc] initWithClass:self];
+		[propertyCollections setObject:collection forKey:class];
+		
+#ifndef NSRCompileWithARC
+		[collection release];
+#endif
 	}
 	
 	return collection;
 }
 
-+ (NSString *) railsProperties
+- (NSRPropertyCollection *) propertyCollection
+{
+	if (customProperties)
+		return customProperties;
+	
+	return [[self class] propertyCollection];
+}
+
++ (NSString *) railsPropertiesWithCustomString:(NSString *)custom
 {
 	//start it off with the NSRails base ("remoteID=id")
-	NSString *finalProperties = NSRAILS_BASE_PROPS;
+	NSMutableString *finalProperties = [NSMutableString stringWithString:NSRAILS_BASE_PROPS];
 	
 	BOOL stopInheriting = NO;
 	
 	//go up the class hierarchy, starting at self, adding the property list from each class
 	for (Class c = self; (c != [NSRailsModel class] && !stopInheriting); c = [c superclass])
 	{
-		if ([c respondsToSelector:@selector(NSRailsSync)])
-		{			
-			NSString *syncString = [c NSRailsSync];
+		NSString *syncString = [NSString string];
+		if (c == self && custom)
+		{
+			syncString = custom;
+		}
+		else if ([c respondsToSelector:@selector(NSRailsSync)])
+		{
+			syncString = [c NSRailsSync];
 			
 			//if that class defines NSRNoCarryFromSuper, mark that we should stop rising classes
 			if ([syncString rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
@@ -122,23 +130,16 @@ static NSMutableDictionary *propertyCollections = nil;
 					syncString = [syncString stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
 				}
 			}
-			
-			finalProperties = [finalProperties stringByAppendingFormat:@", %@", syncString];
 		}
+		[finalProperties appendFormat:@", %@", syncString];
 	}
 	
 	return finalProperties;
 }
 
-//purely for testing purposes - never used otherwise
-- (NSString *) listOfSendableProperties
++ (NSString *) railsProperties
 {
-	NSMutableString *str = [NSMutableString string];
-	for (NSString *property in sendableProperties)
-	{
-		[str appendFormat:@"%@, ",property];
-	}
-	return [str substringToIndex:str.length-2];
+	return [self railsPropertiesWithCustomString:nil];
 }
 
 + (NSString *) getModelName
@@ -199,325 +200,17 @@ static NSMutableDictionary *propertyCollections = nil;
 	}
 }
 
-- (void) addPropertyAsSendable:(NSString *)prop equivalent:(NSString *)equivalent
-{
-	//for sendable, we can only have ONE property which per Rails attribute which is marked as sendable
-	//  (otherwise, which property's value should we stick in the json?)
-	
-	//so, see if there are any other properties defined so far with the same Rails equivalent that are marked as sendable
-	NSArray *objs = [propertyEquivalents allKeysForObject:equivalent];
-	NSMutableArray *sendables = [NSMutableArray arrayWithObject:prop];
-	for (NSString *sendable in objs)
-	{
-		if ([sendableProperties indexOfObject:sendable] != NSNotFound)
-			[sendables addObject:sendable];
-	}
-	//greater than 1 cause we're including this property
-	if (equivalent && sendables.count > 1)
-	{
-		if ([equivalent isEqualToString:@"id"])
-		{
-#ifdef NSRLogErrors
-			NSLog(@"NSR Warning: Obj-C property %@ (class %@) found to set equivalence with 'id'. This is fine for retrieving but should not be marked as sendable. Ignoring this property on send.", prop, NSStringFromClass([self class]));
-#endif
-		}
-		else
-		{
-#ifdef NSRLogErrors
-			NSLog(@"NSR Warning: Multiple Obj-C properties marked as sendable (%@) found pointing to the same Rails attribute ('%@'). Only using data from the first Obj-C property listed. Please fix by only having one sendable property per Rails attribute (you can make the others retrieve-only with the -r flag).", sendables, equivalent);
-#endif
-		}
-	}
-	else
-	{
-		[sendableProperties addObject:prop];
-	}
-}
 
-- (id) initWithSyncProperties:(NSString *)props
+- (id) initWithCustomSyncProperties:(NSString *)str
 {
 	if ((self = [super init]))
 	{
-		//if was called manually and doesn't include the NSRails base sync properties, add them now
-		if ([props rangeOfString:NSRAILS_BASE_PROPS].location == NSNotFound)
-		{
-			props = [NSRAILS_BASE_PROPS stringByAppendingFormat:@", %@",props];
-		}
-		
-		//log on param string for testing
-		//NSLog(@"found props %@",props);
-		
-		//initialize property categories
-		sendableProperties = [[NSMutableArray alloc] init];
-		retrievableProperties = [[NSMutableArray alloc] init];
-		nestedModelProperties = [[NSMutableDictionary alloc] init];
-		propertyEquivalents = [[NSMutableDictionary alloc] init];
-		encodeProperties = [[NSMutableArray alloc] init];
-		decodeProperties = [[NSMutableArray alloc] init];
-		
-		remoteDestroyOnNesting = NO;
-		
-		//here begins the code used for parsing the NSRailsSync param string
-		
-		NSCharacterSet *wn = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-		
-		//exclusion array for any properties declared as -x (will later remove properties from * definition)
-		NSMutableArray *exclude = [NSMutableArray array];
-		
-		//check to see if we should even consider *
-		BOOL markedAll = ([props rangeOfString:@"*"].location != NSNotFound);
-		
-		//marked as NO for the first time in the loop
-		//if a * appeared (markedAll is true), this will enable by the end of the loop and the whole thing will loop again, for the *
-		BOOL onStarIteration = NO;
-		
-		do
-		{
-			NSMutableArray *elements;
-
-			if (onStarIteration)
-			{
-				//make sure we don't loop again
-				onStarIteration = NO;
-				markedAll = NO;
-				
-				NSMutableArray *relevantIvars = [NSMutableArray array];
-				
-				//go up the class hierarchy
-				Class c = [self class];				
-				while (c != [NSRailsModel class])
-				{
-					NSString *properties = [c NSRailsSync];
-					
-					//if there's a *, add all ivars from that class
-					if ([properties rangeOfString:@"*"].location != NSNotFound)
-						[relevantIvars addObjectsFromArray:[c classPropertyNames]];
-					
-					//if there's a NoCarryFromSuper, stop the loop right there since we don't want stuff from any more superclasses
-					if ([properties rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
-						break;
-					
-					c = [c superclass];
-				}
-				
-				
-				elements = [NSMutableArray array];
-				//go through all the ivars we found
-				for (NSString *ivar in relevantIvars)
-				{
-					//if it hasn't been previously declared (from the first run), add it to the list we have to process
-					if (![propertyEquivalents objectForKey:ivar])
-					{
-						[elements addObject:ivar];
-					}
-				}
-			}
-			else
-			{
-				//if on the first run, split properties by commas ("username=user_name, password"=>["username=user_name","password"]
-				elements = [NSMutableArray arrayWithArray:[props componentsSeparatedByString:@","]];
-			}
-			for (int i = 0; i < elements.count; i++)
-			{
-				NSString *element = [[elements objectAtIndex:i] stringByTrimmingCharactersInSet:wn];
-				
-				//skip if there's no NSRailsSync definition (ie, it just inherited NSRailsModel's, so it's not the first time through but it's the same thing as NSRailsModel's)
-				if ([element isEqualToString:NSRAILS_BASE_PROPS] && i != 0)
-				{
-					continue;
-				}
-				
-				//remove any NSRNoCarryFromSuper's to not screw anything up
-				NSString *prop = [element stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
-				
-				if (prop.length > 0)
-				{
-					if ([prop rangeOfString:@"*"].location != NSNotFound)
-					{
-						//if there's a * in this piece, skip it (we already accounted for stars above)
-						continue;
-					}
-					
-					if ([exclude containsObject:prop])
-					{
-						//if it's been marked with '-x' flag previously, ignore it
-						continue;
-					}
-					
-					//prop can be something like "username=user_name:Class -etc"
-					//find string sets between =, :, and -
-					NSArray *opSplit = [prop componentsSeparatedByString:@"-"];
-					NSArray *modSplit = [[opSplit objectAtIndex:0] componentsSeparatedByString:@":"];
-					NSArray *eqSplit = [[modSplit objectAtIndex:0] componentsSeparatedByString:@"="];
-					
-					prop = [[eqSplit objectAtIndex:0] stringByTrimmingCharactersInSet:wn];
-					
-					//check to see if a class is redefining remoteID (remoteID from NSRailsModel is the first property checked - if it's not the first, give a warning)
-					if ([prop isEqualToString:@"remoteID"] && i != 0)
-					{
-#ifdef NSRLogErrors
-						NSLog(@"NSR Warning: Found attempt to define 'remoteID' in NSRailsSync for class %@. This property is reserved by the NSRailsModel superclass and should not be modified. Please fix this; element ignored.", NSStringFromClass([self class]));
-#endif
-						continue;
-					}
-					
-					NSString *options = [opSplit lastObject];
-					//if it was marked exclude, add to exclude list in case * was declared, and skip over anything else
-					if (opSplit.count > 1 && [options rangeOfString:@"x"].location != NSNotFound)
-					{
-						[exclude addObject:prop];
-						continue;
-					}
-					
-					//check to see if the listed property even exists
-					NSString *ivarType = [self getPropertyType:prop];
-					if (!ivarType)
-					{
-#ifdef NSRLogErrors
-						NSLog(@"NSR Warning: Property '%@' declared in NSRailsSync for class %@ was not found in this class or in superclasses. Maybe you forgot to @synthesize it? Element ignored.", prop, NSStringFromClass([self class]));
-#endif
-						continue;
-					}
-					
-					//make sure that the property type is not a primitive
-					NSString *primitive = [self propertyIsPrimitive:prop];
-					if (primitive)
-					{
-#ifdef NSRLogErrors
-						NSLog(@"NSR Warning: Property '%@' declared in NSRailsSync for class %@ was found to be of primitive type '%@' - please use NSNumber*. Element ignored.", prop, NSStringFromClass([self class]), primitive);
-#endif
-						continue;
-					}
-					
-					//see if there are any = declared
-					NSString *equivalent = nil;
-					if (eqSplit.count > 1)
-					{
-						//set the equivalence to the last element after the =
-						equivalent = [[eqSplit lastObject] stringByTrimmingCharactersInSet:wn];
-						
-						[propertyEquivalents setObject:equivalent forKey:prop];
-					}
-					else
-					{
-						//if no property explicitly set, make it NSRNoEquivalentMarker
-						//later on we'll see if automaticallyCamelize is on for the config and get the equivalence accordingly
-						[propertyEquivalents setObject:NSRNoEquivalentMarker forKey:prop];
-					}
-					
-					if (opSplit.count > 1)
-					{
-						if ([options rangeOfString:@"r"].location != NSNotFound)
-							[retrievableProperties addObject:prop];
-						
-						if ([options rangeOfString:@"s"].location != NSNotFound)
-							[self addPropertyAsSendable:prop equivalent:equivalent];
-						
-						if ([options rangeOfString:@"e"].location != NSNotFound)
-							[encodeProperties addObject:prop];
-						
-						if ([options rangeOfString:@"d"].location != NSNotFound)
-							[decodeProperties addObject:prop];
-						
-						//add a special marker in nestedModelProperties dict
-						if ([options rangeOfString:@"b"].location != NSNotFound)
-							[nestedModelProperties setObject:[NSNumber numberWithBool:YES] forKey:NSRBelongsToKeyForProperty(prop)];
-					}
-					
-					//if no options are defined or some are but neither -s nor -r are defined, by default add sendable+retrievable
-					if (opSplit.count == 1 ||
-						([options rangeOfString:@"s"].location == NSNotFound && [options rangeOfString:@"r"].location == NSNotFound))
-					{
-						[self addPropertyAsSendable:prop equivalent:equivalent];
-						[retrievableProperties addObject:prop];
-					}
-					
-					//see if there was a : declared
-					if (modSplit.count > 1)
-					{
-						NSString *otherModel = [[modSplit lastObject] stringByTrimmingCharactersInSet:wn];
-						if (otherModel.length > 0)
-						{
-							//class entered is not a real class
-							if (!NSClassFromString(otherModel))
-							{
-#ifdef NSRLogErrors
-								NSLog(@"NSR Warning: Failed to find class '%@', declared as class for nested property '%@' of class '%@'. Nesting relation not set - will still send any NSRailsModel subclasses correctly but will always retrieve as NSDictionaries. ",otherModel,prop,NSStringFromClass([self class]));
-#endif
-							}
-							//class entered is not a subclass of NSRailsModel
-							else if (![NSClassFromString(otherModel) isSubclassOfClass:[NSRailsModel class]])
-							{
-#ifdef NSRLogErrors
-								NSLog(@"NSR Warning: '%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel. Nesting relation not set - won't be able to send or retrieve this property.",otherModel,prop, NSStringFromClass([self class]),otherModel);
-#endif
-							}
-							else
-							{
-								[nestedModelProperties setObject:otherModel forKey:prop];
-							}
-						}
-					}
-					else
-					{
-						//if no : was declared for this property, check to see if we should link it anyway
-						
-						if ([ivarType isEqualToString:@"NSArray"] ||
-							[ivarType isEqualToString:@"NSMutableArray"])
-						{
-#ifdef NSRLogErrors
-							NSLog(@"NSR Warning: Property '%@' in class %@ was found to be an array, but no nesting model was set. Note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved Rails attributes will be set. If NSDictionaries are desired, to suppress this warning, simply add a colon with nothing following to the property in NSRailsSync... '%@:'",prop,NSStringFromClass([self class]),element);
-#endif
-						}
-						else if (!([ivarType isEqualToString:@"NSString"] ||
-								   [ivarType isEqualToString:@"NSMutableString"] ||
-								   [ivarType isEqualToString:@"NSDictionary"] ||
-								   [ivarType isEqualToString:@"NSMutableDictionary"] ||
-								   [ivarType isEqualToString:@"NSNumber"] ||
-								   [ivarType isEqualToString:@"NSDate"]))
-						{
-							//must be custom obj, see if its a railsmodel, if it is, link it automatically
-							Class c = NSClassFromString(ivarType);
-							if (c && [c isSubclassOfClass:[NSRailsModel class]])
-							{
-								//automatically link that ivar type (ie, Pet) for that property (ie, pets)
-								[nestedModelProperties setObject:ivarType forKey:prop];
-							}
-						}
-					}
-				}
-			}
-			
-			//if markedAll (a * was encountered somewhere), loop again one more time to add all properties not already listed (*)
-			if (markedAll)
-				onStarIteration = YES;
-		} 
-		while (onStarIteration);
-		
-		// for testing's sake
-		//		NSLog(@"-------- %@ ----------",[[self class] getModelName]);
-		//		NSLog(@"list: %@",props);
-		//		NSLog(@"sendable: %@",sendableProperties);
-		//		NSLog(@"retrievable: %@",retrievableProperties);
-		//		NSLog(@"NMP: %@",nestedModelProperties);
-		//		NSLog(@"eqiuvalents: %@",propertyEquivalents);
-		//		NSLog(@"\n");
-	}
-	
-	return self;
-}
-
-- (id) init
-{
-	NSString *props = [[self class] railsProperties];
-	
-	if ((self = [self initWithSyncProperties:props]))
-	{
-		//nothing special...
+		//inheritance rules etc still apply
+		str = [[self class] railsPropertiesWithCustomString:str];
+		customProperties = [[NSRPropertyCollection alloc] initWithClass:[self class] properties:str];
 	}
 	return self;
 }
-
 
 
 
@@ -574,8 +267,8 @@ static NSMutableDictionary *propertyCollections = nil;
 
 - (id) getCustomEnDecoding:(BOOL)YESforEncodingNOforDecoding forProperty:(NSString *)prop value:(id)val
 {
-	BOOL isArray = ([[self getPropertyType:prop] isEqualToString:@"NSArray"] || 
-					[[self getPropertyType:prop] isEqualToString:@"NSMutableArray"]);
+	BOOL isArray = ([[[self class] getPropertyType:prop] isEqualToString:@"NSArray"] || 
+					[[[self class] getPropertyType:prop] isEqualToString:@"NSMutableArray"]);
 	
 	//if prop is an array, add "Element", so it'll be encodeArrayElement: , otherwise, encodeWhatever:
 	NSString *sel = [NSString stringWithFormat:@"%@%@%@:",YESforEncodingNOforDecoding ? @"encode" : @"decode",[prop toClassName], isArray ? @"Element" : @""];
@@ -623,7 +316,7 @@ static NSMutableDictionary *propertyCollections = nil;
 - (id) objectForProperty:(NSString *)prop representation:(id)rep
 {
 	//if object is marked as decodable, use the decode method
-	if ([decodeProperties indexOfObject:prop] != NSNotFound)
+	if ([[self propertyCollection].decodeProperties indexOfObject:prop] != NSNotFound)
 	{
 		//if object is an array, go through each and do decodable
 		if ([rep isKindOfClass:[NSArray class]])
@@ -644,7 +337,7 @@ static NSMutableDictionary *propertyCollections = nil;
 		}
 	}
 	//if the object is of class NSDate and the representation in JSON is a string, automatically convert it to string
-	else if ([[self getPropertyType:prop] isEqualToString:@"NSDate"] && [rep isKindOfClass:[NSString class]])
+	else if ([[[self class] getPropertyType:prop] isEqualToString:@"NSDate"] && [rep isKindOfClass:[NSString class]])
 	{
 		NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 		
@@ -673,16 +366,16 @@ static NSMutableDictionary *propertyCollections = nil;
 
 - (id) representationOfObjectForProperty:(NSString *)prop
 {
-	SEL sel = [self getPropertyGetter:prop];
+	SEL sel = [[self class] getPropertyGetter:prop];
 	if ([self respondsToSelector:sel])
 	{
-		BOOL encodable = [encodeProperties indexOfObject:prop] != NSNotFound;
+		BOOL encodable = [[self propertyCollection].encodeProperties indexOfObject:prop] != NSNotFound;
 		
 		id val = [self performSelector:sel];
 		BOOL isArray = [val isKindOfClass:[NSArray class]];
 		
 		//see if this property actually links to a custom NSRailsModel subclass, or it WASN'T declared, but is an array
-		if ([nestedModelProperties objectForKey:prop] || isArray)
+		if ([[self propertyCollection].nestedModelProperties objectForKey:prop] || isArray)
 		{
 			//if the ivar is an array, we need to make every element into JSON and then put them back in the array
 			if (isArray)
@@ -763,13 +456,12 @@ static NSMutableDictionary *propertyCollections = nil;
 {
 	remoteAttributes = dict;
 	
-	for (NSString *objcProperty in retrievableProperties)
+	for (NSString *objcProperty in [self propertyCollection].retrievableProperties)
 	{
-		NSString *railsEquivalent = [propertyEquivalents objectForKey:objcProperty];
-		if ([railsEquivalent isEqualToString:NSRNoEquivalentMarker])
+		NSString *railsEquivalent = [[self propertyCollection] equivalenceForProperty:objcProperty];
+		if (!railsEquivalent)
 		{
-			//means there was no equivalence defined.
-			//if config supports underscoring and camelizing, guess the rails equivalent by underscoring
+			//check to see if we should auto_underscore if no equivalence set
 			if ([[self class] getRelevantConfig].automaticallyUnderscoreAndCamelize)
 			{
 				railsEquivalent = [objcProperty underscore];
@@ -780,7 +472,7 @@ static NSMutableDictionary *propertyCollections = nil;
 				railsEquivalent = objcProperty;
 			}
 		}
-		SEL sel = [self getPropertySetter:objcProperty];
+		SEL sel = [[self class] getPropertySetter:objcProperty];
 		if ([self respondsToSelector:sel])
 			//means its marked as retrievable and is settable through setEtc:.
 		{
@@ -793,9 +485,9 @@ static NSMutableDictionary *propertyCollections = nil;
 			val = [self objectForProperty:objcProperty representation:([val isKindOfClass:[NSNull class]] ? nil : val)];
 			if (val)
 			{
-				NSString *nestedClass = [[nestedModelProperties objectForKey:objcProperty] toClassName];
+				NSString *nestedClass = [[self propertyCollection].nestedModelProperties objectForKey:objcProperty];
 				//instantiate it as the class specified in NSRailsSync if it hadn't already been custom-decoded
-				if (nestedClass && [decodeProperties indexOfObject:objcProperty] == NSNotFound)
+				if (nestedClass && [[self propertyCollection].decodeProperties indexOfObject:objcProperty] == NSNotFound)
 				{
 					//if the JSON conversion returned an array for the value, instantiate each element
 					if ([val isKindOfClass:[NSArray class]])
@@ -829,12 +521,12 @@ static NSMutableDictionary *propertyCollections = nil;
 {
 	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 
-	for (NSString *objcProperty in sendableProperties)
+	for (NSString *objcProperty in [self propertyCollection].sendableProperties)
 	{
-		NSString *railsEquivalent = [propertyEquivalents objectForKey:objcProperty];
+		NSString *railsEquivalent = [[self propertyCollection] equivalenceForProperty:objcProperty];
 		
 		//check to see if we should auto_underscore if no equivalence set
-		if ([railsEquivalent isEqualToString:NSRNoEquivalentMarker])
+		if (!railsEquivalent)
 		{
 			if ([[self class] getRelevantConfig].automaticallyUnderscoreAndCamelize)
 			{
@@ -854,7 +546,7 @@ static NSMutableDictionary *propertyCollections = nil;
 		//but only do it for non-ID properties - we want to omit ID if it's null (could be for create)
 		if (!val && ![railsEquivalent isEqualToString:@"id"])
 		{
-			NSString *string = [self getPropertyType:objcProperty];
+			NSString *string = [[self class] getPropertyType:objcProperty];
 			if ([string isEqualToString:@"NSArray"] || [string isEqualToString:@"NSMutableArray"])
 			{
 				//there's an array, and because the value is nil, make it an empty array (rails will get angry if you send null)
@@ -886,7 +578,7 @@ static NSMutableDictionary *propertyCollections = nil;
 			//if "-b" declared and it's not NSNull and the relation's remoteID exists, THEN, we should use _id instead of _attributes
 
 			if (!isArray && 
-				[nestedModelProperties objectForKey:NSRBelongsToKeyForProperty(objcProperty)] && 
+				[[self propertyCollection] propertyIsMarkedBelongsTo:objcProperty] && 
 				!null &&
 				[val objectForKey:@"id"])
 			{				
@@ -896,8 +588,8 @@ static NSMutableDictionary *propertyCollections = nil;
 				val = [val objectForKey:@"id"];
 			}
 			
-			//otherwise, if it's included in nestedModelProperties OR it's an array, use "_attributes" if not null (/empty for arrays)
-			else if (([nestedModelProperties objectForKey:objcProperty] || isArray) && !null)
+			//otherwise, if it's associative, use "_attributes" if not null (/empty for arrays)
+			else if (([[self propertyCollection].nestedModelProperties objectForKey:objcProperty] || isArray) && !null)
 			{
 				railsEquivalent = [railsEquivalent stringByAppendingString:@"_attributes"];
 			}
@@ -1052,7 +744,6 @@ static NSMutableDictionary *propertyCollections = nil;
 	[[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
 }
 
-
 //these are really just convenience methods that'll call the above method with the JSON representation of the object
 
 + (NSString *) remoteMakeRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route error:(NSError **)error
@@ -1072,7 +763,6 @@ static NSMutableDictionary *propertyCollections = nil;
 	else
 		completionBlock(nil, e);
 }
-
 
 //these are really just convenience methods that'll call the above method with pre-built "GET" and no body
 
@@ -1294,12 +984,7 @@ static NSMutableDictionary *propertyCollections = nil;
 		remoteAttributes = [aDecoder decodeObjectForKey:@"remoteAttributes"];
 		self.remoteDestroyOnNesting = [aDecoder decodeBoolForKey:@"remoteDestroyOnNesting"];
 		
-		sendableProperties = [aDecoder decodeObjectForKey:@"sendableProperties"];
-		retrievableProperties = [aDecoder decodeObjectForKey:@"retrievableProperties"];
-		encodeProperties = [aDecoder decodeObjectForKey:@"encodeProperties"];
-		decodeProperties = [aDecoder decodeObjectForKey:@"decodeProperties"];
-		nestedModelProperties = [aDecoder decodeObjectForKey:@"nestedModelProperties"];
-		propertyEquivalents = [aDecoder decodeObjectForKey:@"propertyEquivalents"];
+		customProperties = [aDecoder decodeObjectForKey:@"customProperties"];
 	}
 	return self;
 }
@@ -1310,12 +995,7 @@ static NSMutableDictionary *propertyCollections = nil;
 	[aCoder encodeObject:remoteAttributes forKey:@"remoteAttributes"];
 	[aCoder encodeBool:remoteDestroyOnNesting forKey:@"remoteDestroyOnNesting"];
 	
-	[aCoder encodeObject:sendableProperties forKey:@"sendableProperties"];
-	[aCoder encodeObject:retrievableProperties forKey:@"retrievableProperties"];
-	[aCoder encodeObject:encodeProperties forKey:@"encodeProperties"];
-	[aCoder encodeObject:decodeProperties forKey:@"decodeProperties"];
-	[aCoder encodeObject:nestedModelProperties forKey:@"nestedModelProperties"];
-	[aCoder encodeObject:propertyEquivalents forKey:@"propertyEquivalents"];
+	[aCoder encodeObject:customProperties forKey:@"customProperties"];
 }
 
 #pragma mark -
@@ -1326,13 +1006,7 @@ static NSMutableDictionary *propertyCollections = nil;
 {
 	[remoteID release];
 	[remoteAttributes release];
-	
-	[sendableProperties release];
-	[retrievableProperties release];
-	[encodeProperties release];
-	[decodeProperties release];
-	[nestedModelProperties release];
-	[propertyEquivalents release];
+	[customProperties release];
 	
 	[super dealloc];
 }

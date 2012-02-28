@@ -35,17 +35,17 @@
 	return nil;
 }
 
-- (NSString *) getType:(NSString *)prop
++ (NSString *) getType:(NSString *)prop
 {
 	//get class's ivar for the property
-	Ivar var = class_getInstanceVariable([self class], [prop UTF8String]);
+	Ivar var = class_getInstanceVariable(self, [prop UTF8String]);
 	if (!var)
 		return nil;
 	
 	return [NSString stringWithCString:ivar_getTypeEncoding(var) encoding:NSUTF8StringEncoding];
 }
 
-- (NSString *) propertyIsPrimitive:(NSString *)prop
++ (NSString *) propertyIsPrimitive:(NSString *)prop
 {
 	NSDictionary *primitives = [NSDictionary dictionaryWithObjectsAndKeys:
 								@"int", @"i",
@@ -70,7 +70,7 @@
 	return primitiveType;
 }
 
-- (NSString *) getPropertyType:(NSString *)prop
++ (NSString *) getPropertyType:(NSString *)prop
 {
 	NSString *type = [self getType:prop];	
 	
@@ -78,9 +78,9 @@
 	return [[type stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
 }
 
-- (SEL) getProperty:(NSString *)prop attributePrefix:(NSString *)str
++ (SEL) getProperty:(NSString *)prop attributePrefix:(NSString *)str
 {
-	objc_property_t property = class_getProperty([self class], [prop UTF8String]);
+	objc_property_t property = class_getProperty(self, [prop UTF8String]);
 	if (!property)
 		return nil;
 	
@@ -100,7 +100,7 @@
 	return nil;
 }
 
-- (SEL) getPropertyGetter:(NSString *)prop
++ (SEL) getPropertyGetter:(NSString *)prop
 {
 	SEL s = [self getProperty:prop attributePrefix:@"G"];
 	//if no custom getter specified, return the standard "etc"
@@ -111,7 +111,7 @@
 	return s;
 }
 
-- (SEL) getPropertySetter:(NSString *)prop
++ (SEL) getPropertySetter:(NSString *)prop
 {
 	SEL s = [self getProperty:prop attributePrefix:@"S"];
 	//if no custom setter specified, return the standard "setEtc:"

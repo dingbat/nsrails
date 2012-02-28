@@ -7,6 +7,7 @@
 //
 
 #import "NSRails.h"
+#import "NSRPropertyCollection.h"
 #import "NSRConfig.h"
 
 //Make some private methods accessible
@@ -23,7 +24,7 @@
 
 + (NSRConfig *) getRelevantConfig;
 
-- (NSString *) listOfSendableProperties;
++ (NSRPropertyCollection *) propertyCollection;
 
 - (NSString *) routeForInstanceRoute:(NSString *)route error:(NSError **)error;
 + (NSString *) routeForControllerRoute:(NSString *)route;
@@ -41,7 +42,12 @@
 
 #define NSRAssertClassPluralName(mname, class)	GHAssertEqualStrings([class getPluralModelName], mname, @"%@ model name failed.", NSStringFromClass(class))
 
-#define NSRAssertClassProperties(props, class)	GHAssertEqualStrings([[class new] listOfSendableProperties], props, @"%@ properties failed.", NSStringFromClass(class))
+//do-while loop so that test has limited scope
+#define NSRAssertClassProperties(class, property, ...) \
+do { \
+NSArray *test = [NSArray arrayWithObjects:property, __VA_ARGS__, nil];\
+GHAssertEqualObjects([[class propertyCollection] sendableProperties], test, @"%@ properties failed.", NSStringFromClass(class)); \
+} while (NO) 
 
 #define NSRAssertEqualConfigs(config,teststring,desc, ...) GHAssertEqualStrings(config.appURL, [@"http://" stringByAppendingString:teststring], desc, __VA_ARGS__)
 

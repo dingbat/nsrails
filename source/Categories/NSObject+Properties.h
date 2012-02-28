@@ -14,16 +14,16 @@
 + (NSMutableArray *) classPropertyNames;
 
 //returns type of the given property for that instance variable (ie, NSString)
-- (NSString *) getPropertyType:(NSString *)property;
++ (NSString *) getPropertyType:(NSString *)property;
 
 //returns SEL for the setter of given property
-- (SEL) getPropertySetter:(NSString *)property;
++ (SEL) getPropertySetter:(NSString *)property;
 
 //returns SEL for the getter of given property
-- (SEL) getPropertyGetter:(NSString *)property;
++ (SEL) getPropertyGetter:(NSString *)property;
 
 //returns nil if property is not primitive
 //otherwise, returns property type (int, double, float, etc)
-- (NSString *) propertyIsPrimitive:(NSString *)property;
++ (NSString *) propertyIsPrimitive:(NSString *)property;
 
 @end
