@@ -38,7 +38,7 @@ The framework is very flexible and can fit the specific needs of your Rails (or 
 How do I get started?
 ========
 
-It's fairly painless. Add the source folder into your Xcode project, and see [this page](https://github.com/dingbat/nsrails/wiki/Getting-Started).
+It's fairly painless. Add the source folder into your Xcode project, and see [this page](https://github.com/dingbat/nsrails/wiki/Getting-Started). For a head start in transitioning your Rails models into Objective-C using NSRails, see the [autogen tool](https://github.com/dingbat/nsrails/tree/master/autogen)
 
 For more details:
 
