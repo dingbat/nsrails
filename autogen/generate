@@ -123,7 +123,7 @@ def run_script_with_args(args)
   end
 
   file_dir = File.expand_path(File.dirname(__FILE__))
-  output_path = "#{file_dir}/#{project_name}-gen/"
+  output_path = "#{file_dir}/#{project_name}.gen/"
   begin
     Dir.mkdir(output_path)
   rescue

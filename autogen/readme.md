@@ -8,10 +8,10 @@ $ cd <NSRAILS_REPO>
 $ autogen/generate <APP_PATH> [options]
 ```
 
-Classes will be created in a corresponding folder, which can then be added to your Xcode project. Output:
+Files will be created in the `autogen/` directory with the extension `.gen`, whose contained files can then be added to your Xcode project. Sample output for our [demo app](https://github.com/dingbat/nsrails/tree/master/demo/iOS):
 
 ```
-Writing files to '/Users/dan/projects/nsrails/autogen/my_rails_project-gen/'
+Writing files to '/Users/dan/projects/nsrails/autogen/my_rails_project.gen/'
   + Post.h
   + Post.m
   + Response.h
