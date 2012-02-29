@@ -42,10 +42,10 @@ It's fairly painless. Add the source folder into your Xcode project, and see [th
 
 Some more resources:
 
-* For a head start in transitioning your Rails models into Objective-C using NSRails, see the [autogen tool](https://github.com/dingbat/nsrails/tree/master/autogen)
-*   Watch the [screencast](http://vimeo.com/37418882)
-*   Browse the included demo iPhone app - it goes straight to a live Rails app at [nsrails.com](http://nsrails.com), so you won't even have to launch a server to get started. The source for this site is also included. Have fun and be civil!
-*   See the [Wiki](https://github.com/dingbat/nsrails/wiki)
+* Get a head start in translating Rails models into Objective-C using the [autogen tool](https://github.com/dingbat/nsrails/tree/master/autogen)
+* Watch the [screencast](http://vimeo.com/37418882)
+* Browse the included demo iPhone app - it goes straight to a live Rails app at [nsrails.com](http://nsrails.com), so you won't even have to launch a server to get started. The source for this site is also included. Have fun and be civil!
+* See the [Wiki](https://github.com/dingbat/nsrails/wiki)
 
 What's in the sources?
 ========
