@@ -1,4 +1,4 @@
-[![nsrails.com](http://i.imgur.com/3FFpT.png)](https://github.com/dingbat/nsrails/wiki/Getting-Started)
+[![nsrails.com](http://i.imgur.com/3FFpT.png)](http://nsrails.com/)
 
 ***
 
