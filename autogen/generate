@@ -93,7 +93,7 @@ def run_script_with_args(args)
           puts "   #{START_B}--exclude-belongs-to-flag#{END_B}   On properties defined in Rails as belongs_to, will exclude '-b' flag"
           puts "   #{START_B}--use-mutable-arrays#{END_B}        Will use NSMutableArray instead of NSArray for has_many properties"
           puts ""
-          puts "Options for file styling"
+          puts "Options for file styling:"
           puts "   #{START_B}--author=\"X\"#{END_B}                Metadata for 'Created by' header at the top of the files"
           puts "   #{START_B}--project=\"X\"#{END_B}               Metadata for the project header at the top of the files"
           puts "   #{START_B}--company=\"X\"#{END_B}               Metadata for 'Copyright' field header at the top of the files"
@@ -111,7 +111,7 @@ def run_script_with_args(args)
   end
 
   if !path
-    raise "No path specified. See the bundled readme for this tool or use --help"
+    raise "\n#{START_B}#{END_B}#{START_B}No path specified. See the bundled readme for this tool or use --help#{END_B}"
   end
 
   project_name = path.split("/").last
@@ -127,6 +127,7 @@ def run_script_with_args(args)
     Dir.mkdir(output_path)
   rescue
   end
+  puts ""
   puts "#{START_B}#{END_B}Writing files to '#{output_path}':"
 
   @options[:project] ||= project_name.camelize 
@@ -226,6 +227,5 @@ def run_script_with_args(args)
   end
 end
 
-puts ""
 run_script_with_args(ARGV)
 puts ""

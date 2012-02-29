@@ -21,7 +21,7 @@ Classes will be created in a corresponding folder, which can then be added to yo
 Options:
 -----------
 
-Use the `--help` flag for a list of these options.
+Use the `--help` flag for a list of these options. They are absolutely combinable!
 
 ### Property options
 
