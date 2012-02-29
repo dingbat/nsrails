@@ -11,7 +11,7 @@ $ autogen/generate <APP_PATH> [options]
 Classes will be created in a corresponding folder, which can then be added to your Xcode project. Output:
 
 ```
-Writing files to '/Users/dan/projects/nsrails/autogen/my_rails_project-gen/':
+Writing files to '/Users/dan/projects/nsrails/autogen/my_rails_project-gen/'
   + Post.h
   + Post.m
   + Response.h
