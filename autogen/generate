@@ -122,13 +122,14 @@ def run_script_with_args(args)
     raise "Either '#{path}' isn't the root path to a Rails project or your db/schema.rb is misplaced."
   end
 
-  output_path = "#{Dir.pwd}/#{project_name}-gen/"
+  file_dir = File.expand_path(File.dirname(__FILE__))
+  output_path = "#{file_dir}/#{project_name}-gen/"
   begin
     Dir.mkdir(output_path)
   rescue
   end
   puts ""
-  puts "#{START_B}#{END_B}Writing files to '#{output_path}':"
+  puts "#{START_B}#{END_B}Writing files to '#{output_path}'"
 
   @options[:project] ||= project_name.camelize 
   @options[:prefix] ||= ""
