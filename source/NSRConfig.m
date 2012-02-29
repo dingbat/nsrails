@@ -48,21 +48,49 @@
 #pragma mark -
 #pragma mark Config inits
 
-static NSRConfig *defaultConfig = nil;
+static NSMutableDictionary *configEnvironments = nil;
 static NSMutableArray *overrideConfigStack = nil;
+static NSString *currentEnvironment = NSRConfigEnvironmentDevelopment;
+
++ (NSRConfig *) configForEnvironment: (NSString *)environment
+{
+	return [configEnvironments objectForKey:environment];
+}
 
 + (NSRConfig *) defaultConfig
 {
-	//singleton
-	
-	if (!defaultConfig) 
-		[self setAsDefaultConfig:[[NSRConfig alloc] init]];
-	return defaultConfig;
+	NSRConfig *config = [self configForEnvironment:currentEnvironment];
+	if (!config)
+	{
+		config = [[NSRConfig alloc] init];
+		[self setConfig:config asDefaultForEnvironment:currentEnvironment];
+	}
+	return config;
+}
+
++ (void) setConfig:(NSRConfig *)config asDefaultForEnvironment:(NSString *)environment
+{
+	if (!configEnvironments)
+		configEnvironments = [[NSMutableDictionary alloc] init];
+	if (config)
+		[configEnvironments setObject:config forKey:environment];
 }
 
 + (void) setAsDefaultConfig:(NSRConfig *)config
 {
-	defaultConfig = config;
+	[self setConfig:config asDefaultForEnvironment:currentEnvironment];
+}
+
++ (void) setCurrentEnvironment:(NSString *)environment
+{
+	if (!environment)
+		environment = NSRConfigEnvironmentDevelopment;
+	currentEnvironment = environment;
+}
+
++ (NSString *) currentEnvironment
+{
+	return currentEnvironment;
 }
 
 - (id) init
@@ -137,7 +165,7 @@ static NSMutableArray *overrideConfigStack = nil;
 	//make sure the app URL is set
 	if (!self.appURL)
 	{
-		NSError *err = [NSError errorWithDomain:@"NSRails" code:0 userInfo:[NSDictionary dictionaryWithObject:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup." forKey:NSLocalizedDescriptionKey]];
+		NSError *err = [NSError errorWithDomain:@"NSRails" code:0 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup. (env=%@)", currentEnvironment] forKey:NSLocalizedDescriptionKey]];
 		if (error)
 			*error = err;
 		if (completionBlock)

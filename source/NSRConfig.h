@@ -22,6 +22,9 @@
 
 typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
 
+#define NSRConfigEnvironmentDevelopment	@"development"
+#define NSRConfigEnvironmentProduction	@"production"
+
 #define NSRValidationErrorsKey	@"validation errors"
 
 @interface NSRConfig : NSObject
@@ -38,6 +41,11 @@ typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
 
 + (NSRConfig *) defaultConfig;
 + (void) setAsDefaultConfig:(NSRConfig *)config;
++ (void) setConfig:(NSRConfig *)config asDefaultForEnvironment:(NSString *)environment;
+
++ (NSRConfig *) configForEnvironment: (NSString *)environment;
++ (void) setCurrentEnvironment:(NSString *)environment;
++ (NSString *) currentEnvironment;
 
 - (id) initWithAppURL:(NSString *)url;
 

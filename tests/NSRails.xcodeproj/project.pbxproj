@@ -313,6 +313,7 @@
 			isa = PBXGroup;
 			children = (
 				591424AD14EAFE7400481815 /* Tests */,
+				5914245E14EAFD0F00481815 /* NSRails */,
 				59E3187714E9CD8700B0FC39 /* Frameworks */,
 				59E3187514E9CD8700B0FC39 /* Products */,
 			);
@@ -330,7 +331,6 @@
 		59E3187714E9CD8700B0FC39 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5914245E14EAFD0F00481815 /* NSRails */,
 				591424C414EB098600481815 /* GHUnit.framework */,
 				5914249514EAFD4100481815 /* GHUnitIOS.framework */,
 				59E3187814E9CD8700B0FC39 /* UIKit.framework */,

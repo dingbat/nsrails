@@ -51,33 +51,34 @@
 	NSRAssertClassPluralName(@"r_gchild_rS", [RebelliousGrandchildOfRebellious class]); //explicitly set
 }
 
+
 - (void) test_config_inheritance
 {
-	[[NSRConfig defaultConfig] setAppURL:@"http://Default"];
-
+	[[NSRConfig defaultConfig] setAppURL:@"Default"];
+						  
 	//was explicitly set to "parent"
-	NSRAssertClassConfig(@"http://parent", [Parent class]);
+	NSRAssertClassConfig([Parent class], @"parent");
 	
 	//complacent child
 	//is complacent (doesn't explicitly set NSRailsUseConfig or NSRailsUseDefaultConfig), so will inherit the "parent" from Parent
-	NSRAssertClassConfig(@"http://parent", [Child class]);
+	NSRAssertClassConfig([Child class], @"parent");
 	
 	//is complacent (doesn't explicitly set NSRailsUseConfig or NSRailsUseDefaultConfig), so will inherit the "parent" from Child
-	NSRAssertClassConfig(@"http://parent", [Grandchild class]);
+	NSRAssertClassConfig([Grandchild class], @"parent");
 	
 	//is not complacent (defines NSRailsUseConfig), as set to "r_grandchild"
-	NSRAssertClassConfig(@"http://r_gchild", [RebelliousGrandchild class]);
+	NSRAssertClassConfig([RebelliousGrandchild class], @"r_gchild");
 	
-	
+
 	//rebellious child
 	//is rebellious (explicitly defines NSRailsUseDefaultConfig for itself, so should be defaultConfig returned)
-	NSRAssertClassConfig(@"http://Default", [RebelliousChild class]);
+	NSRAssertClassConfig([RebelliousChild class], @"Default");
 	
 	//is complacent (doesn't explicitly set), BUT will inherit default behavior from R.Child, so default behavior
-	NSRAssertClassConfig(@"http://Default", [GrandchildOfRebellious class]);
+	NSRAssertClassConfig([GrandchildOfRebellious class], @"Default");
 	
 	//is rebellious (defines NSRailsUseConfig as "r_gchild_r"), so it'll use that name
-	NSRAssertClassConfig(@"http://r_gchild_r", [RebelliousGrandchildOfRebellious class]);
+	NSRAssertClassConfig([RebelliousGrandchildOfRebellious class], @"r_gchild_r");
 }
 
 - (void) test_property_inheritance

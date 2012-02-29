@@ -22,32 +22,67 @@
 	NSRAssertClassProperties(@"remoteID, attr1", [TestClass class]);
 }
 
-- (void) test_nested_config_contexts
+- (void) test_config_environments
+{	
+	NSRConfig *defaultDev = [NSRConfig defaultConfig];
+	GHAssertNotNil(defaultDev, @"Calling defaultConfig should generate config if nil");
+	
+	[[NSRConfig defaultConfig] setAppURL:@"Default"];
+	NSRAssertRelevantConfigURL(@"Default", nil);
+	GHAssertEqualStrings([NSRConfig currentEnvironment], NSRConfigEnvironmentDevelopment, @"Should've set default to dev environment");
+	
+	[NSRConfig setCurrentEnvironment:NSRConfigEnvironmentProduction];
+	GHAssertEqualStrings([NSRConfig currentEnvironment], NSRConfigEnvironmentProduction, @"Should've set environment to Prod");
+	GHAssertNil([NSRConfig defaultConfig].appURL, @"App URL for Prod environment never set, should be nil.");
+
+	[[NSRConfig defaultConfig] setAppURL:@"Prod"];
+	GHAssertEqualStrings([NSRConfig currentEnvironment], NSRConfigEnvironmentProduction, @"Environment should still be Prod from before");
+	NSRAssertRelevantConfigURL(@"Prod", @"Default URL set while in Prod, shoud have stuck");
+	
+	NSRConfig *testEnv = [[NSRConfig alloc] initWithAppURL:@"Test"];
+	[NSRConfig setConfig:testEnv asDefaultForEnvironment:@"test"];
+	GHAssertEqualStrings([NSRConfig currentEnvironment], NSRConfigEnvironmentProduction, @"Environment still be Prod");
+
+	[NSRConfig setCurrentEnvironment:@"test"];
+	GHAssertEqualStrings([NSRConfig currentEnvironment], @"test", @"Environment should be test");
+	NSRAssertRelevantConfigURL(@"Test", @"Default URL should be one set for test");
+
+	NSRConfig *testEnv2 = [[NSRConfig alloc] initWithAppURL:@"Test2"];
+	[NSRConfig setAsDefaultConfig:testEnv2];
+	GHAssertEqualStrings([NSRConfig currentEnvironment], @"test", @"Environment should still be test");
+	NSRAssertRelevantConfigURL(@"Test2", @"Default URL should be one set for test after re-setting default config");
+	
+	[NSRConfig setCurrentEnvironment:NSRConfigEnvironmentDevelopment];
+	GHAssertEqualStrings([NSRConfig currentEnvironment], NSRConfigEnvironmentDevelopment, @"Environment should have been set to Dev");
+	NSRAssertRelevantConfigURL(@"Default", @"Default URL should be one set for Dev");
+}
+
+- (void) test_config_nested_contexts
 {
 	[[NSRConfig defaultConfig] setAppURL:@"http://Default/"]; //also tests to see that it'll get rid of the /
 	
-	NSRAssertRelevantConfigURL(@"http://Default",nil);
+	NSRAssertRelevantConfigURL(@"Default", @"default, exterior before nesting");
 	
 	[[NSRConfig defaultConfig] useIn:^
 	 {
 		 NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"Nested"]; //also tests to see that it'll add http://
 		 [c use];
 		 
-		 NSRAssertRelevantConfigURL(@"http://Nested", nil);
+		 NSRAssertRelevantConfigURL(@"Nested", @"[use] nested inside of default block");
 
 		 [[NSRConfig defaultConfig] useIn:^
 		  {
-			  NSRAssertRelevantConfigURL(@"http://Default", nil);
+			  NSRAssertRelevantConfigURL(@"Default", @"default block nested inside [use] inside default block");
 
 			  [c useIn:^
 			  {
-				  NSRAssertRelevantConfigURL(@"http://Nested", nil);
+				  NSRAssertRelevantConfigURL(@"Nested", @"triple nested");
 			  }];
 		  }];
 		 
 		 [c end];
 		 
-		 NSRAssertRelevantConfigURL(@"http://Default", nil);
+		 NSRAssertRelevantConfigURL(@"Default", @"default at the end of default block after nestings");
 	 }];
 	
 	GHAssertEqualStrings(@"test_class", [TestClass getModelName], @"auto-underscoring");
@@ -56,12 +91,12 @@
 	c.automaticallyUnderscoreAndCamelize = NO;
 	[c useIn:
 	 ^{
-		 NSRAssertRelevantConfigURL(@"http://NoAuto", nil);
+		 NSRAssertRelevantConfigURL(@"NoAuto", @"custom block ^{} block");
 
 		 GHAssertEqualStrings(@"TestClass", [TestClass getModelName], @"No auto-underscoring");
 	 }];
 	
-	NSRAssertRelevantConfigURL(@"http://Default", nil);
+	NSRAssertRelevantConfigURL(@"Default", @"default exterior after all nesting");
 }
 
 - (void) test_crud
@@ -243,6 +278,10 @@
 
 - (void) test_nesting
 {
+	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
+	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
+	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
+	
 	Post *post = [[Post alloc] init];
 	post.author = @"Dan";
 	post.body = @"Test";
@@ -485,9 +524,6 @@
 - (void)setUp
 {
 	// Run before each test method
-	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
-	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
-	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
 }
 
 - (void)tearDown {
