@@ -14,3 +14,9 @@ demo/iOS/NSRailsApp.xcodeproj/xcuserdata/
 
 test/NSRails.xcodeproj/project.xcworkspace/xcuserdata/
 test/NSRails.xcodeproj/xcuserdata/
+
+
+# Ignore folders made with autogen
+
+*-gen/
+autogen/*-gen/
