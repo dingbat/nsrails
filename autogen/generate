@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'rubygems'
 require 'active_support/inflector'
 
@@ -63,6 +65,9 @@ def run_script_with_args(args)
   @options = Hash.new
   args.each do |arg|
     if !path && arg != "--help"
+      if (arg[arg.length] != "/"[0])
+        arg += "/"
+      end
       path = arg
     else
       begin
@@ -80,7 +85,7 @@ def run_script_with_args(args)
           puts "=========================================================================="
           puts ""
           puts "Usage:"
-          puts "   $ #{START_B}ruby nsrgen.rb APP_PATH [options]#{END_B}"
+          puts "   $ #{START_B}autogen/generate APP_PATH [options]#{END_B}"
           puts ""
           puts "Options for property translation:"
           puts "   #{START_B}--include-created-at#{END_B}        Will include the created_at date property (NSDate)"
@@ -117,7 +122,7 @@ def run_script_with_args(args)
     raise "Either '#{path}' isn't the root path to a Rails project or your db/schema.rb is misplaced."
   end
 
-  output_path = "./#{project_name} classes/"
+  output_path = "#{Dir.pwd}/#{project_name} classes/"
   begin
     Dir.mkdir(output_path)
   rescue
