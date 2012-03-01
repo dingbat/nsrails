@@ -130,7 +130,7 @@ def run_script_with_args(args)
     Dir.mkdir(output_path)
   rescue
   end
-  puts ""
+
   puts "#{START_B}#{END_B}Writing files to '#{output_path}'"
 
   @options[:project] ||= project_name.camelize 
@@ -138,7 +138,7 @@ def run_script_with_args(args)
 
   @time = Time.now.strftime("%m/%d/%Y")
 
-  objc_conversions = {"integer" => "NSNumber", "string" => "NSString", "text" => "NSString", "datetime" => "NSDate"}
+  objc_conversions = {"integer" => "NSNumber", "float" => "NSNumber", "double" => "NSNumber", "string" => "NSString", "text" => "NSString", "datetime" => "NSDate"}
   while line = schema.gets()
     new_model = false
     if line =~ /create_table/
@@ -231,4 +231,3 @@ def run_script_with_args(args)
 end
 
 run_script_with_args(ARGV)
-puts ""
