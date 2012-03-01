@@ -8,7 +8,13 @@ START_B = "\033[1m"
 END_B = "\033[0m"
 
 def h(m)
-  str = "#import \"NSRails.h\"\n\n@interface #{m[:name]} : NSRailsModel\n"
+  str = "#import \"NSRails.h\"\n"
+  if (m[:belongs_tos].count > 0)
+    str += "\n"
+    str += "@class #{m[:belongs_tos].map {|x| @options[:prefix]+x.classify}.join(', ')};"
+    str += "\n"
+  end
+  str += "\n@interface #{m[:name]} : NSRailsModel\n"
   m[:properties].each do |type, properties|
     str += "\n@property (nonatomic, strong) #{type} #{properties.map { |x| '*'+x}.join(', ')};"
   end
@@ -16,17 +22,23 @@ def h(m)
 end
 
 def m(m)
-  str = "#import \"#{m[:name]}.h\"\n\n@implementation #{m[:name]}"
+  str = "#import \"#{m[:name]}.h\"\n"
+  if (m[:X_to_ones].count > 0)
+    str += m[:X_to_ones].map {|x| "#import \"#{@options[:prefix]+x.classify}.h\"" }.join("\n")+"\n"
+  end
+  str += "\n@implementation #{m[:name]}"
   list = []
+  m[:properties].values.each do |v|
+    list += v
+  end
   if (list.count > 0)
-    m[:properties].values.each do |v|
-      list += v
-    end
     str += "\n@synthesize #{list.join(', ')};"
   end
   str += "\nNSRailsSync(*"
-  m[:belongs_tos].each do |bt_prop|
-    str += ", #{bt_prop} -b"
+  if (!@options[:exclude_belongs_to_flag])
+    m[:belongs_tos].each do |bt_prop|
+      str += ", #{bt_prop} -b"
+    end
   end
   m[:has_manys].each do |hm_dict|
     hm_dict.each do |hm_prop, hm|
@@ -138,6 +150,8 @@ def run_script_with_args(args)
 
   @time = Time.now.strftime("%m/%d/%Y")
 
+  models = []
+  
   objc_conversions = {"integer" => "NSNumber", "float" => "NSNumber", "double" => "NSNumber", "string" => "NSString", "text" => "NSString", "datetime" => "NSDate"}
   while line = schema.gets()
     new_model = false
@@ -148,6 +162,7 @@ def run_script_with_args(args)
       @model[:properties] = Hash.new
       @model[:belongs_tos] = Array.new
       @model[:has_manys] = Array.new
+      @model[:X_to_ones] = Array.new
     end
     next unless @model
     if line =~ /end/
@@ -177,11 +192,11 @@ def run_script_with_args(args)
 
           if line =~ /belongs_to/
             type = class_name
-            if (!@options[:exclude_belongs_to_flag])
-              @model[:belongs_tos] << prop
-            end
+            @model[:belongs_tos] << prop
+            @model[:X_to_ones] << prop
           elsif line =~ /has_one/
             type = class_name
+            @model[:X_to_ones] << prop
           elsif line =~ /has_many/
             if (@options[:use_mutable_arrays])
               type = "NSMutableArray"
@@ -208,6 +223,7 @@ def run_script_with_args(args)
           file.puts("\n@end")
         end
       end
+      models << @model
       @model = nil
     elsif !new_model
       prop = line.match(/\"(.*?)\"/).captures[0]
