@@ -270,8 +270,12 @@ static NSMutableDictionary *propertyCollections = nil;
 	BOOL isArray = ([[[self class] getPropertyType:prop] isEqualToString:@"NSArray"] || 
 					[[[self class] getPropertyType:prop] isEqualToString:@"NSMutableArray"]);
 	
-	//if prop is an array, add "Element", so it'll be encodeArrayElement: , otherwise, encodeWhatever:
-	NSString *sel = [NSString stringWithFormat:@"%@%@%@:",YESforEncodingNOforDecoding ? @"encode" : @"decode",[prop toClassName], isArray ? @"Element" : @""];
+	//format: 1st %@ = "encode"/"decode"
+	//        2nd %@ = "Property"
+	//        3rd %@ = "Element" (if array)
+	//        4th %@ = ":" (if decoding - encoding has no parameter)
+
+	NSString *sel = [NSString stringWithFormat:@"%@%@%@%@",YESforEncodingNOforDecoding ? @"encode" : @"decode",[prop toClassName], isArray ? @"Element" : @"", YESforEncodingNOforDecoding ? @"" : @":"];
 	
 	SEL selector = NSSelectorFromString(sel);
 	if ([self respondsToSelector:selector])
