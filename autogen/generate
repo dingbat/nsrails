@@ -6,6 +6,13 @@ require 'active_support/inflector'
 #bold text in terminal
 START_B = "\033[1m"
 END_B = "\033[0m"
+#"first" start bold - sometimes acts strange if just declared as first time
+NORMALIZE_B = "#{START_B}#{END_B}"
+F_START_B = "#{NORMALIZE_B}#{START_B}"
+
+def import_classes(array)
+  array.map {|x| "#import \"#{@options[:prefix]+x.classify}.h\"" }.join("\n")
+end
 
 def h(m)
   str = "#import \"NSRails.h\"\n"
@@ -24,7 +31,7 @@ end
 def m(m)
   str = "#import \"#{m[:name]}.h\"\n"
   if (m[:X_to_ones].count > 0)
-    str += m[:X_to_ones].map {|x| "#import \"#{@options[:prefix]+x.classify}.h\"" }.join("\n")+"\n"
+    str += import_classes(m[:X_to_ones])+"\n"
   end
   str += "\n@implementation #{m[:name]}"
   list = []
@@ -91,7 +98,7 @@ def run_script_with_args(args)
           option["-"] = "_"
         end
         if (option == "help")
-          puts "\n#{START_B}#{END_B}=========================================================================="
+          puts "\n#{NORMALIZE_B}=========================================================================="
           puts "------------------ #{START_B}Welcome to the NSRails autogen tool!#{END_B} ------------------"
           puts "This script will generate NSRails Objective-C classes (.m and .h) for you,\nbased on the models from any given Rails app."
           puts "=========================================================================="
@@ -123,7 +130,7 @@ def run_script_with_args(args)
   end
 
   if !path
-    puts "#{START_B}#{END_B}#{START_B}Error:#{END_B} No path specified. See the bundled readme for this tool or use '#{START_B}autogen/generate --help#{END_B}'"
+    puts "#{FSTART_B}Error:#{END_B} No path specified. See the bundled readme for this tool or use '#{START_B}autogen/generate --help#{END_B}'"
     return
   end
 
@@ -132,7 +139,7 @@ def run_script_with_args(args)
   begin
     schema = File.open(path+"db/schema.rb")
   rescue
-    puts "#{START_B}#{END_B}#{START_B}Error:#{END_B} Either '#{path}' isn't the root path to a Rails project or your db/schema.rb is misplaced."
+    puts "#{FSTART_B}Error:#{END_B} Either '#{path}' isn't the root path to a Rails project or your db/schema.rb is misplaced."
     return
   end
 
@@ -140,10 +147,11 @@ def run_script_with_args(args)
   output_path = "#{file_dir}/#{project_name}.gen/"
   begin
     Dir.mkdir(output_path)
-  rescue
+    puts "Making directory #{project_name}.gen/"
+  rescue    
   end
 
-  puts "#{START_B}#{END_B}Writing files to '#{output_path}'"
+  puts "#{NORMALIZE_B}Writing files to '#{output_path}'"
 
   @options[:project] ||= project_name.camelize 
   @options[:prefix] ||= ""
@@ -216,7 +224,8 @@ def run_script_with_args(args)
 
       ["h", "m"].each do |format|
         filename = @model[:name]+"."+format
-        puts "  #{START_B}+#{END_B} #{filename}"
+        overwrite = File.exist?(output_path+filename)
+        puts "  #{START_B}+#{END_B} #{filename}#{overwrite ? '  (overwrite)' : ''}"
         File.open(output_path+filename, "w") do |file|
           file.puts(header(filename)+"\n\n")
           file.puts(eval("#{format}(@model)"))
@@ -228,13 +237,11 @@ def run_script_with_args(args)
     elsif !new_model
       prop = line.match(/\"(.*?)\"/).captures[0]
       unless (prop =~ /_id/)
-        if (prop == "created_at" && !@options[:include_created_at])
+        if ((prop == "created_at" && !@options[:include_created_at]) ||
+            (prop == "updated_at" && !@options[:include_updated_at]))
           next
         end
-        if (prop == "updated_at" && !@options[:include_updated_at])
-          next
-        end
-
+        
         schema_type = line.match(/t.(.*?)\"/).captures[0].strip
         prop = prop.camelize(:lower)
         type = objc_conversions[schema_type]
@@ -256,7 +263,7 @@ def run_script_with_args(args)
     puts "  #{START_B}+#{END_B} #{filename}"
     File.open(output_path+filename, "w") do |file|
       file.puts(header(filename)+"\n\n")
-      file.puts(models.map {|x| "#import \"#{x[:name]}.h\"" }.join("\n"))
+      file.puts(import_classes(models))
     end
   end
 end
