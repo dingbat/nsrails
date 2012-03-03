@@ -267,8 +267,6 @@ static NSMutableDictionary *propertyCollections = nil;
 
 - (id) getCustomEncodingForProperty:(NSString *)prop
 {
-	NSString *propType = [[self class] getPropertyType:prop];
-
 	NSString *sel = [NSString stringWithFormat:@"encode%@", [prop toClassName]];
 	SEL selector = NSSelectorFromString(sel);
 	if ([self respondsToSelector:selector])
@@ -279,7 +277,8 @@ static NSMutableDictionary *propertyCollections = nil;
 		if (![obj isKindOfClass:[NSArray class]] &&
 			![obj isKindOfClass:[NSDictionary class]] &&
 			![obj isKindOfClass:[NSString class]] &&
-			![obj isKindOfClass:[NSNumber class]])
+			![obj isKindOfClass:[NSNumber class]] &&
+			![obj isKindOfClass:[NSNull class]])
 		{
 #ifdef NSRLogErrors
 			NSLog(@"NSR Warning: Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return an NSDictionary, NSArray, NSString, or NSNumber here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop, NSStringFromClass([self class]),sel);
