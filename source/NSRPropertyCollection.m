@@ -9,6 +9,7 @@
 #import "NSRPropertyCollection.h"
 #import "NSRails.h"
 #import "NSObject+Properties.h"
+#import "NSString+InflectionSupport.h"
 
 //this is the marker for the propertyEquivalents dictionary if there's no explicit equivalence set
 #define NSRNoEquivalentMarker @""
@@ -201,14 +202,33 @@
 						continue;
 					}
 					
+					//if it's sendable & encodable but not part of the class
+					BOOL remoteOnly = NO;
+					
 					//check to see if the listed property even exists
 					NSString *ivarType = [_class getPropertyType:prop];
 					if (!ivarType)
 					{
+						//could be that it's encodable (rails-only attr)
+						NSString *maybeEncodable = [@"encode" stringByAppendingString:[prop toClassName]];
+						if ([_class instancesRespondToSelector:NSSelectorFromString(maybeEncodable)])
+						{
+							//TODO inform the user that this is going on, there also should be no "retrievable" declared etc
+							
+							//if it has encode, make sure it's added as encodable & sendable
+							[encodeProperties addObject:prop];
+							[sendableProperties addObject:prop];
+							
+							//later on we'll skip those two
+							remoteOnly = YES;
+						}
+						else
+						{
 #ifdef NSRLogErrors
-						NSLog(@"NSR Warning: Property '%@' declared in NSRailsSync for class %@ was not found in this class or in superclasses. Maybe you forgot to @synthesize it? Element ignored.", prop, NSStringFromClass(_class));
+							NSLog(@"NSR Warning: Property '%@' declared in NSRailsSync for class %@ was not found in this class or in superclasses. Maybe you forgot to @synthesize it? Element ignored.", prop, NSStringFromClass(_class));
 #endif
-						continue;
+							continue;
+						}
 					}
 					
 					//make sure that the property type is not a primitive
@@ -239,13 +259,13 @@
 					
 					if (opSplit.count > 1)
 					{
-						if ([options rangeOfString:@"r"].location != NSNotFound)
+						if ([options rangeOfString:@"r"].location != NSNotFound && !remoteOnly)
 							[retrievableProperties addObject:prop];
 						
-						if ([options rangeOfString:@"s"].location != NSNotFound)
+						if ([options rangeOfString:@"s"].location != NSNotFound && !remoteOnly)
 							[self addPropertyAsSendable:prop equivalent:equivalent class:_class];
 						
-						if ([options rangeOfString:@"e"].location != NSNotFound)
+						if ([options rangeOfString:@"e"].location != NSNotFound && !remoteOnly)
 							[encodeProperties addObject:prop];
 						
 						if ([options rangeOfString:@"d"].location != NSNotFound)
@@ -260,8 +280,12 @@
 					if (opSplit.count == 1 ||
 						([options rangeOfString:@"s"].location == NSNotFound && [options rangeOfString:@"r"].location == NSNotFound))
 					{
-						[self addPropertyAsSendable:prop equivalent:equivalent class:_class];
-						[retrievableProperties addObject:prop];
+						//if remoteOnly, means we already added as sendable and we do NOT want to retrieve it
+						if (!remoteOnly)
+						{
+							[self addPropertyAsSendable:prop equivalent:equivalent class:_class];
+							[retrievableProperties addObject:prop];
+						}
 					}
 					
 					//see if there was a : declared

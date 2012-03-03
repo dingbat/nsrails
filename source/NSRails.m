@@ -265,54 +265,46 @@ static NSMutableDictionary *propertyCollections = nil;
 	return model;
 }
 
-- (id) getCustomEnDecoding:(BOOL)YESforEncodingNOforDecoding forProperty:(NSString *)prop value:(id)val
+- (id) getCustomEncodingForProperty:(NSString *)prop
 {
-	BOOL isArray = ([[[self class] getPropertyType:prop] isEqualToString:@"NSArray"] || 
-					[[[self class] getPropertyType:prop] isEqualToString:@"NSMutableArray"]);
-	
-	//format: 1st %@ = "encode"/"decode"
-	//        2nd %@ = "Property"
-	//        3rd %@ = "Element" (if array)
-	//        4th %@ = ":" (if decoding - encoding has no parameter)
+	NSString *propType = [[self class] getPropertyType:prop];
 
-	NSString *sel = [NSString stringWithFormat:@"%@%@%@%@",YESforEncodingNOforDecoding ? @"encode" : @"decode",[prop toClassName], isArray ? @"Element" : @"", YESforEncodingNOforDecoding ? @"" : @":"];
-	
+	NSString *sel = [NSString stringWithFormat:@"encode%@", [prop toClassName]];
 	SEL selector = NSSelectorFromString(sel);
 	if ([self respondsToSelector:selector])
 	{
-		id obj = [self performSelector:selector withObject:val];
+		id obj = [self performSelector:selector];
 		
-		if (YESforEncodingNOforDecoding)
+		//make sure that the result is a JSON parse-able
+		if (![obj isKindOfClass:[NSArray class]] &&
+			![obj isKindOfClass:[NSDictionary class]] &&
+			![obj isKindOfClass:[NSString class]] &&
+			![obj isKindOfClass:[NSNumber class]])
 		{
-			//if encoding, make sure that the result is a JSON PARSE-ABLE!
-			if (![obj isKindOfClass:[NSArray class]] &&
-				![obj isKindOfClass:[NSDictionary class]] &&
-				![obj isKindOfClass:[NSString class]] &&
-				![obj isKindOfClass:[NSNumber class]])
-			{
 #ifdef NSRLogErrors
-				NSLog(@"NSR Warning: Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return an NSDictionary, NSArray, NSString, or NSNumber here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop, NSStringFromClass([self class]),sel);
+			NSLog(@"NSR Warning: Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return an NSDictionary, NSArray, NSString, or NSNumber here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop, NSStringFromClass([self class]),sel);
 #endif
-			}
 		}
 		
-		//only send back an NSNull object instead of nil if it's on ENcode, since we'll be ENcoding it into JSON, where that's relevant
-		if (!obj && YESforEncodingNOforDecoding)
+		//send back an NSNull object instead of nil since we'll be encoding it into JSON, where that's relevant
+		if (!obj)
 		{
 			return [NSNull null];
 		}
 		return obj;
 	}
-	else
+	return nil;
+}
+
+- (id) getCustomDecodingForProperty:(NSString *)prop value:(id)val
+{
+	NSString *sel = [NSString stringWithFormat:@"decode%@:",[prop toClassName]];
+	
+	SEL selector = NSSelectorFromString(sel);
+	if ([self respondsToSelector:selector])
 	{
-		//try a "did you mean" without the plurality - maybe user mistyped
-		NSString *didYouMean = [NSString stringWithFormat:@"%@%@%@:",YESforEncodingNOforDecoding ? @"encode" : @"decode",[[prop toClassName] substringToIndex:prop.length-1], isArray ? @"Element" : @""];
-		if ([self respondsToSelector:NSSelectorFromString(didYouMean)])
-		{
-#ifdef NSRLogErrors
-			NSLog(@"NSR Warning: Trying to %@code property '%@' in class '%@'. Found selector %@ but this isn't the right format. Make sure it's exactly \"%@code\"+\"property name ('%@')\" + \"Element:\", ie, proper format is %@. Please fix.",YESforEncodingNOforDecoding ? @"en" : @"de", prop, NSStringFromClass([self class]),didYouMean,YESforEncodingNOforDecoding ? @"en" : @"de",prop,sel);
-#endif
-		}
+		id obj = [self performSelector:selector withObject:val];
+		return obj;
 	}
 	return nil;
 }
@@ -322,23 +314,7 @@ static NSMutableDictionary *propertyCollections = nil;
 	//if object is marked as decodable, use the decode method
 	if ([[self propertyCollection].decodeProperties indexOfObject:prop] != NSNotFound)
 	{
-		//if object is an array, go through each and do decodable
-		if ([rep isKindOfClass:[NSArray class]])
-		{
-			NSMutableArray *newArray = [NSMutableArray array];
-			for (id object in rep)
-			{
-				id decodedElement = [self getCustomEnDecoding:NO forProperty:prop value:object];
-				if (decodedElement)
-					[newArray addObject:decodedElement];
-			}
-			return newArray;
-		}
-		//otherwise, return whatever is in decodable
-		else
-		{
-			return [self getCustomEnDecoding:NO forProperty:prop value:rep];
-		}
+		return [self getCustomDecodingForProperty:prop value:rep];
 	}
 	//if the object is of class NSDate and the representation in JSON is a string, automatically convert it to string
 	else if ([[[self class] getPropertyType:prop] isEqualToString:@"NSDate"] && [rep isKindOfClass:[NSString class]])
@@ -370,79 +346,72 @@ static NSMutableDictionary *propertyCollections = nil;
 
 - (id) representationOfObjectForProperty:(NSString *)prop
 {
-	SEL sel = [[self class] getPropertyGetter:prop];
-	if ([self respondsToSelector:sel])
-	{
-		BOOL encodable = [[self propertyCollection].encodeProperties indexOfObject:prop] != NSNotFound;
-		
-		id val = [self performSelector:sel];
-		BOOL isArray = [val isKindOfClass:[NSArray class]];
-		
-		//see if this property actually links to a custom NSRailsModel subclass, or it WASN'T declared, but is an array
-		if ([[self propertyCollection].nestedModelProperties objectForKey:prop] || isArray)
-		{
-			//if the ivar is an array, we need to make every element into JSON and then put them back in the array
-			if (isArray)
-			{
-				NSMutableArray *new = [NSMutableArray arrayWithCapacity:[val count]];
+	BOOL encodable = [[self propertyCollection].encodeProperties indexOfObject:prop] != NSNotFound;
 
-				for (int i = 0; i < [val count]; i++)
+	if (encodable)
+	{
+		return [self getCustomEncodingForProperty:prop];
+	}
+	else
+	{
+		SEL sel = [[self class] getPropertyGetter:prop];	
+		if ([self respondsToSelector:sel])
+		{
+			id val = [self performSelector:sel];
+			BOOL isArray = [val isKindOfClass:[NSArray class]];
+			
+			//see if this property actually links to a custom NSRailsModel subclass, or it WASN'T declared, but is an array
+			if ([[self propertyCollection].nestedModelProperties objectForKey:prop] || isArray)
+			{
+				//if the ivar is an array, we need to make every element into JSON and then put them back in the array
+				if (isArray)
 				{
-					id element = [val objectAtIndex:i];
-					
-					id encodedObj;
-					//if array is defined as encodable, encode each element
-					if (encodable)
+					NSMutableArray *new = [NSMutableArray arrayWithCapacity:[val count]];
+
+					for (int i = 0; i < [val count]; i++)
 					{
-						encodedObj = [self getCustomEnDecoding:YES forProperty:prop value:element];
-					}
-					//otherwise, use the NSRailsModel dictionaryOfRemoteProperties method to get that object in dictionary form
-					if (!encodable || !encodedObj)
-					{
+						id element = [val objectAtIndex:i];
+						
+						//use the NSRailsModel dictionaryOfRemoteProperties method to get that object in dictionary form
 						//but first make sure it's an NSRailsModel subclass
 						if (![element isKindOfClass:[NSRailsModel class]])
 							continue;
 						
-						encodedObj = [element dictionaryOfRemoteProperties];
+						id encodedObj = [element dictionaryOfRemoteProperties];
+						
+						[new addObject:encodedObj];
 					}
-					
-					[new addObject:encodedObj];
+					return new;
 				}
-				return new;
+				
+				//otherwise, make that nested object a dictionary through NSRailsModel
+				//first make sure it's an NSRailsModel subclass
+				if (![val isKindOfClass:[NSRailsModel class]])
+					return nil;
+				
+				return [val dictionaryOfRemoteProperties];
 			}
 			
-			//otherwise, make that nested object a dictionary through NSRailsModel
-			//first make sure it's an NSRailsModel subclass
-			if (![val isKindOfClass:[NSRailsModel class]])
-				return nil;
+			//if the object is of class NSDate, we need to automatically convert it to string for the JSON framework to handle correctly
+			if ([val isKindOfClass:[NSDate class]])
+			{
+				NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+				
+				//format to whatever date format is defined in the config
+				[formatter setDateFormat:[[self class] getRelevantConfig].dateFormat];
+				
+				NSString *dateValue = [formatter stringFromDate:val];
+				
+	#ifndef NSRCompileWithARC
+				[formatter release];
+	#endif
+				return dateValue;
+			}
 			
-			return [val dictionaryOfRemoteProperties];
+			//otherwise, just return the value from the get method
+			return val;
 		}
-		
-		//if NOT linked property, if its declared as encodable, return encoded version
-		if (encodable)
-		{
-			id obj = [self getCustomEnDecoding:YES forProperty:prop value:val];
-			if (obj)
-				return obj;
-		}
-		//if the object is of class NSDate, we need to automatically convert it to string for the JSON framework to handle correctly
-		else if ([val isKindOfClass:[NSDate class]])
-		{
-			NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-			
-			//format to whatever date format is defined in the config
-			[formatter setDateFormat:[[self class] getRelevantConfig].dateFormat];
-			
-			NSString *dateValue = [formatter stringFromDate:val];
-			
-#ifndef NSRCompileWithARC
-			[formatter release];
-#endif
-			return dateValue;
-		}
-		
-		return val;
+		//TODO warn user that there's no get method!
 	}
 	return nil;
 }
