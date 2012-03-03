@@ -130,7 +130,7 @@ def run_script_with_args(args)
   end
 
   if !path
-    puts "#{FSTART_B}Error:#{END_B} No path specified. See the bundled readme for this tool or use '#{START_B}autogen/generate --help#{END_B}'"
+    puts "#{F_START_B}Error:#{END_B} No path specified. See the bundled readme for this tool or use '#{START_B}autogen/generate --help#{END_B}'"
     return
   end
 
@@ -139,7 +139,7 @@ def run_script_with_args(args)
   begin
     schema = File.open(path+"db/schema.rb")
   rescue
-    puts "#{FSTART_B}Error:#{END_B} Either '#{path}' isn't the root path to a Rails project or your db/schema.rb is misplaced."
+    puts "#{F_START_B}Error:#{END_B} Either '#{path}' isn't the root path to a Rails project or your db/schema.rb is misplaced."
     return
   end
 
