@@ -565,6 +565,46 @@
 	GHAssertEqualStrings(instanceAction, @"posts/1/action", @"Instance route failed");
 }
 
+
+- (void) test_inflection
+{
+	NSString *class = @"Post";
+	NSString *class2 = @"DHPost";
+	NSString *camel = @"postObject";
+	NSString *camel2 = @"postObjectA";
+	NSString *camel3 = @"postObjectAB";
+	NSString *camel4 = @"postObjectABCSomething";
+	NSString *under = @"post_object";
+	NSString *under2 = @"post_Object";
+	
+	NSString *_class = @"post";
+	NSString *_class2 = @"dh_post";
+	NSString *_camel = @"post_object";
+	NSString *_camel2 = @"post_object_a";
+	NSString *_camel3 = @"post_object_ab";
+	NSString *_camel4 = @"post_object_abc_something";
+	NSString *_under = @"post_object";
+	NSString *_under2 = @"post_object";
+	
+	NSRAssertEqualsUnderscored(class, _class);
+	NSRAssertEqualsUnderscored(class2, _class2);
+	NSRAssertEqualsUnderscored(camel, _camel);
+	NSRAssertEqualsUnderscored(camel2, _camel2);
+	NSRAssertEqualsUnderscored(camel3, _camel3);
+	NSRAssertEqualsUnderscored(camel4, _camel4);
+	NSRAssertEqualsUnderscored(under, _under);
+	NSRAssertEqualsUnderscored(under2, _under2);
+	
+	NSRAssertEqualsCamelized(_class, @"post");
+	NSRAssertEqualsCamelized(_class2, @"dhPost");
+	NSRAssertEqualsCamelized(_camel, camel);
+	NSRAssertEqualsCamelized(_camel2, camel2);
+	NSRAssertEqualsCamelized(_camel3, @"postObjectAb");
+	NSRAssertEqualsCamelized(@"post_object_ABC_something", @"postObjectABCSomething");
+	NSRAssertEqualsCamelized(_under, @"postObject");
+	NSRAssertEqualsCamelized(_under2, @"postObject");
+}
+
 - (void)setUpClass {
 	// Run at start of all tests in the class
 }

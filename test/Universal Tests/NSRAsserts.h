@@ -9,6 +9,7 @@
 #import "NSRails.h"
 #import "NSRPropertyCollection.h"
 #import "NSRConfig.h"
+#import "NSString+InflectionSupport.h"
 
 //Make some private methods accessible
 @interface NSRailsModel (internal)
@@ -52,3 +53,7 @@ GHAssertEqualObjects(arr, test, nil); \
 #define NSRAssertClassConfig(class, teststring) NSRAssertEqualConfigs([class getRelevantConfig], teststring, @"%@ config failed", NSStringFromClass(class))
 
 #define NSRAssertRelevantConfigURL(teststring,desc) NSRAssertEqualConfigs([NSRailsModel getRelevantConfig], teststring, desc, nil)
+
+#define NSRAssertEqualsUnderscored(string, underscored) GHAssertEqualStrings([string underscore], underscored, nil)
+#define NSRAssertEqualsCamelized(string, camelized) GHAssertEqualStrings([string camelize], camelized, nil)
+
