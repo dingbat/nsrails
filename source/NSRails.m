@@ -253,6 +253,16 @@ static NSMutableDictionary *propertyCollections = nil;
 	return [self remoteJSONRepresentation:nil];
 }
 
+//used to override SBJson's category to use the remoteJSON
+- (NSString *) JSONRepresentation
+{
+	return [self JSONRepresentation:nil];
+}
+- (NSString *) JSONRepresentation:(NSError **)error
+{
+	return [self remoteJSONRepresentation:error];
+}
+
 - (id) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
 {
 	//make a new class to be entered for this property/array (we can assume it subclasses NSRailsModel)
