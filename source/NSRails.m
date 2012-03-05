@@ -47,8 +47,6 @@
 @implementation NSRailsModel
 @synthesize remoteID, remoteDestroyOnNesting, remoteAttributes;
 
-static NSMutableDictionary *propertyCollections = nil;
-
 #pragma mark - Meta-NSR stuff
 
 //this will suppress the compiler warnings that come with ARC when doing performSelector
@@ -63,9 +61,14 @@ static NSMutableDictionary *propertyCollections = nil;
 
 + (NSRPropertyCollection *) propertyCollection
 {
-	if (!propertyCollections)
-		propertyCollections = [[NSMutableDictionary alloc] init];
+	__strong static NSMutableDictionary *propertyCollections = nil;
+	static dispatch_once_t onceToken;
 	
+	//singleton initializer
+    dispatch_once(&onceToken, ^{
+		propertyCollections = [[NSMutableDictionary alloc] init];
+    });
+		
 	NSString *class = NSStringFromClass(self);
 	NSRPropertyCollection *collection = [propertyCollections objectForKey:class];
 	if (!collection)
