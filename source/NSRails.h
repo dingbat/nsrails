@@ -28,14 +28,12 @@
 
 @property (nonatomic, strong) NSNumber *remoteID;
 @property (nonatomic, strong, readonly) NSDictionary *remoteAttributes;
-@property (nonatomic) BOOL remoteDestroyOnNesting; 
-
+@property (nonatomic) BOOL remoteDestroyOnNesting;
 
 
 /// =============================================================================================
 #pragma mark - CRUD
 /// =============================================================================================
-
 
 // Synchronous, no error retrieval
 
@@ -48,7 +46,6 @@
 + (id) remoteObjectWithID:(NSInteger)mID;
 
 
-
 // Synchronous, with error dereference
 
 - (BOOL) remoteGetLatest:(NSError **)error;
@@ -58,7 +55,6 @@
 
 + (NSArray *) remoteAll:(NSError **)error;
 + (id) remoteObjectWithID:(NSInteger)mID error:(NSError **)error;
-
 
 
 // Asynchronous
@@ -76,11 +72,9 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 + (void) remoteObjectWithID:(NSInteger)mID async:(NSRGetObjectCompletionBlock)completionBlock;
 
 
-
 /// =============================================================================================
 #pragma mark - Non-CRUD instance methods
 /// =============================================================================================
-
 
 - (NSString *)	remoteMakeGETRequestWithRoute:(NSString *)route error:(NSError **)error;
 - (void)		remoteMakeGETRequestWithRoute:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock;
@@ -93,13 +87,11 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 - (void)		remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock;
 
 
-
 /// =============================================================================================
 #pragma mark - Non-CRUD class methods
 //            if called on a subclass, will direct it to the controller ([User makeGET:@"foo"] => myapp.com/users/foo)
 //            if called on NSRailsModel, will direct it to the app's root ([NSRailsModel makeGET:@"foo"] => myapp.com/foo)
 /// =============================================================================================
-
 
 + (NSString *)	remoteMakeGETRequestWithRoute:(NSString *)httpVerb error:(NSError **)error;
 + (void)		remoteMakeGETRequestWithRoute:(NSString *)httpVerb async:(NSRHTTPCompletionBlock)completionBlock;
@@ -109,7 +101,6 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 
 + (NSString *)	remoteMakeRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route error:(NSError **)error;
 + (void)		remoteMakeRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock;
-
 
 
 /// =============================================================================================
@@ -132,12 +123,16 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 
 - (id) initWithCustomSyncProperties:(NSString *)str;
 
+
 @end
 
 
 
-
+/// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /
+/// =============================================================================================
 #pragma mark - Macro definitions
+/// =============================================================================================
+/// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /
 
 
 /// =============================================================================================

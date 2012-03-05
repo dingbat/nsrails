@@ -20,6 +20,8 @@
  quickly in Xcode using #pragma marks.
 								    	*/
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 @interface NSRailsModel (internal)
 
 + (NSRConfig *) getRelevantConfig;
@@ -40,12 +42,12 @@
 
 @end
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @implementation NSRailsModel
 @synthesize remoteID, remoteDestroyOnNesting, remoteAttributes;
 
 static NSMutableDictionary *propertyCollections = nil;
-
 
 #pragma mark - Meta-NSR stuff
 
