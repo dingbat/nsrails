@@ -1,43 +1,44 @@
 //
 //  NSRails.h
-//  NSRails
+/*
+ 
+ _|      _|    _|_|_|  _|_|_|              _|  _|            
+ _|_|    _|  _|        _|    _|    _|_|_|      _|    _|_|_|  
+ _|  _|  _|    _|_|    _|_|_|    _|    _|  _|  _|  _|_|      
+ _|    _|_|        _|  _|    _|  _|    _|  _|  _|      _|_|  
+ _|      _|  _|_|_|    _|    _|    _|_|_|  _|  _|  _|_|_| 
+ 
+ */
 //
 //  Created by Dan Hassin on 1/10/12.
 //  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
+
 
 #import <Foundation/Foundation.h>
 #import "NSRConfig.h"
 
 @class NSRPropertyCollection;
 
-//log NSR errors by default
-#define NSRLogErrors
-
-typedef void(^NSRBasicCompletionBlock)(NSError *error);
-typedef void(^NSRGetAllCompletionBlock)(NSArray *allRemote, NSError *error);
-typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
-
-@interface NSRailsModel : NSObject <NSCoding> //NSCoding is supported for serialization
+@interface NSRailsModel : NSObject <NSCoding>
 {
-	//used if instance is made with custom sync properties (and not from NSRailsSync in its class)
+	//used if initialized with initWithCustomSyncProperties
 	NSRPropertyCollection *customProperties;
 }
 
 @property (nonatomic, strong) NSNumber *remoteID;
 @property (nonatomic, strong, readonly) NSDictionary *remoteAttributes;
-
-//for nested models
-//remember that rails-side needs to implement ":allow_destroy => true" on accepts_nested_attributes_for
-@property (nonatomic) BOOL remoteDestroyOnNesting;
+@property (nonatomic) BOOL remoteDestroyOnNesting; 
 
 
-///////
-//CRUD
-///////
 
-/////////////////////////
-//sync, no error retrieval
+/// =============================================================================================
+#pragma mark - CRUD
+/// =============================================================================================
+
+
+// Synchronous, no error retrieval
+
 - (BOOL) remoteGetLatest;
 - (BOOL) remoteUpdate;
 - (BOOL) remoteCreate;
@@ -46,8 +47,10 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 + (NSArray *) remoteAll;
 + (id) remoteObjectWithID:(NSInteger)mID;
 
-/////////////////////////
-//sync
+
+
+// Synchronous, with error dereference
+
 - (BOOL) remoteGetLatest:(NSError **)error;
 - (BOOL) remoteUpdate:(NSError **)error;
 - (BOOL) remoteCreate:(NSError **)error;
@@ -56,8 +59,14 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 + (NSArray *) remoteAll:(NSError **)error;
 + (id) remoteObjectWithID:(NSInteger)mID error:(NSError **)error;
 
-///////////////////////////
-//async
+
+
+// Asynchronous
+ 
+typedef void(^NSRBasicCompletionBlock)(NSError *error);
+typedef void(^NSRGetAllCompletionBlock)(NSArray *allRemote, NSError *error);
+typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
+
 - (void) remoteGetLatestAsync:(NSRBasicCompletionBlock)completionBlock;
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock;
 - (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock;
@@ -67,14 +76,16 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 + (void) remoteObjectWithID:(NSInteger)mID async:(NSRGetObjectCompletionBlock)completionBlock;
 
 
-///////////////////////////////////////
-//custom methods (not CRUD) on instance
-///////////////////////////////////////
+
+/// =============================================================================================
+#pragma mark - Non-CRUD instance methods
+/// =============================================================================================
+
 
 - (NSString *)	remoteMakeGETRequestWithRoute:(NSString *)route error:(NSError **)error;
 - (void)		remoteMakeGETRequestWithRoute:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock;
 
-//will send itself as requestBody
+// (will send JSON representation of itself as requestBody)
 - (NSString *)	remoteMakeRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route error:(NSError **)error;
 - (void)		remoteMakeRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock;
 
@@ -82,11 +93,13 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 - (void)		remoteMakeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock;
 
 
-///////////////////////////////////////
-//custom methods (not CRUD) on class
-//if called on a subclass, will direct it to the controller ([User makeGET:@"hello"] => myapp.com/users/hello)
-//if called on NSRailsModel, will direct it to the app's root ([NSRailsModel makeGET:@"hello"] => myapp.com/hello)
-///////////////////////////////////////
+
+/// =============================================================================================
+#pragma mark - Non-CRUD class methods
+//            if called on a subclass, will direct it to the controller ([User makeGET:@"foo"] => myapp.com/users/foo)
+//            if called on NSRailsModel, will direct it to the app's root ([NSRailsModel makeGET:@"foo"] => myapp.com/foo)
+/// =============================================================================================
+
 
 + (NSString *)	remoteMakeGETRequestWithRoute:(NSString *)httpVerb error:(NSError **)error;
 + (void)		remoteMakeGETRequestWithRoute:(NSString *)httpVerb async:(NSRHTTPCompletionBlock)completionBlock;
@@ -98,10 +111,11 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 + (void)		remoteMakeRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock;
 
 
-///////////////////////////////////////////
-//manual json encoding/decoding
-//will use whatever inputted in NSRailsSync()
-///////////////////////////////////////////
+
+/// =============================================================================================
+#pragma mark - Manual JSON encoding/decoding
+//             (Takes into account NSRailsSync)
+/// =============================================================================================
 
 - (NSString *) remoteJSONRepresentation;
 - (NSDictionary *) dictionaryOfRemoteProperties;
@@ -110,31 +124,44 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 - (void) setAttributesAsPerRemoteDictionary:(NSDictionary *)dict;
 - (id) initWithRemoteAttributesDictionary:(NSDictionary *)railsDict;
 
-//manual sync properties string, specific for that instance
+
+/// =============================================================================================
+#pragma mark - Initializers
+//             (Sets custom sync properties for that instance - will not use its class's NSRailsSync)
+/// =============================================================================================
+
 - (id) initWithCustomSyncProperties:(NSString *)str;
 
 @end
 
-///////////////////
-//macro definitions
-///////////////////
+
+
+
+#pragma mark - Macro definitions
+
+
+/// =============================================================================================
+#pragma mark - Helpers
+/// =============================================================================================
 
 //clever macro trick to allow "overloading" macro functions thanks to orj's gist: https://gist.github.com/985501
-#define CAT(a, b) _PRIMITIVE_CAT(a, b)
+#define _CAT(a, b) _PRIMITIVE_CAT(a, b)
 #define _PRIMITIVE_CAT(a, b) a##b
-#define N_ARGS(...) N_ARGS_1(__VA_ARGS__, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
-#define N_ARGS_1(...) N_ARGS_2(__VA_ARGS__)
-#define N_ARGS_2(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, n, ...) n
+#define _N_ARGS(...) _N_ARGS_1(__VA_ARGS__, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#define _N_ARGS_1(...) _N_ARGS_2(__VA_ARGS__)
+#define _N_ARGS_2(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, n, ...) n
 
 //maco to convert cstring to NSString
 #define NSRStringFromCString(cstr)	[NSString stringWithCString:cstr encoding:NSUTF8StringEncoding]
+
 //adding a # before va_args will simply make its contents a cstring
 #define _MAKE_STR(...)	NSRStringFromCString(#__VA_ARGS__)
 
-//NSRails macros
 
-//////////////
-//NSRailsSync
+/// =============================================================================================
+#pragma mark NSRailsSync
+/// =============================================================================================
+
 //define NSRailsSync to create a method called NSRailsSync, which returns the entire param list
 #define NSRailsSync(...) \
 + (NSString*) NSRailsSync { return _MAKE_STR(__VA_ARGS__); }
@@ -145,10 +172,14 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 //returns the string version of NSRNoCarryFromSuper so we can find it when evaluating NSRailsSync string
 #define _NSRNoCarryFromSuper_STR	_MAKE_STR(_NSR_NO_SUPER_)
 
-////////////
-//NSRailsUseModelName
+
+
+/// =============================================================================================
+#pragma mark NSRailsUseModelName
+/// =============================================================================================
+
 //define NSRailsUseModelName to concat either _NSR_Name1(x) or _NSR_Name2(x,y), depending on the number of args passed in
-#define NSRailsUseModelName(...) CAT(_NSR_Name,N_ARGS(__VA_ARGS__))(__VA_ARGS__)
+#define NSRailsUseModelName(...) _CAT(_NSR_Name,_N_ARGS(__VA_ARGS__))(__VA_ARGS__)
 
 //using default is the same thing as passing nil for both model name + plural name
 #define NSRailsUseDefaultModelName _NSR_Name2(nil,nil)
@@ -163,12 +194,14 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 + (NSString*) NSRailsUseModelName { return x; } \
 + (NSString*) NSRailsUsePluralName { return y; }
 
-/////////////
-//NSRailsUseConfig
+
+/// =============================================================================================
+#pragma mark NSRailsUseConfig
+/// =============================================================================================
 
 //works the same way as NSRailsUseModelName
 
-#define NSRailsUseConfig(...) CAT(_NSR_Config,N_ARGS(__VA_ARGS__))(__VA_ARGS__)
+#define NSRailsUseConfig(...) _CAT(_NSR_Config,_N_ARGS(__VA_ARGS__))(__VA_ARGS__)
 #define NSRailsUseDefaultConfig \
 + (NSRConfig *) NSRailsUseConfig { return [NSRConfig defaultConfig]; }
 #define _NSR_Config1(x) \
@@ -176,7 +209,13 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 #define _NSR_Config3(x,y,z)  \
 + (NSRConfig *) NSRailsUseConfig { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = x; config.appUsername = y; config.appPassword = z; return config; }
 
+/// =============================================================================================
+#pragma mark - NSRails
+/// =============================================================================================
+
 //this will be the NSRailsSync for NSRailsModel, basis for all subclasses
 //use remoteID as equivalent for rails property id
 #define NSRAILS_BASE_PROPS @"remoteID=id"
 
+//log NSR errors by default
+#define NSRLogErrors

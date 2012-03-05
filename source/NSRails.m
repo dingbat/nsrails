@@ -14,22 +14,11 @@
 #import "NSData+Additions.h"
 #import "NSObject+Properties.h"
 
-  ///////////////////////////////////////////////////////////////
-
-     ///   //   //////   //////      /////   //  //      //////
-    ////  //  //        //   //    //   //  //  //     //
-   // // //    ////    //////     //   //  //  //       ////
-  //  ////       //   //  //     ///////  //  //          //
- //   ///   /////    //    ///  //   //  //  /////// /////
-
-/////////////////////////////////////////////////////////////
-
 /* 
     If this file is too intimidating, 
  remember that you can navigate it
  quickly in Xcode using #pragma marks.
 								    	*/
-
 
 @interface NSRailsModel (internal)
 
@@ -57,8 +46,8 @@
 
 static NSMutableDictionary *propertyCollections = nil;
 
-#pragma mark -
-#pragma mark Meta-NSR stuff
+
+#pragma mark - Meta-NSR stuff
 
 //this will suppress the compiler warnings that come with ARC when doing performSelector
 #pragma clang diagnostic push
@@ -215,8 +204,7 @@ static NSMutableDictionary *propertyCollections = nil;
 
 
 
-#pragma mark -
-#pragma mark Internal NSR stuff
+#pragma mark - Internal NSR stuff
 
 //overload NSObject's description method to be a bit more, hm... descriptive
 //will return the latest Rails dictionary (hash) retrieved
@@ -620,8 +608,7 @@ static NSMutableDictionary *propertyCollections = nil;
 
 
 
-#pragma mark -
-#pragma mark HTTP Request stuff
+#pragma mark - HTTP Request stuff
 
 + (NSString *) routeForControllerRoute:(NSString *)route
 {
@@ -760,8 +747,7 @@ static NSMutableDictionary *propertyCollections = nil;
 
 
 
-#pragma mark -
-#pragma mark External stuff (CRUD)
+#pragma mark - External stuff (CRUD)
 
 #pragma mark Create
 
@@ -955,8 +941,7 @@ static NSMutableDictionary *propertyCollections = nil;
 }
 
 
-#pragma mark -
-#pragma mark NSCoding
+#pragma mark - NSCoding
 
 - (id) initWithCoder:(NSCoder *)aDecoder
 {
@@ -980,8 +965,7 @@ static NSMutableDictionary *propertyCollections = nil;
 	[aCoder encodeObject:customProperties forKey:@"customProperties"];
 }
 
-#pragma mark -
-#pragma mark Dealloc for non-ARC
+#pragma mark - Dealloc for non-ARC
 #ifndef NSRCompileWithARC
 
 - (void) dealloc
