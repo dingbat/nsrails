@@ -15,16 +15,12 @@
 
 + (NSRConfig *) getRelevantConfig;
 
-- (void) setAttributesAsPerDictionary:(NSDictionary *)dict;
-- (NSDictionary *) dictionaryOfRelevantProperties;
-
 + (NSString *) railsProperties;
 + (NSString *) getModelName;
 + (NSString *) getPluralModelName;
 
-+ (NSRConfig *) getRelevantConfig;
-
 + (NSRPropertyCollection *) propertyCollection;
+- (NSRPropertyCollection *) propertyCollection;
 
 - (NSString *) routeForInstanceRoute:(NSString *)route error:(NSError **)error;
 + (NSString *) routeForControllerRoute:(NSString *)route;
@@ -42,12 +38,14 @@
 
 #define NSRAssertClassPluralName(mname, class)	GHAssertEqualStrings([class getPluralModelName], mname, @"%@ model name failed.", NSStringFromClass(class))
 
-//do-while loop so that test has limited scope
-#define NSRAssertClassProperties(class, property, ...) \
-do { \
-NSArray *test = [NSArray arrayWithObjects:property, __VA_ARGS__, nil];\
-GHAssertEqualObjects([[class propertyCollection] sendableProperties], test, @"%@ properties failed.", NSStringFromClass(class)); \
-} while (NO) 
+//if statement, for limited scope
+#define NSRAssertEqualArrays(arr, ...) \
+if (YES) { \
+NSArray *test = [NSArray arrayWithObjects:__VA_ARGS__, nil];\
+GHAssertEqualObjects(arr, test, nil); \
+}
+
+#define NSRAssertClassProperties(class, ...) NSRAssertEqualArrays([[class propertyCollection] sendableProperties], __VA_ARGS__)
 
 #define NSRAssertEqualConfigs(config,teststring,desc, ...) GHAssertEqualStrings(config.appURL, [@"http://" stringByAppendingString:teststring], desc, __VA_ARGS__)
 

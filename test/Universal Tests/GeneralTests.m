@@ -5,12 +5,12 @@
 //  Created by Dan Hassin on 1/29/12.
 //  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
- 
+
 #import "NSRAsserts.h"
 
 #import "InheritanceTestClasses.h"
 #import "NestingTestClasses.h"
-#import "TestClass.h"
+#import "TestClasses.h"
 
 @interface GeneralTests : GHTestCase
 @end
@@ -20,6 +20,49 @@
 - (void) test_invalid_sync_params
 {
 	NSRAssertClassProperties([TestClass class], @"remoteID", @"attr1");
+}
+
+- (void) test_property_flags
+{
+	TestClass *c = [[TestClass alloc] initWithCustomSyncProperties:@"remoteID -r, retrieve -r, send -s, local -x, decode -d, encode -e, parent -b"];
+	NSRPropertyCollection *pc = [c propertyCollection];
+	
+	NSRAssertEqualArrays(pc.retrievableProperties, @"remoteID", @"retrieve", @"decode", @"encode", @"parent");
+	NSRAssertEqualArrays(pc.sendableProperties, @"remoteID", @"send", @"decode", @"encode", @"parent");
+	NSRAssertEqualArrays(pc.decodeProperties, @"decode");
+	NSRAssertEqualArrays(pc.encodeProperties, @"encode");
+	
+	c.encode = @"encode"; //should capitalize it
+
+	NSDictionary *sendDict = [c dictionaryOfRemoteProperties];
+	GHAssertNil([sendDict objectForKey:@"retrieve"], @"Retrieve was defined as -r only, should not be in send dict");
+	GHAssertNil([sendDict objectForKey:@"local"], @"Local was defined as -x, should not be in send dict");
+	GHAssertEqualStrings([sendDict objectForKey:@"encode"], [c.encode uppercaseString], @"Encode method failed");
+	GHAssertTrue([sendDict objectForKey:@"parent"] == [NSNull null], @"Even if belongs_to, should've sent nil if prop is nil");
+	
+	c.parent = [[TestClassParent alloc] init];
+	NSLog(@"found dict %@",[c dictionaryOfRemoteProperties]);
+	GHAssertNotNil([[c dictionaryOfRemoteProperties] objectForKey:@"parent_attributes"], @"'parent_attributes' should've been set, not _id");
+	GHAssertNil([[c dictionaryOfRemoteProperties] objectForKey:@"parent"], @"'parent' shouldn't been set, since it's not nil (should be _attributes)");
+
+	c.parent.remoteID = [NSNumber numberWithInt:5];
+	GHAssertTrue([[[c dictionaryOfRemoteProperties] objectForKey:@"parent_id"] intValue] == 5, @"parent_id should've been set, to 5");
+	GHAssertNil([[c dictionaryOfRemoteProperties] objectForKey:@"parent_attributes"], @"'parent_attributes' shouldn't have been set, since it has an id");
+	GHAssertNil([[c dictionaryOfRemoteProperties] objectForKey:@"parent"], @"'parent' shouldn't been set, since it's not nil (should be _attributes)");
+
+	NSMutableDictionary *remoteReturn = [[NSMutableDictionary alloc] init];
+	[remoteReturn setObject:@"DECODE" forKey:@"decode"];
+	[remoteReturn setObject:@"xxxxx" forKey:@"send"];
+	[remoteReturn setObject:@"xxxxx" forKey:@"local"];
+	[remoteReturn setObject:@"retrieve" forKey:@"retrieve"];
+	[remoteReturn setObject:@"ENCODE" forKey:@"encode"];
+	
+	[c setAttributesAsPerRemoteDictionary:remoteReturn];
+	GHAssertNil(c.send, @"Sendable-only property shouldn't have been set");
+	GHAssertNil(c.local, @"Local-only property shouldn't have been set");
+	GHAssertEqualStrings(c.decode, @"decode", @"Decodable property should've been downcased");
+	GHAssertEqualStrings(c.retrieve, @"retrieve", @"Retrievable property should've been set");
+	GHAssertEqualStrings(c.encode, @"ENCODE", @"Encodable-only property should've been untouched");
 }
 
 - (void) test_config_environments
@@ -46,11 +89,11 @@
 	GHAssertEqualStrings([NSRConfig currentEnvironment], NSRConfigEnvironmentProduction, @"Environment still be Prod");
 	NSRAssertRelevantConfigURL(@"Prod", @"Default URL set while in Prod, should have stuck");
 	GHAssertNotNil(testConfig, @"Calling configForEnvironment: should generate a new config if non-existent");
-
+	
 	[NSRConfig setCurrentEnvironment:@"test"];
 	GHAssertEqualStrings([NSRConfig currentEnvironment], @"test", @"Environment should be test");
 	NSRAssertRelevantConfigURL(@"TestURL", @"Default URL should be one set for test");
-
+	
 	NSRConfig *newProd = [[NSRConfig alloc] initWithAppURL:@"NewProdURL"];
 	[NSRConfig setConfig:newProd asDefaultForEnvironment:NSRConfigEnvironmentProduction];
 	GHAssertEqualStrings([NSRConfig currentEnvironment], @"test", @"Environment should still be test");
@@ -78,15 +121,15 @@
 		 [c use];
 		 
 		 NSRAssertRelevantConfigURL(@"Nested", @"[use] nested inside of default block");
-
+		 
 		 [[NSRConfig defaultConfig] useIn:^
 		  {
 			  NSRAssertRelevantConfigURL(@"Default", @"default block nested inside [use] inside default block");
-
+			  
 			  [c useIn:^
-			  {
-				  NSRAssertRelevantConfigURL(@"Nested", @"triple nested");
-			  }];
+			   {
+				   NSRAssertRelevantConfigURL(@"Nested", @"triple nested");
+			   }];
 		  }];
 		 
 		 [c end];
@@ -95,13 +138,13 @@
 	 }];
 	
 	GHAssertEqualStrings(@"test_class", [TestClass getModelName], @"auto-underscoring");
-
+	
 	NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"NoAuto/"]; //also tests to see that it'll add http:// and remove the /
 	c.automaticallyUnderscoreAndCamelize = NO;
 	[c useIn:
 	 ^{
 		 NSRAssertRelevantConfigURL(@"NoAuto", @"custom block ^{} block");
-
+		 
 		 GHAssertEqualStrings(@"TestClass", [TestClass getModelName], @"No auto-underscoring");
 	 }];
 	
@@ -133,7 +176,7 @@
 	[[NSRConfig defaultConfig] setAppPassword:nil];
 	
 	NSArray *allPeople = [Post remoteAll:&e];
-
+	
 	GHAssertNotNil(e, @"Should fail on not authenticated, where's the error?");
 	GHAssertNil(allPeople, @"Array should be nil because there was an authentication error");
 	
@@ -143,7 +186,7 @@
 	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
 	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
 	allPeople = [Post remoteAll:&e];
-
+	
 	//if error, and it's NSURL domain, must be that the server isn't running
 	if ([[e domain] isEqualToString:@"NSURLErrorDomain"])
 	{
@@ -163,7 +206,7 @@
 	
 	GHAssertNil(e, @"remoteAll on Post should have worked.'");
 	GHAssertNotNil(allPeople, @"No errors, allPeople should not be nil.");
-
+	
 	e = nil;
 	
 	/////////////////
@@ -179,7 +222,7 @@
 	
 	/////////////////
 	//TEST CREATE
-		
+	
 	//this should fail on validation b/c no author
 	Post *failedPost = [[Post alloc] init];
 	failedPost.author = @"Fail";
@@ -190,7 +233,7 @@
 	GHAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"There was an error by validation, so validation error dictionary should be present.");
 	
 	e = nil;
-
+	
 	//this should go through
 	Post *newPost = [[Post alloc] init];
 	newPost.author = @"Dan";
@@ -213,7 +256,7 @@
 	GHAssertEqualObjects(retrievedPost.remoteID, newPost.remoteID, @"Retrieved post should have same remoteID as created post");
 	
 	e = nil;
-
+	
 	/////////////////
 	//TEST UPDATE
 	
@@ -224,7 +267,7 @@
 	GHAssertNil(e, @"Update should've gone through, there should be no error");
 	
 	e = nil;
-
+	
 	NSNumber *postID = newPost.remoteID;
 	newPost.remoteID = nil;
 	[newPost remoteUpdate:&e];
@@ -238,7 +281,7 @@
 	//update should fail validation b/c no author
 	newPost.author = nil;
 	[newPost remoteUpdate:&e];
-
+	
 	GHAssertNotNil(e, @"New post should've failed, there should be an error.");
 	GHAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"There was an error by validation, so validation error dictionary should be present.");
 	GHAssertNil(newPost.author, @"New author failed validation (unchanged) but it should still be nil locally.");
@@ -253,13 +296,13 @@
 	GHAssertNil(e, @"Should be no error retrieving a value.");
 	//see if it correctly set the info on the server (still there after failed validation) to overwrite the local author (set to nil)
 	GHAssertNotNil(newPost.author, @"New post should have gotten back his old author after validation failed (on the retrieve).");
-
+	
 	e = nil;
 	
 	//see if there's an error if trying to retrieve with a nil ID
 	newPost.remoteID = nil;
 	[newPost remoteGetLatest:&e];
-
+	
 	GHAssertNotNil(e, @"Tried to retrieve an instance with a nil ID, where's the error?");
 	
 	e = nil;
@@ -271,7 +314,7 @@
 	[newPost remoteDestroy:&e];
 	GHAssertNotNil(e, @"Tried to delete an instance with a nil ID, where's the error?");
 	newPost.remoteID = postID;
-
+	
 	e = nil;
 	
 	//should work
@@ -333,7 +376,7 @@
 	GHAssertNil(e, @"There should be no error nesting Response creation");
 	GHAssertTrue(post.responses.count == 1, @"Local responses array should still have response (created properly).");
 	GHAssertNotNil(response, @"Local Response object should still be here (created properly)");
-
+	
 	e = nil;
 	
 	//now try retrieving post and see if remoteID exists
@@ -345,7 +388,7 @@
 	NSNumber *responseID = response.remoteID;
 	response.remoteDestroyOnNesting = YES;
 	[post remoteUpdate:&e];
-
+	
 	GHAssertNil(e, @"There should be no error nesting Response deletion");
 	GHAssertTrue(post.responses.count == 1, @"Local responses array should still have response (deleted properly).");
 	GHAssertNotNil(response, @"Local Response object should still be here (deleted properly)");
@@ -354,7 +397,7 @@
 	
 	Response *retrieveResponse = [Response remoteObjectWithID:[responseID integerValue] error:&e];
 	GHAssertNotNil(e, @"Response object should've been nest-deleted, where's the error in retrieving it?");
-
+	
 	e = nil;
 	
 	//test nest-creation via RESPONSE-side, meaning we set its post variable (this should fail without the -b flag)
@@ -366,7 +409,7 @@
 	[newResponse remoteCreate:&e];
 	GHAssertNotNil(e, @"Tried to send Rails a 'post_attributes' key in belongs_to association, where's the error?");
 	GHAssertNil(newResponse.remoteID, @"newResponse's ID should be nil - there was an error in create.");
-
+	
 	e = nil;
 	
 	//now try with -b flag
@@ -449,7 +492,7 @@
 			
 			//now, as the retrieve part of the create, it won't know what to stick in the array and put NSDictionaries in instead
 			GHAssertTrue([[missingClassPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Couldn't find what to put into the array, so should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[missingClassPost.responses objectAtIndex:0] class]));
-						
+			
 			//same applies for retrieve
 			[missingClassPost remoteGetLatest:&e];
 			GHAssertNil(e, @"There should've been no errors on the retrieve, even if no nested model defined.");

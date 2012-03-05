@@ -9,7 +9,6 @@
 #import "NSRConfig.h"
 #import "NSRails.h"
 #import "InheritanceTestClasses.h"
-#import "TestClass.h"
 #import "NSRAsserts.h"
 
 @interface InheritanceTests : GHTestCase
