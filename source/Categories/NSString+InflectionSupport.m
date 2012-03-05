@@ -1,5 +1,3 @@
-//this category borrowed from ObjectiveResource
-
 //
 //  NSString+InflectionSupport.m
 //  
@@ -7,6 +5,7 @@
 //  Created by Ryan Daigle on 7/31/08.
 //  Copyright 2008 yFactorial, LLC. All rights reserved.
 //
+// This category borrowed from ObjectiveResource
 
 #import "NSString+InflectionSupport.h"
 
@@ -16,19 +15,37 @@
 	return [NSCharacterSet uppercaseLetterCharacterSet];
 }
 
-- (NSString *)deCamelizeWith:(NSString *)delimiter {
-	
+- (NSCharacterSet *)camelcaseDelimiters {
+	return [NSCharacterSet characterSetWithCharactersInString:@"-_"];
+}
+
+//improved by NSRails to support more circumstances (see test_inflection in /test)
+- (NSString *)deCamelizeWith:(NSString *)delimiter 
+{	
 	unichar *buffer = calloc([self length], sizeof(unichar));
-	[self getCharacters:buffer ];
+	[self getCharacters:buffer];
 	NSMutableString *underscored = [NSMutableString string];
 	
 	NSString *currChar;
-	for (int i = 0; i < [self length]; i++) {
+	BOOL previousLetterWasCaps = NO;
+	for (int i = 0; i < [self length]; i++) 
+	{
 		currChar = [NSString stringWithCharacters:buffer+i length:1];
-		if([[self capitals] characterIsMember:buffer[i]]) {
-			[underscored appendFormat:@"%@%@", (i == 0 ? @"" : delimiter), [currChar lowercaseString]];
-		} else {
+		if ([[self capitals] characterIsMember:buffer[i]]) 
+		{
+			BOOL nextLetterIsCaps = (i+1 == self.length || [[self capitals] characterIsMember:buffer[i+1]]);
+			//only add the delimiter if, it's not the first letter, it's not in the middle of a bunch of caps, and it's not a repeat
+			if (i != 0 && !(previousLetterWasCaps && nextLetterIsCaps) && ![[self camelcaseDelimiters] characterIsMember:buffer[i-1]])
+			{
+				[underscored appendString:delimiter];
+			}
+			[underscored appendString:[currChar lowercaseString]];
+			previousLetterWasCaps = YES;
+		}
+		else 
+		{
 			[underscored appendString:currChar];
+			previousLetterWasCaps = NO;
 		}
 	}
 	
@@ -44,10 +61,6 @@
 - (NSString *)underscore
 {
 	return [self deCamelizeWith:@"_"];
-}
-
-- (NSCharacterSet *)camelcaseDelimiters {
-	return [NSCharacterSet characterSetWithCharactersInString:@"-_"];
 }
 
 - (NSString *)camelize

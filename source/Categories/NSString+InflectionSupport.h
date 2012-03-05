@@ -1,5 +1,3 @@
-//this category borrowed from ObjectiveResource
-
 //
 //  NSString+InflectionSupport.h
 //  
@@ -7,6 +5,7 @@
 //  Created by Ryan Daigle on 7/31/08.
 //  Copyright 2008 yFactorial, LLC. All rights reserved.
 //
+// This category borrowed from ObjectiveResource
 
 @interface NSString (InflectionSupport)
 
