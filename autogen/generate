@@ -134,8 +134,8 @@ def run_script_with_args(args)
     display_help
     return
   end
-    
-  project_name = @options[:path].split("/").last
+  
+  project_name = @options[:project] || File.expand_path(@options[:path]).split("/").last    
 
   begin
     schema = File.open(@options[:path]+"db/schema.rb")
@@ -151,11 +151,11 @@ def run_script_with_args(args)
     puts "Making directory #{project_name}.gen/"
   rescue    
   end
+  
+  @options[:project] ||= project_name.camelize
+  @options[:prefix] ||= ""
 
   puts "Writing files to #{output_path}"
-
-  @options[:project] ||= project_name.camelize 
-  @options[:prefix] ||= ""
 
   @time = Time.now.strftime("%m/%d/%Y")
 
