@@ -122,12 +122,15 @@ def options_hash_for_args(args)
         options[current_option.to_sym] = arg
         current_option = nil
       else
-        arg = EXPANDED_OPTIONS[arg] || arg
-        current_option = arg[2..arg.length].gsub("-","_")
+        begin
+          arg = EXPANDED_OPTIONS[arg] || arg
+          current_option = arg[2..arg.length].gsub("-","_")
 
-        if !EXPANDED_OPTIONS.values.include? arg
-          options[current_option.to_sym] = true
-          current_option = nil          
+          if !EXPANDED_OPTIONS.values.include? arg
+            options[current_option.to_sym] = true
+            current_option = nil          
+          end
+        rescue
         end
       end
     end
@@ -233,11 +236,21 @@ def run_script_with_args(args)
       ["h", "m"].each do |format|
         filename = @model[:name]+"."+format
         overwrite = File.exist?(output_path+filename)
-        puts "  + #{filename}#{overwrite ? '  (overwrite)' : ''}"
+        identical = false
+        
+        contents = header(filename)
+        contents += "\n\n"
+        contents += eval("#{format}(@model)")
+        contents += "\n\n@end"
+        
+        if (overwrite && contents.chomp == File.open(output_path+filename).read.chomp)
+          identical = true
+          overwrite = false
+        end
+        
+        puts "  + #{filename}#{overwrite ? '  (overwrite)' : identical ? '  (identical)' : ''}"
         File.open(output_path+filename, "w") do |file|
-          file.puts(header(filename)+"\n\n")
-          file.puts(eval("#{format}(@model)"))
-          file.puts("\n@end")
+          file.puts contents
         end
       end
       models << @model
@@ -268,7 +281,7 @@ def run_script_with_args(args)
       end
     end
     filename += ".h"
-    puts "  + #{filename}"
+    puts "  + #{filename}"    
     File.open(output_path+filename, "w") do |file|
       file.puts(header(filename)+"\n\n")
       file.puts(import_classes(models.collect { |m| m[:name] }))
