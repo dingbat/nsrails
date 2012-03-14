@@ -31,7 +31,8 @@ Include `created_at` or `updated_at`: (excluded by default)
 $ autogen/generate APP_PATH --created-at --updated-at
 ```
 
-## Nested properties
+Nested properties
+===================
 
 Exclude `-b` flag to any `belongs_to` properties: (flags included by default - read more about this [here](https://github.com/dingbat/nsrails/wiki/Property-flags))
 
@@ -45,7 +46,7 @@ Make X-to-many properties use `NSMutableArray` instead of `NSArray`:
 $ autogen/generate APP_PATH --nesting-mutable-arrays
 ```
 
-Make all nested properties [[retrievable-only|Property-flags]] (if you don't want to [[support accepting nested attributes|Nesting]]):
+Make all nested properties [retrievable-only](https://github.com/dingbat/nsrails/wiki/Property-flags) (if you don't want to [support accepting nested attributes](https://github.com/dingbat/nsrails/wiki/Nesting)):
 
 ```
 $ autogen/generate APP_PATH --nesting-retrievable-only
