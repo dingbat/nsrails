@@ -176,7 +176,7 @@ def run_script_with_args(args)
     next unless @model
     if line =~ /end/
       begin
-        model_file = File.open(path+"app/models/#{@model[:model_name]}.rb")
+        model_file = File.open(@options[:path]+"app/models/#{@model[:model_name]}.rb")
         while line = model_file.gets()
           if (line.length > 0 && line[0] == "#"[0])
             next
