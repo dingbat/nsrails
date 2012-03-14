@@ -35,14 +35,20 @@ def m(m)
     str += "\n@synthesize #{list.join(', ')};"
   end
   str += "\nNSRailsSync(*"
-  if (!@options[:exclude_belongs_to_flag])
+  if (!@options[:nesting_no_b_flag])
     m[:belongs_tos].each do |bt_prop|
       str += ", #{bt_prop} -b"
+      if (@options[:nesting_retrievable_only])
+        str += "r"
+      end
     end
   end
   m[:has_manys].each do |hm_dict|
     hm_dict.each do |hm_prop, hm|
       str += ", #{hm_prop}:#{hm}"
+      if (@options[:nesting_retrievable_only])
+        str += " -r"
+      end
     end
   end
   str += ")"
@@ -79,15 +85,16 @@ def display_help
   puts "   #{this_file[pwd.length+1..this_file.length]} APP_PATH [options]"
   puts ""
   puts "Options for property translation:"
-  puts "   --include-created-at        // Will include the created_at date property (as NSDate)"
-  puts "   --include-updated-at        // Will include the updated_at date property (as NSDate)"
-  puts "   --exclude-belongs-to-flag   // On properties defined in Rails as belongs_to, will exclude '-b' flag"
-  puts "   --use-mutable-arrays        // Will use NSMutableArray instead of NSArray for has_many properties"
+  puts "   --created-at                  // Will include the created_at date property (as NSDate)"
+  puts "   --updated-at                  // Will include the updated_at date property (as NSDate)"
+  puts "   --nesting-no-b-flag           // On properties defined in Rails as belongs_to, will exclude '-b' flag"
+  puts "   --nesting-retrievable-only    // On properties relating another model, will include '-r' flag"
+  puts "   --nesting-mutable-arrays      // Will use NSMutableArray instead of NSArray for has_many properties"
   puts ""
   puts "Options for file styling:"
   puts "   -a [--author]    -a \"Dan H\"             /* This is metadata for the headers at the"
-  puts "   -p [--project]   -p \"My Project\"           top of your files. Use quotations if your"
-  puts "   -c [--company]   -c \"My Company, LLC\"      argument has spaces.                   */"
+  puts "   -p [--project]   -p \"My Project\"             top of your files. Use quotations if your"
+  puts "   -c [--company]   -c \"My Company, LLC\"        argument has spaces.                   */"
   puts "   -x [--prefix]    -x NSR                 // Prefix for classes and filenames"
   puts ""
 end
@@ -116,7 +123,7 @@ def options_hash_for_args(args)
         current_option = nil
       else
         arg = EXPANDED_OPTIONS[arg] || arg
-        current_option = arg[2..arg.length]
+        current_option = arg[2..arg.length].gsub("-","_")
 
         if !EXPANDED_OPTIONS.values.include? arg
           options[current_option.to_sym] = true
@@ -207,7 +214,7 @@ def run_script_with_args(args)
             type = class_name
             @model[:X_to_ones] << prop
           elsif line =~ /has_many/
-            if (@options[:use_mutable_arrays])
+            if (@options[:nesting_mutable_arrays])
               type = "NSMutableArray"
             else
               type = "NSArray"
@@ -238,8 +245,8 @@ def run_script_with_args(args)
     elsif !new_model
       prop = line.match(/\"(.*?)\"/).captures[0]
       unless (prop =~ /_id/)
-        if ((prop == "created_at" && !@options[:include_created_at]) ||
-            (prop == "updated_at" && !@options[:include_updated_at]))
+        if ((prop == "created_at" && !@options[:created_at]) ||
+            (prop == "updated_at" && !@options[:updated_at]))
           next
         end
         
