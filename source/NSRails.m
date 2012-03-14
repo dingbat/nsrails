@@ -13,6 +13,7 @@
 #import "NSString+InflectionSupport.h"
 #import "NSData+Additions.h"
 #import "NSObject+Properties.h"
+#import "NSRails+SBJson.h"
 
 /* 
     If this file is too intimidating, 

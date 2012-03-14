@@ -8,6 +8,7 @@
 
 #import "NSRConfig.h"
 
+#import "NSRails+SBJson.h"
 #import "NSData+Additions.h"
 
 //NSRConfigStackElement implementation

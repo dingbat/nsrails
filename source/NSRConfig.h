@@ -6,8 +6,6 @@
 //  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
-#import "NSRails+SBJson.h"
-
 /////////////////////////////
 //  OPTIONS
 // for documentation on these, see https://github.com/dingbat/nsrails/wiki/Compile-config
