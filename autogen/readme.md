@@ -21,7 +21,7 @@ Writing files to '/Users/dan/projects/nsrails/autogen/my_rails_project.gen/'
 Options:
 -----------
 
-Use the `--help` flag for a list of these options. They are absolutely combinable!
+Run the script without any arguments or use the `-h` (`--help`) flag for a list of these options. They are absolutely combinable!
 
 ### Property options
 
@@ -48,11 +48,14 @@ $ autogen/generate APP_PATH --use-mutable-arrays
 Metadata for comments header at the top of the files:
 
 ```
-$ autogen/generate APP_PATH --author="Nikola Tesla" --company="Tesla ELM" --project="The Coil"
+$ autogen/generate APP_PATH --author "Nikola Tesla" --company "Tesla ELM" --project "The Coil"
+$ autogen/generate APP_PATH -a "Nikola Tesla" -c "Tesla ELM" -p "The Coil"
 ```
 
 Add prefix for classes and filenames:
 
 ```
-$ autogen/generate APP_PATH --prefix="NSR"
+$ autogen/generate APP_PATH --prefix NSR
+$ autogen/generate APP_PATH -x NSR
 ```
+Use quotes if your argument has spaces in it.

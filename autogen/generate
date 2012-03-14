@@ -3,13 +3,6 @@
 require 'rubygems'
 require 'active_support/inflector'
 
-#bold text in terminal
-START_B = "\033[1m"
-END_B = "\033[0m"
-#"first" start bold - sometimes acts strange if just declared as first time
-NORMALIZE_B = "#{START_B}#{END_B}"
-F_START_B = "#{NORMALIZE_B}#{START_B}"
-
 def import_classes(array)
   array.map {|x| "#import \"#{@options[:prefix]+x.classify}.h\"" }.join("\n")
 end
@@ -78,68 +71,76 @@ str += "//  Copyright (c) #{Time.now.year.to_s} #{company}. All rights reserved.
 //"
 end
 
-def run_script_with_args(args)
-  path = nil
+def display_help
+  this_file = File.expand_path(File.dirname(__FILE__))+"/generate"
+  pwd = Dir.pwd
+  
+  puts "Usage:"
+  puts "   #{this_file[pwd.length+1..this_file.length]} APP_PATH [options]"
+  puts ""
+  puts "Options for property translation:"
+  puts "   --include-created-at        // Will include the created_at date property (as NSDate)"
+  puts "   --include-updated-at        // Will include the updated_at date property (as NSDate)"
+  puts "   --exclude-belongs-to-flag   // On properties defined in Rails as belongs_to, will exclude '-b' flag"
+  puts "   --use-mutable-arrays        // Will use NSMutableArray instead of NSArray for has_many properties"
+  puts ""
+  puts "Options for file styling:"
+  puts "   -a [--author]    -a \"Dan H\"             /* This is metadata for the headers at the"
+  puts "   -p [--project]   -p \"My Project\"           top of your files. Use quotations if your"
+  puts "   -c [--company]   -c \"My Company, LLC\"      argument has spaces.                   */"
+  puts "   -x [--prefix]    -x NSR                 // Prefix for classes and filenames"
+  puts ""
+end
 
-  @options = Hash.new
+EXPANDED_OPTIONS = {"-a" => "--author", "-p" => "--project", "-c" => "--company", "-x" => "--prefix"}
+
+def options_hash_for_args(args)
+  if args.empty?
+    return nil
+  end
+  options = Hash.new
+  current_option = nil
   args.each do |arg|
-    if !path && arg != "--help"
+    if arg == "-h" || arg == "--help"
+      return nil
+    end
+    
+    if !options[:path] #if path hasn't been set yet
       if (arg[arg.length] != "/"[0])
         arg += "/"
       end
-      path = arg
+      options[:path] = arg
     else
-      begin
-        var = arg[2..arg.length]
-        equal_split = var.split('=')
+      if (current_option)
+        options[current_option.to_sym] = arg
+        current_option = nil
+      else
+        arg = EXPANDED_OPTIONS[arg] || arg
+        current_option = arg[2..arg.length]
 
-        option = equal_split[0]
-        while option["-"]
-          option["-"] = "_"
+        if !EXPANDED_OPTIONS.values.include? arg
+          options[current_option.to_sym] = true
+          current_option = nil          
         end
-        if (option == "help")
-          puts "\n#{NORMALIZE_B}=========================================================================="
-          puts "------------------ #{START_B}Welcome to the NSRails autogen tool!#{END_B} ------------------"
-          puts "This script will generate NSRails Objective-C classes (.m and .h) for you,\nbased on the models from any given Rails app."
-          puts "=========================================================================="
-          puts ""
-          puts "Usage:"
-          puts "   $ #{START_B}autogen/generate APP_PATH [options]#{END_B}"
-          puts ""
-          puts "Options for property translation:"
-          puts "   #{START_B}--include-created-at#{END_B}        Will include the created_at date property (NSDate)"
-          puts "   #{START_B}--include-updated-at#{END_B}        Will include the updated_at date property (NSDate)"
-          puts "   #{START_B}--exclude-belongs-to-flag#{END_B}   On properties defined in Rails as belongs_to, will exclude '-b' flag"
-          puts "   #{START_B}--use-mutable-arrays#{END_B}        Will use NSMutableArray instead of NSArray for has_many properties"
-          puts ""
-          puts "Options for file styling:"
-          puts "   #{START_B}--author=\"X\"#{END_B}                Metadata for 'Created by' header at the top of the files"
-          puts "   #{START_B}--project=\"X\"#{END_B}               Metadata for the project header at the top of the files"
-          puts "   #{START_B}--company=\"X\"#{END_B}               Metadata for 'Copyright' field header at the top of the files"
-          puts "   #{START_B}--prefix=\"XX\"#{END_B}               Prefix for classes and filenames"
-          puts ""
-          puts ""
-          return
-        end
-        value = (equal_split.count > 1 ? equal_split[1] : true)
-
-        @options[option.to_sym] = value
-      rescue
       end
     end
   end
+  options
+end
 
-  if !path
-    puts "#{F_START_B}Error:#{END_B} No path specified. See the bundled readme for this tool or use '#{START_B}autogen/generate --help#{END_B}'"
+def run_script_with_args(args)
+  @options = options_hash_for_args(args)
+  if (!@options)
+    display_help
     return
   end
-
-  project_name = path.split("/").last
+    
+  project_name = @options[:path].split("/").last
 
   begin
-    schema = File.open(path+"db/schema.rb")
+    schema = File.open(@options[:path]+"db/schema.rb")
   rescue
-    puts "#{F_START_B}Error:#{END_B} Either '#{path}' isn't the root path to a Rails project or your db/schema.rb is misplaced."
+    puts "Error: Either '#{@options[:path]}' isn't the root path to a Rails project or your db/schema.rb is misplaced."
     return
   end
 
@@ -151,7 +152,7 @@ def run_script_with_args(args)
   rescue    
   end
 
-  puts "#{NORMALIZE_B}Writing files to '#{output_path}'"
+  puts "Writing files to #{output_path}"
 
   @options[:project] ||= project_name.camelize 
   @options[:prefix] ||= ""
@@ -225,7 +226,7 @@ def run_script_with_args(args)
       ["h", "m"].each do |format|
         filename = @model[:name]+"."+format
         overwrite = File.exist?(output_path+filename)
-        puts "  #{START_B}+#{END_B} #{filename}#{overwrite ? '  (overwrite)' : ''}"
+        puts "  + #{filename}#{overwrite ? '  (overwrite)' : ''}"
         File.open(output_path+filename, "w") do |file|
           file.puts(header(filename)+"\n\n")
           file.puts(eval("#{format}(@model)"))
@@ -260,7 +261,7 @@ def run_script_with_args(args)
       end
     end
     filename += ".h"
-    puts "  #{START_B}+#{END_B} #{filename}"
+    puts "  + #{filename}"
     File.open(output_path+filename, "w") do |file|
       file.puts(header(filename)+"\n\n")
       file.puts(import_classes(models.collect { |m| m[:name] }))
