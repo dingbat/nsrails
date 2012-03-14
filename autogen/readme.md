@@ -1,5 +1,5 @@
 Usage:
------------
+==========
 
 This autogen tool will generate NSRails Objective-C classes (`.m` and `.h`) for you, based on the models from a Rails app. Properties with `belongs_to`, `has_one`, and `has_many` relationships will also be included.
 
@@ -19,11 +19,12 @@ Writing files to '/Users/dan/projects/nsrails/autogen/my_rails_project.gen/'
 ```
 
 Options:
------------
+==========
 
 Run the script without any arguments or use the `-h` (`--help`) flag for a list of these options. They are absolutely combinable!
 
-### Property translation
+Property translation
+------------
 
 Include `created_at` or `updated_at`: (excluded by default)
 
@@ -31,8 +32,7 @@ Include `created_at` or `updated_at`: (excluded by default)
 $ autogen/generate APP_PATH --created-at --updated-at
 ```
 
-Nested properties
-===================
+### Nested properties
 
 Exclude `-b` flag to any `belongs_to` properties: (flags included by default - read more about this [here](https://github.com/dingbat/nsrails/wiki/Property-flags))
 
@@ -52,7 +52,8 @@ Make all nested properties [retrievable-only](https://github.com/dingbat/nsrails
 $ autogen/generate APP_PATH --nesting-retrievable-only
 ```
 
-### File styling
+File styling
+--------------
 
 Metadata for comments header at the top of the files:
 
