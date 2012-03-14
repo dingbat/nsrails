@@ -11,11 +11,13 @@ $ autogen/generate <APP_PATH> [options]
 Files will be created in the `autogen/` directory with the extension `.gen`, whose contained files can then be added to your Xcode project. Sample output for our [demo app](https://github.com/dingbat/nsrails/tree/master/demo/iOS):
 
 ```
-Writing files to '/Users/dan/projects/nsrails/autogen/my_rails_project.gen/'
+Making directory my_rails_project.gen/
+Writing files to /Users/dan/projects/nsrails/autogen/my_rails_project.gen/
   + Post.h
   + Post.m
   + Response.h
   + Response.m
+  + MyRailsProject.h
 ```
 
 Options:
