@@ -31,6 +31,7 @@ typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
 }
 
 @property (nonatomic) BOOL automaticallyInflects, managesNetworkActivityIndicator;
+@property (nonatomic) NSTimeInterval timeoutInterval;
 
 @property (nonatomic, strong) NSString *appURL, *appUsername, *appPassword;
 @property (nonatomic, strong) NSString *dateFormat;

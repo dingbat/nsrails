@@ -44,7 +44,8 @@
 @end
 
 @implementation NSRConfig
-@synthesize appURL, appUsername, appPassword, dateFormat, automaticallyInflects, managesNetworkActivityIndicator;
+@synthesize appURL, appUsername, appPassword, dateFormat;
+@synthesize automaticallyInflects, managesNetworkActivityIndicator, timeoutInterval;
 
 #pragma mark -
 #pragma mark Config inits
@@ -112,7 +113,8 @@ static int networkActivityRequests = 0;
 		//by default, set to accept datestring like "2012-02-01T00:56:24Z"
 		//this format (ISO 8601) is default in rails
 		self.dateFormat = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
-		automaticallyInflects = YES;
+		self.automaticallyInflects = YES;
+		self.timeoutInterval = 60;
 		
 		asyncOperationQueue = [[NSOperationQueue alloc] init];
 	}
@@ -381,7 +383,9 @@ static int networkActivityRequests = 0;
 {
 	NSString *url = [NSString stringWithFormat:@"%@/%@",appURL,route];
 	
-	NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]
+														   cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
+													   timeoutInterval:timeoutInterval];
 	
 	[request setHTTPMethod:type];
 	[request setHTTPShouldHandleCookies:NO];
@@ -406,10 +410,6 @@ static int networkActivityRequests = 0;
 		
 		[request setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];
  	}
-	
-#ifndef NSRCompileWithARC
-	[request autorelease];
-#endif
 	
 	return request;
 }
