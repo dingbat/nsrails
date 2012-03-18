@@ -103,7 +103,7 @@
 		5914249514EAFD4100481815 /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GHUnitIOS.framework; path = "iPhone Tests/GHUnitIOS.framework"; sourceTree = "<group>"; };
 		591424AF14EAFF9800481815 /* InheritanceTestClasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InheritanceTestClasses.h; sourceTree = "<group>"; };
 		591424B014EAFF9800481815 /* InheritanceTestClasses.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InheritanceTestClasses.m; sourceTree = "<group>"; };
-		591424B114EAFF9800481815 /* TestClasses.h */ = {isa = PBXFileReference; fileEncoding = 4; path = TestClasses.h; sourceTree = "<group>"; };
+		591424B114EAFF9800481815 /* TestClasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestClasses.h; sourceTree = "<group>"; };
 		591424B214EAFF9800481815 /* TestClasses.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestClasses.m; sourceTree = "<group>"; };
 		591424B314EAFF9800481815 /* GeneralTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneralTests.m; sourceTree = "<group>"; };
 		591424BB14EAFFD200481815 /* iPhone Tests-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "iPhone Tests-Prefix.pch"; sourceTree = "<group>"; };
@@ -541,7 +541,7 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Mac OS Tests/Mac OS Tests-Prefix.pch";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INFOPLIST_FILE = "Mac OS Tests/Mac OS Tests-Info.plist";
@@ -569,7 +569,7 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Mac OS Tests/Mac OS Tests-Prefix.pch";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				INFOPLIST_FILE = "Mac OS Tests/Mac OS Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
@@ -636,6 +636,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iPhone Tests/iPhone Tests-Prefix.pch";
+				GCC_VERSION = "";
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INFOPLIST_FILE = "iPhone Tests/iPhone Tests-Info.plist";
 				OTHER_LDFLAGS = (
@@ -658,6 +659,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iPhone Tests/iPhone Tests-Prefix.pch";
+				GCC_VERSION = "";
 				INFOPLIST_FILE = "iPhone Tests/iPhone Tests-Info.plist";
 				OTHER_LDFLAGS = (
 					"-ObjC",

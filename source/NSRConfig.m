@@ -44,7 +44,7 @@
 @end
 
 @implementation NSRConfig
-@synthesize appURL, appUsername, appPassword, dateFormat, automaticallyUnderscoreAndCamelize;
+@synthesize appURL, appUsername, appPassword, dateFormat, automaticallyInflects, managesNetworkActivityIndicator;
 
 #pragma mark -
 #pragma mark Config inits
@@ -52,6 +52,8 @@
 static NSMutableDictionary *configEnvironments = nil;
 static NSMutableArray *overrideConfigStack = nil;
 static NSString *currentEnvironment = NSRConfigEnvironmentDevelopment;
+
+static int networkActivityRequests = 0;
 
 //purely for test purposes
 + (void) resetConfigs
@@ -110,10 +112,9 @@ static NSString *currentEnvironment = NSRConfigEnvironmentDevelopment;
 		//by default, set to accept datestring like "2012-02-01T00:56:24Z"
 		//this format (ISO 8601) is default in rails
 		self.dateFormat = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
-		automaticallyUnderscoreAndCamelize = YES;
+		automaticallyInflects = YES;
 		
 		asyncOperationQueue = [[NSOperationQueue alloc] init];
-		[asyncOperationQueue setMaxConcurrentOperationCount:5];
 	}
 	return self;
 }
@@ -172,6 +173,15 @@ static NSString *currentEnvironment = NSRConfigEnvironmentDevelopment;
 //Do not override this method - it includes a check to see if there's no AppURL specified
 - (NSString *) resultForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock
 {
+#if TARGET_OS_IPHONE
+	//manage network activity, currently only supported on async
+	if (self.managesNetworkActivityIndicator && completionBlock)
+	{
+		networkActivityRequests++;
+		[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+	}
+#endif
+	
 	//make sure the app URL is set
 	if (!self.appURL)
 	{
@@ -186,8 +196,26 @@ static NSString *currentEnvironment = NSRConfigEnvironmentDevelopment;
 		return nil;
 	}
 	
+	NSRHTTPCompletionBlock blockPlusNetworkActivity = completionBlock;
+
+#if TARGET_OS_IPHONE
+	if (self.managesNetworkActivityIndicator && completionBlock)
+	{
+		blockPlusNetworkActivity = ^(NSString *data, NSError *error)
+		{
+			completionBlock(data, error);
+			
+			networkActivityRequests--;
+			if (networkActivityRequests == 0)
+			{
+				[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+			}
+		};
+	}
+#endif
+	
 	//If you want to override handling the connection, override this method
-	NSString *result = [self makeRequestType:type requestBody:requestStr route:route sync:error orAsync:completionBlock];
+	NSString *result = [self makeRequestType:type requestBody:requestStr route:route sync:error orAsync:blockPlusNetworkActivity];	
 	return result;
 }
 
@@ -213,10 +241,8 @@ static NSString *currentEnvironment = NSRConfigEnvironmentDevelopment;
 //Overide THIS method if necessary (for SSL etc)
 - (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock
 {	
-	//helper method to get an NSURLRequest object based on above params
 	NSURLRequest *request = [self HTTPRequestForRequestType:type requestBody:requestStr route:route];
 	
-	//log relevant stuff
 	[self logRequestWithBody:requestStr httpVerb:type url:[[request URL] absoluteString]];
 	
 	//send request using HTTP!
@@ -267,6 +293,7 @@ static NSString *currentEnvironment = NSRConfigEnvironmentDevelopment;
 	{
 		NSError *appleError = nil;
 		NSURLResponse *response = nil;
+
 		NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&appleError];
 		
 		//if there's an error here there must have been an issue connecting to the server.
@@ -416,7 +443,6 @@ static NSString *currentEnvironment = NSRConfigEnvironmentDevelopment;
 	//start at the end of the stack
 	for (NSInteger i = overrideConfigStack.count-1; i >= 0; i--)
 	{
-		//see if any element matches this config
 		NSRConfigStackElement *c = [overrideConfigStack objectAtIndex:i];
 		if (c.config == self)
 		{

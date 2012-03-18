@@ -140,7 +140,7 @@
 	GHAssertEqualStrings(@"test_class", [TestClass getModelName], @"auto-underscoring");
 	
 	NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"NoAuto/"]; //also tests to see that it'll add http:// and remove the /
-	c.automaticallyUnderscoreAndCamelize = NO;
+	c.automaticallyInflects = NO;
 	[c useIn:
 	 ^{
 		 NSRAssertRelevantConfigURL(@"NoAuto", @"custom block ^{} block");

@@ -30,12 +30,10 @@ typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
 	NSOperationQueue *asyncOperationQueue; //used for async requests
 }
 
-@property (nonatomic, strong) NSString *appURL;
-@property (nonatomic, strong) NSString *appUsername;
-@property (nonatomic, strong) NSString *appPassword;
+@property (nonatomic) BOOL automaticallyInflects, managesNetworkActivityIndicator;
 
+@property (nonatomic, strong) NSString *appURL, *appUsername, *appPassword;
 @property (nonatomic, strong) NSString *dateFormat;
-@property (nonatomic) BOOL automaticallyUnderscoreAndCamelize;
 
 + (NSRConfig *) defaultConfig;
 + (void) setConfigAsDefault:(NSRConfig *)config;
