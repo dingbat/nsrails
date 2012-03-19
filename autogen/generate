@@ -4,14 +4,21 @@ require 'rubygems'
 require 'active_support/inflector'
 
 def import_classes(array)
-  array.map {|x| "#import \"#{@options[:prefix]+x.classify}.h\"" }.join("\n")
+  array.map {|x| "#import \"#{x}.h\"" }.join("\n")
 end
 
 def h(m)
   str = "#import \"NSRails.h\"\n"
   if (m[:belongs_tos].count > 0)
     str += "\n"
-    str += "@class #{m[:belongs_tos].map {|x| @options[:prefix]+x.classify}.join(', ')};"
+    classes = ""
+    m[:belongs_tos].each do |type, properties|
+      if (classes.length > 0)
+        classes += ", "
+      end
+      classes += type
+    end
+    str += "@class #{classes};"
     str += "\n"
   end
   str += "\n@interface #{m[:name]} : NSRailsModel\n"
@@ -24,7 +31,7 @@ end
 def m(m)
   str = "#import \"#{m[:name]}.h\"\n"
   if (m[:X_to_ones].count > 0)
-    str += import_classes(m[:X_to_ones])+"\n"
+    str += import_classes(m[:X_to_ones].keys)+"\n"
   end
   str += "\n@implementation #{m[:name]}"
   list = []
@@ -36,16 +43,18 @@ def m(m)
   end
   str += "\nNSRailsSync(*"
   if (!@options[:nesting_no_b_flag])
-    m[:belongs_tos].each do |bt_prop|
-      str += ", #{bt_prop} -b"
-      if (@options[:nesting_retrievable_only])
-        str += "r"
+    m[:belongs_tos].each do |type, props|
+      props.each do |prop|
+        str += ", #{prop} -b"
+        if (@options[:nesting_retrievable_only])
+          str += "r"
+        end
       end
     end
   end
-  m[:has_manys].each do |hm_dict|
-    hm_dict.each do |hm_prop, hm|
-      str += ", #{hm_prop}:#{hm}"
+  m[:has_manys].each do |type, props|
+    props.each do |prop|
+      str += ", #{prop}:#{type}"
       if (@options[:nesting_retrievable_only])
         str += " -r"
       end
@@ -179,9 +188,9 @@ def run_script_with_args(args)
       model_name = line.match(/create_table "(.*)",/).captures[0]
       @model = {:name => @options[:prefix]+model_name.classify, :model_name => model_name.singularize}
       @model[:properties] = Hash.new
-      @model[:belongs_tos] = Array.new
-      @model[:has_manys] = Array.new
-      @model[:X_to_ones] = Array.new
+      @model[:belongs_tos] = Hash.new
+      @model[:has_manys] = Hash.new
+      @model[:X_to_ones] = Hash.new
     end
     next unless @model
     if line =~ /end/
@@ -206,29 +215,38 @@ def run_script_with_args(args)
           end
 
           prop = match[0].camelize(:lower)
-          class_name = @options[:prefix]+prop.classify
-          type = nil
+          prop_type = prop.classify
+          
+          if line =~ /:class_name/
+            match = line.match(/:class_name => (.*)/)
+            if match
+              prop_type = match.captures[0]
+              prop_type.gsub!("'","")
+              prop_type.gsub!("\"","")
+            end
+          end
+          
+          class_name = @options[:prefix]+prop_type
+          objc_type = class_name
 
           if line =~ /belongs_to/
-            type = class_name
-            @model[:belongs_tos] << prop
-            @model[:X_to_ones] << prop
+            @model[:belongs_tos][objc_type] ||= []
+            @model[:belongs_tos][objc_type] << prop
+            @model[:X_to_ones][objc_type] ||= []
+            @model[:X_to_ones][objc_type] << prop
           elsif line =~ /has_one/
-            type = class_name
-            @model[:X_to_ones] << prop
+            @model[:X_to_ones][objc_type] ||= []
+            @model[:X_to_ones][objc_type] << prop
           elsif line =~ /has_many/
-            if (@options[:nesting_mutable_arrays])
-              type = "NSMutableArray"
-            else
-              type = "NSArray"
-            end
-            @model[:has_manys] << {prop => class_name}
+            objc_type = @options[:nesting_mutable_arrays] ? "NSMutableArray" : "NSArray"
+            @model[:has_manys][class_name] ||= []
+            @model[:has_manys][class_name] << prop
           else
             next
           end
 
-          @model[:properties][type] ||= []
-          @model[:properties][type] << prop
+          @model[:properties][objc_type] ||= []
+          @model[:properties][objc_type] << prop
         end
       rescue
       end
