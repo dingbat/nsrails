@@ -16,7 +16,7 @@
 @end
 
 
-@interface Response : NSRailsModel
+@interface NSRResponse : NSRailsModel   //prefix to test ignore-prefix feature
 
 @property (nonatomic, strong) NSString *content, *author;
 @property (nonatomic, strong) Post *post;

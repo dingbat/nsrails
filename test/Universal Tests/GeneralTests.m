@@ -334,12 +334,21 @@
 	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
 	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
 	
+	NSError *e = nil;
+
+	NSArray *resps = [NSRResponse remoteAll:&e];
+	GHAssertNotNil(e, @"Without 'prefix ignore' set it should fail trying to access nsr_response...");
+
+	[[NSRConfig defaultConfig] setIgnoresClassPrefixes:YES];
+	
+	e = nil;
+	
 	Post *post = [[Post alloc] init];
 	post.author = @"Dan";
 	post.content = @"Test";
 	post.responses = nil;
 	
-	NSError *e = nil;
+	e = nil;
 	
 	[post remoteCreate:&e];
 	
@@ -357,7 +366,7 @@
 	
 	e = nil;
 	
-	Response *response = [[Response alloc] init];
+	NSRResponse *response = [[NSRResponse alloc] init];
 	[post.responses addObject:response];
 	
 	[post remoteUpdate:&e];
@@ -395,13 +404,13 @@
 	
 	e = nil;
 	
-	Response *retrieveResponse = [Response remoteObjectWithID:[responseID integerValue] error:&e];
+	NSRResponse *retrieveResponse = [NSRResponse remoteObjectWithID:[responseID integerValue] error:&e];
 	GHAssertNotNil(e, @"Response object should've been nest-deleted, where's the error in retrieving it?");
 	
 	e = nil;
 	
 	//test nest-creation via RESPONSE-side, meaning we set its post variable (this should fail without the -b flag)
-	Response *newResponse = [[Response alloc] init];
+	NSRResponse *newResponse = [[NSRResponse alloc] init];
 	newResponse.content = @"Test";
 	newResponse.author = @"Test";
 	newResponse.post = post;
@@ -413,7 +422,7 @@
 	e = nil;
 	
 	//now try with -b flag
-	Response *belongsTo = [[Response alloc] initWithCustomSyncProperties:@"*, post -b"];
+	NSRResponse *belongsTo = [[NSRResponse alloc] initWithCustomSyncProperties:@"*, post -b"];
 	belongsTo.content = @"Test";
 	belongsTo.author = @"Test";
 	belongsTo.post = post;
@@ -463,11 +472,11 @@
 		missingClassPost.content = @"content";
 		missingClassPost.responses = [NSMutableArray array];
 		
-		Response *testResponse;
+		NSRResponse *testResponse;
 		if (i == 3)
-			testResponse = (Response *)[[BadResponse alloc] init];
+			testResponse = (NSRResponse *)[[BadResponse alloc] init];
 		else
-			testResponse = [[Response alloc] init];
+			testResponse = [[NSRResponse alloc] init];
 		testResponse.author = @"Test";
 		testResponse.content = @"Test";
 		
@@ -577,6 +586,13 @@
 	NSRAssertEqualsUnderscored(@"postObjectABCSomething", @"post_object_abc_something");
 	NSRAssertEqualsUnderscored(@"post_object", @"post_object");
 	NSRAssertEqualsUnderscored(@"post_Object", @"post_object");
+
+	GHAssertEqualStrings([@"post" underscoreIgnorePrefix:YES], @"post", nil);
+	GHAssertEqualStrings([@"Post" underscoreIgnorePrefix:YES], @"post", nil);
+	GHAssertEqualStrings([@"DPost" underscoreIgnorePrefix:YES], @"post", nil);
+	GHAssertEqualStrings([@"DHPost" underscoreIgnorePrefix:YES], @"post", nil);
+	GHAssertEqualStrings([@"PostDH" underscoreIgnorePrefix:YES], @"post_dh", nil);
+	GHAssertEqualStrings([@"DHPostDH" underscoreIgnorePrefix:YES], @"post_dh", nil);
 	
 	NSRAssertEqualsCamelized(@"post", @"post");
 	NSRAssertEqualsCamelized(@"Post", @"Post");

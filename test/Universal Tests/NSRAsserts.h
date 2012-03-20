@@ -9,7 +9,7 @@
 #import "NSRails.h"
 #import "NSRPropertyCollection.h"
 #import "NSRConfig.h"
-#import "NSString+InflectionSupport.h"
+#import "NSString+Inflection.h"
 
 //Make some private methods accessible
 @interface NSRailsModel (internal)

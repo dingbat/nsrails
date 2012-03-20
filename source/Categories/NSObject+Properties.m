@@ -8,7 +8,7 @@
 
 #import "NSObject+Properties.h"
 #import <objc/runtime.h>
-#import "NSString+InflectionSupport.h"
+#import "NSString+Inflection.h"
 
 @implementation NSObject (NSRPropertySupport)
 

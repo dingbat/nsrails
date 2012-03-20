@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		59C3C6BC15185CCB00C81A69 /* NSString+Inflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C3C6BB15185CCB00C81A69 /* NSString+Inflection.m */; };
 		59C8B7AE14F816E500105108 /* NSObject+SBJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C8B79414F816E500105108 /* NSObject+SBJson.m */; };
 		59C8B7B014F816E500105108 /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C8B79914F816E500105108 /* SBJsonParser.m */; };
 		59C8B7B114F816E500105108 /* SBJsonStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C8B79B14F816E500105108 /* SBJsonStreamParser.m */; };
@@ -22,7 +23,6 @@
 		59C8B9DE14F96E3300105108 /* NSData+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C8B9D714F96E3300105108 /* NSData+Additions.m */; };
 		59C8B9DF14F96E3300105108 /* NSObject+Properties.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C8B9D914F96E3300105108 /* NSObject+Properties.m */; };
 		59C8B9E014F96E3300105108 /* NSRails+SBJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C8B9DB14F96E3300105108 /* NSRails+SBJson.m */; };
-		59C8B9E114F96E3300105108 /* NSString+InflectionSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 59C8B9DD14F96E3300105108 /* NSString+InflectionSupport.m */; };
 		59D00C0414FC8BF400D247EC /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D00C0314FC8BF400D247EC /* NSRPropertyCollection.m */; };
 		59D2A88E14F34B1800101C64 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D2A88D14F34B1800101C64 /* UIKit.framework */; };
 		59D2A89014F34B1800101C64 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D2A88F14F34B1800101C64 /* Foundation.framework */; };
@@ -44,6 +44,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		59C3C6BA15185CCB00C81A69 /* NSString+Inflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Inflection.h"; sourceTree = "<group>"; };
+		59C3C6BB15185CCB00C81A69 /* NSString+Inflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Inflection.m"; sourceTree = "<group>"; };
 		59C8B79314F816E500105108 /* NSObject+SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJson.h"; sourceTree = "<group>"; };
 		59C8B79414F816E500105108 /* NSObject+SBJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SBJson.m"; sourceTree = "<group>"; };
 		59C8B79714F816E500105108 /* SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJson.h; sourceTree = "<group>"; };
@@ -75,8 +77,6 @@
 		59C8B9D914F96E3300105108 /* NSObject+Properties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Properties.m"; sourceTree = "<group>"; };
 		59C8B9DA14F96E3300105108 /* NSRails+SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSRails+SBJson.h"; sourceTree = "<group>"; };
 		59C8B9DB14F96E3300105108 /* NSRails+SBJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSRails+SBJson.m"; sourceTree = "<group>"; };
-		59C8B9DC14F96E3300105108 /* NSString+InflectionSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+InflectionSupport.h"; sourceTree = "<group>"; };
-		59C8B9DD14F96E3300105108 /* NSString+InflectionSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+InflectionSupport.m"; sourceTree = "<group>"; };
 		59D00C0214FC8BF400D247EC /* NSRPropertyCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRPropertyCollection.h; sourceTree = "<group>"; };
 		59D00C0314FC8BF400D247EC /* NSRPropertyCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRPropertyCollection.m; sourceTree = "<group>"; };
 		59D2A88914F34B1800101C64 /* NSRailsApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NSRailsApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -159,14 +159,14 @@
 		59C8B9D514F96E3300105108 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				59C3C6BA15185CCB00C81A69 /* NSString+Inflection.h */,
+				59C3C6BB15185CCB00C81A69 /* NSString+Inflection.m */,
 				59C8B9D614F96E3300105108 /* NSData+Additions.h */,
 				59C8B9D714F96E3300105108 /* NSData+Additions.m */,
 				59C8B9D814F96E3300105108 /* NSObject+Properties.h */,
 				59C8B9D914F96E3300105108 /* NSObject+Properties.m */,
 				59C8B9DA14F96E3300105108 /* NSRails+SBJson.h */,
 				59C8B9DB14F96E3300105108 /* NSRails+SBJson.m */,
-				59C8B9DC14F96E3300105108 /* NSString+InflectionSupport.h */,
-				59C8B9DD14F96E3300105108 /* NSString+InflectionSupport.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -363,8 +363,8 @@
 				59C8B9DE14F96E3300105108 /* NSData+Additions.m in Sources */,
 				59C8B9DF14F96E3300105108 /* NSObject+Properties.m in Sources */,
 				59C8B9E014F96E3300105108 /* NSRails+SBJson.m in Sources */,
-				59C8B9E114F96E3300105108 /* NSString+InflectionSupport.m in Sources */,
 				59D00C0414FC8BF400D247EC /* NSRPropertyCollection.m in Sources */,
+				59C3C6BC15185CCB00C81A69 /* NSString+Inflection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

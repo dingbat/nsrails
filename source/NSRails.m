@@ -10,7 +10,7 @@
 
 #import "NSRPropertyCollection.h"
 
-#import "NSString+InflectionSupport.h"
+#import "NSString+Inflection.h"
 #import "NSData+Additions.h"
 #import "NSObject+Properties.h"
 #import "NSRails+SBJson.h"
@@ -153,9 +153,14 @@
 		class = nil;
 	
 	if ([self getRelevantConfig].automaticallyInflects)
-		return [[class underscore] lowercaseString];
+	{
+		NSString *railsified = [class underscoreIgnorePrefix:[self getRelevantConfig].ignoresClassPrefixes];
+		return [railsified lowercaseString];
+	}
 	else
+	{
 		return class;
+	}
 }
 
 + (NSString *) getPluralModelName

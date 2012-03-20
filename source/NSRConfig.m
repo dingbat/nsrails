@@ -45,7 +45,7 @@
 
 @implementation NSRConfig
 @synthesize appURL, appUsername, appPassword, dateFormat;
-@synthesize automaticallyInflects, managesNetworkActivityIndicator, timeoutInterval;
+@synthesize automaticallyInflects, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes;
 
 #pragma mark -
 #pragma mark Config inits

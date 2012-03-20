@@ -10,11 +10,11 @@
 
 @implementation Post
 @synthesize author, content, responses;
-NSRailsSync(*, responses:Response)
+NSRailsSync(*, responses:NSRResponse)
 
 @end
 
-@implementation Response
+@implementation NSRResponse
 @synthesize post, content, author;
 NSRailsSync(*)
 

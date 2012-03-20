@@ -9,7 +9,7 @@
 #import "NSRPropertyCollection.h"
 #import "NSRails.h"
 #import "NSObject+Properties.h"
-#import "NSString+InflectionSupport.h"
+#import "NSString+Inflection.h"
 
 //this is the marker for the propertyEquivalents dictionary if there's no explicit equivalence set
 #define NSRNoEquivalentMarker @""
