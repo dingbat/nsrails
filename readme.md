@@ -15,7 +15,7 @@ Once you've created Objective-C classes to match your Rails model structure, NSR
 ``` objc
 Article *newArticle = [[Article alloc] init];
 newArticle.title = @"This article and its properties created right on your Rails server";
-newArticle.content = @"All that's needed is the following method:";
+newArticle.content = @"All that's needed is a call to the following method:";
 [newArticle remoteCreate:&error];
 ```
 
