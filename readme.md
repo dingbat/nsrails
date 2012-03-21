@@ -10,20 +10,21 @@ NSRails is a light-weight Objective-C framework (iOS or OS X) for simple but pow
 What can NSRails do?
 ========
 
-Once you've created Objective-C classes to match your Rails model structure, NSRails provides them with native ActiveResource-like support. This means CRUD and other operations can be called seamlessly via Objective-C methods:
+Once you've created Objective-C classes to match your Rails model structure, NSRails gives them native, ActiveResource-like support. This means CRUD and other operations can be called seamlessly via Objective-C methods:
 
 ``` objc
 Article *newArticle = [[Article alloc] init];
 newArticle.title = @"This article and its properties created right on your Rails server";
-newArticle.content = @"All that's needed is the following method:";
-[newArticle remoteCreate];
+newArticle.content = @"All that's needed is a call to the following method:";
+[newArticle remoteCreate:&error];
 ```
 
 Instances inherit methods to remotely create, update, destroy, or read a corresponding Rails object - only with a single method call. They'll also inherit class methods to retrieve certain objects (or all of them):
 
 ``` objc
-Article *articleNumber1 = [Article remoteObjectWithID:1];
-// Display your article! It's ready with its properties populated directly from your remote DB
+NSArray *allArticles = [Article remoteAll:&error];
+Article *articleNumber1 = [Article remoteObjectWithID:1 error:&error];
+// Display your article(s)! They're ready with their properties populated directly from your remote DB
 ```
 
 
@@ -38,7 +39,7 @@ The framework is very flexible and can fit the specific needs of your Rails (or 
 How do I get started?
 ========
 
-It's fairly painless. Add the source folder into your Xcode project, and see [this page](https://github.com/dingbat/nsrails/wiki/Getting-Started).
+It's fairly painless. Drop the source folder into your Xcode project, and see [this page](https://github.com/dingbat/nsrails/wiki/Getting-Started).
 
 Some more resources:
 
@@ -52,4 +53,4 @@ What's in the sources?
 
 The main class (and the one from which to derive your classes) is [NSRailsModel](https://github.com/dingbat/nsrails/wiki/NSRailsModel) (defined in NSRails.h). Also included is the [NSRConfig](https://github.com/dingbat/nsrails/wiki/NSRConfig) class for server settings.
 
-As per external frameworks, NSRails makes great use of the [SBJSON framework](https://github.com/stig/json-framework). And finally, I have to give a lot of credit to [ObjectiveResource](https://github.com/yfactorial/objectiveresource), whose framework was largely the inspiration for NSRails.
+As per external frameworks, NSRails makes use of the [SBJSON framework](https://github.com/stig/json-framework). And finally, I have to give a lot of credit to [ObjectiveResource](https://github.com/yfactorial/objectiveresource), whose framework was largely the inspiration for NSRails.
