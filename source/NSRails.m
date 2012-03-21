@@ -640,7 +640,7 @@
 {
 	if (!self.remoteID)
 	{
-		NSError *e = [NSError errorWithDomain:@"NSRails" code:0 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Attempted to update or delete an object with no ID. (Instance of %@)",NSStringFromClass([self class])] forKey:NSLocalizedDescriptionKey]];
+		NSError *e = [NSError errorWithDomain:NSRLocalErrorDomain code:0 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Attempted to update or delete an object with no ID. (Instance of %@)",NSStringFromClass([self class])] forKey:NSLocalizedDescriptionKey]];
 		if (error)
 			*error = e;
 		
@@ -889,7 +889,7 @@
 	
 	if (![arr isKindOfClass:[NSArray class]])
 	{
-		NSError *e = [NSError errorWithDomain:@"NSRails" 
+		NSError *e = [NSError errorWithDomain:NSRLocalErrorDomain
 										 code:0 
 									 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"getAll method (index) for %@ controller did not return an array - check your rails app.",[self getPluralModelName]]
 																		  forKey:NSLocalizedDescriptionKey]];

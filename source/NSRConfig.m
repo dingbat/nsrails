@@ -188,7 +188,7 @@ static int networkActivityRequests = 0;
 	//make sure the app URL is set
 	if (!self.appURL)
 	{
-		NSError *err = [NSError errorWithDomain:@"NSRails" code:0 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup. (env=%@)", currentEnvironment] forKey:NSLocalizedDescriptionKey]];
+		NSError *err = [NSError errorWithDomain:NSRLocalErrorDomain code:0 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup. (env=%@)", currentEnvironment] forKey:NSLocalizedDescriptionKey]];
 		if (error)
 			*error = err;
 		if (completionBlock)
@@ -369,7 +369,7 @@ static int networkActivityRequests = 0;
 				[inf setObject:validationErrors forKey:NSRValidationErrorsKey];
 		}
 		
-		NSError *statusError = [NSError errorWithDomain:@"Rails"
+		NSError *statusError = [NSError errorWithDomain:NSRRemoteErrorDomain
 												   code:statusCode
 											   userInfo:inf];
 		

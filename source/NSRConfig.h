@@ -41,6 +41,9 @@ typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
 
 #define NSRValidationErrorsKey	@"validation errors"
 
+#define NSRLocalErrorDomain @"NSRLocalErrorDomain"
+#define NSRRemoteErrorDomain @"NSRRemoteErrorDomain"
+
 
 ////////////////////////////////
 
