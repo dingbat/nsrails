@@ -51,7 +51,7 @@ typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
 	NSOperationQueue *asyncOperationQueue; //used for async requests
 }
 
-@property (nonatomic) BOOL automaticallyInflects, managesNetworkActivityIndicator, ignoresClassPrefixes;
+@property (nonatomic) BOOL automaticallyInflects, managesNetworkActivityIndicator, ignoresClassPrefixes, succinctErrorMessages;
 @property (nonatomic) NSTimeInterval timeoutInterval;
 
 @property (nonatomic, strong) NSString *appURL, *appUsername, *appPassword;

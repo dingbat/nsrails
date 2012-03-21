@@ -45,7 +45,7 @@
 
 @implementation NSRConfig
 @synthesize appURL, appUsername, appPassword, dateFormat;
-@synthesize automaticallyInflects, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes;
+@synthesize automaticallyInflects, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages;
 
 #pragma mark -
 #pragma mark Config inits
@@ -114,6 +114,7 @@ static int networkActivityRequests = 0;
 		//this format (ISO 8601) is default in rails
 		self.dateFormat = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
 		self.automaticallyInflects = YES;
+		self.succinctErrorMessages = YES;
 		self.timeoutInterval = 60;
 		
 		asyncOperationQueue = [[NSOperationQueue alloc] init];
@@ -341,20 +342,21 @@ static int networkActivityRequests = 0;
 	
 	if (err)
 	{
-#ifdef NSRSuccinctErrorMessages
-		//if error message is in HTML,
-		if ([response rangeOfString:@"</html>"].location != NSNotFound)
+		if (self.succinctErrorMessages)
 		{
-			NSArray *pres = [response componentsSeparatedByString:@"<pre>"];
-			if (pres.count > 1)
+			//if error message is in HTML,
+			if ([response rangeOfString:@"</html>"].location != NSNotFound)
 			{
-				//get the value between <pre> and </pre>
-				response = [[[pres objectAtIndex:1] componentsSeparatedByString:@"</pre"] objectAtIndex:0];
-				//some weird thing rails does, will send html tags &quot; for quotes
-				response = [response stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
+				NSArray *pres = [response componentsSeparatedByString:@"<pre>"];
+				if (pres.count > 1)
+				{
+					//get the value between <pre> and </pre>
+					response = [[[pres objectAtIndex:1] componentsSeparatedByString:@"</pre"] objectAtIndex:0];
+					//some weird thing rails does, will send html tags &quot; for quotes
+					response = [response stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
+				}
 			}
 		}
-#endif
 		
 		NSMutableDictionary *inf = [NSMutableDictionary dictionaryWithObject:response
 																	  forKey:NSLocalizedDescriptionKey];
