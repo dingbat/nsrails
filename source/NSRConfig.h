@@ -11,7 +11,6 @@
 // for documentation on these, see https://github.com/dingbat/nsrails/wiki/Compile-config
 
 #define NSRLog 2
-#define NSRSuccinctErrorMessages
 //#define NSRCrashOnError
 
 //NSRConfig.h
