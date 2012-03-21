@@ -273,7 +273,7 @@ static int networkActivityRequests = 0;
 				 
 				 NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
 				 
-#ifndef NSRCompileWithARC
+#ifndef ARC_ENABLED
 				 [rawResult autorelease];
 #endif
 				 
@@ -313,7 +313,7 @@ static int networkActivityRequests = 0;
 
 		NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
 		
-#ifndef NSRCompileWithARC
+#ifndef ARC_ENABLED
 		[rawResult autorelease];
 #endif
 		

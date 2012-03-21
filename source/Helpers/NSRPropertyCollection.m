@@ -411,7 +411,7 @@
 
 #pragma mark -
 #pragma mark Dealloc for non-ARC
-#ifndef NSRCompileWithARC
+#ifndef ARC_ENABLED
 
 - (void) dealloc
 {	

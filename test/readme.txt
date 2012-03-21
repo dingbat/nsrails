@@ -1,3 +1,3 @@
 Running these tests is simple thanks to GHUnit. Just change the target in Xcode for testing on iPhone/Mac OS (should be identical, really).
 
-The only thing is that GHUnit doesn't seem to be ARC-supported for Mac OS (or maybe it's just that I'm still running 10.6), so there's a lot of memory leakage. This shouldn't be relevant for the purposes of these tests, though, so it doesn't really matter. If you can get ARC working though, that would be appreciated.
+The only thing is that GHUnit doesn't seem to be ARC-supported for Mac OS, so there's some memory leakage with SBJson, which is ARC-only. This shouldn't be relevant for the purposes of these tests, though, so it doesn't really matter.

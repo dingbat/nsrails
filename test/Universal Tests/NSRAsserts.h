@@ -34,6 +34,12 @@
 
 @end
 
+#if TARGET_OS_MAC
+
+#undef ARC_ENABLED
+
+#endif
+
 
 #define NSRAssertClassModelName(mname, class)	GHAssertEqualStrings([class getModelName], mname, @"%@ model name failed.", NSStringFromClass(class))
 

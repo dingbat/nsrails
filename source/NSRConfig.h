@@ -11,12 +11,29 @@
 // for documentation on these, see https://github.com/dingbat/nsrails/wiki/Compile-config
 
 #define NSRLog 2
-#define NSRCompileWithARC
 #define NSRSuccinctErrorMessages
 //#define NSRCrashOnError
 
 //NSRConfig.h
 /////////////////////////////
+
+
+// Test if ARC is enabled (thanks to http://www.learn-cocos2d.com/2011/11/everything-know-about-arc/ )
+// define some LLVM3 macros if the code is compiled with a different compiler (ie LLVMGCC42)
+#ifndef __has_feature
+#define __has_feature(x) 0
+#endif
+
+#ifndef __has_extension
+#define __has_extension __has_feature // Compatibility with pre-3.0 compilers.
+#endif
+
+#if __has_feature(objc_arc) && __clang_major__ >= 3
+#define ARC_ENABLED
+#endif // __has_feature(objc_arc)
+
+
+////////////////////////////////
 
 typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
 
@@ -24,6 +41,10 @@ typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
 #define NSRConfigEnvironmentProduction	@"production"
 
 #define NSRValidationErrorsKey	@"validation errors"
+
+
+////////////////////////////////
+
 
 @interface NSRConfig : NSObject
 {
@@ -80,6 +101,5 @@ typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
 
 - (void) logRequestWithBody:(NSString *)requestStr httpVerb:(NSString *)httpVerb url:(NSString *)url;
 - (void) logResponse:(NSString *)response statusCode:(int)code;
-
 
 @end

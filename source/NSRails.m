@@ -77,7 +77,7 @@
 		collection = [[NSRPropertyCollection alloc] initWithClass:self];
 		[propertyCollections setObject:collection forKey:class];
 		
-#ifndef NSRCompileWithARC
+#ifndef ARC_ENABLED
 		[collection release];
 #endif
 	}
@@ -267,7 +267,7 @@
 	//make a new class to be entered for this property/array (we can assume it subclasses NSRailsModel)
 	NSRailsModel *model = [[NSClassFromString(classN) alloc] initWithRemoteAttributesDictionary:dict];
 	
-#ifndef NSRCompileWithARC
+#ifndef ARC_ENABLED
 	[model autorelease];
 #endif
 	
@@ -342,7 +342,7 @@
 #endif
 		}
 		
-#ifndef NSRCompileWithARC
+#ifndef ARC_ENABLED
 		[formatter release];
 #endif
 		return date;
@@ -410,7 +410,7 @@
 				
 				NSString *dateValue = [formatter stringFromDate:val];
 				
-	#ifndef NSRCompileWithARC
+	#ifndef ARC_ENABLED
 				[formatter release];
 	#endif
 				return dateValue;
@@ -845,7 +845,7 @@
 	if (![obj remoteGetLatest:error])
 		obj = nil;
 	
-#ifndef NSRCompileWithARC
+#ifndef ARC_ENABLED
 	[obj autorelease];
 #endif
 	
@@ -857,7 +857,7 @@
 	NSRailsModel *obj = [[[self class] alloc] init];
 	obj.remoteID = [NSDecimalNumber numberWithInteger:mID];
 	
-#ifndef NSRCompileWithARC
+#ifndef ARC_ENABLED
 	[obj autorelease];
 #endif
 	
@@ -913,7 +913,7 @@
 		
 		[objects addObject:obj];
 		
-#ifndef NSRCompileWithARC
+#ifndef ARC_ENABLED
 		[obj release];
 #endif
 	}
@@ -977,7 +977,7 @@
 }
 
 #pragma mark - Dealloc for non-ARC
-#ifndef NSRCompileWithARC
+#ifndef ARC_ENABLED
 
 - (void) dealloc
 {
