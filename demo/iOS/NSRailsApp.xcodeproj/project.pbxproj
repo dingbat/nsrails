@@ -308,7 +308,7 @@
 		59D2A88014F34B1800101C64 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0430;
 				ORGANIZATIONNAME = "InContext LLC";
 			};
 			buildConfigurationList = 59D2A88314F34B1800101C64 /* Build configuration list for PBXProject "NSRailsApp" */;
