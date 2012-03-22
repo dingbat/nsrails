@@ -26,9 +26,9 @@
 	NSRPropertyCollection *customProperties;
 }
 
+@property (nonatomic) BOOL remoteDestroyOnNesting;
 @property (nonatomic, strong) NSNumber *remoteID;
 @property (nonatomic, strong, readonly) NSDictionary *remoteAttributes;
-@property (nonatomic) BOOL remoteDestroyOnNesting;
 
 
 /// =============================================================================================
@@ -37,7 +37,7 @@
 
 // Synchronous, with error dereference
 
-- (void) remoteGetLatest:(NSError **)error;
+- (BOOL) remoteGetLatest:(NSError **)error;
 - (void) remoteUpdate:(NSError **)error;
 - (void) remoteCreate:(NSError **)error;
 - (void) remoteDestroy:(NSError **)error;
@@ -49,10 +49,11 @@
 // Asynchronous
  
 typedef void(^NSRBasicCompletionBlock)(NSError *error);
+typedef void(^NSRGetLatestCompletionBlock)(NSError *error, BOOL changed);
 typedef void(^NSRGetAllCompletionBlock)(NSArray *allRemote, NSError *error);
 typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 
-- (void) remoteGetLatestAsync:(NSRBasicCompletionBlock)completionBlock;
+- (void) remoteGetLatestAsync:(NSRGetLatestCompletionBlock)completionBlock;
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock;
 - (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock;
 - (void) remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock;
@@ -100,9 +101,10 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 - (NSString *) remoteJSONRepresentation;
 - (NSDictionary *) dictionaryOfRemoteProperties;
 
-- (BOOL) setAttributesAsPerRemoteJSON:(NSString *)json;
-- (void) setAttributesAsPerRemoteDictionary:(NSDictionary *)dict;
-- (id) initWithRemoteAttributesDictionary:(NSDictionary *)railsDict;
+- (BOOL) setPropertiesUsingRemoteJSON:(NSString *)json;
+- (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict;
+
+- (id) initWithRemoteDictionary:(NSDictionary *)railsDict;
 
 
 /// =============================================================================================
@@ -169,14 +171,14 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 #define NSRailsUseDefaultModelName _NSR_Name2(nil,nil)
 
 //_NSR_Name1 (only with 1 parameter, ie, custom model name but default plurality), creates NSRailsUseModelName method that returns param, return nil for plural to make it go to default
-#define _NSR_Name1(x) \
-+ (NSString*) NSRailsUseModelName { return x; } \
+#define _NSR_Name1(name) \
++ (NSString*) NSRailsUseModelName { return name; } \
 + (NSString*) NSRailsUsePluralName { return nil; }
 
 //_NSR_Name2 (2 parameters, ie, custom model name and custom plurality), creates NSRailsUseModelName and NSRailsUsePluralName
-#define _NSR_Name2(x,y)  \
-+ (NSString*) NSRailsUseModelName { return x; } \
-+ (NSString*) NSRailsUsePluralName { return y; }
+#define _NSR_Name2(name,plural)  \
++ (NSString*) NSRailsUseModelName { return name; } \
++ (NSString*) NSRailsUsePluralName { return plural; }
 
 
 /// =============================================================================================
@@ -188,10 +190,10 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 #define NSRailsUseConfig(...) _CAT(_NSR_Config,_N_ARGS(__VA_ARGS__))(__VA_ARGS__)
 #define NSRailsUseDefaultConfig \
 + (NSRConfig *) NSRailsUseConfig { return [NSRConfig defaultConfig]; }
-#define _NSR_Config1(x) \
-+ (NSRConfig *) NSRailsUseConfig { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = x; return config; }
-#define _NSR_Config3(x,y,z)  \
-+ (NSRConfig *) NSRailsUseConfig { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = x; config.appUsername = y; config.appPassword = z; return config; }
+#define _NSR_Config1(url) \
++ (NSRConfig *) NSRailsUseConfig { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = url; return config; }
+#define _NSR_Config3(url,user,pass)  \
++ (NSRConfig *) NSRailsUseConfig { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = url; config.appUsername = user; config.appPassword = pass; return config; }
 
 /// =============================================================================================
 #pragma mark - NSRails

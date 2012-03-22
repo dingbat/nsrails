@@ -33,6 +33,9 @@
 
 + (NSRPropertyCollection *) propertyCollection;
 
++ (SEL) getPropertySetterAndOtherwiseFail:(NSString *)property;
++ (SEL) getPropertyGetterAndOtherwiseFail:(NSString *)property;
+
 @end
 
 @interface NSRConfig (access)
@@ -265,7 +268,7 @@
 - (id) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
 {
 	//make a new class to be entered for this property/array (we can assume it subclasses NSRailsModel)
-	NSRailsModel *model = [[NSClassFromString(classN) alloc] initWithRemoteAttributesDictionary:dict];
+	NSRailsModel *model = [[NSClassFromString(classN) alloc] initWithRemoteDictionary:dict];
 	
 #ifndef ARC_ENABLED
 	[model autorelease];
@@ -424,20 +427,22 @@
 	return nil;
 }
 
-- (id) initWithRemoteAttributesDictionary:(NSDictionary *)railsDict
+- (id) initWithRemoteDictionary:(NSDictionary *)railsDict
 {
 	if ((self = [self init]))
 	{
-		[self setAttributesAsPerRemoteDictionary:railsDict];
+		[self setPropertiesUsingRemoteDictionary:railsDict];
 	}
 	return self;
 }
 
-- (void) setAttributesAsPerRemoteDictionary:(NSDictionary *)dict
+- (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict
 {
 	remoteAttributes = dict;
 	
-	for (NSString *objcProperty in [self propertyCollection].retrievableProperties)
+	BOOL changes = NO;
+	
+	for (NSString *objcProperty in [self propertyCollection].retrievableProperties) //marked as retrievable
 	{
 		NSString *railsEquivalent = [[self propertyCollection] equivalenceForProperty:objcProperty];
 		if (!railsEquivalent)
@@ -453,8 +458,8 @@
 				railsEquivalent = objcProperty;
 			}
 		}
-		SEL sel = [[self class] getPropertySetter:objcProperty];
-		if ([self respondsToSelector:sel])
+		SEL setter = [[self class] getPropertySetter:objcProperty];
+		if ([self respondsToSelector:setter])
 			//means its marked as retrievable and is settable through setEtc:.
 		{
 			id val = [dict objectForKey:railsEquivalent];
@@ -464,38 +469,121 @@
 			
 			//get the intended value
 			val = [self objectForProperty:objcProperty representation:([val isKindOfClass:[NSNull class]] ? nil : val)];
+			
+			SEL getter = [[self class] getPropertyGetter:objcProperty];
+			id previousVal = [self performSelector:getter];
+			
 			if (val)
 			{
 				NSString *nestedClass = [[self propertyCollection].nestedModelProperties objectForKey:objcProperty];
 				//instantiate it as the class specified in NSRailsSync if it hadn't already been custom-decoded
 				if (nestedClass && [[self propertyCollection].decodeProperties indexOfObject:objcProperty] == NSNotFound)
 				{
-					//if the JSON conversion returned an array for the value, instantiate each element
 					if ([val isKindOfClass:[NSArray class]])
-					{
-						NSMutableArray *array = [NSMutableArray array];
+					{			
+						//array is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
+						
+						if (!previousVal)
+						{
+							//array was nil, make a new one and set it!
+							NSMutableArray *newArray = [[NSMutableArray alloc] init];
+							[self performSelector:setter withObject:newArray];
+#ifndef ARC_ENABLED
+							[newArray release];
+#endif
+							//set previousVal so the rest of the method can work
+							previousVal = newArray;
+							changes = YES;
+						}
+						
+						for (int i = 0; i < [previousVal count]; i++)
+						{
+							NSRailsModel *element = [previousVal objectAtIndex:i];
+							NSDictionary *correspondingElement = nil;
+							for (NSDictionary *dict in val)
+							{
+								if ([[dict objectForKey:@"id"] isEqual:element.remoteID])
+								{
+									correspondingElement = dict;
+									break;
+								}
+							}
+							
+							if (!correspondingElement)
+							{
+								//if not present in rails array, remove it from local
+								changes = YES;
+								[previousVal removeObject:element];
+								i--;
+							}
+							else
+							{
+								BOOL neededChange = [element setPropertiesUsingRemoteDictionary:correspondingElement];
+								if (neededChange)
+									changes = YES;
+
+								//remove it from rails array so we know we counted it
+								[val removeObject:correspondingElement];
+							}
+						}
+						
+						//add the remainder of dictionaries (new entries)
 						for (NSDictionary *dict in val)
 						{
 							id model = [self makeRelevantModelFromClass:nestedClass basedOn:dict];
-							[array addObject:model];
+							[previousVal addObject:model];
+							
+							changes = YES;
 						}
-						val = array;
 					}
-					//if it's not an array and just a dict, make a new class based on that dict
+					//if it's not an array and just a dict
 					else
 					{
-						val = [self makeRelevantModelFromClass:nestedClass basedOn:[dict objectForKey:railsEquivalent]];
+						NSDictionary *objDict = [dict objectForKey:railsEquivalent];
+						
+						//if the nested object didn't exist before, make it
+						if (!previousVal)
+						{
+							val = [self makeRelevantModelFromClass:nestedClass basedOn:objDict];
+							changes = YES;
+						}
+						else
+						{
+							//otherwise, mark as change if ITS properties changed (recursive)
+							
+							BOOL objChange = [previousVal setPropertiesUsingRemoteDictionary:objDict];
+							if (objChange)
+								changes = YES;
+						}
+					}
+					
+					//since it's a nested class, we're only setting properties to the existing nested object(s)
+					//we don't have to use the setter, so go to next property
+					continue;
+				}
+				else
+				{
+					//if it's not a nested class, check for simple equality
+					if (![previousVal isEqual:val])
+					{
+						changes = YES;
 					}
 				}
 				//if there was no nested class specified, simply give it what JSON decoded (in the case of a nested model, it will be a dictionary, or, an array of dictionaries. don't worry, the user got ample warning)
-				[self performSelector:sel withObject:val];
+				[self performSelector:setter withObject:val];
 			}
 			else
 			{
-				[self performSelector:sel withObject:nil];
+				//if previous object existed but now it's nil, mark a change
+				if (previousVal)
+					changes = YES;
+				
+				[self performSelector:setter withObject:nil];
 			}
 		}
 	}
+	
+	return changes;
 }
 
 - (NSDictionary *) dictionaryOfRemoteProperties
@@ -591,13 +679,13 @@
 	return dict;
 }
 
-- (void) setAttributesAsPerRemoteJSON:(NSString *)json error:(NSError **)e
+- (BOOL) setPropertiesUsingRemoteJSON:(NSString *)json error:(NSError **)e
 {
 	if (!json)
 	{
 		//decided to not make this return an error, as to mislead dev to think they are connection problems, although the error domain should be checked every time
 		NSLog(@"NSR Warning: Can't set attributes to nil JSON.");
-		return;
+		return NO;
 		
 //		NSError *error = [NSError errorWithDomain:NSRLocalErrorDomain code:0 userInfo:[NSDictionary dictionaryWithObject:@"Can't set attributes to nil JSON." forKey:NSLocalizedDescriptionKey]];
 //		if (e)
@@ -610,20 +698,19 @@
 	
 	if (dict)
 	{
-		[self setAttributesAsPerRemoteDictionary:dict];
+		return [self setPropertiesUsingRemoteDictionary:dict];
 	}
 	else
 	{
 		if (e)
 			[NSRConfig crashWithError:*e];
+		return NO;
 	}
 }
 
-- (BOOL) setAttributesAsPerRemoteJSON:(NSString *)json
+- (BOOL) setPropertiesUsingRemoteJSON:(NSString *)json
 {
-	NSError *e;
-	[self setAttributesAsPerRemoteJSON:json error:&e];
-	return !e;
+	return [self setPropertiesUsingRemoteJSON:json error:nil];
 }
 
 //pop the warning suppressor defined above (for calling performSelector's in ARC)
@@ -781,7 +868,7 @@
 	if (error && *error)
 		return;
 
-	[self setAttributesAsPerRemoteJSON:jsonResponse error:error];
+	[self setPropertiesUsingRemoteJSON:jsonResponse error:error];
 }
 
 - (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock
@@ -790,7 +877,7 @@
 	 
 	 ^(NSString *result, NSError *error) {
 		 if (result)
-			 [self setAttributesAsPerRemoteJSON:result];
+			 [self setPropertiesUsingRemoteJSON:result];
 		 completionBlock(error);
 	 }];
 }
@@ -829,25 +916,26 @@
 
 #pragma mark Get latest
 
-- (void) remoteGetLatest:(NSError **)error
+- (BOOL) remoteGetLatest:(NSError **)error
 {
 	NSString *jsonResponse = [self remoteGETRequestWithRoute:nil error:error];
 
 	if (error && *error)
-		return;
+		return NO;
 	
-	[self setAttributesAsPerRemoteJSON:jsonResponse error:error];
+	return [self setPropertiesUsingRemoteJSON:jsonResponse error:error];
 }
 
-- (void) remoteGetLatestAsync:(NSRBasicCompletionBlock)completionBlock
+- (void) remoteGetLatestAsync:(NSRGetLatestCompletionBlock)completionBlock
 {
 	[self remoteGETRequestWithRoute:nil async:
 	 
 	 ^(NSString *result, NSError *error) 
 	 {
+		 BOOL change = NO;
 		 if (result)
-			 [self setAttributesAsPerRemoteJSON:result];
-		 completionBlock(error);
+			change = [self setPropertiesUsingRemoteJSON:result];
+		 completionBlock(error, change);
 	 }];
 }
 
@@ -889,7 +977,7 @@
 	
 	[obj remoteGetLatestAsync:
 	 
-	 ^(NSError *error) {
+	 ^(NSError *error, BOOL changed) {
 		if (error)
 			completionBlock(nil, error);
 		else
@@ -935,7 +1023,7 @@
 	//iterate through every object returned by Rails (as dicts)
 	for (NSDictionary *dict in arr)
 	{
-		NSRailsModel *obj = [[[self class] alloc] initWithRemoteAttributesDictionary:dict];	
+		NSRailsModel *obj = [[[self class] alloc] initWithRemoteDictionary:dict];	
 		
 		[objects addObject:obj];
 		

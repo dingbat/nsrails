@@ -57,7 +57,7 @@
 	[remoteReturn setObject:@"retrieve" forKey:@"retrieve"];
 	[remoteReturn setObject:@"ENCODE" forKey:@"encode"];
 	
-	[c setAttributesAsPerRemoteDictionary:remoteReturn];
+	[c setPropertiesUsingRemoteDictionary:remoteReturn];
 	GHAssertNil(c.send, @"Sendable-only property shouldn't have been set");
 	GHAssertNil(c.local, @"Local-only property shouldn't have been set");
 	GHAssertEqualStrings(c.decode, @"decode", @"Decodable property should've been downcased");
@@ -191,7 +191,7 @@
 	if ([[e domain] isEqualToString:@"NSURLErrorDomain"])
 	{
 		NSString *title = @"Server not running";
-		NSString *text = @"It doesn't look the test Rails app is running locally. The CRUD and nesting tests can't run without it.\n\nTo run the app:\n\"$ cd demo/server; rails s\".\nIf your DB isn't set up:\n\"$ rake db:migrate\".";
+		NSString *text = @"It doesn't look the test Rails app is running locally. Some tests can't run without it.\n\nTo run the app:\n\"$ cd demo/server; rails s\".\nIf your DB isn't set up:\n\"$ rake db:migrate\".";
 		
 #if TARGET_OS_IPHONE
 		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:text delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -531,6 +531,93 @@
 	}
 }
 
+- (void) test_diff_detection
+{
+	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
+	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
+	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
+	
+	NSError *e;
+	
+	Post *post = [[Post alloc] init];
+	post.author = @"Dan";
+	post.content = @"Text";
+	
+	[post remoteCreate:&e];
+	
+	GHAssertNil(e, @"There should be no error on a normal remoteCreate for Post");
+	GHAssertNotNil(post.remoteID, @"There should be a remoteID present for newly created object");
+	
+	e = nil;
+	
+	BOOL changes = [post remoteGetLatest:&e];
+	GHAssertNil(e, @"There should be no error on a normal remoteGetLatest for existing Post obj");
+	GHAssertFalse(changes, @"remoteGetLatest should've returned false - there were no changes to Post");
+	
+	e = nil;
+	
+	post.content = @"Local change";
+	
+	changes = [post remoteGetLatest:&e];
+	GHAssertNil(e, @"There should be no error on a normal remoteGetLatest for existing Post obj");
+	GHAssertTrue(changes, @"remoteGetLatest should've returned true - there was a local change to Post");
+	
+	e = nil;
+	
+	//default NSRResponse class doesn't have -b, used for some other test
+	NSRResponse *response = [[NSRResponse alloc] initWithCustomSyncProperties:@"*, post -b"];
+	response.author = @"John";
+	response.content = @"Response";
+	
+	[post.responses addObject:response];
+	
+	changes = [post remoteGetLatest:&e];
+	GHAssertNil(e, @"There should be no error on a normal remoteGetLatest for existing Post obj");
+	GHAssertTrue(post.responses.count == 0, @"remoteGetLatest should've overwritten post.responses");
+	GHAssertTrue(changes, @"remoteGetLatest should've returned true - there was a local change to Post (added a nested Response)");
+
+	e = nil;
+	
+	response.post = post;
+	[response remoteCreate:&e];
+	
+	//this should actually fail since it'll think it's nsr_response
+	GHAssertNotNil(e, @"There should be an error from not reaching 'nsr_response'...");
+	
+	e = nil;
+	
+	//simultaneously test -[NSRConfig setIgnoresClassPrefixes:]
+	[[NSRConfig defaultConfig] setIgnoresClassPrefixes:YES];
+	[response remoteCreate:&e];
+
+	GHAssertNil(e, @"There should be no error on a normal remoteCreate for Response obj");
+	GHAssertNotNil(response.remoteID, @"There should be a remoteID present for newly created object");
+	
+	e = nil;
+	
+	changes = [post remoteGetLatest:&e];
+	GHAssertNil(e, @"There should be no error on a normal remoteGetLatest for existing Post obj");
+	GHAssertTrue(post.responses.count == 1, @"remoteGetLatest should've added the newly created response");
+	GHAssertTrue(changes, @"remoteGetLatest should've returned true - there was a remote change to Post (Response was created)");
+
+	e = nil;
+	
+	changes = [post remoteGetLatest:&e];
+	GHAssertNil(e, @"There should be no error on a normal remoteGetLatest for existing Post obj");
+	GHAssertFalse(changes, @"remoteGetLatest should've returned false - there were no changes to Post");
+	
+	e = nil;
+
+	//clean up
+	
+	[response remoteDestroy:&e];
+	GHAssertNil(e, @"There should be no error on a normal remoteDestroy for existing Response obj");
+	e = nil;
+	
+	[post remoteDestroy:&e];
+	GHAssertNil(e, @"There should be no error on a normal remoteDestroy for existing Post obj");
+}
+
 - (void) test_custom_requests
 {
 	////////
@@ -573,7 +660,6 @@
 	GHAssertNil(e, @"Route should have been formed correctly - remoteID is present");
 	GHAssertEqualStrings(instanceAction, @"posts/1/action", @"Instance route failed");
 }
-
 
 - (void) test_inflection
 {
