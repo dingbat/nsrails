@@ -56,7 +56,7 @@
 												  //since it's not part of our post.responses array yet, let's remoteGetLatest
 												  //(we could also just do a simple [post.responses addObject:newResp])
 												  
-												  [post remoteGetLatest];
+												  [post remoteGetLatest:nil];
 												  
 												  [self.tableView reloadData];
 												  return YES;
@@ -139,7 +139,7 @@
 	//here, on the delete, we're calling remoteDestroy to destroy our object remotely. remember to remove it from our local array, too.
 
 	Response *resp = [post.responses objectAtIndex:indexPath.row];
-	[resp remoteDestroy];
+	[resp remoteDestroy:nil];
 	[post.responses removeObject:resp];
 	
 	[tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];

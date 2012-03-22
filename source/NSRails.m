@@ -591,26 +591,39 @@
 	return dict;
 }
 
-- (BOOL) setAttributesAsPerRemoteJSON:(NSString *)json
+- (void) setAttributesAsPerRemoteJSON:(NSString *)json error:(NSError **)e
 {
 	if (!json)
 	{
+		//decided to not make this return an error, as to mislead dev to think they are connection problems, although the error domain should be checked every time
 		NSLog(@"NSR Warning: Can't set attributes to nil JSON.");
-		return NO;
+		return;
+		
+//		NSError *error = [NSError errorWithDomain:NSRLocalErrorDomain code:0 userInfo:[NSDictionary dictionaryWithObject:@"Can't set attributes to nil JSON." forKey:NSLocalizedDescriptionKey]];
+//		if (e)
+//			*e = error;
+//		[NSRConfig crashWithError:error];
+//		return;
 	}
 	
-	NSError *e;
-	NSDictionary *dict = [json JSONValue:&e];
+	NSDictionary *dict = [json JSONValue:e];
 	
-	if (!dict)
+	if (dict)
 	{
-		[NSRConfig crashWithError:e];
-		return NO;
+		[self setAttributesAsPerRemoteDictionary:dict];
 	}
-	
-	[self setAttributesAsPerRemoteDictionary:dict];
-	
-	return YES;
+	else
+	{
+		if (e)
+			[NSRConfig crashWithError:*e];
+	}
+}
+
+- (BOOL) setAttributesAsPerRemoteJSON:(NSString *)json
+{
+	NSError *e;
+	[self setAttributesAsPerRemoteJSON:json error:&e];
+	return !e;
 }
 
 //pop the warning suppressor defined above (for calling performSelector's in ARC)
@@ -762,14 +775,15 @@
 
 #pragma mark Create
 
-- (BOOL) remoteCreate {	return [self remoteCreate:nil];	}
-- (BOOL) remoteCreate:(NSError **)error
+- (void) remoteCreate:(NSError **)error
 {
 	NSString *jsonResponse = [[self class] remoteRequest:@"POST" sendObject:self route:nil error:error];
-	
-	//check to see if json exists, and if it does, set obj's attributes to it (ie, set remoteID), and return if it worked
-	return (jsonResponse && [self setAttributesAsPerRemoteJSON:jsonResponse]);
+	if (error && *error)
+		return;
+
+	[self setAttributesAsPerRemoteJSON:jsonResponse error:error];
 }
+
 - (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock
 {
 	[[self class] remoteRequest:@"POST" sendObject:self route:nil async:
@@ -783,12 +797,11 @@
 
 #pragma mark Update
 
-- (BOOL) remoteUpdate {	return [self remoteUpdate:nil];	}
-- (BOOL) remoteUpdate:(NSError **)error
+- (void) remoteUpdate:(NSError **)error
 {
-	//makeRequest will actually return a result string, so return if it's not nil (!! = not nil, nifty way to turn object to BOOL)
-	return !![self remoteRequestSendingSelf:@"PUT" route:nil error:error];
+	[self remoteRequestSendingSelf:@"PUT" route:nil error:error];
 }
+
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock
 {
 	[self remoteRequestSendingSelf:@"PUT" route:nil async:
@@ -800,11 +813,11 @@
 
 #pragma mark Destroy
 
-- (BOOL) remoteDestroy { return [self remoteDestroy:nil]; }
-- (BOOL) remoteDestroy:(NSError **)error
+- (void) remoteDestroy:(NSError **)error
 {
-	return (!![self remoteRequest:@"DELETE" requestBody:nil route:nil error:error]);
+	[self remoteRequest:@"DELETE" requestBody:nil route:nil error:error];
 }
+
 - (void) remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock
 {
 	[self remoteRequest:@"DELETE" requestBody:nil route:nil async:
@@ -816,12 +829,16 @@
 
 #pragma mark Get latest
 
-- (BOOL) remoteGetLatest {	return [self remoteGetLatest:nil]; }
-- (BOOL) remoteGetLatest:(NSError **)error
+- (void) remoteGetLatest:(NSError **)error
 {
-	NSString *json = [self remoteGETRequestWithRoute:nil error:error];
-	return (json && [self setAttributesAsPerRemoteJSON:json]); //will return true/false if conversion worked
+	NSString *jsonResponse = [self remoteGETRequestWithRoute:nil error:error];
+
+	if (error && *error)
+		return;
+	
+	[self setAttributesAsPerRemoteJSON:jsonResponse error:error];
 }
+
 - (void) remoteGetLatestAsync:(NSRBasicCompletionBlock)completionBlock
 {
 	[self remoteGETRequestWithRoute:nil async:
@@ -836,13 +853,21 @@
 
 #pragma mark Get specific object (class-level)
 
-+ (id) remoteObjectWithID:(NSInteger)mID	{ return [self remoteObjectWithID:mID error:nil]; }
 + (id) remoteObjectWithID:(NSInteger)mID error:(NSError **)error
 {
 	NSRailsModel *obj = [[[self class] alloc] init];
 	obj.remoteID = [NSDecimalNumber numberWithInteger:mID];
 	
-	if (![obj remoteGetLatest:error])
+	//make sure there's an error, we'll need to retrieve it
+	if (!error)
+	{
+		__autoreleasing NSError *e;
+		error = &e;
+	}
+	
+	[obj remoteGetLatest:error];
+	
+	if (*error)
 		obj = nil;
 	
 #ifndef ARC_ENABLED
@@ -851,6 +876,7 @@
 	
 	return obj;
 }
+
 + (void) remoteObjectWithID:(NSInteger)mID async:(NSRGetObjectCompletionBlock)completionBlock
 {
 	//see comments for previous method
@@ -921,7 +947,6 @@
 	return objects;
 }
 
-+ (NSArray *) remoteAll {	return [self remoteAll:nil]; }
 + (NSArray *) remoteAll:(NSError **)error
 {
 	//make a class GET call (so just the controller - myapp.com/users)

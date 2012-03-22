@@ -30,8 +30,8 @@
 
 - (void) refresh
 {
-	//when the refresh button is hit, get latest array of posts with [Post remoteAll]
-	NSArray *allPosts = [Post remoteAll];
+	//when the refresh button is hit, get latest array of posts with [Post remoteAll:] (error is unimportant for now)
+	NSArray *allPosts = [Post remoteAll:nil];
 	
 	//set it to our ivar
 	posts = [NSMutableArray arrayWithArray:allPosts];
@@ -131,7 +131,7 @@
 	//here, on the delete, we're calling remoteDestroy to destroy our object remotely. remember to remove it from our local array, too.
 	
 	Post *post = [posts objectAtIndex:indexPath.row];
-	[post remoteDestroy];
+	[post remoteDestroy:nil];
 	[posts removeObject:post];
 	
 	[tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];

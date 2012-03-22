@@ -35,23 +35,12 @@
 #pragma mark - CRUD
 /// =============================================================================================
 
-// Synchronous, no error retrieval
-
-- (BOOL) remoteGetLatest;
-- (BOOL) remoteUpdate;
-- (BOOL) remoteCreate;
-- (BOOL) remoteDestroy;
-
-+ (NSArray *) remoteAll;
-+ (id) remoteObjectWithID:(NSInteger)mID;
-
-
 // Synchronous, with error dereference
 
-- (BOOL) remoteGetLatest:(NSError **)error;
-- (BOOL) remoteUpdate:(NSError **)error;
-- (BOOL) remoteCreate:(NSError **)error;
-- (BOOL) remoteDestroy:(NSError **)error;
+- (void) remoteGetLatest:(NSError **)error;
+- (void) remoteUpdate:(NSError **)error;
+- (void) remoteCreate:(NSError **)error;
+- (void) remoteDestroy:(NSError **)error;
 
 + (NSArray *) remoteAll:(NSError **)error;
 + (id) remoteObjectWithID:(NSInteger)mID error:(NSError **)error;
