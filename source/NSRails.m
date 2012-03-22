@@ -33,9 +33,6 @@
 
 + (NSRPropertyCollection *) propertyCollection;
 
-+ (SEL) getPropertySetterAndOtherwiseFail:(NSString *)property;
-+ (SEL) getPropertyGetterAndOtherwiseFail:(NSString *)property;
-
 @end
 
 @interface NSRConfig (access)

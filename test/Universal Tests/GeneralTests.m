@@ -19,7 +19,8 @@
 
 - (void) test_invalid_sync_params
 {
-	NSRAssertClassProperties([TestClass class], @"remoteID", @"attr1");
+	NSRAssertClassProperties([TestClass class], @"remoteID", @"attr1", @"badRetrieve");
+	TestClass *tc = [[TestClass alloc] init];
 }
 
 - (void) test_property_flags

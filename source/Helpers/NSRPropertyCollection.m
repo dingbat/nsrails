@@ -26,6 +26,30 @@
 
 @end
 
+@interface NSObject (getterSetter)
+
++ (BOOL) classHasGetterSetter:(BOOL)getter forProperty:(NSString *)str;
+
+@end
+
+@implementation NSObject (getterSetter)
+
++ (BOOL) classHasGetterSetter:(BOOL)getter forProperty:(NSString *)str
+{
+	SEL sel = (getter ? [self getPropertyGetter:str] : [self getPropertySetter:str]);
+	if (!sel || ![self instancesRespondToSelector:sel])
+	{
+#ifdef NSRLogErrors
+		NSLog(@"NSR Warning: Property '%@' declared in NSRailsSync for class %@ was marked as %@, but there was no getter method found. Maybe you forgot to @synthesize it? Element ignored.", str, NSStringFromClass(self), getter ? @"sendable" : @"retrievable");
+#endif
+		return NO;
+	}
+	
+	return YES;
+}
+
+@end
+
 
 @implementation NSRPropertyCollection
 @synthesize sendableProperties, retrievableProperties, encodeProperties, decodeProperties;
@@ -225,7 +249,7 @@
 						else
 						{
 #ifdef NSRLogErrors
-							NSLog(@"NSR Warning: Property '%@' declared in NSRailsSync for class %@ was not found in this class or in superclasses. Maybe you forgot to @synthesize it? Element ignored.", prop, NSStringFromClass(_class));
+							NSLog(@"NSR Warning: Property '%@' declared in NSRailsSync for class %@ was not found in this class or in superclasses. Element ignored.", prop, NSStringFromClass(_class));
 #endif
 							continue;
 						}
@@ -260,10 +284,22 @@
 					if (opSplit.count > 1)
 					{
 						if ([options rangeOfString:@"r"].location != NSNotFound && !remoteOnly)
-							[retrievableProperties addObject:prop];
+						{
+							//check to see if setter exists
+							if ([_class classHasGetterSetter:NO forProperty:prop])
+							{
+								[retrievableProperties addObject:prop];
+							}
+						}
 						
 						if ([options rangeOfString:@"s"].location != NSNotFound && !remoteOnly)
-							[self addPropertyAsSendable:prop equivalent:equivalent class:_class];
+						{
+							//check to see if getter exists
+							if ([_class classHasGetterSetter:YES forProperty:prop])
+							{
+								[self addPropertyAsSendable:prop equivalent:equivalent class:_class];
+							}
+						}
 						
 						if ([options rangeOfString:@"e"].location != NSNotFound && !remoteOnly)
 							[encodeProperties addObject:prop];
@@ -283,8 +319,14 @@
 						//if remoteOnly, means we already added as sendable and we do NOT want to retrieve it
 						if (!remoteOnly)
 						{
-							[self addPropertyAsSendable:prop equivalent:equivalent class:_class];
-							[retrievableProperties addObject:prop];
+							if ([_class classHasGetterSetter:YES forProperty:prop])
+							{
+								[self addPropertyAsSendable:prop equivalent:equivalent class:_class];
+							}
+							if ([_class classHasGetterSetter:NO forProperty:prop])
+							{
+								[retrievableProperties addObject:prop];
+							}
 						}
 					}
 					

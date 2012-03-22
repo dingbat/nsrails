@@ -17,6 +17,7 @@
 @property (nonatomic, strong) NSString *myID;
 @property (nonatomic, strong) NSString *attr1;
 @property (nonatomic, strong) NSString *attr2;
+@property (nonatomic, strong, readonly) NSString *badRetrieve;
 
 @property (nonatomic, strong) NSString *send, *retrieve, *encode, *decode, *local;
 @property (nonatomic, strong) TestClassParent *parent;
