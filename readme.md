@@ -1,35 +1,56 @@
-# RABL #
+[![nsrails.com](http://i.imgur.com/3FFpT.png)](http://nsrails.com/)
 
-RABL (Ruby API Builder Language) is a Rails and [Padrino](http://padrinorb.com) ruby templating system for generating JSON, XML, MessagePack, PList and BSON. When using the ActiveRecord 'to_json' method, I tend to quickly find myself wanting a more expressive and powerful solution for generating APIs.
-This is especially frustrating when the JSON representation is complex or doesn't match the exact schema defined in the database.
+***
 
-I wanted a simple and flexible system for generating my APIs. In particular, I wanted to easily:
+Welcome!
 
- * Create arbitrary nodes named based on combining data in an object
- * Pass arguments to methods and store the result as a child node
- * Render partial templates and inherit to reduce code duplication
- * Rename or alias attributes to change the name from the model
- * Append attributes from a child into a parent node
- * Include nodes only if a certain condition has been met
+NSRails is a light-weight Objective-C framework (iOS or OS X) for simple but powerful communication with your Rails server.
 
-Anyone who has tried the 'to_json' method used in ActiveRecord for generating a JSON response has felt the pain of this restrictive approach.
-RABL is a general templating system created to solve these problems in an entirely new way.
 
-## Installation ##
+What can NSRails do?
+========
 
-Install RABL as a gem:
+Once you've created Objective-C classes to match your Rails model structure, NSRails gives them native, ActiveResource-like support. This means CRUD and other operations can be called seamlessly via Objective-C methods:
 
-```
-gem install rabl
+``` objc
+Article *newArticle = [[Article alloc] init];
+newArticle.title = @"This article and its properties created right on your Rails server";
+newArticle.content = @"All that's needed is a call to the following method:";
+[newArticle remoteCreate:&error];
 ```
 
-or add to your Gemfile:
+Instances inherit methods to remotely create, update, destroy, or read a corresponding Rails object - only with a single method call. They'll also inherit class methods to retrieve certain objects (or all of them):
 
-```ruby
-# Gemfile
-gem 'rabl'
-# Also add either `json` or `yajl-ruby` as the JSON parser
-gem 'yajl-ruby'
+``` objc
+NSArray *allArticles = [Article remoteAll:&error];
+Article *articleNumber1 = [Article remoteObjectWithID:1 error:&error];
+// Display your article(s)! They're ready with their properties populated directly from your remote DB
 ```
 
-and run `bundle install` to install the dependency.
+
+The framework is very flexible and can fit the specific needs of your Rails (or RESTful) server. Some features include:
+
+* Keeping models and properties of your choice [in-sync](https://github.com/dingbat/nsrails/wiki/NSRailsSync) with those of Rails
+* [Nesting](https://github.com/dingbat/nsrails/wiki/Nesting) your related models (has-many, etc)
+* Support for [basic HTTP authentication](https://github.com/dingbat/nsrails/wiki/NSRConfig)
+* [Asynchronous](https://github.com/dingbat/nsrails/wiki/NSRailsModel) requests
+* A lot more...
+
+How do I get started?
+========
+
+It's fairly painless. Drop the source folder into your Xcode project, and see [this page](https://github.com/dingbat/nsrails/wiki/Getting-Started).
+
+Some more resources:
+
+* Get a head start in translating Rails models into Objective-C using the [autogen tool](https://github.com/dingbat/nsrails/tree/master/autogen)
+* Watch the [screencast](http://vimeo.com/37418882)
+* Browse the included demo iPhone app - it goes straight to a live Rails app at [nsrails.com](http://nsrails.com), so you won't even have to launch a server to get started. The source for this site is also included. Have fun and be civil!
+* See the [Wiki](https://github.com/dingbat/nsrails/wiki)
+
+What's in the sources?
+========
+
+The main class (and the one from which to derive your classes) is [NSRailsModel](https://github.com/dingbat/nsrails/wiki/NSRailsModel) (defined in NSRails.h). Also included is the [NSRConfig](https://github.com/dingbat/nsrails/wiki/NSRConfig) class for server settings.
+
+As per external frameworks, NSRails makes use of the [SBJSON framework](https://github.com/stig/json-framework). And finally, I have to give a lot of credit to [ObjectiveResource](https://github.com/yfactorial/objectiveresource), whose framework was largely the inspiration for NSRails.
