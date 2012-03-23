@@ -12,7 +12,7 @@ What can NSRails do?
 
 Once you've created Objective-C classes to match your Rails model structure, NSRails gives them native, ActiveResource-like support. This means CRUD and other operations can be called seamlessly via Objective-C methods:
 
-``` obj-c
+``` objc
 Article *newArticle = [[Article alloc] init];
 newArticle.title = @"This article and its properties created right on your Rails server";
 newArticle.content = @"All that's needed is a call to the following method:";
@@ -21,10 +21,10 @@ newArticle.content = @"All that's needed is a call to the following method:";
 
 Instances inherit methods to remotely create, update, destroy, or read a corresponding Rails object - only with a single method call. They'll also inherit class methods to retrieve certain objects (or all of them):
 
-``` objc
+``` ruby
 NSArray *allArticles = [Article remoteAll:&error];
 Article *articleNumber1 = [Article remoteObjectWithID:1 error:&error];
-// Display your article(s)! They're ready with their properties populated directly from your remote DB
+# Display your article(s)! They're ready with their properties populated directly from your remote DB
 ```
 
 
