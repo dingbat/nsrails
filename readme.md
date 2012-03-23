@@ -16,7 +16,7 @@ Once you've created Objective-C classes to match your Rails model structure, NSR
 Article *newArticle = [[Article alloc] init];
 newArticle.title = @"This article and its properties created right on your Rails server";
 newArticle.content = @"All that's needed is a call to the following method:";
-[newArticle remoteCreate:&error];
+[newArticle remoteCreate:error];
 ```
 
 Instances inherit methods to remotely create, update, destroy, or read a corresponding Rails object - only with a single method call. They'll also inherit class methods to retrieve certain objects (or all of them):
