@@ -289,9 +289,7 @@
 			![obj isKindOfClass:[NSNumber class]] &&
 			![obj isKindOfClass:[NSNull class]])
 		{
-#ifdef NSRLogErrors
-			NSLog(@"NSR Warning: Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return an NSDictionary, NSArray, NSString, or NSNumber here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop, NSStringFromClass([self class]),sel);
-#endif
+			NSRWarn(@"NSR Warning: Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return an NSDictionary, NSArray, NSString, or NSNumber here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop, NSStringFromClass([self class]),sel);
 		}
 		
 		//send back an NSNull object instead of nil since we'll be encoding it into JSON, where that's relevant
@@ -337,9 +335,7 @@
 		
 		if (!date)
 		{
-#ifdef NSRLogErrors
-			NSLog(@"NSR Warning: Attempted to convert date string returned by Rails (\"%@\") into an NSDate* object for the property '%@' in class %@, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation).",rep,prop,NSStringFromClass([self class]),format);
-#endif
+			NSRWarn(@"NSR Warning: Attempted to convert date string returned by Rails (\"%@\") into an NSDate* object for the property '%@' in class %@, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation).",rep,prop,NSStringFromClass([self class]),format);
 		}
 		
 #ifndef ARC_ENABLED
@@ -680,10 +676,11 @@
 {
 	if (!json)
 	{
-		//decided to not make this return an error, as to mislead dev to think they are connection problems, although the error domain should be checked every time
 		NSLog(@"NSR Warning: Can't set attributes to nil JSON.");
 		return NO;
-		
+
+		//decided to not make this return an error, thinking it would mislead developers to think they are connection problems (although, you should check error domain every time)
+
 //		NSError *error = [NSError errorWithDomain:NSRLocalErrorDomain code:0 userInfo:[NSDictionary dictionaryWithObject:@"Can't set attributes to nil JSON." forKey:NSLocalizedDescriptionKey]];
 //		if (e)
 //			*e = error;

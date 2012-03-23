@@ -39,9 +39,7 @@
 	SEL sel = (getter ? [self getPropertyGetter:str] : [self getPropertySetter:str]);
 	if (!sel || ![self instancesRespondToSelector:sel])
 	{
-#ifdef NSRLogErrors
-		NSLog(@"NSR Warning: Property '%@' declared in NSRailsSync for class %@ was marked as %@, but there was no getter method found. Maybe you forgot to @synthesize it? Element ignored.", str, NSStringFromClass(self), getter ? @"sendable" : @"retrievable");
-#endif
+		NSRWarn(@"NSR Warning: Property '%@' declared in NSRailsSync for class %@ was marked as %@, but there was no getter method found. Maybe you forgot to @synthesize it? Element ignored.", str, NSStringFromClass(self), getter ? @"sendable" : @"retrievable");
 		return NO;
 	}
 	
@@ -76,15 +74,11 @@
 	{
 		if ([equivalent isEqualToString:@"id"])
 		{
-#ifdef NSRLogErrors
-			NSLog(@"NSR Warning: Obj-C property %@ (class %@) found to set equivalence with 'id'. This is fine for retrieving but should not be marked as sendable. Ignoring this property on send.", prop, NSStringFromClass(_class));
-#endif
+			NSRWarn(@"NSR Warning: Obj-C property %@ (class %@) found to set equivalence with 'id'. This is fine for retrieving but should not be marked as sendable. Ignoring this property on send.", prop, NSStringFromClass(_class));
 		}
 		else
 		{
-#ifdef NSRLogErrors
-			NSLog(@"NSR Warning: Multiple Obj-C properties marked as sendable (%@) found pointing to the same Rails attribute ('%@'). Only using data from the first Obj-C property listed. Please fix by only having one sendable property per Rails attribute (you can make the others retrieve-only with the -r flag).", sendables, equivalent);
-#endif
+			NSRWarn(@"NSR Warning: Multiple Obj-C properties marked as sendable (%@) found pointing to the same Rails attribute ('%@'). Only using data from the first Obj-C property listed. Please fix by only having one sendable property per Rails attribute (you can make the others retrieve-only with the -r flag).", sendables, equivalent);
 		}
 	}
 	else
@@ -212,9 +206,7 @@
 					//check to see if a class is redefining remoteID (remoteID from NSRailsModel is the first property checked - if it's not the first, give a warning)
 					if ([prop isEqualToString:@"remoteID"] && i != 0)
 					{
-#ifdef NSRLogErrors
-						NSLog(@"NSR Warning: Found attempt to define 'remoteID' in NSRailsSync for class %@. This property is reserved by the NSRailsModel superclass and should not be modified. Please fix this; element ignored.", NSStringFromClass(_class));
-#endif
+						NSRWarn(@"NSR Warning: Found attempt to define 'remoteID' in NSRailsSync for class %@. This property is reserved by the NSRailsModel superclass and should not be modified. Please fix this; element ignored.", NSStringFromClass(_class));
 						continue;
 					}
 					
@@ -248,9 +240,7 @@
 						}
 						else
 						{
-#ifdef NSRLogErrors
-							NSLog(@"NSR Warning: Property '%@' declared in NSRailsSync for class %@ was not found in this class or in superclasses. Element ignored.", prop, NSStringFromClass(_class));
-#endif
+							NSRWarn(@"NSR Warning: Property '%@' declared in NSRailsSync for class %@ was not found in this class or in superclasses. Element ignored.", prop, NSStringFromClass(_class));
 							continue;
 						}
 					}
@@ -259,9 +249,7 @@
 					NSString *primitive = [_class propertyIsPrimitive:prop];
 					if (primitive)
 					{
-#ifdef NSRLogErrors
-						NSLog(@"NSR Warning: Property '%@' declared in NSRailsSync for class %@ was found to be of primitive type '%@' - please use NSNumber*. Element ignored.", prop, NSStringFromClass(_class), primitive);
-#endif
+						NSRWarn(@"NSR Warning: Property '%@' declared in NSRailsSync for class %@ was found to be of primitive type '%@' - please use NSNumber*. Element ignored.", prop, NSStringFromClass(_class), primitive);
 						continue;
 					}
 					
@@ -339,16 +327,12 @@
 							//class entered is not a real class
 							if (!NSClassFromString(otherModel))
 							{
-#ifdef NSRLogErrors
-								NSLog(@"NSR Warning: Failed to find class '%@', declared as class for nested property '%@' of class '%@'. Nesting relation not set - will still send any NSRailsModel subclasses correctly but will always retrieve as NSDictionaries. ",otherModel,prop,NSStringFromClass(_class));
-#endif
+								NSRWarn(@"NSR Warning: Failed to find class '%@', declared as class for nested property '%@' of class '%@'. Nesting relation not set - will still send any NSRailsModel subclasses correctly but will always retrieve as NSDictionaries. ",otherModel,prop,NSStringFromClass(_class));
 							}
 							//class entered is not a subclass of NSRailsModel
 							else if (![NSClassFromString(otherModel) isSubclassOfClass:[NSRailsModel class]])
 							{
-#ifdef NSRLogErrors
-								NSLog(@"NSR Warning: '%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel. Nesting relation not set - won't be able to send or retrieve this property.",otherModel,prop, NSStringFromClass(_class),otherModel);
-#endif
+								NSRWarn(@"NSR Warning: '%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel. Nesting relation not set - won't be able to send or retrieve this property.",otherModel,prop, NSStringFromClass(_class),otherModel);
 							}
 							else
 							{
@@ -363,9 +347,7 @@
 						if ([ivarType isEqualToString:@"NSArray"] ||
 							[ivarType isEqualToString:@"NSMutableArray"])
 						{
-#ifdef NSRLogErrors
-							NSLog(@"NSR Warning: Property '%@' in class %@ was found to be an array, but no nesting model was set. Note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved Rails attributes will be set. If NSDictionaries are desired, to suppress this warning, simply add a colon with nothing following to the property in NSRailsSync... '%@:'",prop,NSStringFromClass(_class),element);
-#endif
+							NSRWarn(@"NSR Warning: Property '%@' in class %@ was found to be an array, but no nesting model was set. Note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved Rails attributes will be set. If NSDictionaries are desired, to suppress this warning, simply add a colon with nothing following to the property in NSRailsSync... '%@:'",prop,NSStringFromClass(_class),element);
 						}
 						else if (!([ivarType isEqualToString:@"NSString"] ||
 								   [ivarType isEqualToString:@"NSMutableString"] ||

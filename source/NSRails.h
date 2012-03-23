@@ -204,4 +204,11 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 #define NSRAILS_BASE_PROPS @"remoteID=id"
 
 //log NSR errors by default
-#define NSRLogErrors
+#define NSRLogErrors 0
+
+#if NSRLogErrors
+#define NSRWarn	NSLog
+#else
+#define NSRWarn(...)
+#endif
+
