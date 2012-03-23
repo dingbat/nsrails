@@ -49,7 +49,7 @@ Some more resources:
 * Browse the included demo iPhone app - it goes straight to a live Rails app at [nsrails.com](http://nsrails.com), so you won't even have to launch a server to get started. The source for this site is also included. Have fun and be civil!
 * See the [Wiki](https://github.com/dingbat/nsrails/wiki)
 
-What's in the sources?
+What's in the sources? 
 ========
 
 The main class (and the one from which to derive your classes) is [NSRailsModel](https://github.com/dingbat/nsrails/wiki/NSRailsModel) (defined in NSRails.h). Also included is the [NSRConfig](https://github.com/dingbat/nsrails/wiki/NSRConfig) class for server settings.
