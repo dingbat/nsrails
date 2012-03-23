@@ -1,4 +1,3 @@
-```ruby
-def etc
-end
+```
+NSString *s = @"hi";
 ```
