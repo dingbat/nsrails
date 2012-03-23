@@ -159,19 +159,6 @@ static int networkActivityRequests = 0;
 #pragma mark -
 #pragma mark HTTP stuff
 
-//purpose of this method is to factor printing out an error message (if NSRLog allows) and crash (if desired)
-
-+ (void) crashWithError:(NSError *)error
-{
-#if NSRLog > 0
-	NSLog(@"%@",error);
-	NSLog(@" ");
-#endif
-	
-#ifdef NSRCrashOnError
-	[NSException raise:[NSString stringWithFormat:@"%@ error code %d",[error domain],[error code]] format:[error localizedDescription]];
-#endif
-}
 
 //Do not override this method - it includes a check to see if there's no AppURL specified
 - (NSString *) resultForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock
@@ -194,7 +181,7 @@ static int networkActivityRequests = 0;
 		if (completionBlock)
 			completionBlock(nil, err);
 		
-		[NSRConfig crashWithError:err];
+		NSRLogError(err);
 		
 		return nil;
 	}
@@ -264,7 +251,7 @@ static int networkActivityRequests = 0;
 			 //if there's an error from the request there must have been an issue connecting to the server.
 			 if (appleError)
 			 {
-				 [[self class] crashWithError:appleError];
+				 NSRLogError(appleError);
 
 				 completionBlock(nil,appleError);
 			 }
@@ -302,8 +289,8 @@ static int networkActivityRequests = 0;
 		//if there's an error here there must have been an issue connecting to the server.
 		if (appleError)
 		{
-			[[self class] crashWithError:appleError];
-
+			NSRLogError(appleError);
+			
 			if (error)
 				*error = appleError;
 			
@@ -373,7 +360,7 @@ static int networkActivityRequests = 0;
 												   code:statusCode
 											   userInfo:inf];
 		
-		[NSRConfig crashWithError:statusError];
+		NSRLogError(statusError);
 		
 		return statusError;
 	}

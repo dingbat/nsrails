@@ -71,12 +71,16 @@
 
 - (NSString *) toClassName
 {
+	return [[self camelize] properCase];
+}
+
+- (NSString *) properCase
+{
 	if (self.length == 0)
 		return self;
 	
-	NSString *result = [self camelize];
-	return [result stringByReplacingCharactersInRange:NSMakeRange(0,1) 
-										   withString:[[result substringWithRange:NSMakeRange(0,1)] uppercaseString]];
+	return [self stringByReplacingCharactersInRange:NSMakeRange(0,1) 
+										 withString:[[self substringWithRange:NSMakeRange(0,1)] uppercaseString]];
 }
 
 - (NSString *) camelize

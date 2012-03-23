@@ -22,4 +22,6 @@
 @property (nonatomic, strong) NSString *send, *retrieve, *encode, *decode, *local;
 @property (nonatomic, strong) TestClassParent *parent;
 
+@property (nonatomic, strong) NSArray *array;
+
 @end

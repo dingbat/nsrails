@@ -38,7 +38,6 @@
 @interface NSRConfig (access)
 
 + (NSRConfig *) overrideConfig;
-+ (void) crashWithError:(NSError *)error;
 - (NSString *) resultForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock;
 
 @end
@@ -239,7 +238,7 @@
 	{
 		if (e)
 			*e = error;
-		[NSRConfig crashWithError:error];
+		NSRLogError(error);
 	}
 	return json;
 }
@@ -276,7 +275,7 @@
 
 - (id) getCustomEncodingForProperty:(NSString *)prop
 {
-	NSString *sel = [NSString stringWithFormat:@"encode%@", [prop toClassName]];
+	NSString *sel = [NSString stringWithFormat:@"encode%@", [prop properCase]];
 	SEL selector = NSSelectorFromString(sel);
 	if ([self respondsToSelector:selector])
 	{
@@ -289,7 +288,7 @@
 			![obj isKindOfClass:[NSNumber class]] &&
 			![obj isKindOfClass:[NSNull class]])
 		{
-			NSRWarn(@"NSR Warning: Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return an NSDictionary, NSArray, NSString, or NSNumber here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop, NSStringFromClass([self class]),sel);
+			[NSException raise:@"NSR" format:@"Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return NSDictionary, NSArray, NSString, NSNumber, or NSNull here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop, NSStringFromClass([self class]),sel];
 		}
 		
 		//send back an NSNull object instead of nil since we'll be encoding it into JSON, where that's relevant
@@ -304,7 +303,7 @@
 
 - (id) getCustomDecodingForProperty:(NSString *)prop value:(id)val
 {
-	NSString *sel = [NSString stringWithFormat:@"decode%@:",[prop toClassName]];
+	NSString *sel = [NSString stringWithFormat:@"decode%@:",[prop properCase]];
 	
 	SEL selector = NSSelectorFromString(sel);
 	if ([self respondsToSelector:selector])
@@ -335,7 +334,7 @@
 		
 		if (!date)
 		{
-			NSRWarn(@"NSR Warning: Attempted to convert date string returned by Rails (\"%@\") into an NSDate* object for the property '%@' in class %@, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation).",rep,prop,NSStringFromClass([self class]),format);
+			[NSException raise:@"NSR" format:@"Attempted to convert date string returned by Rails (\"%@\") into an NSDate* object for the property '%@' in class %@, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation).",rep,prop,NSStringFromClass([self class]),format];
 		}
 		
 #ifndef ARC_ENABLED
@@ -679,13 +678,8 @@
 		NSLog(@"NSR Warning: Can't set attributes to nil JSON.");
 		return NO;
 
-		//decided to not make this return an error, thinking it would mislead developers to think they are connection problems (although, you should check error domain every time)
-
-//		NSError *error = [NSError errorWithDomain:NSRLocalErrorDomain code:0 userInfo:[NSDictionary dictionaryWithObject:@"Can't set attributes to nil JSON." forKey:NSLocalizedDescriptionKey]];
-//		if (e)
-//			*e = error;
-//		[NSRConfig crashWithError:error];
-//		return;
+		//decided to not make this raise an exception
+		//[NSException raise:@"NSRailsNilJSONError" format:@"Can't set attributes to nil JSON."];
 	}
 	
 	NSDictionary *dict = [json JSONValue:e];
@@ -697,7 +691,7 @@
 	else
 	{
 		if (e)
-			[NSRConfig crashWithError:*e];
+			NSRLogError(*e);
 		return NO;
 	}
 }
@@ -734,11 +728,7 @@
 {
 	if (!self.remoteID)
 	{
-		NSError *e = [NSError errorWithDomain:NSRLocalErrorDomain code:0 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Attempted to update or delete an object with no ID. (Instance of %@)",NSStringFromClass([self class])] forKey:NSLocalizedDescriptionKey]];
-		if (error)
-			*error = e;
-		
-		[NSRConfig crashWithError:e];
+		[NSException raise:@"NSRailsMissingRemoteIDError" format:@"Attempted to update, delete, or retrieve an object with no ID. (Instance of %@)",NSStringFromClass([self class])];
 		return nil;
 	}
 	
@@ -989,25 +979,16 @@
 	//transform result into array (via json)
 	id arr = [json JSONValue:&jsonError];
 	
-	if (!arr)
+	if (jsonError || !arr)
 	{
-		*error = jsonError;
+		if (jsonError && error)
+			*error = jsonError;
 		return nil;
 	}
 	
 	if (![arr isKindOfClass:[NSArray class]])
 	{
-		NSError *e = [NSError errorWithDomain:NSRLocalErrorDomain
-										 code:0 
-									 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"getAll method (index) for %@ controller did not return an array - check your rails app.",[self getPluralModelName]]
-																		  forKey:NSLocalizedDescriptionKey]];
-		
-		if (error)
-			*error = e;
-		
-		[NSRConfig crashWithError:e];
-		
-		return nil;
+		[NSException raise:@"NSRailsInternalError" format:@"getAll method (index) for %@ controller retuned this JSON: `%@`, which is not an array - check your Rails app.",NSStringFromClass([self class]), json];
 	}
 	
 	//here comes actually making the array to return

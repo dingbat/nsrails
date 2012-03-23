@@ -117,7 +117,7 @@
 	//if no custom setter specified, return the standard "setEtc:"
 	if (!s)
 	{
-		s = NSSelectorFromString([NSString stringWithFormat:@"set%@:",[prop toClassName]]);
+		s = NSSelectorFromString([NSString stringWithFormat:@"set%@:",[prop properCase]]);
 	}
 	return s;
 }

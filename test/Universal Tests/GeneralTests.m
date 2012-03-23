@@ -17,15 +17,38 @@
 
 @implementation GeneralTests
 
+#define NSRInitTestClass(customProperties) [[TestClass alloc] initWithCustomSyncProperties:customProperties]
+
 - (void) test_invalid_sync_params
 {
-	NSRAssertClassProperties([TestClass class], @"remoteID", @"attr1", @"badRetrieve");
-	TestClass *tc = [[TestClass alloc] init];
+	GHAssertThrows(NSRInitTestClass(@"f8a asufoj as;lfkas [pfl;aksm jofaskf oasa"), @"Should've failed random mash");
+
+	GHAssertNoThrow(NSRInitTestClass(@"attr1,\nattr2"), @"Shouldn't crash if newline in the middle");
+
+	GHAssertThrows(NSRInitTestClass(@"primitiveAttr"), @"Should crash if a primitive attribute was defined in NSRailsSync");
+	
+	GHAssertThrows(NSRInitTestClass(@"remoteID -x"), @"Should crash if trying to modify remoteID in NSRS");
+	GHAssertThrows(NSRInitTestClass(@"myID=id"), @"Should crash if trying to set a property to ID equiv in NSRS");
+	GHAssertNoThrow(NSRInitTestClass(@"myID=id -r"), @"Shouldn't crash for setting a property to ID -r only");
+	
+	GHAssertThrows(NSRInitTestClass(@"nonexistent"), @"Should crash if trying to set a nonexistent property in NSRS");
+	
+	GHAssertThrows(NSRInitTestClass(@"attr1=hello, attr2=hello"), @"Should crash if trying to set two properties to the same rails equiv in NSRS");
+	GHAssertThrows(NSRInitTestClass(@"attr1=hello -r, attr2=hello, myID=hello"), @"Should crash if trying to set two sendable properties to the same rails equiv in NSRS");
+	GHAssertNoThrow(NSRInitTestClass(@"attr1=hello -r, attr2=hello"), @"Shouldn't crash if two properties are set to the same rails equiv in NSRS, but only one is sendable");
+	
+	GHAssertThrows(NSRInitTestClass(@"badRetrieve"), @"Should crash if trying to set a retrievable property without a getter in NSRS");
+	GHAssertNoThrow(NSRInitTestClass(@"badRetrieve -s"), @"Shouldn't crash if trying to set a sendable property without a getter in NSRS");
+
+	GHAssertThrows(NSRInitTestClass(@"array"), @"Should crash without class to fill array");
+	GHAssertThrows(NSRInitTestClass(@"array:FakeClass"), @"Should crash without real class to fill array");
+	GHAssertThrows(NSRInitTestClass(@"array:BadResponse"), @"Should crash because class exists but doesn't inherit from NSRM");
+	GHAssertNoThrow(NSRInitTestClass(@"array:"), @"Shouldn't crash when defaulting to NSDictionaries");
 }
 
 - (void) test_property_flags
 {
-	TestClass *c = [[TestClass alloc] initWithCustomSyncProperties:@"remoteID -r, retrieve -r, send -s, local -x, decode -d, encode -e, parent -b"];
+	TestClass *c = [[TestClass alloc] initWithCustomSyncProperties:@"retrieve -r, send -s, local -x, decode -d, encode -e, parent -b"];
 	NSRPropertyCollection *pc = [c propertyCollection];
 	
 	NSRAssertEqualArrays(pc.retrievableProperties, @"remoteID", @"retrieve", @"decode", @"encode", @"parent");
@@ -42,7 +65,6 @@
 	GHAssertTrue([sendDict objectForKey:@"parent"] == [NSNull null], @"Even if belongs_to, should've sent nil if prop is nil");
 	
 	c.parent = [[TestClassParent alloc] init];
-	NSLog(@"found dict %@",[c dictionaryOfRemoteProperties]);
 	GHAssertNotNil([[c dictionaryOfRemoteProperties] objectForKey:@"parent_attributes"], @"'parent_attributes' should've been set, not _id");
 	GHAssertNil([[c dictionaryOfRemoteProperties] objectForKey:@"parent"], @"'parent' shouldn't been set, since it's not nil (should be _attributes)");
 
@@ -271,10 +293,9 @@
 	
 	NSNumber *postID = newPost.remoteID;
 	newPost.remoteID = nil;
-	[newPost remoteUpdate:&e];
 	
 	//test to see that it'll fail on trying to update instance with nil ID
-	GHAssertNotNil(e, @"Tried to update an instance with a nil ID, where's the error?");
+	GHAssertThrows([newPost remoteUpdate:&e], @"Tried to update an instance with a nil ID, where's the exception?");
 	newPost.remoteID = postID;
 	
 	e = nil;
@@ -302,9 +323,8 @@
 	
 	//see if there's an error if trying to retrieve with a nil ID
 	newPost.remoteID = nil;
-	[newPost remoteGetLatest:&e];
 	
-	GHAssertNotNil(e, @"Tried to retrieve an instance with a nil ID, where's the error?");
+	GHAssertThrows([newPost remoteGetLatest:&e], @"Tried to retrieve an instance with a nil ID, where's the exception?");
 	
 	e = nil;
 	
@@ -312,8 +332,7 @@
 	//TEST DESTROY
 	
 	//test trying to destroy instance with nil ID
-	[newPost remoteDestroy:&e];
-	GHAssertNotNil(e, @"Tried to delete an instance with a nil ID, where's the error?");
+	GHAssertThrows([newPost remoteDestroy:&e], @"Tried to delete an instance with a nil ID, where's the exception?");
 	newPost.remoteID = postID;
 	
 	e = nil;
@@ -452,84 +471,52 @@
 	
 	e = nil;
 	
-	for (int i = 0; i < 4; i++)
-	{
-		/////////////
-		//test with unreliable NSRailsSync strings
-		
-		
-		//in all of these cases (besides the last), sending will work fine (cause the Response object is in the array), but retrieving should return NSDictionaries.
-		
-		NSString *sync = @"*, responses:TheResponseClass"; //won't be able to find class 'TheResponseClass' (will log warning)
-		if (i == 1)
-			sync = @"*, responses:"; //explicitly defined to use NSDictionaries (all OK)
-		if (i == 2)
-			sync = @"*, responses"; //no nested model definition - will use NSDictionaries (will log warning)
-		if (i == 3)
-			sync = @"*, responses:BadResponse"; //won't work at all, since BadResponse doesnt inherit from NSRM
-		
-		Post *missingClassPost = [[Post alloc] initWithCustomSyncProperties:sync];
-		missingClassPost.author = @"author";
-		missingClassPost.content = @"content";
-		missingClassPost.responses = [NSMutableArray array];
-		
-		NSRResponse *testResponse;
-		if (i == 3)
-			testResponse = (NSRResponse *)[[BadResponse alloc] init];
-		else
-			testResponse = [[NSRResponse alloc] init];
-		testResponse.author = @"Test";
-		testResponse.content = @"Test";
-		
-		[missingClassPost.responses addObject:testResponse];
-		
-		[missingClassPost remoteCreate:&e];
-		GHAssertNil(e, @"Should be no error, even though can't find class Response");
-		GHAssertNotNil(missingClassPost.remoteID, @"Model ID should be present if there was no error on create...");
-		
-		e = nil;
-		
-		//BadResponse run (doesn't inherit from NSRailsModel)
-		if (i == 3)
-		{
-			GHAssertTrue(missingClassPost.responses.count == 0, @"BadResponse shouldn't have been sent since it's not an NSRailsModel subclass");
-		}
-		else
-		{
-			//All of these runs should make NSRails assume to use NSDictionaries
-			
-			GHAssertTrue(missingClassPost.responses.count == 1, @"Should have one response returned from Post create");
-			
-			//now, as the retrieve part of the create, it won't know what to stick in the array and put NSDictionaries in instead
-			GHAssertTrue([[missingClassPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Couldn't find what to put into the array, so should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[missingClassPost.responses objectAtIndex:0] class]));
-			
-			//same applies for retrieve
-			[missingClassPost remoteGetLatest:&e];
-			GHAssertNil(e, @"There should've been no errors on the retrieve, even if no nested model defined.");
-			GHAssertTrue(missingClassPost.responses.count == 1, @"Should still come back with one response");
-			GHAssertTrue([[missingClassPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Couldn't find what to put into the array, so should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[missingClassPost.responses objectAtIndex:0] class]));
-			
-			e = nil;
-			
-			//testResponse will fail destroy
-			[testResponse remoteDestroy:&e];	
-			GHAssertNotNil(e, @"testResponse object was never set an ID (since the retrieve only returned dictionaries), so it should fail destroy.");
-			
-			e = nil;
-			
-			//now, let's manually add it from the dictionary and destroy
-			testResponse.remoteID = [[missingClassPost.responses objectAtIndex:0] objectForKey:@"id"];
-			[testResponse remoteDestroy:&e];	
-			GHAssertNil(e, @"testResponse object should've been destroyed fine after manually setting ID from dictionary (nothing to do with nesting, just cleaning up)");
-			
-			e = nil;
-		}
-		
-		[missingClassPost remoteDestroy:&e];	
-		GHAssertNil(e, @"Post object should've been destroyed fine (nothing to do with nesting, just cleaning up)");
-		
-		e = nil;
-	}
+	Post *missingClassPost = [[Post alloc] initWithCustomSyncProperties:@"*, responses:"];
+	missingClassPost.author = @"author";
+	missingClassPost.content = @"content";
+	missingClassPost.responses = [NSMutableArray array];
+	
+	NSRResponse *testResponse = [[NSRResponse alloc] init];
+	testResponse.author = @"Test";
+	testResponse.content = @"Test";
+	
+	[missingClassPost.responses addObject:testResponse];
+	
+	[missingClassPost remoteCreate:&e];
+	GHAssertNil(e, @"Should be no error, even though can't find class Response");
+	GHAssertNotNil(missingClassPost.remoteID, @"Model ID should be present if there was no error on create...");
+	
+	e = nil;
+	
+	GHAssertTrue(missingClassPost.responses.count == 1, @"Should have one response returned from Post create");
+	
+	//now, as the retrieve part of the create, it won't know what to stick in the array and put NSDictionaries in instead
+	GHAssertTrue([[missingClassPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Couldn't find what to put into the array, so should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[missingClassPost.responses objectAtIndex:0] class]));
+	
+	//same applies for retrieve
+	[missingClassPost remoteGetLatest:&e];
+	GHAssertNil(e, @"There should've been no errors on the retrieve, even if no nested model defined.");
+	GHAssertTrue(missingClassPost.responses.count == 1, @"Should still come back with one response");
+	GHAssertTrue([[missingClassPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Couldn't find what to put into the array, so should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[missingClassPost.responses objectAtIndex:0] class]));
+	
+	e = nil;
+	
+	//testResponse will fail destroy
+	GHAssertThrows([testResponse remoteDestroy:&e], @"testResponse object was never set an ID (since the retrieve only returned dictionaries), so it should throw an exception on destroy.");
+	
+	e = nil;
+	
+	//now, let's manually add it from the dictionary and destroy
+	testResponse.remoteID = [[missingClassPost.responses objectAtIndex:0] objectForKey:@"id"];
+	[testResponse remoteDestroy:&e];	
+	GHAssertNil(e, @"testResponse object should've been destroyed fine after manually setting ID from dictionary (nothing to do with nesting, just cleaning up)");
+	
+	e = nil;
+	
+	[missingClassPost remoteDestroy:&e];	
+	GHAssertNil(e, @"Post object should've been destroyed fine (nothing to do with nesting, just cleaning up)");
+
+	e = nil;
 }
 
 - (void) test_diff_detection
@@ -643,9 +630,7 @@
 	NSError *e = nil;
 	
 	//should fail, since post has nil ID
-	NSString *failure = [post routeForInstanceRoute:nil error:&e];
-	GHAssertNotNil(e, @"Should have been an error when trying to get an instance route on instance with nil remoteID");
-	GHAssertNil(failure, @"Route should be nil when there was an error forming it (no remoteID for instance)");
+	GHAssertThrows([post routeForInstanceRoute:nil error:&e], @"Should have been an exception when trying to get an instance route on instance with nil remoteID");
 	
 	post.remoteID = [NSNumber numberWithInt:1];
 	

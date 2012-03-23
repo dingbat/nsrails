@@ -203,12 +203,4 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 //use remoteID as equivalent for rails property id
 #define NSRAILS_BASE_PROPS @"remoteID=id"
 
-//log NSR errors by default
-#define NSRLogErrors 0
-
-#if NSRLogErrors
-#define NSRWarn	NSLog
-#else
-#define NSRWarn(...)
-#endif
 

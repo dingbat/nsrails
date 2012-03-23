@@ -16,6 +16,7 @@
 
 - (NSString *) pluralize;
 
-- (NSString *) toClassName;
+- (NSString *) properCase; //first letter capitalized
+- (NSString *) toClassName; //camelize+properCase
 
 @end

@@ -14,10 +14,8 @@
 
 
 @implementation TestClass
-@synthesize primitiveAttr, myID, attr1, attr2;
+@synthesize primitiveAttr, myID, attr1, attr2, array;
 @synthesize retrieve, send, local, decode, encode, parent, badRetrieve;
-NSRailsSync(primitiveAttr, remoteID -x, myID=id, nonexistent, //test linebreak
-			attr1=hello, attr2=hello, badRetrieve)
 
 - (NSString *) encodeEncode
 {

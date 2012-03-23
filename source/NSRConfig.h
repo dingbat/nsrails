@@ -11,7 +11,6 @@
 // for documentation on these, see https://github.com/dingbat/nsrails/wiki/Compile-config
 
 #define NSRLog 2
-//#define NSRCrashOnError
 
 //NSRConfig.h
 /////////////////////////////
@@ -105,3 +104,11 @@ typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
 - (void) logResponse:(NSString *)response statusCode:(int)code;
 
 @end
+
+
+#if NSRLog > 0
+#define NSRLogError(x)	NSLog(@"%@",x);
+#else
+#define NSRLogError(x)
+#endif
+
