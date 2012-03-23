@@ -1,3 +1,4 @@
 ```ruby
-#test
+def etc
+end
 ```
