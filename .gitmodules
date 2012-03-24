@@ -1,3 +1,0 @@
-[submodule "autogen"]
-	path = autogen
-	url = git@github.com:dingbat/nsrails-autogen.git
