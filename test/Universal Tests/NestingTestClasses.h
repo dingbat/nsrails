@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) NSString *author, *content;
 @property (nonatomic, strong) NSMutableArray *responses;
+@property (nonatomic, strong) NSDate *updatedAt, *createdAt;
 
 @end
 

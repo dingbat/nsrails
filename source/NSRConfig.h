@@ -48,12 +48,14 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 #define NSRRemoteErrorDomain				@"NSRRemoteErrorDomain"
 #define NSRailsSyncException				@"NSRailsSyncException"
 #define NSRailsInvalidJSONEncodingException @"NSRailsInvalidJSONEncodingException"
+#define NSRailsDateConversionException		@"NSRailsDateConversionException"
 
 ////////////////////////////////
 
 
 @interface NSRConfig : NSObject
 {
+	NSDateFormatter *dateFormatter;
 	NSOperationQueue *asyncOperationQueue; //used for async requests
 }
 
@@ -61,7 +63,6 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 @property (nonatomic) NSTimeInterval timeoutInterval;
 
 @property (nonatomic, strong) NSString *appURL, *appUsername, *appPassword;
-@property (nonatomic, strong) NSString *dateFormat;
 
 + (NSRConfig *) defaultConfig;
 + (void) setConfigAsDefault:(NSRConfig *)config;
@@ -77,6 +78,12 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 - (void) end;
 
 - (void) useIn:(void(^)(void))block;
+
+- (void) setDateFormat:(NSString *)dateFormat;
+- (NSString *) dateFormat;
+
+- (NSString *) convertDateToString:(NSDate *)date;
+- (NSDate *) convertStringToDate:(NSString *)string;
 
 
 ////////////////////////////

@@ -209,7 +209,7 @@
 	allPeople = [Post remoteAll:&e];
 	
 	//if error, and it's NSURL domain, must be that the server isn't running
-	if ([[e domain] isEqualToString:@"NSURLErrorDomain"])
+	if (e && [[e domain] isEqualToString:NSURLErrorDomain])
 	{
 		NSString *title = @"Server not running";
 		NSString *text = @"It doesn't look the test Rails app is running locally. Some tests can't run without it.\n\nTo run the app:\n\"$ cd demo/server; rails s\".\nIf your DB isn't set up:\n\"$ rake db:migrate\".";
@@ -523,9 +523,10 @@
 	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
 	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
 	
-	NSError *e;
+	NSError *e = nil;
 	
-	Post *post = [[Post alloc] init];
+	//remove the two dates, which could modify our object (not relevant currently in this test, but i'll forget later)
+	Post *post = [[Post alloc] initWithCustomSyncProperties:@"*, responses:NSRResponse, updatedAt -x, createdAt -x"];
 	post.author = @"Dan";
 	post.content = @"Text";
 	
@@ -604,10 +605,61 @@
 	GHAssertNil(e, @"There should be no error on a normal remoteDestroy for existing Post obj");
 }
 
+- (void) test_date_conversion
+{	
+	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
+	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
+	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
+	
+	Post *post = [[Post alloc] init];
+	post.author = @"Author";
+	post.content = @"Content";
+	
+	NSError *e = nil;
+	
+	[post remoteCreate:&e];
+	
+	GHAssertNil(e, @"There should be no error in remoteCreate");
+	GHAssertNotNil(post.updatedAt,@"updatedAt should've been set from remoteCreate");
+	
+	e = nil;
+	
+	//sleep to make a substantial difference in updated_at
+	sleep(1);
+	
+	post.content = @"change";
+	[post remoteUpdate:&e];
+	
+	GHAssertNil(e,@"There should be no error in updating post");
+	
+	e = nil;
+	
+	BOOL changes = [post remoteGetLatest:&e];
+	
+	GHAssertNil(e, @"There should be no error in remoteGetLatest");
+	GHAssertNotNil(post.updatedAt,@"updatedAt should be present");
+	GHAssertTrue(changes,@"UpdatedAt should've changed");
+	
+	e = nil;
+	
+	//invalid date format
+	[[NSRConfig defaultConfig] setDateFormat:@"!@#@$"];
+	GHAssertThrows([post remoteGetLatest:&e], @"There should be an exception in setting to a bad format");
+	
+	NSDictionary *dict = [post dictionaryOfRemoteProperties];
+	GHAssertNotNil(dict, @"There should be no problem making a dict, even if format is bad");
+	GHAssertEqualStrings([dict objectForKey:@"created_at"], @"!@#@$", @"New format should've been applied");	
+	
+	e = nil;
+}
+
 - (void) test_custom_requests
 {
 	////////
 	//root
+	NSString *root = [NSRailsModel routeForControllerRoute:nil];
+	GHAssertEqualStrings(root, @"", @"Root route failed");	
+
 	NSString *rootAction = [NSRailsModel routeForControllerRoute:@"action"];
 	GHAssertEqualStrings(rootAction, @"action", @"Root route failed");	
 	

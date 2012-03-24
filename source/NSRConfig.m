@@ -44,7 +44,7 @@
 @end
 
 @implementation NSRConfig
-@synthesize appURL, appUsername, appPassword, dateFormat;
+@synthesize appURL, appUsername, appPassword;
 @synthesize automaticallyInflects, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages;
 
 #pragma mark -
@@ -110,6 +110,8 @@ static int networkActivityRequests = 0;
 {
 	if ((self = [super init]))
 	{
+		dateFormatter = [[NSDateFormatter alloc] init];
+		
 		//by default, set to accept datestring like "2012-02-01T00:56:24Z"
 		//this format (ISO 8601) is default in rails
 		self.dateFormat = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
@@ -153,8 +155,35 @@ static int networkActivityRequests = 0;
 	appURL = str;
 }
 
+#pragma mark - Date Formatting
 
+- (void) setDateFormat:(NSString *)dateFormat
+{
+	[dateFormatter setDateFormat:dateFormat];
+}
 
+- (NSString *) dateFormat
+{
+	return dateFormatter.dateFormat;
+}
+
+- (NSString *) convertDateToString:(NSDate *)date
+{
+	return [dateFormatter stringFromDate:date];
+}
+
+- (NSDate *) convertStringToDate:(NSString *)string
+{
+	NSDate *date = [dateFormatter dateFromString:string];
+	
+	if (!date)
+	{
+		[NSException raise:NSRailsDateConversionException format:@"Attempted to convert remote date string (\"%@\") into an NSDate object, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation).",string,dateFormatter.dateFormat];
+		return nil;
+	}
+	
+	return date;
+}
 
 #pragma mark -
 #pragma mark HTTP stuff

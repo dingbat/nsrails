@@ -281,6 +281,12 @@
 	{
 		id obj = [self performSelector:selector];
 		
+		//send back an NSNull object instead of nil since we'll be encoding it into JSON, where that's relevant
+		if (!obj)
+		{
+			return [NSNull null];
+		}
+		
 		//make sure that the result is a JSON parse-able
 		if (![obj isKindOfClass:[NSArray class]] &&
 			![obj isKindOfClass:[NSDictionary class]] &&
@@ -291,11 +297,6 @@
 			[NSException raise:NSRailsInvalidJSONEncodingException format:@"Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return NSDictionary, NSArray, NSString, NSNumber, or NSNull here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop, NSStringFromClass([self class]),sel];
 		}
 		
-		//send back an NSNull object instead of nil since we'll be encoding it into JSON, where that's relevant
-		if (!obj)
-		{
-			return [NSNull null];
-		}
 		return obj;
 	}
 	return nil;
@@ -321,26 +322,10 @@
 	{
 		return [self getCustomDecodingForProperty:prop value:rep];
 	}
-	//if the object is of class NSDate and the representation in JSON is a string, automatically convert it to string
-	else if ([[[self class] getPropertyType:prop] isEqualToString:@"NSDate"] && [rep isKindOfClass:[NSString class]])
+	//if the object is of class NSDate and the representation in JSON is a string, automatically convert it to an NSDate
+	else if (rep && [rep isKindOfClass:[NSString class]] && [[[self class] getPropertyType:prop] isEqualToString:@"NSDate"])
 	{
-		NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-		
-		//format to whatever date format is defined in the config
-		NSString *format = [[self class] getRelevantConfig].dateFormat;
-		[formatter setDateFormat:format];
-		
-		NSDate *date = [formatter dateFromString:rep];
-		
-		if (!date)
-		{
-			NSLog(@"NSR Warning: Attempted to convert date string returned by Rails (\"%@\") into an NSDate object for the property '%@' in class %@, but conversion failed. Setting date to nil. Please check your config's dateFormat (used format \"%@\" for this operation).",rep,prop,NSStringFromClass([self class]),format);
-		}
-		
-#ifndef ARC_ENABLED
-		[formatter release];
-#endif
-		return date;
+		return [[[self class] getRelevantConfig] convertStringToDate:rep];
 	}
 	
 	//otherwise, return whatever it is
@@ -398,24 +383,7 @@
 			//if the object is of class NSDate, we need to automatically convert it to string for the JSON framework to handle correctly
 			if ([val isKindOfClass:[NSDate class]])
 			{
-				NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-				
-				NSString *format = [[self class] getRelevantConfig].dateFormat;
-				
-				//format to whatever date format is defined in the config
-				[formatter setDateFormat:format];
-				
-				NSString *dateValue = [formatter stringFromDate:val];
-				
-				if (!dateValue)
-				{
-					NSLog(@"NSR Warning: Attempted to convert NSDate (%@) for the property '%@' in class %@, but conversion into NSString failed. Will send this property to Rails as NULL! Please check your config's dateFormat (used format \"%@\" for this operation).",val,prop,NSStringFromClass([self class]),format);
-				}
-				
-#ifndef ARC_ENABLED
-				[formatter release];
-#endif
-				return dateValue;
+				return [[[self class] getRelevantConfig] convertDateToString:val];
 			}
 			
 			//otherwise, just return the value from the get method
