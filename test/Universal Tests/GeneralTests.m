@@ -183,10 +183,8 @@
 	[[NSRConfig defaultConfig] setAppURL:nil];
 	
 	NSError *e = nil;
-	Post *post = [Post remoteObjectWithID:1 error:&e];
 	
-	GHAssertNotNil(e, @"Should fail on no app URL set in config, where's the error?");
-	GHAssertNil(post, @"Post should be nil because no connection could be made");
+	GHAssertThrows([Post remoteObjectWithID:1 error:&e], @"Should fail on no app URL set in config, where's the error?");
 	
 	e = nil;
 	
@@ -236,7 +234,7 @@
 	//TEST READ BY ID
 	
 	//try to retrieve ID = -1, obviously error
-	post = [Post remoteObjectWithID:-1 error:&e];
+	Post *post = [Post remoteObjectWithID:-1 error:&e];
 	
 	GHAssertNotNil(e, @"Obviously no one with ID -1, where's the error?");
 	GHAssertNil(post, @"There was an error on remoteObjectWithID, post should be nil.");

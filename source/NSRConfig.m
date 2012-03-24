@@ -175,13 +175,7 @@ static int networkActivityRequests = 0;
 	//make sure the app URL is set
 	if (!self.appURL)
 	{
-		NSError *err = [NSError errorWithDomain:NSRLocalErrorDomain code:0 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup. (env=%@)", currentEnvironment] forKey:NSLocalizedDescriptionKey]];
-		if (error)
-			*error = err;
-		if (completionBlock)
-			completionBlock(nil, err);
-		
-		NSRLogError(err);
+		[NSException raise:@"NSRailsMissingURLException" format:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup. (env=%@)", currentEnvironment];
 		
 		return nil;
 	}
@@ -222,7 +216,9 @@ static int networkActivityRequests = 0;
 
 - (void) logResponse:(NSString *)response statusCode:(int)code
 {
-#if NSRLog > 1
+#if NSRLog == 1
+	NSLog(@"<== Code %d",code);
+#elif NSRLog > 1
 	NSLog(@"IN<=== Code %d; %@\n\n",code,((code < 0 || code >= 400) ? @"[see ERROR]" : response));
 	NSLog(@" ");
 #endif

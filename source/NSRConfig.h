@@ -6,17 +6,16 @@
 //  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
-/////////////////////////////
-//  OPTIONS
-// for documentation on these, see https://github.com/dingbat/nsrails/wiki/Compile-config
-
-#define NSRLog 2
-
-//NSRConfig.h
-/////////////////////////////
+//Logging
+/////////
+                     //undefined, NSRails will log nothing
+//#define NSRLog 1   //As 1, NSRails will log HTTP verbs with their outgoing URLs and any server errors being returned.
+#define NSRLog 2     //As 2, NSRails will also log any JSON going out/coming in.
 
 
-// Test if ARC is enabled (thanks to http://www.learn-cocos2d.com/2011/11/everything-know-about-arc/ )
+//Test if ARC is enabled
+////////////////////////
+// (thanks to http://www.learn-cocos2d.com/2011/11/everything-know-about-arc/ )
 // define some LLVM3 macros if the code is compiled with a different compiler (ie LLVMGCC42)
 #ifndef __has_feature
 #define __has_feature(x) 0
@@ -31,18 +30,24 @@
 #endif // __has_feature(objc_arc)
 
 
-////////////////////////////////
+//Common Blocks
+////////////////////////
 
 typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
+
+typedef void(^NSRBasicCompletionBlock)(NSError *error);
+typedef void(^NSRGetLatestCompletionBlock)(BOOL changed, NSError *error);
+typedef void(^NSRGetAllCompletionBlock)(NSArray *allRemote, NSError *error);
+typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 
 #define NSRConfigEnvironmentDevelopment	@"development"
 #define NSRConfigEnvironmentProduction	@"production"
 
 #define NSRValidationErrorsKey	@"validation errors"
 
-#define NSRLocalErrorDomain @"NSRLocalErrorDomain"
-#define NSRRemoteErrorDomain @"NSRRemoteErrorDomain"
-
+#define NSRRemoteErrorDomain				@"NSRRemoteErrorDomain"
+#define NSRailsSyncException				@"NSRailsSyncException"
+#define NSRailsInvalidJSONEncodingException @"NSRailsInvalidJSONEncodingException"
 
 ////////////////////////////////
 

@@ -47,11 +47,6 @@
 
 
 // Asynchronous
- 
-typedef void(^NSRBasicCompletionBlock)(NSError *error);
-typedef void(^NSRGetLatestCompletionBlock)(NSError *error, BOOL changed);
-typedef void(^NSRGetAllCompletionBlock)(NSArray *allRemote, NSError *error);
-typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 
 - (void) remoteGetLatestAsync:(NSRGetLatestCompletionBlock)completionBlock;
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock;
@@ -101,6 +96,7 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 - (NSString *) remoteJSONRepresentation;
 - (NSDictionary *) dictionaryOfRemoteProperties;
 
+// returns YES if any changes were made to the local object, NO if object was identical before/after
 - (BOOL) setPropertiesUsingRemoteJSON:(NSString *)json;
 - (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict;
 
@@ -137,7 +133,7 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 #define _N_ARGS_1(...) _N_ARGS_2(__VA_ARGS__)
 #define _N_ARGS_2(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, n, ...) n
 
-//maco to convert cstring to NSString
+//macro to convert cstring to NSString
 #define NSRStringFromCString(cstr)	[NSString stringWithCString:cstr encoding:NSUTF8StringEncoding]
 
 //adding a # before va_args will simply make its contents a cstring
@@ -157,7 +153,6 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 
 //returns the string version of NSRNoCarryFromSuper so we can find it when evaluating NSRailsSync string
 #define _NSRNoCarryFromSuper_STR	_MAKE_STR(_NSR_NO_SUPER_)
-
 
 
 /// =============================================================================================

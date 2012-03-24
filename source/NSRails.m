@@ -288,7 +288,7 @@
 			![obj isKindOfClass:[NSNumber class]] &&
 			![obj isKindOfClass:[NSNull class]])
 		{
-			[NSException raise:@"NSR" format:@"Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return NSDictionary, NSArray, NSString, NSNumber, or NSNull here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop, NSStringFromClass([self class]),sel];
+			[NSException raise:NSRailsInvalidJSONEncodingException format:@"Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return NSDictionary, NSArray, NSString, NSNumber, or NSNull here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop, NSStringFromClass([self class]),sel];
 		}
 		
 		//send back an NSNull object instead of nil since we'll be encoding it into JSON, where that's relevant
@@ -334,7 +334,7 @@
 		
 		if (!date)
 		{
-			[NSException raise:@"NSR" format:@"Attempted to convert date string returned by Rails (\"%@\") into an NSDate* object for the property '%@' in class %@, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation).",rep,prop,NSStringFromClass([self class]),format];
+			NSLog(@"NSR Warning: Attempted to convert date string returned by Rails (\"%@\") into an NSDate object for the property '%@' in class %@, but conversion failed. Setting date to nil. Please check your config's dateFormat (used format \"%@\" for this operation).",rep,prop,NSStringFromClass([self class]),format);
 		}
 		
 #ifndef ARC_ENABLED
@@ -919,7 +919,7 @@
 		 BOOL change = NO;
 		 if (result)
 			change = [self setPropertiesUsingRemoteJSON:result];
-		 completionBlock(error, change);
+		 completionBlock(change, error);
 	 }];
 }
 
@@ -961,7 +961,7 @@
 	
 	[obj remoteGetLatestAsync:
 	 
-	 ^(NSError *error, BOOL changed) {
+	 ^(BOOL changed, NSError *error) {
 		if (error)
 			completionBlock(nil, error);
 		else

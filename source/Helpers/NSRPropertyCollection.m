@@ -18,7 +18,7 @@
 //this gonna go in the nestedModelProperties (properties can never have a comma/space in them so we're safe from any conflicts)
 #define NSRBelongsToKeyForProperty(prop) [prop stringByAppendingString:@", belongs_to"]
 
-#define NSRRaiseError(x, ...) [NSException raise:@"NSRSyncPropertyException" format:x,__VA_ARGS__,nil]
+#define NSRRaiseError(x, ...) [NSException raise:NSRailsSyncException format:x,__VA_ARGS__,nil]
 
 @interface NSRailsModel (internal)
 
