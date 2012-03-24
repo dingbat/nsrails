@@ -232,7 +232,7 @@
 	NSDictionary *enveloped = [NSDictionary dictionaryWithObject:[self dictionaryOfRemoteProperties]
 														  forKey:[[self class] getModelName]];
 	
-	NSError *error;
+	NSError *error = nil;
 	NSString *json = [enveloped JSONRepresentation:&error];
 	if (!json)
 	{
@@ -400,21 +400,27 @@
 			{
 				NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 				
+				NSString *format = [[self class] getRelevantConfig].dateFormat;
+				
 				//format to whatever date format is defined in the config
-				[formatter setDateFormat:[[self class] getRelevantConfig].dateFormat];
+				[formatter setDateFormat:format];
 				
 				NSString *dateValue = [formatter stringFromDate:val];
 				
-	#ifndef ARC_ENABLED
+				if (!dateValue)
+				{
+					NSLog(@"NSR Warning: Attempted to convert NSDate (%@) for the property '%@' in class %@, but conversion into NSString failed. Will send this property to Rails as NULL! Please check your config's dateFormat (used format \"%@\" for this operation).",val,prop,NSStringFromClass([self class]),format);
+				}
+				
+#ifndef ARC_ENABLED
 				[formatter release];
-	#endif
+#endif
 				return dateValue;
 			}
 			
 			//otherwise, just return the value from the get method
 			return val;
 		}
-		//TODO warn user that there's no get method!
 	}
 	return nil;
 }
@@ -721,7 +727,7 @@
 		//otherwise, if it was called on NSRailsModel (to access a "root method"), don't modify the route:
 		//eg, ([NSRailsModel makeGET:@"hello"] => myapp.com/hello)
 	}
-	return route;
+	return (route ? route : @"");
 }
 
 - (NSString *) routeForInstanceRoute:(NSString *)route error:(NSError **)error
@@ -752,7 +758,7 @@
 
 - (void) remoteRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
 {
-	NSError *error;
+	NSError *error = nil;
 	route = [self routeForInstanceRoute:route error:&error];
 	if (route)
 		[[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
@@ -772,7 +778,7 @@
 
 - (void) remoteRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
 {
-	NSError *e;
+	NSError *e = nil;
 	NSString *json = [self remoteJSONRepresentation:&e];
 	if (json)
 		[self remoteRequest:httpVerb requestBody:json route:route async:completionBlock];
@@ -820,7 +826,7 @@
 
 + (void) remoteRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
 {
-	NSError *e;
+	NSError *e = nil;
 	NSString *json = [obj remoteJSONRepresentation:&e];
 	if (json)
 		[self remoteRequest:httpVerb requestBody:json route:route async:completionBlock];
@@ -933,7 +939,7 @@
 	//make sure there's an error, we'll need to retrieve it
 	if (!error)
 	{
-		__autoreleasing NSError *e;
+		__autoreleasing NSError *e = nil;
 		error = &e;
 	}
 	
@@ -974,7 +980,7 @@
 //helper method for both sync+async for remoteAll
 + (NSArray *) arrayOfModelsFromJSON:(NSString *)json error:(NSError **)error
 {
-	NSError *jsonError;
+	NSError *jsonError = nil;
 	
 	//transform result into array (via json)
 	id arr = [json JSONValue:&jsonError];
