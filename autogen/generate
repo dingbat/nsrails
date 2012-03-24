@@ -60,6 +60,12 @@ def m(m)
       end
     end
   end
+  if (@options[:created_at])
+    str += ", createdAt -r"
+  end
+  if (@options[:updated_at])
+    str += ", updatedAt -r"
+  end
   str += ")"
 end
 
