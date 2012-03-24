@@ -4,15 +4,15 @@ Usage:
 ==========
 
 ```
-$ cd <NSRAILS_REPO>
-$ autogen/generate <APP_PATH> [options]
+$ cd path/to/nsrails_repo
+$ autogen/generate path/to/your_rails_project [options]
 ```
 
 Files will be created in the `autogen/` directory with the extension `.gen`, whose contained files can then be added to your Xcode project. Sample output for our [demo app](https://github.com/dingbat/nsrails/tree/master/demo/iOS):
 
 ```
-Making directory my_rails_project.gen/
-Writing files to /Users/dan/projects/nsrails/autogen/my_rails_project.gen/
+Making directory your_rails_project.gen/
+Writing files to /Users/dan/projects/nsrails/autogen/your_rails_project.gen/
   + Post.h
   + Post.m
   + Response.h
