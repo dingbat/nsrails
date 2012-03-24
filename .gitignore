@@ -1,19 +1,11 @@
-# Ignore Xcode build folders
-
-demo/iOS/.DS_Store
-demo/iOS/DerivedData/
-
-test/.DS_Store
-test/DerivedData/
+*.DS_Store
 
 
-# Ignore Xcode UI files
+# Ignore Xcode noise
 
-demo/iOS/NSRailsApp.xcodeproj/project.xcworkspace/xcuserdata/
-demo/iOS/NSRailsApp.xcodeproj/xcuserdata/
-
-test/NSRails.xcodeproj/project.xcworkspace/xcuserdata/
-test/NSRails.xcodeproj/xcuserdata/
+DerivedData
+xcuserdata
+project.xcworkspace
 
 
 # Ignore folders made with autogen
