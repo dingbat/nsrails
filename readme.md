@@ -49,9 +49,9 @@ Some more resources:
 * Browse the included demo iPhone app - it goes straight to a live Rails app at [nsrails.com](http://nsrails.com), so you won't even have to launch a server to get started. The source for this site is also included. Have fun and be civil!
 * See the [Wiki](https://github.com/dingbat/nsrails/wiki)
 
-What's in the sources? 
+Credits 
 ========
 
-The main class (and the one from which to derive your classes) is [NSRailsModel](https://github.com/dingbat/nsrails/wiki/NSRailsModel) (defined in NSRails.h). Also included is the [NSRConfig](https://github.com/dingbat/nsrails/wiki/NSRConfig) class for server settings.
+NSRails is published under the MIT license, meaning you can use the sources however you'd like.
 
-As per external frameworks, NSRails makes use of the [SBJSON framework](https://github.com/stig/json-framework). And finally, I have to give a lot of credit to [ObjectiveResource](https://github.com/yfactorial/objectiveresource), whose framework was largely the inspiration for NSRails.
+Thanks a lot to the [SB JSON framework](https://github.com/stig/json-framework) for JSON parsing and writing, and to [ObjectiveResource](https://github.com/yfactorial/objectiveresource) for being largely the inspiration for NSRails.
