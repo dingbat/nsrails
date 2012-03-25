@@ -13,6 +13,9 @@
 #import "TestClasses.h"
 
 @interface GeneralTests : GHTestCase
+{
+	BOOL noServer;
+}
 @end
 
 @implementation GeneralTests
@@ -174,8 +177,127 @@
 	NSRAssertRelevantConfigURL(@"Default", @"default exterior after all nesting");
 }
 
+- (void) test_crud_async
+{
+	GHAssertFalse(noServer, @"Test app not running. Run 'rails s'.");
+	
+	/////////////////
+	//TEST READ ALL
+	
+	[[NSRConfig defaultConfig] setAppURL:@"localhost:3000"];
+	
+	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
+	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
+	
+	[Post remoteAllAsync:^(NSArray *allPeople, NSError *error) 
+	{
+		GHAssertNil(error, @"ASYNC remoteAll on Post should have worked.'");
+		GHAssertNotNil(allPeople, @"ASYNC No errors, allPeople should not be nil.");
+	}];
+	
+	
+	/////////////////
+	//TEST READ BY ID
+	
+	//try to retrieve ID = -1, obviously error
+	[Post remoteObjectWithID:-1 async:^(id post, NSError *error) {
+		GHAssertNotNil(error, @"ASYNC Obviously no one with ID -1, where's the error?");
+		GHAssertNil(post, @"ASYNC There was an error on remoteObjectWithID, post should be nil.");
+	}];
+	
+	
+	/////////////////
+	//TEST CREATE
+	
+	//this should fail on validation b/c no author
+	Post *failedPost = [[Post alloc] init];
+	failedPost.author = @"Fail";
+	[failedPost remoteCreateAsync:^(NSError *e) {
+		GHAssertNotNil(e, @"ASYNC Post should have failed validation b/c no content... where is error?");
+		GHAssertNotNil(failedPost, @"ASYNC Post did fail but object should not be nil.");
+		GHAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"ASYNC There was an error by validation, so validation error dictionary should be present.");
+	}];
+	
+	//this should go through
+	Post *newPost = [[Post alloc] init];
+	newPost.author = @"Dan";
+	newPost.content = @"Async Test";
+	[newPost remoteCreateAsync:^(NSError *e) {
+		GHAssertNil(e, @"ASYNC New post should've been created fine, there should be no error.");
+		GHAssertNotNil(newPost.remoteID, @"ASYNC New post was just created, remoteID shouldn't be nil.");
+		GHAssertNotNil(newPost.remoteAttributes, @"ASYNC New post was just created, remoteAttributes shouldn't be nil.");
+		
+		/////////////////
+		//TEST READ BY ID (again)
+		
+		[Post remoteObjectWithID:[newPost.remoteID integerValue] async:^(id retrievedPost, NSError *e2) {
+			GHAssertNil(e2, @"ASYNC Retrieving post we just made, should be no errors.");
+			GHAssertNotNil(retrievedPost, @"ASYNC No errors retrieving post we just made, he should not be nil.");
+			GHAssertEqualObjects([retrievedPost remoteID], newPost.remoteID, @"ASYNC Retrieved post should have same remoteID as created post");
+		
+			newPost.author = @"Dan 2";
+			
+			/////////////////
+			//TEST UPDATE
+			//update should go through
+			[newPost remoteUpdateAsync:^(NSError *e3) {
+				GHAssertNil(e3, @"ASYNC Update should've gone through, there should be no error");
+
+				NSNumber *postID = newPost.remoteID;
+				newPost.remoteID = nil;
+				
+				//test to see that it'll fail on trying to update instance with nil ID
+				GHAssertThrows([newPost remoteUpdateAsync:^(NSError *error) {}], @"ASYNC Tried to update an instance with a nil ID, where's the exception?");
+				
+				newPost.remoteID = postID;
+				
+				//update should fail validation b/c no author
+				newPost.author = nil;
+				[newPost remoteUpdateAsync:^(NSError *e4) {
+					GHAssertNotNil(e4, @"ASYNC New post should've failed, there should be an error.");
+					GHAssertNotNil([[e4 userInfo] objectForKey:NSRValidationErrorsKey], @"ASYNC There was an error by validation, so validation error dictionary should be present.");
+					GHAssertNil(newPost.author, @"ASYNC New author failed validation (unchanged) but it should still be nil locally.");
+					
+					///////////////////////
+					//TEST READ (RETRIVE)
+					
+					[newPost remoteGetLatestAsync:^(BOOL changed, NSError *e5) {
+						GHAssertNil(e5, @"ASYNC Should be no error retrieving a value.");
+						//see if it correctly set the info on the server (still there after failed validation) to overwrite the local author (set to nil)
+						GHAssertNotNil(newPost.author, @"ASYNC New post should have gotten back his old author after validation failed (on the retrieve).");
+						
+						newPost.remoteID = nil;
+						
+						//see if there's an exception if trying to retrieve with a nil ID
+						GHAssertThrows([newPost remoteGetLatestAsync:^(BOOL changed, NSError *error) {}], @"ASYNC Tried to retrieve an instance with a nil ID, where's the exception?");
+
+						///////////////////////
+						//TEST DESTROY
+						
+						//test trying to destroy instance with nil ID
+						GHAssertThrows([newPost remoteDestroyAsync:^(NSError *error) {}], @"ASYNC Tried to delete an instance with a nil ID, where's the exception?");
+						newPost.remoteID = postID;
+						
+						[newPost remoteDestroyAsync:^(NSError *e6) {
+							GHAssertNil(e6, @"ASYNC Deleting new post should have worked, but got back an error.");
+							
+							//should get back an error cause there shouldn't be a post with its ID anymore
+							[newPost remoteDestroyAsync:^(NSError *e7) {
+								GHAssertNotNil(e7, @"ASYNC Deleting new post for a second time shouldn't have worked, where's the error?");
+							}];
+						}];
+					}];
+				}];
+			}];
+			
+		}];
+	}];	
+}
+
 - (void) test_crud
 {
+	GHAssertFalse(noServer, @"Test app not running. Run 'rails s'.");
+	
 	///////////////////
 	//TEST NIL APP URL
 	
@@ -207,23 +329,6 @@
 	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
 	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
 	allPeople = [Post remoteAll:&e];
-	
-	//if error, and it's NSURL domain, must be that the server isn't running
-	if (e && [[e domain] isEqualToString:NSURLErrorDomain])
-	{
-		NSString *title = @"Server not running";
-		NSString *text = @"It doesn't look the test Rails app is running locally. Some tests can't run without it.\n\nTo run the app:\n\"$ cd demo/server; rails s\".\nIf your DB isn't set up:\n\"$ rake db:migrate\".";
-		
-#if TARGET_OS_IPHONE
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:text delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-		[alert show];
-#else
-		NSAlert *alert = [NSAlert alertWithMessageText:title defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:text];
-		[alert runModal];
-#endif
-		
-		GHFail(@"Test app not running. Run 'rails s'.");
-	}
 	
 	GHAssertNil(e, @"remoteAll on Post should have worked.'");
 	GHAssertNotNil(allPeople, @"No errors, allPeople should not be nil.");
@@ -348,6 +453,8 @@
 
 - (void) test_nesting
 {
+	GHAssertFalse(noServer, @"Test app not running. Run 'rails s'.");
+	
 	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
 	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
 	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
@@ -469,33 +576,34 @@
 	
 	e = nil;
 	
-	Post *missingClassPost = [[Post alloc] initWithCustomSyncProperties:@"*, responses:"];
-	missingClassPost.author = @"author";
-	missingClassPost.content = @"content";
-	missingClassPost.responses = [NSMutableArray array];
+	Post *dictionariesPost = [[Post alloc] initWithCustomSyncProperties:@"*, responses:"];
+	dictionariesPost.author = @"author";
+	dictionariesPost.content = @"content";
+	dictionariesPost.responses = [NSMutableArray array];
 	
 	NSRResponse *testResponse = [[NSRResponse alloc] init];
 	testResponse.author = @"Test";
 	testResponse.content = @"Test";
 	
-	[missingClassPost.responses addObject:testResponse];
+	[dictionariesPost.responses addObject:testResponse];
 	
-	[missingClassPost remoteCreate:&e];
-	GHAssertNil(e, @"Should be no error, even though can't find class Response");
-	GHAssertNotNil(missingClassPost.remoteID, @"Model ID should be present if there was no error on create...");
+	[dictionariesPost remoteCreate:&e];
+	GHAssertNil(e, @"Should be no error, even though responses is set to dicts");
+	GHAssertNotNil(dictionariesPost.remoteID, @"Model ID should be present if there was no error on create...");
 	
 	e = nil;
 	
-	GHAssertTrue(missingClassPost.responses.count == 1, @"Should have one response returned from Post create");
+	GHAssertTrue(dictionariesPost.responses.count == 1, @"Should have one response returned from Post create");
 	
 	//now, as the retrieve part of the create, it won't know what to stick in the array and put NSDictionaries in instead
-	GHAssertTrue([[missingClassPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Couldn't find what to put into the array, so should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[missingClassPost.responses objectAtIndex:0] class]));
+	GHAssertTrue([[dictionariesPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[dictionariesPost.responses objectAtIndex:0] class]));
 	
 	//same applies for retrieve
-	[missingClassPost remoteGetLatest:&e];
+	BOOL changes = [dictionariesPost remoteGetLatest:&e];
 	GHAssertNil(e, @"There should've been no errors on the retrieve, even if no nested model defined.");
-	GHAssertTrue(missingClassPost.responses.count == 1, @"Should still come back with one response");
-	GHAssertTrue([[missingClassPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Couldn't find what to put into the array, so should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[missingClassPost.responses objectAtIndex:0] class]));
+	GHAssertTrue(dictionariesPost.responses.count == 1, @"Should still come back with one response");
+	GHAssertTrue([[dictionariesPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[dictionariesPost.responses objectAtIndex:0] class]));
+	GHAssertFalse(changes,@"There should be no changes, even when using dicts");
 	
 	e = nil;
 	
@@ -505,13 +613,13 @@
 	e = nil;
 	
 	//now, let's manually add it from the dictionary and destroy
-	testResponse.remoteID = [[missingClassPost.responses objectAtIndex:0] objectForKey:@"id"];
+	testResponse.remoteID = [[dictionariesPost.responses objectAtIndex:0] objectForKey:@"id"];
 	[testResponse remoteDestroy:&e];	
 	GHAssertNil(e, @"testResponse object should've been destroyed fine after manually setting ID from dictionary (nothing to do with nesting, just cleaning up)");
 	
 	e = nil;
 	
-	[missingClassPost remoteDestroy:&e];	
+	[dictionariesPost remoteDestroy:&e];	
 	GHAssertNil(e, @"Post object should've been destroyed fine (nothing to do with nesting, just cleaning up)");
 
 	e = nil;
@@ -519,6 +627,8 @@
 
 - (void) test_diff_detection
 {
+	GHAssertFalse(noServer, @"Test app not running. Run 'rails s'.");
+	
 	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
 	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
 	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
@@ -607,13 +717,15 @@
 
 - (void) test_date_conversion
 {	
+	GHAssertFalse(noServer, @"Test app not running. Run 'rails s'.");
+	
 	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
 	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
 	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
 	
 	Post *post = [[Post alloc] init];
 	post.author = @"Author";
-	post.content = @"Content";
+	post.content = @"test_date_conversion";
 	
 	NSError *e = nil;
 	
@@ -651,6 +763,10 @@
 	GHAssertEqualStrings([dict objectForKey:@"created_at"], @"!@#@$", @"New format should've been applied");	
 	
 	e = nil;
+	
+	[post remoteDestroy:&e];
+	
+	GHAssertNil(e,@"There should be no problem remotely destroying post - just cleaning up.");
 }
 
 - (void) test_custom_requests
@@ -727,8 +843,32 @@
 	NSRAssertEqualsCamelized(@"postObject", @"postObject");
 }
 
-- (void)setUpClass {
+- (void)setUpClass
+{
 	// Run at start of all tests in the class
+
+	NSError *e = nil;
+	
+	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
+	
+	[NSRailsModel remoteGETRequestWithRoute:@"404.html" error:&e];
+	
+	//if error, and it's NSURL domain, must be that the server isn't running
+	if (e && [[e domain] isEqualToString:NSURLErrorDomain])
+	{
+		noServer = YES;
+		
+		NSString *title = @"Server not running";
+		NSString *text = @"It doesn't look the test Rails app is running locally. Some tests can't run without it.\n\nTo run the app:\n\"$ cd demo/server; rails s\".\nIf your DB isn't set up:\n\"$ rake db:migrate\".";
+		
+#if TARGET_OS_IPHONE
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:text delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+		[alert show];
+#else
+		NSAlert *alert = [NSAlert alertWithMessageText:title defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:text];
+		[alert runModal];
+#endif
+	}
 }
 
 - (void)tearDownClass {
