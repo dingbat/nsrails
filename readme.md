@@ -30,7 +30,18 @@ Article *articleNumber1 = [Article remoteObjectWithID:1 error:&error];
 // Display your article(s)! They're ready with their properties populated directly from your remote DB
 ```
 
+Both instances and classes also support custom requests, and everything comes in asynchronous flavor too:
+
+```objc
+[User remoteRequest:@"POST" sendObject:user route:@"login" async:^  //goes to http://myapp.com/users/login
+  (NSString *result, NSError *error)
+  {
+	  	//Log in
+	}];
+```
+
 **Features:**
+
 * High-level APIs, yet flexible enough even to work with any RESTful server
 * Keeping models and properties of your choice [in-sync](https://github.com/dingbat/nsrails/wiki/NSRailsSync) with those of Rails
 * [Nesting](https://github.com/dingbat/nsrails/wiki/Nesting) your related models (has-many, etc)
