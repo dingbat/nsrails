@@ -10,28 +10,27 @@ NSRails is a light-weight, drop-in Objective-C framework (iOS or OS X) for simpl
 What does NSRails do?
 ========
 
-NSRails provides simple, high-level APIs that give your Objective-C classes ActiveResource-like support. This means CRUD and other operations on your corresponding Rails objects can be called natively via Objective-C methods:
+NSRails provides simple, high-level APIs that give your Objective-C classes ActiveResource-like support. This means CRUD and other operations on your corresponding Rails objects can be called natively via Objective-C methods.
+
+Instances will inherit methods to remotely create, read, update, or destroy a remote object:
 
 ```objc
-// Instances will inherit methods to remotely create, read, update, or destroy a remote object
-
 Article *newArticle = [[Article alloc] init];
 newArticle.title = @"Title";
 newArticle.content = @"Some text";
 [newArticle remoteCreate:&error];     //This article and its properties created right on a Rails server
 ```
 
-```objc
-// Classes will inherit methods to retrieve all, or specific objects
+Classes will inherit methods to retrieve all objects, or only certain ones:
 
+```objc
 NSArray *allArticles = [Article remoteAll:&error];
 Article *articleNumber1 = [Article remoteObjectWithID:1 error:&error];
 
 // Display your article(s)! They're ready with their properties populated directly from your remote DB
 ```
 
-*Features:*
-
+**Features:**
 * High-level APIs, yet flexible enough even to work with any RESTful server
 * Keeping models and properties of your choice [in-sync](https://github.com/dingbat/nsrails/wiki/NSRailsSync) with those of Rails
 * [Nesting](https://github.com/dingbat/nsrails/wiki/Nesting) your related models (has-many, etc)
