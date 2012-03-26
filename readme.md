@@ -33,11 +33,11 @@ Article *articleNumber1 = [Article remoteObjectWithID:1 error:&error];
 Both instances and classes also support custom requests, and everything comes in asynchronous flavor too:
 
 ```objc
-[User remoteRequest:@"POST" sendObject:user route:@"login" async:^  //goes to http://myapp.com/users/login
+[User remoteRequest:@"POST" sendObject:user route:@"login" async:^  // http://myapp.com/users/login
   (NSString *result, NSError *error)
   {
 	  	//Log in
-	}];
+  }];
 ```
 
 **Features:**
