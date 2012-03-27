@@ -289,13 +289,8 @@
 					}];
 				}];
 			}];
-			
 		}];
 	}];	
-	
-	[Post remoteRequest:(NSString *) sendObject:(NSRailsModel *) route:(NSString *) async:^(NSString *result, NSError *error) {
-		<#code#>
-	}];
 }
 
 - (void) test_crud
