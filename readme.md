@@ -30,16 +30,6 @@ Article *articleNumber1 = [Article remoteObjectWithID:1 error:&error];
 // Display your article(s)! They're ready with their properties populated directly from your remote DB
 ```
 
-Both instances and classes also support custom requests, and everything comes in asynchronous flavor too:
-
-```objc
-[User remoteRequest:@"POST" sendObject:user route:@"login" async:^  // http://myapp.com/users/login
-  (NSString *result, NSError *error)
-  {
-	  	//Log in
-  }];
-```
-
 **Features:**
 
 * High-level APIs, yet flexible enough even to work with any RESTful server
