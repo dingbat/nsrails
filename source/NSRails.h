@@ -116,6 +116,7 @@ static NSString * const NSRailsBaseProperties = @"remoteID=id";
 - (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict;
 
 - (id) initWithRemoteDictionary:(NSDictionary *)railsDict;
+- (id) initWithRemoteJSON:(NSString *)json;
 
 
 /// =============================================================================================

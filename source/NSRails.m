@@ -424,6 +424,15 @@
 	return self;
 }
 
+- (id) initWithRemoteJSON:(NSString *)json
+{
+	if ((self = [self init]))
+	{
+		[self setPropertiesUsingRemoteJSON:json];
+	}
+	return self;
+}
+
 - (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict
 {
 	remoteAttributes = dict;
