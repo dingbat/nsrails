@@ -78,7 +78,7 @@
 
 + (NSString *) NSRailsSync
 {
-	return NSRAILS_BASE_PROPS;
+	return NSRailsBaseProperties;
 }
 
 + (NSRPropertyCollection *) propertyCollection
@@ -117,7 +117,7 @@
 + (NSString *) railsPropertiesWithCustomString:(NSString *)custom
 {
 	//start it off with the NSRails base ("remoteID=id")
-	NSMutableString *finalProperties = [NSMutableString stringWithString:NSRAILS_BASE_PROPS];
+	NSMutableString *finalProperties = [NSMutableString stringWithString:NSRailsBaseProperties];
 	
 	BOOL stopInheriting = NO;
 	

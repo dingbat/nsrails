@@ -62,15 +62,19 @@ typedef void(^NSRGetLatestCompletionBlock)(BOOL changed, NSError *error);
 typedef void(^NSRGetAllCompletionBlock)(NSArray *allRemote, NSError *error);
 typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 
-#define NSRConfigEnvironmentDevelopment	@"development"
-#define NSRConfigEnvironmentProduction	@"production"
 
-#define NSRValidationErrorsKey	@"validation errors"
+//Environments
+static NSString * const NSRConfigEnvironmentDevelopment = @"NSRConfigEnvironmentDevelopment";
+static NSString * const NSRConfigEnvironmentProduction	= @"NSRConfigEnvironmentProduction";
 
-#define NSRRemoteErrorDomain				@"NSRRemoteErrorDomain"
-#define NSRailsSyncException				@"NSRailsSyncException"
-#define NSRailsInvalidJSONEncodingException @"NSRailsInvalidJSONEncodingException"
-#define NSRailsDateConversionException		@"NSRailsDateConversionException"
+//Keys
+static NSString * const NSRValidationErrorsKey			= @"NSRValidationErrorsKey";
+
+//Exceptions+Domains
+static NSString * const NSRRemoteErrorDomain				= @"NSRRemoteErrorDomain";
+static NSString * const NSRailsSyncException				= @"NSRailsSyncException";
+static NSString * const NSRailsInvalidJSONEncodingException = @"NSRailsInvalidJSONEncodingException";
+static NSString * const NSRailsDateConversionException		= @"NSRailsDateConversionException";
 
 ////////////////////////////////
 

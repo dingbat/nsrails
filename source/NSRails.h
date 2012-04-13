@@ -33,6 +33,8 @@
 
 @class NSRPropertyCollection;
 
+static NSString * const NSRailsBaseProperties = @"remoteID=id";
+
 @interface NSRailsModel : NSObject <NSCoding>
 {
 	//used if initialized with initWithCustomSyncProperties
@@ -202,13 +204,4 @@
 + (NSRConfig *) NSRailsUseConfig { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = url; return config; }
 #define _NSR_Config3(url,user,pass)  \
 + (NSRConfig *) NSRailsUseConfig { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = url; config.appUsername = user; config.appPassword = pass; return config; }
-
-/// =============================================================================================
-#pragma mark - NSRails
-/// =============================================================================================
-
-//this will be the NSRailsSync for NSRailsModel, basis for all subclasses
-//use remoteID as equivalent for rails property id
-#define NSRAILS_BASE_PROPS @"remoteID=id"
-
 

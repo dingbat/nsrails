@@ -74,7 +74,7 @@
 
 static NSMutableDictionary *configEnvironments = nil;
 static NSMutableArray *overrideConfigStack = nil;
-static NSString *currentEnvironment = NSRConfigEnvironmentDevelopment;
+static NSString *currentEnvironment = nil;
 
 static int networkActivityRequests = 0;
 
@@ -82,8 +82,8 @@ static int networkActivityRequests = 0;
 + (void) resetConfigs
 {
 	//taken from static definitions above ^
-	configEnvironments = nil;
-	overrideConfigStack = nil;
+	[configEnvironments removeAllObjects];
+	[overrideConfigStack removeAllObjects];
 	currentEnvironment = NSRConfigEnvironmentDevelopment;
 }
 
@@ -100,31 +100,38 @@ static int networkActivityRequests = 0;
 
 + (NSRConfig *) defaultConfig
 {
-	return [self configForEnvironment:currentEnvironment];
+	return [self configForEnvironment:[self currentEnvironment]];
 }
 
 + (void) setConfig:(NSRConfig *)config asDefaultForEnvironment:(NSString *)environment
 {
-	if (!configEnvironments)
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
 		configEnvironments = [[NSMutableDictionary alloc] init];
+	});
+	
 	if (config)
 		[configEnvironments setObject:config forKey:environment];
 }
 
 + (void) setConfigAsDefault:(NSRConfig *)config
 {
-	[self setConfig:config asDefaultForEnvironment:currentEnvironment];
+	[self setConfig:config asDefaultForEnvironment:[self currentEnvironment]];
 }
 
 + (void) setCurrentEnvironment:(NSString *)environment
 {
 	if (!environment)
-		environment = NSRConfigEnvironmentDevelopment;
+		return;
 	currentEnvironment = environment;
 }
 
 + (NSString *) currentEnvironment
 {
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		currentEnvironment = NSRConfigEnvironmentDevelopment;
+	});
 	return currentEnvironment;
 }
 
@@ -226,7 +233,7 @@ static int networkActivityRequests = 0;
 	//make sure the app URL is set
 	if (!self.appURL)
 	{
-		[NSException raise:@"NSRailsMissingURLException" format:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup. (env=%@)", currentEnvironment];
+		[NSException raise:@"NSRailsMissingURLException" format:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup. (env=%@)", [NSRConfig currentEnvironment]];
 		
 		return nil;
 	}
@@ -463,14 +470,15 @@ static int networkActivityRequests = 0;
 
 - (void) use
 {
-	//this will signal the beginning of a config context block
-	
-	if (!overrideConfigStack)
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^
+	{
 		overrideConfigStack = [[NSMutableArray alloc] init];
+	});
 	
-	// make a new stack element for this config (explained at top of the file)
+	// make a new stack element for this config (explained at top of the file) and push it to the stack
+
 	NSRConfigStackElement *c = [NSRConfigStackElement elementForConfig:self];
-	
 	[overrideConfigStack addObject:c];
 }
 

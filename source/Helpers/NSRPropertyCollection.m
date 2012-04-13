@@ -33,8 +33,8 @@
 #import "NSObject+Properties.h"
 #import "NSString+Inflection.h"
 
-//this is the marker for the propertyEquivalents dictionary if there's no explicit equivalence set
-#define NSRNoEquivalentMarker @""
+//this is the marker (blank string) for the propertyEquivalents dictionary if there's no explicit equivalence set
+static NSString * const NSRNoEquivalentMarker = @"";
 
 //this will be the marker for any property that has the "-b flag"
 //this gonna go in the nestedModelProperties (properties can never have a comma/space in them so we're safe from any conflicts)
@@ -196,7 +196,7 @@
 				NSString *element = [[elements objectAtIndex:i] stringByTrimmingCharactersInSet:wn];
 				
 				//skip if there's no NSRailsSync definition (ie, it just inherited NSRailsModel's, so it's not the first time through but it's the same thing as NSRailsModel's)
-				if ([element isEqualToString:NSRAILS_BASE_PROPS] && i != 0)
+				if ([element isEqualToString:NSRailsBaseProperties] && i != 0)
 				{
 					continue;
 				}
