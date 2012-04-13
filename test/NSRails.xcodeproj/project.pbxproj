@@ -121,6 +121,7 @@
 		591F9D511519983300E30253 /* SBJsonUTF8Stream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonUTF8Stream.m; sourceTree = "<group>"; };
 		591F9D521519983300E30253 /* SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonWriter.h; sourceTree = "<group>"; };
 		591F9D531519983300E30253 /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonWriter.m; sourceTree = "<group>"; };
+		59B58E5D1538943E00DF8835 /* readme.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.md; sourceTree = "<group>"; };
 		59D16332153880AD0039BA21 /* Mac OS Tests-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Mac OS Tests-Prefix.pch"; path = "Mac OS/Mac OS Tests-Prefix.pch"; sourceTree = SOURCE_ROOT; };
 		59D16333153880AD0039BA21 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = "Mac OS/main.m"; sourceTree = SOURCE_ROOT; };
 		59D16335153880B90039BA21 /* iPhone Tests-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "iPhone Tests-Prefix.pch"; path = "iOS/iPhone Tests-Prefix.pch"; sourceTree = SOURCE_ROOT; };
@@ -139,7 +140,6 @@
 		59D16351153882320039BA21 /* GHUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GHUnit.framework; path = "Mac OS/GHUnit.framework"; sourceTree = "<group>"; };
 		59D16353153882490039BA21 /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GHUnitIOS.framework; path = iOS/GHUnitIOS.framework; sourceTree = "<group>"; };
 		59D16358153883420039BA21 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
-		59D1635B153883D60039BA21 /* readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
 		59E3187814E9CD8700B0FC39 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		59E3187A14E9CD8700B0FC39 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		59E3187C14E9CD8700B0FC39 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -307,7 +307,7 @@
 		59E3186914E9CD8700B0FC39 = {
 			isa = PBXGroup;
 			children = (
-				59D1635B153883D60039BA21 /* readme.txt */,
+				59B58E5D1538943E00DF8835 /* readme.md */,
 				591424AD14EAFE7400481815 /* Tests */,
 				5914245E14EAFD0F00481815 /* NSRails */,
 				59E3187714E9CD8700B0FC39 /* Frameworks */,
