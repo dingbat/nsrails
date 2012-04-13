@@ -27,4 +27,10 @@
 	return [_decode lowercaseString];
 }
 
+
+@end
+
+@implementation ClassWithNoRailsSync
+@synthesize attribute;
+
 @end

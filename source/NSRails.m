@@ -78,7 +78,9 @@
 
 + (NSString *) NSRailsSync
 {
-	return NSRailsBaseProperties;
+	// If NSRailsSync isn't overriden (ie, if NSRailsSync() macro is not declared in subclass), this will be called
+	// Default to inlcude all properties
+	return @"*";
 }
 
 + (NSRPropertyCollection *) propertyCollection
@@ -117,7 +119,7 @@
 + (NSString *) railsPropertiesWithCustomString:(NSString *)custom
 {
 	//start it off with the NSRails base ("remoteID=id")
-	NSMutableString *finalProperties = [NSMutableString stringWithString:NSRailsBaseProperties];
+	NSMutableString *finalProperties = [NSMutableString stringWithString:@"remoteID=id"];
 	
 	BOOL stopInheriting = NO;
 	

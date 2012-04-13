@@ -33,8 +33,6 @@
 
 @class NSRPropertyCollection;
 
-static NSString * const NSRailsBaseProperties = @"remoteID=id";
-
 static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDException";
 
 @interface NSRailsModel : NSObject <NSCoding>

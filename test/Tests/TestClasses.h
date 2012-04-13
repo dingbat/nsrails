@@ -25,3 +25,9 @@
 @property (nonatomic, strong) NSArray *array;
 
 @end
+
+@interface ClassWithNoRailsSync : NSRailsModel
+
+@property (nonatomic, strong) NSString *attribute;
+
+@end

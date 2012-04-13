@@ -195,12 +195,6 @@ static NSString * const NSRNoEquivalentMarker = @"";
 			{
 				NSString *element = [[elements objectAtIndex:i] stringByTrimmingCharactersInSet:wn];
 				
-				//skip if there's no NSRailsSync definition (ie, it just inherited NSRailsModel's, so it's not the first time through but it's the same thing as NSRailsModel's)
-				if ([element isEqualToString:NSRailsBaseProperties] && i != 0)
-				{
-					continue;
-				}
-				
 				//remove any NSRNoCarryFromSuper's to not screw anything up
 				NSString *prop = [element stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
 				

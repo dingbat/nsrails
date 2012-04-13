@@ -49,6 +49,11 @@
 	GHAssertNoThrow(NSRInitTestClass(@"array:"), @"Shouldn't crash when defaulting to NSDictionaries");
 }
 
+- (void) test_no_rails_sync
+{
+	NSRAssertClassProperties([ClassWithNoRailsSync class], @"remoteID", @"attribute");
+}
+
 - (void) test_property_flags
 {
 	TestClass *c = [[TestClass alloc] initWithCustomSyncProperties:@"retrieve -r, send -s, local -x, decode -d, encode -e, parent -b"];
