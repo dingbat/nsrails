@@ -233,7 +233,7 @@ static int networkActivityRequests = 0;
 	//make sure the app URL is set
 	if (!self.appURL)
 	{
-		[NSException raise:@"NSRailsMissingURLException" format:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup. (env=%@)", [NSRConfig currentEnvironment]];
+		[NSException raise:NSRailsMissingURLException format:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup. (env=%@)", [NSRConfig currentEnvironment]];
 		
 		return nil;
 	}
@@ -278,7 +278,6 @@ static int networkActivityRequests = 0;
 	NSLog(@"<== Code %d",code);
 #elif NSRLog > 1
 	NSLog(@"IN<=== Code %d; %@\n\n",code,((code < 0 || code >= 400) ? @"[see ERROR]" : response));
-	NSLog(@" ");
 #endif
 }
 

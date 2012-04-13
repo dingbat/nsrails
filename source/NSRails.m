@@ -684,7 +684,7 @@
 		return NO;
 
 		//decided to not make this raise an exception
-		//[NSException raise:@"NSRailsNilJSONError" format:@"Can't set attributes to nil JSON."];
+		//[NSException raise:@"NSRailsNilJSONException" format:@"Can't set attributes to nil JSON."];
 	}
 	
 	NSDictionary *dict = [json JSONValue:e];
@@ -733,7 +733,7 @@
 {
 	if (!self.remoteID)
 	{
-		[NSException raise:@"NSRailsMissingRemoteIDError" format:@"Attempted to update, delete, or retrieve an object with no ID. (Instance of %@)",NSStringFromClass([self class])];
+		[NSException raise:NSRailsNullRemoteIDException format:@"Attempted to update, delete, or retrieve an object with no ID. (Instance of %@)",NSStringFromClass([self class])];
 		return nil;
 	}
 	
