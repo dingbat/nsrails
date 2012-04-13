@@ -347,7 +347,7 @@
 	//if the object is of class NSDate and the representation in JSON is a string, automatically convert it to an NSDate
 	else if (rep && [rep isKindOfClass:[NSString class]] && [[[self class] getPropertyType:prop] isEqualToString:@"NSDate"])
 	{
-		return [[[self class] getRelevantConfig] convertStringToDate:rep];
+		return [[[self class] getRelevantConfig] dateFromString:rep];
 	}
 	
 	//otherwise, return whatever it is
@@ -405,7 +405,7 @@
 			//if the object is of class NSDate, we need to automatically convert it to string for the JSON framework to handle correctly
 			if ([val isKindOfClass:[NSDate class]])
 			{
-				return [[[self class] getRelevantConfig] convertDateToString:val];
+				return [[[self class] getRelevantConfig] stringFromDate:val];
 			}
 			
 			//otherwise, just return the value from the get method

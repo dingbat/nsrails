@@ -108,8 +108,8 @@ static NSString * const NSRailsDateConversionException		= @"NSRailsDateConversio
 - (void) setDateFormat:(NSString *)dateFormat;
 - (NSString *) dateFormat;
 
-- (NSString *) convertDateToString:(NSDate *)date;
-- (NSDate *) convertStringToDate:(NSString *)string;
+- (NSString *) stringFromDate:(NSDate *)date;
+- (NSDate *) dateFromString:(NSString *)string;
 
 
 ////////////////////////////

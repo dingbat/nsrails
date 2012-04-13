@@ -196,12 +196,12 @@ static int networkActivityRequests = 0;
 	return dateFormatter.dateFormat;
 }
 
-- (NSString *) convertDateToString:(NSDate *)date
+- (NSString *) stringFromDate:(NSDate *)date
 {
 	return [dateFormatter stringFromDate:date];
 }
 
-- (NSDate *) convertStringToDate:(NSString *)string
+- (NSDate *) dateFromString:(NSString *)string
 {
 	NSDate *date = [dateFormatter dateFromString:string];
 	
