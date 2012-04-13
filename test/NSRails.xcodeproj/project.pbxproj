@@ -126,10 +126,10 @@
 		59D16333153880AD0039BA21 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = "Mac OS/main.m"; sourceTree = SOURCE_ROOT; };
 		59D16335153880B90039BA21 /* iPhone Tests-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "iPhone Tests-Prefix.pch"; path = "iOS/iPhone Tests-Prefix.pch"; sourceTree = SOURCE_ROOT; };
 		59D16336153880B90039BA21 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = iOS/main.m; sourceTree = SOURCE_ROOT; };
-		59D16339153880F90039BA21 /* GeneralTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneralTests.m; sourceTree = "<group>"; };
+		59D16339153880F90039BA21 /* GeneralTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GeneralTests.m; path = Tests/GeneralTests.m; sourceTree = "<group>"; };
 		59D1633A153880F90039BA21 /* InheritanceTestClasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InheritanceTestClasses.h; sourceTree = "<group>"; };
 		59D1633B153880F90039BA21 /* InheritanceTestClasses.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InheritanceTestClasses.m; sourceTree = "<group>"; };
-		59D1633C153880F90039BA21 /* InheritanceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InheritanceTests.m; sourceTree = "<group>"; };
+		59D1633C153880F90039BA21 /* InheritanceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InheritanceTests.m; path = Tests/InheritanceTests.m; sourceTree = "<group>"; };
 		59D1633D153880F90039BA21 /* NestingTestClasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NestingTestClasses.h; sourceTree = "<group>"; };
 		59D1633E153880F90039BA21 /* NestingTestClasses.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NestingTestClasses.m; sourceTree = "<group>"; };
 		59D1633F153880F90039BA21 /* NSRAsserts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSRAsserts.h; path = Tests/NSRAsserts.h; sourceTree = "<group>"; };
@@ -209,7 +209,9 @@
 			isa = PBXGroup;
 			children = (
 				59D1633F153880F90039BA21 /* NSRAsserts.h */,
-				59D16338153880F90039BA21 /* Tests */,
+				59D1634C1538811D0039BA21 /* Test Classes */,
+				59D16339153880F90039BA21 /* GeneralTests.m */,
+				59D1633C153880F90039BA21 /* InheritanceTests.m */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -272,16 +274,6 @@
 			path = SBJson;
 			sourceTree = "<group>";
 		};
-		59D16338153880F90039BA21 /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				59D16339153880F90039BA21 /* GeneralTests.m */,
-				59D1633C153880F90039BA21 /* InheritanceTests.m */,
-				59D1634C1538811D0039BA21 /* Test Classes */,
-			);
-			path = Tests;
-			sourceTree = "<group>";
-		};
 		59D1634C1538811D0039BA21 /* Test Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -293,6 +285,7 @@
 				59D16341153880F90039BA21 /* TestClasses.m */,
 			);
 			name = "Test Classes";
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		59D1635A153883AD0039BA21 /* Targets */ = {
