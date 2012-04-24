@@ -696,6 +696,14 @@
 	
 	e = nil;
 	
+	response.post = nil;
+	changes = [response remoteGetLatest:&e];
+	GHAssertNil(e, @"There should be no error on a normal remoteGetLatest for existing Response obj");
+	GHAssertNotNil(response.post, @"remoteGetLatest should've added the tied Post object");
+	GHAssertTrue(changes, @"remoteGetLatest should've returned true - locally the post attr was set to nil.");
+	
+	e = nil;
+	
 	changes = [post remoteGetLatest:&e];
 	GHAssertNil(e, @"There should be no error on a normal remoteGetLatest for existing Post obj");
 	GHAssertTrue(post.responses.count == 1, @"remoteGetLatest should've added the newly created response");

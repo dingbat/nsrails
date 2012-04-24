@@ -544,6 +544,7 @@
 						if (!previousVal)
 						{
 							val = [self makeRelevantModelFromClass:nestedClass basedOn:objDict];
+							[self performSelector:setter withObject:val];
 							changes = YES;
 						}
 						else
