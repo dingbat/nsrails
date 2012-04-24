@@ -47,16 +47,16 @@
 											     [post remoteUpdate:&error];
 											   
 											   Doing this may be better for your structure since it'd already be in post's "responses" array.
-											   However, you have to take into account the case where the Response validation fails and you'd have to remove it from the array. Also, creating the Response rather than updating the Post will set newResp's remoteID! And, doing it this way will demonstrate that doing a [post remoteGetLatest]; in the next line will update post.responses.
+											   However, you have to take into account the case where the Response validation fails and you'd have to remove it from the array. Also, creating the Response rather than updating the Post will set newResp's remoteID! And, doing it this way will demonstrate that doing a [post remoteFetch]; in the next line will update post.responses.
 											  */
 											  
 											  
 											  if (!error)
 											  {
-												  //since it's not part of our post.responses array yet, let's remoteGetLatest
+												  //since it's not part of our post.responses array yet, let's remoteFetch
 												  //(we could also just do a simple [post.responses addObject:newResp])
 												  
-												  [post remoteGetLatest:nil];
+												  [post remoteFetch:nil];
 												  
 												  [self.tableView reloadData];
 												  return YES;

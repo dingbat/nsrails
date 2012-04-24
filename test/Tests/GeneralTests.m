@@ -266,7 +266,7 @@
 					///////////////////////
 					//TEST READ (RETRIVE)
 					
-					[newPost remoteGetLatestAsync:^(BOOL changed, NSError *e5) {
+					[newPost remoteFetchAsync:^(BOOL changed, NSError *e5) {
 						GHAssertNil(e5, @"ASYNC Should be no error retrieving a value.");
 						//see if it correctly set the info on the server (still there after failed validation) to overwrite the local author (set to nil)
 						GHAssertNotNil(newPost.author, @"ASYNC New post should have gotten back his old author after validation failed (on the retrieve).");
@@ -274,7 +274,7 @@
 						newPost.remoteID = nil;
 						
 						//see if there's an exception if trying to retrieve with a nil ID
-						GHAssertThrows([newPost remoteGetLatestAsync:^(BOOL changed, NSError *error) {}], @"ASYNC Tried to retrieve an instance with a nil ID, where's the exception?");
+						GHAssertThrows([newPost remoteFetchAsync:^(BOOL changed, NSError *error) {}], @"ASYNC Tried to retrieve an instance with a nil ID, where's the exception?");
 
 						///////////////////////
 						//TEST DESTROY
@@ -420,7 +420,7 @@
 	///////////////////////
 	//TEST READ (RETRIVE)
 	
-	[newPost remoteGetLatest:&e];
+	[newPost remoteFetch:&e];
 	
 	GHAssertNil(e, @"Should be no error retrieving a value.");
 	//see if it correctly set the info on the server (still there after failed validation) to overwrite the local author (set to nil)
@@ -431,7 +431,7 @@
 	//see if there's an error if trying to retrieve with a nil ID
 	newPost.remoteID = nil;
 	
-	GHAssertThrows([newPost remoteGetLatest:&e], @"Tried to retrieve an instance with a nil ID, where's the exception?");
+	GHAssertThrows([newPost remoteFetch:&e], @"Tried to retrieve an instance with a nil ID, where's the exception?");
 	
 	e = nil;
 	
@@ -563,7 +563,7 @@
 	
 	e = nil;
 	
-	[belongsTo remoteGetLatest:&e];
+	[belongsTo remoteFetch:&e];
 	
 	GHAssertNil(e, @"There should be no error in retrieving response.");
 	GHAssertEqualObjects(belongsTo.post.remoteID, post.remoteID, @"The Post remoteID coming from the newly created Response should be the same as the post object under which we made it.");
@@ -603,7 +603,7 @@
 	GHAssertTrue([[dictionariesPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[dictionariesPost.responses objectAtIndex:0] class]));
 	
 	//same applies for retrieve
-	BOOL changes = [dictionariesPost remoteGetLatest:&e];
+	BOOL changes = [dictionariesPost remoteFetch:&e];
 	GHAssertNil(e, @"There should've been no errors on the retrieve, even if no nested model defined.");
 	GHAssertTrue(dictionariesPost.responses.count == 1, @"Should still come back with one response");
 	GHAssertTrue([[dictionariesPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[dictionariesPost.responses objectAtIndex:0] class]));
@@ -651,17 +651,17 @@
 	
 	e = nil;
 	
-	BOOL changes = [post remoteGetLatest:&e];
-	GHAssertNil(e, @"There should be no error on a normal remoteGetLatest for existing Post obj");
-	GHAssertFalse(changes, @"remoteGetLatest should've returned false - there were no changes to Post");
+	BOOL changes = [post remoteFetch:&e];
+	GHAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
+	GHAssertFalse(changes, @"remoteFetch should've returned false - there were no changes to Post");
 	
 	e = nil;
 	
 	post.content = @"Local change";
 	
-	changes = [post remoteGetLatest:&e];
-	GHAssertNil(e, @"There should be no error on a normal remoteGetLatest for existing Post obj");
-	GHAssertTrue(changes, @"remoteGetLatest should've returned true - there was a local change to Post");
+	changes = [post remoteFetch:&e];
+	GHAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
+	GHAssertTrue(changes, @"remoteFetch should've returned true - there was a local change to Post");
 	
 	e = nil;
 	
@@ -672,10 +672,10 @@
 	
 	[post.responses addObject:response];
 	
-	changes = [post remoteGetLatest:&e];
-	GHAssertNil(e, @"There should be no error on a normal remoteGetLatest for existing Post obj");
-	GHAssertTrue(post.responses.count == 0, @"remoteGetLatest should've overwritten post.responses");
-	GHAssertTrue(changes, @"remoteGetLatest should've returned true - there was a local change to Post (added a nested Response)");
+	changes = [post remoteFetch:&e];
+	GHAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
+	GHAssertTrue(post.responses.count == 0, @"remoteFetch should've overwritten post.responses");
+	GHAssertTrue(changes, @"remoteFetch should've returned true - there was a local change to Post (added a nested Response)");
 
 	e = nil;
 	
@@ -697,23 +697,23 @@
 	e = nil;
 	
 	response.post = nil;
-	changes = [response remoteGetLatest:&e];
-	GHAssertNil(e, @"There should be no error on a normal remoteGetLatest for existing Response obj");
-	GHAssertNotNil(response.post, @"remoteGetLatest should've added the tied Post object");
-	GHAssertTrue(changes, @"remoteGetLatest should've returned true - locally the post attr was set to nil.");
+	changes = [response remoteFetch:&e];
+	GHAssertNil(e, @"There should be no error on a normal remoteFetch for existing Response obj");
+	GHAssertNotNil(response.post, @"remoteFetch should've added the tied Post object");
+	GHAssertTrue(changes, @"remoteFetch should've returned true - locally the post attr was set to nil.");
 	
 	e = nil;
 	
-	changes = [post remoteGetLatest:&e];
-	GHAssertNil(e, @"There should be no error on a normal remoteGetLatest for existing Post obj");
-	GHAssertTrue(post.responses.count == 1, @"remoteGetLatest should've added the newly created response");
-	GHAssertTrue(changes, @"remoteGetLatest should've returned true - there was a remote change to Post (Response was created)");
+	changes = [post remoteFetch:&e];
+	GHAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
+	GHAssertTrue(post.responses.count == 1, @"remoteFetch should've added the newly created response");
+	GHAssertTrue(changes, @"remoteFetch should've returned true - there was a remote change to Post (Response was created)");
 
 	e = nil;
 	
-	changes = [post remoteGetLatest:&e];
-	GHAssertNil(e, @"There should be no error on a normal remoteGetLatest for existing Post obj");
-	GHAssertFalse(changes, @"remoteGetLatest should've returned false - there were no changes to Post");
+	changes = [post remoteFetch:&e];
+	GHAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
+	GHAssertFalse(changes, @"remoteFetch should've returned false - there were no changes to Post");
 	
 	e = nil;
 
@@ -758,9 +758,9 @@
 	
 	e = nil;
 	
-	BOOL changes = [post remoteGetLatest:&e];
+	BOOL changes = [post remoteFetch:&e];
 	
-	GHAssertNil(e, @"There should be no error in remoteGetLatest");
+	GHAssertNil(e, @"There should be no error in remoteFetch");
 	GHAssertNotNil(post.updatedAt,@"updatedAt should be present");
 	GHAssertTrue(changes,@"UpdatedAt should've changed");
 	
@@ -768,7 +768,7 @@
 	
 	//invalid date format
 	[[NSRConfig defaultConfig] setDateFormat:@"!@#@$"];
-	GHAssertThrows([post remoteGetLatest:&e], @"There should be an exception in setting to a bad format");
+	GHAssertThrows([post remoteFetch:&e], @"There should be an exception in setting to a bad format");
 	
 	NSDictionary *dict = [post dictionaryOfRemoteProperties];
 	GHAssertNotNil(dict, @"There should be no problem making a dict, even if format is bad");

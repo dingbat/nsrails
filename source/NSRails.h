@@ -52,7 +52,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 
 // Synchronous, with error dereference
 
-- (BOOL) remoteGetLatest:(NSError **)error;
+- (BOOL) remoteFetch:(NSError **)error;
 - (void) remoteUpdate:(NSError **)error;
 - (void) remoteCreate:(NSError **)error;
 - (void) remoteDestroy:(NSError **)error;
@@ -63,7 +63,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 
 // Asynchronous
 
-- (void) remoteGetLatestAsync:(NSRGetLatestCompletionBlock)completionBlock;
+- (void) remoteFetchAsync:(NSRGetLatestCompletionBlock)completionBlock;
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock;
 - (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock;
 - (void) remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock;
@@ -89,8 +89,8 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 
 /// =============================================================================================
 #pragma mark - Non-CRUD class methods
-//            if called on a subclass, will direct it to the controller ([User makeGET:@"foo"] => myapp.com/users/foo)
-//            if called on NSRailsModel, will direct it to the app's root ([NSRailsModel makeGET:@"foo"] => myapp.com/foo)
+//            if called on a subclass, will direct it to the controller ([User remoteGET:@"foo"] => myapp.com/users/foo)
+//            if called on NSRailsModel, will direct it to the app's root ([NSRailsModel remoteGET:@"foo"] => myapp.com/foo)
 /// =============================================================================================
 
 + (NSString *)	remoteGETRequestWithRoute:(NSString *)httpVerb error:(NSError **)error;

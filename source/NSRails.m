@@ -916,7 +916,7 @@
 
 #pragma mark Get latest
 
-- (BOOL) remoteGetLatest:(NSError **)error
+- (BOOL) remoteFetch:(NSError **)error
 {
 	NSString *jsonResponse = [self remoteGETRequestWithRoute:nil error:error];
 
@@ -926,7 +926,7 @@
 	return [self setPropertiesUsingRemoteJSON:jsonResponse error:error];
 }
 
-- (void) remoteGetLatestAsync:(NSRGetLatestCompletionBlock)completionBlock
+- (void) remoteFetchAsync:(NSRGetLatestCompletionBlock)completionBlock
 {
 	[self remoteGETRequestWithRoute:nil async:
 	 
@@ -953,7 +953,7 @@
 		error = &e;
 	}
 	
-	[obj remoteGetLatest:error];
+	[obj remoteFetch:error];
 	
 	if (*error)
 		obj = nil;
@@ -975,7 +975,7 @@
 	[obj autorelease];
 #endif
 	
-	[obj remoteGetLatestAsync:
+	[obj remoteFetchAsync:
 	 
 	 ^(BOOL changed, NSError *error) {
 		if (error)
