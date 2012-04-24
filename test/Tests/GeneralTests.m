@@ -168,7 +168,7 @@
 		 NSRAssertRelevantConfigURL(@"Default", @"default at the end of default block after nestings");
 	 }];
 	
-	GHAssertEqualStrings(@"test_class", [TestClass getModelName], @"auto-underscoring");
+	GHAssertEqualStrings(@"class_with_no_rails_sync", [ClassWithNoRailsSync getModelName], @"auto-underscoring");
 	
 	NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"NoAuto/"]; //also tests to see that it'll add http:// and remove the /
 	c.automaticallyInflects = NO;
@@ -176,7 +176,7 @@
 	 ^{
 		 NSRAssertRelevantConfigURL(@"NoAuto", @"custom block ^{} block");
 		 
-		 GHAssertEqualStrings(@"TestClass", [TestClass getModelName], @"No auto-underscoring");
+		 GHAssertEqualStrings(@"ClassWithNoRailsSync", [ClassWithNoRailsSync getModelName], @"No auto-underscoring");
 	 }];
 	
 	NSRAssertRelevantConfigURL(@"Default", @"default exterior after all nesting");

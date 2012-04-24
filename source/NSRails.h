@@ -182,9 +182,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 #define NSRailsUseDefaultModelName _NSR_Name2(nil,nil)
 
 //_NSR_Name1 (only with 1 parameter, ie, custom model name but default plurality), creates NSRailsUseModelName method that returns param, return nil for plural to make it go to default
-#define _NSR_Name1(name) \
-+ (NSString*) NSRailsUseModelName { return name; } \
-+ (NSString*) NSRailsUsePluralName { return nil; }
+#define _NSR_Name1(name)	_NSR_Name2(name, nil)
 
 //_NSR_Name2 (2 parameters, ie, custom model name and custom plurality), creates NSRailsUseModelName and NSRailsUsePluralName
 #define _NSR_Name2(name,plural)  \
@@ -199,14 +197,13 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 //works the same way as NSRailsUseModelName
 
 #define NSRailsUseConfig(...) _CAT(_NSR_Config,_N_ARGS(__VA_ARGS__))(__VA_ARGS__)
-#define NSRailsUseDefaultConfig \
-_NSR_Config3(nil, nil, nil)
 
-#define _NSR_Config1(url) \
-_NSR_Config3(url, nil, nil)
+#define NSRailsUseDefaultConfig	_NSR_Config3(nil, nil, nil)
+
+#define _NSR_Config1(url)	_NSR_Config3(url, nil, nil)
 
 #define _NSR_Config3(url,user,pass)  \
-+ (NSRConfig *) NSRailsUseConfigURL { return url; } \
-+ (NSRConfig *) NSRailsUseConfigUsername { return user; } \
-+ (NSRConfig *) NSRailsUseConfigPassword { return pass; }
++ (NSString *) NSRailsUseConfigURL { return url; } \
++ (NSString *) NSRailsUseConfigUsername { return user; } \
++ (NSString *) NSRailsUseConfigPassword { return pass; }
 

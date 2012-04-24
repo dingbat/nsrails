@@ -43,7 +43,7 @@
 @property (nonatomic, strong) NSMutableArray *decodeProperties;
 @property (nonatomic, strong) NSMutableDictionary *nestedModelProperties;
 @property (nonatomic, strong) NSMutableDictionary *propertyEquivalents;
-@property (nonatomic, strong) NSRConfig *classCustomConfig;
+@property (nonatomic, strong) NSRConfig *customConfig;
 
 
 - (NSString *) equivalenceForProperty:(NSString *)objcProperty;

@@ -198,11 +198,9 @@
 	return [[self getModelName] pluralize];
 }
 
-+ (NSRConfig *) getRelevantConfig
++ (NSRConfig *) getRelevantConfigFromPropertyCollection:(NSRPropertyCollection *)propertyCollection
 {
 	//get the config for this class
-	
-	NSRConfig *classCustomConfig = [[self propertyCollection] classCustomConfig];
 	
 	//if there's an overriding config in this context (an -[NSRConfig use] was called (explicitly or implicity via a block))
 	//use the overrider
@@ -212,10 +210,10 @@
 	}
 	
 	//if this class defines NSRailsUseConfig, use it over the default
-	else if (classCustomConfig)
+	else if (propertyCollection.customConfig)
 	{
-		return classCustomConfig;
-	} 
+		return propertyCollection.customConfig;
+	}
 	
 	//otherwise, use the default config
 	else
@@ -224,6 +222,15 @@
 	}
 }
 
++ (NSRConfig *) getRelevantConfig
+{
+	return [self getRelevantConfigFromPropertyCollection:[self propertyCollection]];
+}
+
+- (NSRConfig *) getRelevantConfig
+{
+	return [[self class] getRelevantConfigFromPropertyCollection:customProperties];
+}
 
 - (id) initWithCustomSyncProperties:(NSString *)str
 {
@@ -350,7 +357,7 @@
 	//if the object is of class NSDate and the representation in JSON is a string, automatically convert it to an NSDate
 	else if (rep && [rep isKindOfClass:[NSString class]] && [[[self class] getPropertyType:prop] isEqualToString:@"NSDate"])
 	{
-		return [[[self class] getRelevantConfig] dateFromString:rep];
+		return [[self getRelevantConfig] dateFromString:rep];
 	}
 	
 	//otherwise, return whatever it is
@@ -408,7 +415,7 @@
 			//if the object is of class NSDate, we need to automatically convert it to string for the JSON framework to handle correctly
 			if ([val isKindOfClass:[NSDate class]])
 			{
-				return [[[self class] getRelevantConfig] stringFromDate:val];
+				return [[self getRelevantConfig] stringFromDate:val];
 			}
 			
 			//otherwise, just return the value from the get method
@@ -448,7 +455,7 @@
 		if (!railsEquivalent)
 		{
 			//check to see if we should auto_underscore if no equivalence set
-			if ([[self class] getRelevantConfig].automaticallyInflects)
+			if ([self getRelevantConfig].automaticallyInflects)
 			{
 				railsEquivalent = [objcProperty underscore];
 			}
@@ -598,7 +605,7 @@
 		//check to see if we should auto_underscore if no equivalence set
 		if (!railsEquivalent)
 		{
-			if ([[self class] getRelevantConfig].automaticallyInflects)
+			if ([self getRelevantConfig].automaticallyInflects)
 			{
 				railsEquivalent = [[objcProperty underscore] lowercaseString];
 			}
@@ -755,7 +762,7 @@
 {
 	route = [self routeForInstanceRoute:route error:error];
 	if (route)
-		return [[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:error orAsync:nil];
+		return [[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:error orAsync:nil];
 	return nil;
 }
 
@@ -764,7 +771,7 @@
 	NSError *error = nil;
 	route = [self routeForInstanceRoute:route error:&error];
 	if (route)
-		[[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
+		[[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
 	else
 		completionBlock(nil, error);
 }
@@ -808,13 +815,13 @@
 + (NSString *)	remoteRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route error:(NSError **)error
 {
 	route = [self routeForControllerRoute:route];
-	return [[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:error orAsync:nil];
+	return [[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:error orAsync:nil];
 }
 
 + (void) remoteRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
 {
 	route = [self routeForControllerRoute:route];
-	[[[self class] getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
+	[[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
 }
 
 //these are really just convenience methods that'll call the above method with the JSON representation of the object

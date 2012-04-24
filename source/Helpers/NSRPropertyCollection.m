@@ -74,7 +74,7 @@ static NSString * const NSRNoEquivalentMarker = @"";
 
 @implementation NSRPropertyCollection
 @synthesize sendableProperties, retrievableProperties, encodeProperties, decodeProperties;
-@synthesize nestedModelProperties, propertyEquivalents, classCustomConfig;
+@synthesize nestedModelProperties, propertyEquivalents, customConfig;
 
 #pragma mark -
 #pragma mark Parser
@@ -133,10 +133,10 @@ static NSString * const NSRNoEquivalentMarker = @"";
 		
 		//check for a custom config for the class
 
-		classCustomConfig = nil;
+		customConfig = nil;
 //this will suppress the compiler warnings that come with ARC when doing performSelector
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 
 		SEL urlSEL = @selector(NSRailsUseConfigURL);
 		SEL usernameSEL = @selector(NSRailsUseConfigUsername);
@@ -147,22 +147,22 @@ static NSString * const NSRNoEquivalentMarker = @"";
 			NSString *url = [_class performSelector:urlSEL];
 			if (url)
 			{
-				classCustomConfig = [[NSRConfig alloc] initWithAppURL:url];
+				customConfig = [[NSRConfig alloc] initWithAppURL:url];
 				if ([_class respondsToSelector:usernameSEL])
 				{
 					NSString *username = [_class performSelector:usernameSEL];
-					classCustomConfig.appUsername = username;
+					customConfig.appUsername = username;
 					if ([_class respondsToSelector:passwordSEL])
 					{
 						NSString *password = [_class performSelector:passwordSEL];
-						classCustomConfig.appPassword = password;
+						customConfig.appPassword = password;
 					}
 				}
 			}
 		}
 
 //pop the warning suppressor defined above (for calling performSelector's in ARC)
-//#pragma clang diagnostic pop
+#pragma clang diagnostic pop
 
 		//here begins the code used for parsing the NSRailsSync param string
 		
