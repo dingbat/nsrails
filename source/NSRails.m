@@ -202,6 +202,8 @@
 {
 	//get the config for this class
 	
+	NSRConfig *classCustomConfig = [[self propertyCollection] classCustomConfig];
+	
 	//if there's an overriding config in this context (an -[NSRConfig use] was called (explicitly or implicity via a block))
 	//use the overrider
 	if ([NSRConfig overrideConfig])
@@ -210,10 +212,9 @@
 	}
 	
 	//if this class defines NSRailsUseConfig, use it over the default
-	//could also be return the defaultConfig
-	else if ([[self class] respondsToSelector:@selector(NSRailsUseConfig)])
+	else if (classCustomConfig)
 	{
-		return [[self class] performSelector:@selector(NSRailsUseConfig)];
+		return classCustomConfig;
 	} 
 	
 	//otherwise, use the default config

@@ -200,9 +200,13 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 
 #define NSRailsUseConfig(...) _CAT(_NSR_Config,_N_ARGS(__VA_ARGS__))(__VA_ARGS__)
 #define NSRailsUseDefaultConfig \
-+ (NSRConfig *) NSRailsUseConfig { return [NSRConfig defaultConfig]; }
+_NSR_Config3(nil, nil, nil)
+
 #define _NSR_Config1(url) \
-+ (NSRConfig *) NSRailsUseConfig { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = url; return config; }
+_NSR_Config3(url, nil, nil)
+
 #define _NSR_Config3(url,user,pass)  \
-+ (NSRConfig *) NSRailsUseConfig { NSRConfig *config = [[NSRConfig alloc] init]; config.appURL = url; config.appUsername = user; config.appPassword = pass; return config; }
++ (NSRConfig *) NSRailsUseConfigURL { return url; } \
++ (NSRConfig *) NSRailsUseConfigUsername { return user; } \
++ (NSRConfig *) NSRailsUseConfigPassword { return pass; }
 

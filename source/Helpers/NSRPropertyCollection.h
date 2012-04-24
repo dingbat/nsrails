@@ -33,6 +33,7 @@
 //There's not much to do here.
 
 #import <Foundation/Foundation.h>
+#import "NSRConfig.h"
 
 @interface NSRPropertyCollection : NSObject <NSCoding>
 
@@ -42,6 +43,8 @@
 @property (nonatomic, strong) NSMutableArray *decodeProperties;
 @property (nonatomic, strong) NSMutableDictionary *nestedModelProperties;
 @property (nonatomic, strong) NSMutableDictionary *propertyEquivalents;
+@property (nonatomic, strong) NSRConfig *classCustomConfig;
+
 
 - (NSString *) equivalenceForProperty:(NSString *)objcProperty;
 - (BOOL) propertyIsMarkedBelongsTo:(NSString *)prop;
