@@ -23,8 +23,8 @@
 + (NSRPropertyCollection *) propertyCollection;
 - (NSRPropertyCollection *) propertyCollection;
 
-- (NSString *) routeForInstanceRoute:(NSString *)route error:(NSError **)error;
-+ (NSString *) routeForControllerRoute:(NSString *)route;
+- (NSString *) routeForInstanceMethod:(NSString *)route;
++ (NSString *) routeForControllerMethod:(NSString *)route;
 
 @end
 

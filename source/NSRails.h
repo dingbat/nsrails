@@ -76,15 +76,15 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 #pragma mark - Non-CRUD instance methods
 /// =============================================================================================
 
-- (NSString *)	remoteGETRequestWithRoute:(NSString *)route error:(NSError **)error;
-- (void)		remoteGETRequestWithRoute:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock;
+- (NSString *)	remoteGET:(NSString *)customRESTMethod error:(NSError **)error;
+- (void)		remoteGET:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock;
 
 // (will send JSON representation of itself as requestBody)
-- (NSString *)	remoteRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route error:(NSError **)error;
-- (void)		remoteRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock;
+- (NSString *)	remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod error:(NSError **)error;
+- (void)		remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock;
 
-- (NSString *)	remoteRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route error:(NSError **)error;
-- (void)		remoteRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock;
+- (NSString *)	remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body error:(NSError **)error;
+- (void)		remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock;
 
 
 /// =============================================================================================
@@ -93,14 +93,14 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 //            if called on NSRailsModel, will direct it to the app's root ([NSRailsModel remoteGET:@"foo"] => myapp.com/foo)
 /// =============================================================================================
 
-+ (NSString *)	remoteGETRequestWithRoute:(NSString *)httpVerb error:(NSError **)error;
-+ (void)		remoteGETRequestWithRoute:(NSString *)httpVerb async:(NSRHTTPCompletionBlock)completionBlock;
++ (NSString *)	remoteGET:(NSString *)customRESTMethod error:(NSError **)error;
++ (void)		remoteGET:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock;
 
-+ (NSString *)	remoteRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route error:(NSError **)error;
-+ (void)		remoteRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock;
++ (NSString *)	remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body error:(NSError **)error;
++ (void)		remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock;
 
-+ (NSString *)	remoteRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route error:(NSError **)error;
-+ (void)		remoteRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock;
++ (NSString *)	remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj error:(NSError **)error;
++ (void)		remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj async:(NSRHTTPCompletionBlock)completionBlock;
 
 
 /// =============================================================================================

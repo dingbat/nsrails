@@ -725,14 +725,15 @@
 
 #pragma mark - HTTP Request stuff
 
-+ (NSString *) routeForControllerRoute:(NSString *)route
++ (NSString *) routeForControllerMethod:(NSString *)customRESTMethod
 {
 	NSString *controller = [self getPluralModelName];
+	NSString *route = customRESTMethod;
 	if (controller)
 	{
 		//this means this method was called on an NSRailsMethod _subclass_, so appropriately point the method to its controller
 		//eg, ([User makeGET:@"hello"] => myapp.com/users/hello)
-		route = [NSString stringWithFormat:@"%@%@",controller, (route ? [@"/" stringByAppendingString:route] : @"")];
+		route = [NSString stringWithFormat:@"%@%@",controller, (customRESTMethod ? [@"/" stringByAppendingString:customRESTMethod] : @"")];
 		
 		//otherwise, if it was called on NSRailsModel (to access a "root method"), don't modify the route:
 		//eg, ([NSRailsModel makeGET:@"hello"] => myapp.com/hello)
@@ -740,7 +741,7 @@
 	return (route ? route : @"");
 }
 
-- (NSString *) routeForInstanceRoute:(NSString *)route error:(NSError **)error
+- (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod
 {
 	if (!self.remoteID)
 	{
@@ -749,111 +750,105 @@
 	}
 	
 	//make request on an instance, so make route "id", or "id/route" if there's an additional route included (1/edit)
-	NSString *idAndMethod = [NSString stringWithFormat:@"%@%@",self.remoteID,(route ? [@"/" stringByAppendingString:route] : @"")];
+	NSString *idAndMethod = [NSString stringWithFormat:@"%@%@",self.remoteID,(customRESTMethod ? [@"/" stringByAppendingString:customRESTMethod] : @"")];
 	
-	return [[self class] routeForControllerRoute:idAndMethod];
+	return [[self class] routeForControllerMethod:idAndMethod];
 }
 
 
 #pragma mark Performing actions on instances
 
 
-- (NSString *) remoteRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route error:(NSError **)error
+- (NSString *) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body error:(NSError **)error
 {
-	route = [self routeForInstanceRoute:route error:error];
-	if (route)
-		return [[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:error orAsync:nil];
-	return nil;
+	NSString *route = [self routeForInstanceMethod:customRESTMethod];
+	return [[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:error orAsync:nil];
 }
 
-- (void) remoteRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
+- (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock
 {
-	NSError *error = nil;
-	route = [self routeForInstanceRoute:route error:&error];
-	if (route)
-		[[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
-	else
-		completionBlock(nil, error);
+	NSString *route = [self routeForInstanceMethod:route];
+	[[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
 }
 
 //these are really just convenience methods that'll call the above method sending the object data as request body
 
-- (NSString *) remoteRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route error:(NSError **)error
+- (NSString *) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod error:(NSError **)error
 {
 	NSString *json = [self remoteJSONRepresentation:error];
 	if (json)
-		return [self remoteRequest:httpVerb requestBody:json route:route error:error];
+		return [self remoteRequest:httpVerb method:customRESTMethod body:json error:error];
 	return nil;
 }
 
-- (void) remoteRequestSendingSelf:(NSString *)httpVerb route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
+- (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock
 {
 	NSError *e = nil;
 	NSString *json = [self remoteJSONRepresentation:&e];
 	if (json)
-		[self remoteRequest:httpVerb requestBody:json route:route async:completionBlock];
+		[self remoteRequest:httpVerb method:customRESTMethod body:json async:completionBlock];
 	else
 		completionBlock(nil, e);
 }
 
 //these are really just convenience methods that'll call the above method with pre-built "GET" and no body
 
-- (NSString *) remoteGETRequestWithRoute:(NSString *)route error:(NSError **)error
+- (NSString *) remoteGET:(NSString *)customRESTMethod error:(NSError **)error
 {
-	return [self remoteRequest:@"GET" requestBody:nil route:route error:error];
+	return [self remoteRequest:@"GET" method:customRESTMethod body:nil error:error];
 }
 
-- (void) remoteGETRequestWithRoute:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
+- (void) remoteGET:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock
 {
-	[self remoteRequest:@"GET" requestBody:nil route:route async:completionBlock];
+	[self remoteRequest:@"GET" method:customRESTMethod body:nil async:completionBlock];
 }
 
 
 #pragma mark Performing actions on classes
 
 
-+ (NSString *)	remoteRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route error:(NSError **)error
++ (NSString *)	remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body error:(NSError **)error
 {
-	route = [self routeForControllerRoute:route];
+	NSString *route = [self routeForControllerMethod:customRESTMethod];
 	return [[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:error orAsync:nil];
 }
 
-+ (void) remoteRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
++ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock;
 {
-	route = [self routeForControllerRoute:route];
+	NSString *route = [self routeForControllerMethod:route];
 	[[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
 }
 
 //these are really just convenience methods that'll call the above method with the JSON representation of the object
 
-+ (NSString *) remoteRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route error:(NSError **)error
++ (NSString *)	remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj error:(NSError **)error;
 {
 	NSString *json = [obj remoteJSONRepresentation:error];
 	if (json)
-		return [self remoteRequest:httpVerb requestBody:json route:route error:error];
+		return [self remoteRequest:httpVerb method:customRESTMethod body:json error:error];
 	return nil;
 }
 
-+ (void) remoteRequest:(NSString *)httpVerb sendObject:(NSRailsModel *)obj route:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
++ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj async:(NSRHTTPCompletionBlock)completionBlock;
 {
 	NSError *e = nil;
 	NSString *json = [obj remoteJSONRepresentation:&e];
 	if (json)
-		[self remoteRequest:httpVerb requestBody:json route:route async:completionBlock];
+		[self remoteRequest:httpVerb method:customRESTMethod body:json async:completionBlock];
 	else
 		completionBlock(nil, e);
 }
 
 //these are really just convenience methods that'll call the above method with pre-built "GET" and no body
 
-+ (NSString *) remoteGETRequestWithRoute:(NSString *)route error:(NSError **)error
++ (NSString *) remoteGET:(NSString *)customRESTMethod error:(NSError **)error
 {
-	return [self remoteRequest:@"GET" requestBody:nil route:route error:error];
+	return [self remoteRequest:@"GET" method:customRESTMethod body:nil error:error];
 }
 
-+ (void) remoteGETRequestWithRoute:(NSString *)route async:(NSRHTTPCompletionBlock)completionBlock
++ (void) remoteGET:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock
 {
-	[self remoteRequest:@"GET" requestBody:nil route:route async:completionBlock];
+	[self remoteRequest:@"GET" method:customRESTMethod body:nil async:completionBlock];
 }
 
 
@@ -864,7 +859,7 @@
 
 - (void) remoteCreate:(NSError **)error
 {
-	NSString *jsonResponse = [[self class] remoteRequest:@"POST" sendObject:self route:nil error:error];
+	NSString *jsonResponse = [[self class] remoteRequest:@"POST" method:nil bodyAsObject:self error:error];
 	if (error && *error)
 		return;
 
@@ -873,7 +868,7 @@
 
 - (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock
 {
-	[[self class] remoteRequest:@"POST" sendObject:self route:nil async:
+	[[self class] remoteRequest:@"POST" method:nil bodyAsObject:self async:
 	 
 	 ^(NSString *result, NSError *error) {
 		 if (result)
@@ -886,12 +881,12 @@
 
 - (void) remoteUpdate:(NSError **)error
 {
-	[self remoteRequestSendingSelf:@"PUT" route:nil error:error];
+	[self remoteRequest:@"PUT" method:nil error:error];
 }
 
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock
 {
-	[self remoteRequestSendingSelf:@"PUT" route:nil async:
+	[self remoteRequest:@"PUT" method:nil async:
 	 
 	 ^(NSString *result, NSError *error) {
 		 completionBlock(error);
@@ -902,12 +897,12 @@
 
 - (void) remoteDestroy:(NSError **)error
 {
-	[self remoteRequest:@"DELETE" requestBody:nil route:nil error:error];
+	[self remoteRequest:@"DELETE" method:nil body:nil error:error];
 }
 
 - (void) remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock
 {
-	[self remoteRequest:@"DELETE" requestBody:nil route:nil async:
+	[self remoteRequest:@"DELETE" method:nil body:nil async:
 	 
 	 ^(NSString *result, NSError *error) {
 		completionBlock(error);
@@ -918,7 +913,7 @@
 
 - (BOOL) remoteFetch:(NSError **)error
 {
-	NSString *jsonResponse = [self remoteGETRequestWithRoute:nil error:error];
+	NSString *jsonResponse = [self remoteGET:nil error:error];
 
 	if (error && *error)
 		return NO;
@@ -928,7 +923,7 @@
 
 - (void) remoteFetchAsync:(NSRGetLatestCompletionBlock)completionBlock
 {
-	[self remoteGETRequestWithRoute:nil async:
+	[self remoteGET:nil async:
 	 
 	 ^(NSString *result, NSError *error) 
 	 {
@@ -1029,7 +1024,7 @@
 + (NSArray *) remoteAll:(NSError **)error
 {
 	//make a class GET call (so just the controller - myapp.com/users)
-	NSString *json = [self remoteGETRequestWithRoute:nil error:error];
+	NSString *json = [self remoteGET:nil error:error];
 	if (!json)
 	{
 		return nil;
@@ -1039,7 +1034,7 @@
 
 + (void) remoteAllAsync:(NSRGetAllCompletionBlock)completionBlock
 {
-	[self remoteGETRequestWithRoute:nil async:
+	[self remoteGET:nil async:
 	 ^(NSString *result, NSError *error) 
 	 {
 		 if (error || !result)

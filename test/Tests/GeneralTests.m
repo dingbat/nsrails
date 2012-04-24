@@ -785,19 +785,19 @@
 {
 	////////
 	//root
-	NSString *root = [NSRailsModel routeForControllerRoute:nil];
+	NSString *root = [NSRailsModel routeForControllerMethod:nil];
 	GHAssertEqualStrings(root, @"", @"Root route failed");	
 
-	NSString *rootAction = [NSRailsModel routeForControllerRoute:@"action"];
+	NSString *rootAction = [NSRailsModel routeForControllerMethod:@"action"];
 	GHAssertEqualStrings(rootAction, @"action", @"Root route failed");	
 	
 	
 	/////////////////////
 	//controller (class)
-	NSString *getAll = [Post routeForControllerRoute:nil];
+	NSString *getAll = [Post routeForControllerMethod:nil];
 	GHAssertEqualStrings(getAll, @"posts", @"Nil controller route failed");
 	
-	NSString *controllerAction = [Post routeForControllerRoute:@"action"];
+	NSString *controllerAction = [Post routeForControllerMethod:@"action"];
 	GHAssertEqualStrings(controllerAction, @"posts/action", @"Controller route failed");
 	
 	
@@ -805,23 +805,15 @@
 	//instance
 	Post *post = [[Post alloc] init];
 	
-	NSError *e = nil;
-	
 	//should fail, since post has nil ID
-	GHAssertThrows([post routeForInstanceRoute:nil error:&e], @"Should have been an exception when trying to get an instance route on instance with nil remoteID");
+	GHAssertThrows([post routeForInstanceMethod:nil], @"Should have been an exception when trying to get an instance route on instance with nil remoteID");
 	
 	post.remoteID = [NSNumber numberWithInt:1];
 	
-	e = nil;
-	
-	NSString *get = [post routeForInstanceRoute:nil error:&e];
-	GHAssertNil(e, @"Route should have been formed correctly - remoteID is present");
+	NSString *get = [post routeForInstanceMethod:nil];
 	GHAssertEqualStrings(get, @"posts/1", @"Nil instance route failed");
-	
-	e = nil;
-	
-	NSString *instanceAction = [post routeForInstanceRoute:@"action" error:&e];
-	GHAssertNil(e, @"Route should have been formed correctly - remoteID is present");
+		
+	NSString *instanceAction = [post routeForInstanceMethod:@"action"];
 	GHAssertEqualStrings(instanceAction, @"posts/1/action", @"Instance route failed");
 }
 
@@ -863,7 +855,7 @@
 	
 	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
 	
-	[NSRailsModel remoteGETRequestWithRoute:@"404.html" error:&e];
+	[NSRailsModel remoteGET:@"404.html" error:&e];
 	
 	//if error, and it's NSURL domain, must be that the server isn't running
 	if (e && [[e domain] isEqualToString:NSURLErrorDomain])
