@@ -2,18 +2,19 @@
  * This is a manifest file that'll automatically include all the stylesheets available in this directory
  * and any sub-directories. You're free to add application-wide styles to this file and they'll appear at
  * the top of the compiled file, but it's generally better to create a new file per style scope.
- *= require_self
- *= require_tree . 
 */
+
 
 
 body {
 	font: 12px "Lucida Grande";
+//	border:0; margin:0; padding:0;
 }
 
 footer
 {
 	padding-top:10px;
+//	height:10px;
 }
 
 #head
@@ -70,6 +71,7 @@ p.coming_soon
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 	background: #FBFBFB;
+	
 	margin-left: 19%;
 	margin-right: 19%;
 }
@@ -125,12 +127,12 @@ div::-webkit-scrollbar-thumb {
 	font-size:13px;
 	float:right;
 }
-
 .comment_body
 {
 	overflow: auto;
 	overflow-x: hidden;
 	max-height:162px;
+	
 	font-size:15px;
 	margin: 10px;
 }

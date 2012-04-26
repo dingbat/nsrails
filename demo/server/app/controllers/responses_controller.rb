@@ -5,7 +5,7 @@ class ResponsesController < ApplicationController
     @responses = Response.all
 
     respond_to do |format|
-      format.json { render :json => @responses.to_json(:include => :post) } 
+      format.json { render :json => @responses.to_json(:include => :post) }
     end
   end
 

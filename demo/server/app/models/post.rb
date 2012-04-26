@@ -1,8 +1,8 @@
 class Post < ActiveRecord::Base
   has_many :responses, :dependent => :destroy
   
-  validates :content, :presence => true
-  validates :author, :presence => true
+  validate :content, :presence => true
+  validate :author, :presence => true
   
   accepts_nested_attributes_for :responses
   

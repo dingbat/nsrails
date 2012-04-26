@@ -19,5 +19,7 @@ test:
   timeout: 5000
 
 production:
-  adapter: mysql2
-  database: nsrails_production
+  adapter: pg
+  database: db/production
+  pool: 5
+  timeout: 5000
