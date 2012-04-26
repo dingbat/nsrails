@@ -184,7 +184,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  @param error Out parameter used if an error occurs while processing the request. May be NULL.
  @return NSString response (in JSON).
  */
-+ (NSString *)	remoteGET:(NSString *)customRESTMethod error:(NSError **)error;
++ (NSString *) remoteGET:(NSString *)customRESTMethod error:(NSError **)error;
 
 /**
  Makes a GET request to a custom method.
@@ -194,7 +194,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  @param customRESTMethod Custom REST method to be called on the subclass's controller. If `nil`, will route to index.
  @param completionBlock Block to be executed when the request is complete.
  */
-+ (void)		remoteGET:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock;
++ (void) remoteGET:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock;
 
 
 
@@ -212,7 +212,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  @param error Out parameter used if an error occurs while processing the request. May be NULL.
  @return NSString response (in JSON).
  */
-+ (NSString *)	remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj error:(NSError **)error;
++ (NSString *) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj error:(NSError **)error;
 
 /**
  Makes a request with a custom method, sending an `NSRailsModel` subclass instance as the body.
@@ -224,7 +224,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  @param obj NSRailsModel subclass instance - object you want to send in the body.
  @param completionBlock Block to be executed when the request is complete.
  */
-+ (void)		remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj async:(NSRHTTPCompletionBlock)completionBlock;
++ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj async:(NSRHTTPCompletionBlock)completionBlock;
 
 
 /**
@@ -248,7 +248,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  @param error Out parameter used if an error occurs while processing the request. May be NULL.
  @return Response string (in JSON).
  */
-+ (NSString *)	remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body error:(NSError **)error;
++ (NSString *) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body error:(NSError **)error;
 
 /**
  Makes a request with a custom method.
@@ -268,7 +268,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  @param body Request body.
  @param completionBlock Block to be executed when the request is complete.
  */
-+ (void)		remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock;
++ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock;
 
 /// =============================================================================================
 /// @name Instance requests (CRUD)
@@ -383,7 +383,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  @param error Out parameter used if an error occurs while processing the request. May be NULL.
  @return NSString response (in JSON).
  */
-- (NSString *)	remoteGET:(NSString *)customRESTMethod error:(NSError **)error;
+- (NSString *) remoteGET:(NSString *)customRESTMethod error:(NSError **)error;
 
 /**
  Makes a GET request to a custom method.
@@ -393,7 +393,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  @param customRESTMethod Custom REST method to be called on the remote object corresponding to the sender. If `nil`, will route to only the sender (objects/1.json).
  @param completionBlock Block to be executed when the request is complete.
  */
-- (void)		remoteGET:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock;
+- (void) remoteGET:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock;
 
 
 /**
@@ -408,7 +408,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  @param error Out parameter used if an error occurs while processing the request. May be NULL.
  @return NSString response (in JSON).
  */
-- (NSString *)	remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod error:(NSError **)error;
+- (NSString *) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod error:(NSError **)error;
 
 /**
  Makes a request with a custom method, sending the JSON representation of the sender as the request body.
@@ -419,7 +419,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  @param customRESTMethod Custom REST method to be called on the remote object corresponding to the sender. If `nil`, will route to only the sender (objects/1.json).
  @param completionBlock Block to be executed when the request is complete.
  */
-- (void)		remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock;
+- (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock;
 
 
 /**
@@ -440,7 +440,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  @param error Out parameter used if an error occurs while processing the request. May be NULL.
  @return Response string (in JSON).
  */
-- (NSString *)	remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body error:(NSError **)error;
+- (NSString *) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body error:(NSError **)error;
 
 /**
  Makes a request with a custom method on the sender's corresponding remote object.
@@ -457,7 +457,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  @param body Request body.
  @param completionBlock Block to be executed when the request is complete.
  */
-- (void)		remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock;
+- (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock;
 
 
 

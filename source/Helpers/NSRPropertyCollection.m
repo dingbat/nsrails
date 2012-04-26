@@ -483,22 +483,4 @@ static NSString * const NSRNoEquivalentMarker = @"";
 	[aCoder encodeObject:propertyEquivalents forKey:@"propertyEquivalents"];
 }
 
-#pragma mark -
-#pragma mark Dealloc for non-ARC
-#ifndef ARC_ENABLED
-
-- (void) dealloc
-{	
-	[sendableProperties release];
-	[retrievableProperties release];
-	[encodeProperties release];
-	[decodeProperties release];
-	[nestedModelProperties release];
-	[propertyEquivalents release];
-	
-	[super dealloc];
-}
-
-#endif
-
 @end

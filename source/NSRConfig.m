@@ -314,11 +314,7 @@ static int networkActivityRequests = 0;
 				 NSInteger code = [(NSHTTPURLResponse *)response statusCode];
 				 
 				 NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-				 
-#ifndef ARC_ENABLED
-				 [rawResult autorelease];
-#endif
-				 
+				 				 
 				 //int casting done to suppress Mac OS precision loss warnings
 				 [self logResponse:rawResult statusCode:(int)code];
 				 
@@ -354,10 +350,6 @@ static int networkActivityRequests = 0;
 		NSInteger code = [(NSHTTPURLResponse *)response statusCode];
 
 		NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-		
-#ifndef ARC_ENABLED
-		[rawResult autorelease];
-#endif
 		
 		//int casting done to suppress Mac OS precision loss warnings
 		[self logResponse:rawResult statusCode:(int)code];

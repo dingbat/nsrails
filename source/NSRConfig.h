@@ -34,22 +34,11 @@
 //#define NSRLog 1   //As 1, NSRails will log HTTP verbs with their outgoing URLs and any server errors being returned.
 #define NSRLog 2     //As 2, NSRails will also log any JSON going out/coming in.
 
-
-//Test if ARC is enabled
-////////////////////////
-// (thanks to http://www.learn-cocos2d.com/2011/11/everything-know-about-arc/ )
-// define some LLVM3 macros if the code is compiled with a different compiler (ie LLVMGCC42)
-#ifndef __has_feature
-#define __has_feature(x) 0
+#if NSRLog > 0
+#define NSRLogError(x)	NSLog(@"%@",x);
+#else
+#define NSRLogError(x)
 #endif
-
-#ifndef __has_extension
-#define __has_extension __has_feature // Compatibility with pre-3.0 compilers.
-#endif
-
-#if __has_feature(objc_arc) && __clang_major__ >= 3
-#define ARC_ENABLED
-#endif // __has_feature(objc_arc)
 
 
 //Common Blocks
@@ -399,11 +388,4 @@ static NSString * const NSRailsMissingURLException			= @"NSRailsMissingURLExcept
 - (void) logResponse:(NSString *)response statusCode:(int)code;
 
 @end
-
-
-#if NSRLog > 0
-#define NSRLogError(x)	NSLog(@"%@",x);
-#else
-#define NSRLogError(x)
-#endif
 

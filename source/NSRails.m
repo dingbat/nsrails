@@ -99,10 +99,6 @@
 	{
 		collection = [[NSRPropertyCollection alloc] initWithClass:self];
 		[propertyCollections setObject:collection forKey:class];
-		
-#ifndef ARC_ENABLED
-		[collection release];
-#endif
 	}
 	
 	return collection;
@@ -297,11 +293,7 @@
 {
 	//make a new class to be entered for this property/array (we can assume it subclasses NSRailsModel)
 	NSRailsModel *model = [[NSClassFromString(classN) alloc] initWithRemoteDictionary:dict];
-	
-#ifndef ARC_ENABLED
-	[model autorelease];
-#endif
-	
+		
 	return model;
 }
 
@@ -495,9 +487,7 @@
 							//array was nil, make a new one and set it!
 							NSMutableArray *newArray = [[NSMutableArray alloc] init];
 							[self performSelector:setter withObject:newArray];
-#ifndef ARC_ENABLED
-							[newArray release];
-#endif
+
 							//set previousVal so the rest of the method can work
 							previousVal = newArray;
 							changes = YES;
@@ -952,11 +942,7 @@
 	
 	if (*error)
 		obj = nil;
-	
-#ifndef ARC_ENABLED
-	[obj autorelease];
-#endif
-	
+		
 	return obj;
 }
 
@@ -965,11 +951,7 @@
 	//see comments for previous method
 	NSRailsModel *obj = [[[self class] alloc] init];
 	obj.remoteID = [NSDecimalNumber numberWithInteger:mID];
-	
-#ifndef ARC_ENABLED
-	[obj autorelease];
-#endif
-	
+		
 	[obj remoteFetchAsync:
 	 
 	 ^(BOOL changed, NSError *error) {
@@ -1012,10 +994,6 @@
 		NSRailsModel *obj = [[[self class] alloc] initWithRemoteDictionary:dict];	
 		
 		[objects addObject:obj];
-		
-#ifndef ARC_ENABLED
-		[obj release];
-#endif
 	}
 	
 	return objects;
@@ -1074,19 +1052,5 @@
 	
 	[aCoder encodeObject:customProperties forKey:@"customProperties"];
 }
-
-#pragma mark - Dealloc for non-ARC
-#ifndef ARC_ENABLED
-
-- (void) dealloc
-{
-	[remoteID release];
-	[remoteAttributes release];
-	[customProperties release];
-	
-	[super dealloc];
-}
-
-#endif
 
 @end
