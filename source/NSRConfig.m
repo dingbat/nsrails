@@ -67,7 +67,8 @@
 
 @implementation NSRConfig
 @synthesize appURL, appUsername, appPassword;
-@synthesize automaticallyInflects, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages;
+@synthesize autoInflectsNamesAndProperties, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages;
+@dynamic dateFormat;
 
 #pragma mark -
 #pragma mark Config inits
@@ -144,7 +145,7 @@ static int networkActivityRequests = 0;
 		//by default, set to accept datestring like "2012-02-01T00:56:24Z"
 		//this format (ISO 8601) is default in rails
 		self.dateFormat = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
-		self.automaticallyInflects = YES;
+		self.autoInflectsNamesAndProperties = YES;
 		self.succinctErrorMessages = YES;
 		self.timeoutInterval = 60;
 		

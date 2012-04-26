@@ -175,7 +175,7 @@
 	if ([class isEqualToString:@"NSRailsModel"])
 		class = nil;
 	
-	if ([self getRelevantConfig].automaticallyInflects)
+	if ([self getRelevantConfig].autoInflectsNamesAndProperties)
 	{
 		NSString *railsified = [class underscoreIgnorePrefix:[self getRelevantConfig].ignoresClassPrefixes];
 		return [railsified lowercaseString];
@@ -455,7 +455,7 @@
 		if (!railsEquivalent)
 		{
 			//check to see if we should auto_underscore if no equivalence set
-			if ([self getRelevantConfig].automaticallyInflects)
+			if ([self getRelevantConfig].autoInflectsNamesAndProperties)
 			{
 				railsEquivalent = [objcProperty underscore];
 			}
@@ -605,7 +605,7 @@
 		//check to see if we should auto_underscore if no equivalence set
 		if (!railsEquivalent)
 		{
-			if ([self getRelevantConfig].automaticallyInflects)
+			if ([self getRelevantConfig].autoInflectsNamesAndProperties)
 			{
 				railsEquivalent = [[objcProperty underscore] lowercaseString];
 			}

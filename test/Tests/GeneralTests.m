@@ -171,7 +171,7 @@
 	GHAssertEqualStrings(@"class_with_no_rails_sync", [ClassWithNoRailsSync getModelName], @"auto-underscoring");
 	
 	NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"NoAuto/"]; //also tests to see that it'll add http:// and remove the /
-	c.automaticallyInflects = NO;
+	c.autoInflectsNamesAndProperties = NO;
 	[c useIn:
 	 ^{
 		 NSRAssertRelevantConfigURL(@"NoAuto", @"custom block ^{} block");
