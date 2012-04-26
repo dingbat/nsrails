@@ -9,7 +9,6 @@
 
 body {
 	font: 12px "Lucida Grande";
-//	border:0; margin:0; padding:0;
 }
 
 footer
@@ -55,7 +54,6 @@ p.coming_soon
 .divider
 {
 	margin-bottom: 30px;
-//	margin-top: 30px;
 	margin-left: 15%;
 	margin-right: 15%;
 }
@@ -79,7 +77,6 @@ p.coming_soon
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 	background: #FBFBFB;
-	
 	margin-left: 20%;
 	margin-right: 20%;
 }
@@ -126,12 +123,12 @@ div::-webkit-scrollbar-thumb {
 	font-size:13px;
 	float:right;
 }
+
 .comment_body
 {
 	overflow: auto;
 	overflow-x: hidden;
 	max-height:162px;
-	
 	font-size:15px;
 	margin: 10px;
 }
