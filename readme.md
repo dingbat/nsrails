@@ -10,7 +10,7 @@ NSRails is a light-weight, drop-in Objective-C framework (iOS or OS X) for simpl
 What does NSRails do?
 ========
 
-NSRails provides simple, high-level APIs that give your Objective-C classes ActiveResource-like support. This means CRUD and other operations on your corresponding Rails objects can be called natively via Objective-C methods.
+NSRails provides simple, high-level APIs that gives your Objective-C classes ActiveResource-like support. This means CRUD and other operations on your corresponding Rails objects can be called natively via Objective-C methods.
 
 Instances will inherit methods to remotely create, read, update, or destroy a remote object:
 
