@@ -301,23 +301,23 @@ static NSString * const NSRailsMissingURLException			= @"NSRailsMissingURLExcept
 /// =============================================================================================
 
 /**
- Begins a context block of code to use the sender as the default config.
+ Begins a context block of code to use the receiver as the default config.
  
  @see end.
  */
 - (void) use;
 
 /**
- Ends a context block of code to use the sender as the default config.
+ Ends a context block of code to use the receiver as the default config.
  
  @see use.
  */
 - (void) end;
 
 /**
- Executes a given block with the sender as the default config in that block.
+ Executes a given block with the receiver as the default config in that block.
  
- @param block Block to be executed with the default config context of sender.
+ @param block Block to be executed with the default config context of receiver.
  @see use.
  @see end.
  */

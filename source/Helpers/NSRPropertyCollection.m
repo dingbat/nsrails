@@ -62,7 +62,7 @@ static NSString * const NSRNoEquivalentMarker = @"";
 	SEL sel = (getter ? [self getPropertyGetter:str] : [self getPropertySetter:str]);
 	if (!sel || ![self instancesRespondToSelector:sel])
 	{
-		NSRRaiseError(@"Property '%@' declared in NSRailsSync for class %@ was marked as %@, but there was no %@ method found. Maybe you forgot to @synthesize it?", str, NSStringFromClass(self), getter ? @"sendable" : @"retrievable", getter ? @"getter" : @"sender");
+		NSRRaiseError(@"Property '%@' declared in NSRailsSync for class %@ was marked as %@, but there was no %@ method found. Maybe you forgot to @synthesize it?", str, NSStringFromClass(self), getter ? @"sendable" : @"retrievable", getter ? @"getter" : @"setter");
 		return NO;
 	}
 	

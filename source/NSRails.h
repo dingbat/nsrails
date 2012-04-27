@@ -38,20 +38,30 @@
  ### Summary
  
  `NSRailsModel` is the primary class in NSRails - any classes that inherit from it will be treated with a "remote correspondance" and ActiveResource-like APIs will be available.
- 
- You'll notice that almost all `NSRailsModel` properties and methods are prefixed with `remote`, so you can quickly navigate through them with autocomplete.
- 
+  
  Note that you do not have to define an `id` property for your Objective-C class, as your subclass will inherit `NSRailsModel`'s `remoteID` property. Foreign keys are optional but also unnecessary (see [nesting](https://github.com/dingbat/nsrails/wiki/Nesting) on the NSRails wiki).
  
- - Before exploring this document, make sure that your class inherits from `NSRailsModel`, or this API will not be available.
+ About this document:
+ 
+ - You'll notice that almost all `NSRailsModel` properties and methods are prefixed with `remote`, so you can quickly navigate through them with autocomplete.
+ - When this document refers to an object's "model name", that means (by default) the name of its class. If you wish to define a custom model name (if the name of your model in Rails is distinct from your class name), use the `NSRailsUseModelName()` macro.
+ - Before exploring this document, make sure that your class inherits from `NSRailsModel`, or of course these methods & properties will not be available.
  
  ### Available Macros
  
- - NSRailsSync ()
- - NSRailsUseModelName ()
- - NSRailsUseConfig ()
+ - `NSRailsSync()` - define specific properties to be shared with Rails, along with configurable behaviors.
+ - `NSRailsUseModelName()` - define a custom model name for your class, optionally with a custom plural. Takes string literal(s).
+ - `NSRailsUseConfig()` - define a custom app URL for your class, optionally with username/password. Takes string literal(s).
  
- Please see their descriptions on [the NSRails wiki](https://github.com/dingbat/nsrails/wiki/Macros).
+ These macros can be defined right inside your subclass's implementation:
+ 
+	@implementation Article  NSRailsUseModelName(@"post")
+	@synthesize title, content;
+	NSRailsSync(title, content)
+	
+	@end
+ 
+ Please see their detailed descriptions on [the NSRails wiki](https://github.com/dingbat/nsrails/wiki/Macros).
  
  ### Validation Errors
  
@@ -91,7 +101,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 /**
  The corresponding local property for `id`.
  
- It is notable that this property will be automatically updated after `remoteCreate`, as will anything else that is returned from that create.
+ It is notable that this property will be automatically updated after remoteCreate:, as will anything else that is returned from that create.
  */
 @property (nonatomic, strong) NSNumber *remoteID;
 
@@ -99,14 +109,14 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  The most recent dictionary of all properties returned by Rails, exactly as it returned it. (read-only)
  
  This will include properties that you may not have defined in your Objective-C class, allowing you to dynamically add fields to your app if the server-side model changes.
- Moreover, this will not take into account anything in NSRailsSync.
+ Moreover, this will not take into account anything in NSRailsSync - it is exactly the hash as was sent by Rails.
  */
 @property (nonatomic, strong, readonly) NSDictionary *remoteAttributes;
 
 /**
  If true, will remotely destroy this object if sent nested.
  
- If true, this object will include a `_destroy` key on send (ie, when the model nesting it is sent during a `remoteUpdate` or `remoteCreate`).
+ If true, this object will include a `_destroy` key on send (ie, when the model nesting it is sent during a remoteUpdate: or remoteCreate:).
  
  This can be useful if you have a lot of nested models you need to destroy - you can do it in one request instead of several repeated destroys on each object.
  
@@ -120,21 +130,21 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 // =============================================================================================
 
 /**
- Returns an array of all remote objects (as instances of your subclass.) Each instance’s properties will be set to those returned by Rails.
+ Returns an array of all remote objects (as instances of receiver's class.) Each instance’s properties will be set to those returned by Rails.
  
- Makes a GET request to `/objects.json` (where `objects` is the pluralization of your subclass.)
+ Makes a GET request to `/objects.json` (where `objects` is the pluralization of receiver's model name.)
  
  Request done synchronously. See remoteAllAsync: for asynchronous operation.
  
- @param error Out parameter used if an error occurs while processing the request. May be NULL.
- @return NSArray of instances of your subclass. Each object’s properties will be set to those returned by Rails.
+ @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
+ @return NSArray of instances of receiver's class. Each object’s properties will be set to those returned by Rails.
  */
 + (NSArray *) remoteAll:(NSError **)error;
 
 /**
- Retrieves an array of all remote objects (as instances of your subclass.) Each instance’s properties will be set to those returned by Rails.
+ Retrieves an array of all remote objects (as instances of receiver's class.) Each instance’s properties will be set to those returned by Rails.
  
- Asynchronously makes a GET request to `/objects.json` (where `objects` is the pluralization of your subclass.)
+ Asynchronously makes a GET request to `/objects.json` (where `objects` is the pluralization of receiver's model name.)
   
  @param completionBlock Block to be executed when the request is complete.
  */
@@ -143,26 +153,26 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 
 
 /**
- Returns an instance of your subclass corresponding to the remote object with that ID.
+ Returns an instance of receiver's class corresponding to the remote object with that ID.
  
- Makes a GET request to `/objects/1.json` (where `objects` is the pluralization of your subclass, and `1` is *objectID*
+ Makes a GET request to `/objects/1.json` (where `objects` is the pluralization of receiver's model name, and `1` is *objectID*
  
  )
  
  Request done synchronously. See remoteObjectWithID:async: for asynchronous operation.
  
- @param objectID The ID of your remote object.
- @param error Out parameter used if an error occurs while processing the request. May be NULL.
- @return Object of your subclass class with properties from the remote object with that ID.
+ @param objectID The ID of the remote object.
+ @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
+ @return Instance of receiver's class with properties from the remote object with that ID.
  */
 + (id) remoteObjectWithID:(NSInteger)objectID error:(NSError **)error;
 
 /**
- Retrieves an instance of your subclass corresponding to the remote object with that ID.
+ Retrieves an instance receiver's class corresponding to the remote object with that ID.
  
- Asynchronously makes a GET request to `/objects/1.json` (where `objects` is the pluralization of your subclass, and `1` is *objectID*)
+ Asynchronously makes a GET request to `/objects/1.json` (where `objects` is the pluralization of receiver's model name, and `1` is *objectID*)
  
- @param objectID The ID of your remote object.
+ @param objectID The ID of the remote object.
  @param completionBlock Block to be executed when the request is complete.
  */
 + (void) remoteObjectWithID:(NSInteger)objectID async:(NSRGetObjectCompletionBlock)completionBlock;
@@ -181,7 +191,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  Request done synchronously. See remoteGET:async: for asynchronous operation.
 
  @param customRESTMethod Custom REST method to be called on the subclass's controller. If `nil`, will route to index.
- @param error Out parameter used if an error occurs while processing the request. May be NULL.
+ @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return NSString response (in JSON).
  */
 + (NSString *) remoteGET:(NSString *)customRESTMethod error:(NSError **)error;
@@ -209,7 +219,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
  @param customRESTMethod Custom REST method to be called on the subclass's controller. If `nil`, will route to index.
  @param obj NSRailsModel subclass instance - object you want to send in the body.
- @param error Out parameter used if an error occurs while processing the request. May be NULL.
+ @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return NSString response (in JSON).
  */
 + (NSString *) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj error:(NSError **)error;
@@ -230,7 +240,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 /**
  Returns the JSON response for a request with a custom method.
  
- If called on a subclass, makes the request to `/objects/method` (where `objects` is the pluralization of your subclass, and `method` is *customRESTMethod*).
+ If called on a subclass, makes the request to `/objects/method` (where `objects` is the pluralization of receiver's model name, and `method` is *customRESTMethod*).
  
  If called on `NSRailsModel`, makes the request to `/method` (where `method` is *customRESTMethod*).
  
@@ -245,7 +255,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
  @param customRESTMethod The REST method to call (appended to the route). If `nil`, will call index. See above for examples.
  @param body Request body.
- @param error Out parameter used if an error occurs while processing the request. May be NULL.
+ @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return Response string (in JSON).
  */
 + (NSString *) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body error:(NSError **)error;
@@ -253,7 +263,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 /**
  Makes a request with a custom method.
  
- If called on a subclass, makes the request to `/objects/method` (where `objects` is the pluralization of your subclass, and `method` is *customRESTMethod*).
+ If called on a subclass, makes the request to `/objects/method` (where `objects` is the pluralization of receiver's model name, and `method` is *customRESTMethod*).
  
  If called on `NSRailsModel`, makes the request to `/method` (where `method` is *customRESTMethod*).
  
@@ -275,37 +285,43 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 /// =============================================================================================
 
 /**
- Retrieves the latest remote data for sender and sets its properties to received response.
+ Retrieves the latest remote data for receiver and sets its properties to received response.
  
- Sends a `GET` request to `/objects/1.json` (where `objects` is the pluralization of your subclass, and `1` is the sender's `remoteID`).
+ Sends a `GET` request to `/objects/1.json` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
  Request made synchronously. See remoteFetchAsync: for asynchronous operation.
  
  Requires presence of `remoteID`, or will throw an `NSRailsRequiresRemoteIDException`.
  
- @param error Out parameter used if an error occurs while processing the request. May be NULL. 
+ @param error Out parameter used if an error occurs while processing the request. May be `NULL`. 
  @return `YES` if fetch was successful. Returns `NO` if an error occurred.
+ 
+ @see remoteFetch:changes:
  */
 - (BOOL) remoteFetch:(NSError **)error;
 
 /**
- Retrieves the latest remote data for sender and sets its properties to received response.
+ Retrieves the latest remote data for receiver and sets its properties to received response.
  
- Sends a `GET` request to `/objects/1.json` (where `objects` is the pluralization of your subclass, and `1` is the sender's `remoteID`).
+ Sends a `GET` request to `/objects/1.json` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
  Request made synchronously. See remoteFetchAsync: for asynchronous operation.
  
  Requires presence of `remoteID`, or will throw an `NSRailsRequiresRemoteIDException`.
  
- @param error Out parameter used if an error occurs while processing the request. May be NULL. 
- @param changesPtr Pointer to BOOL whether or not there was a *local* change. This means changes in `updated_at`, etc, will only apply if your Objective-C class implement this as a property as well. This also applies when updating any of its nested objects (done recursively). May be `NULL`.
+ @param error Out parameter used if an error occurs while processing the request. May be `NULL`. 
+ @param changesPtr Pointer to boolean value set to whether or not the receiver changed in any way after the fetch (ie, if this fetch modified one of receiver's local properties due to a change in value server-side). This will also take into account diffs to any nested `NSRailsModel` objects that are affected by this fetch (done recursively).
+ 
+ Note that because this only tracks differences in local changes, properties that changed server-side that are not defined in the receiver's class will *not* report back a change (ie, if receiver's class doesn't implement an `updated_at` property and `updated_at` is changed in your remote DB, no change will be reported.) This parameter may be `NULL` if this information is not useful, or use remoteFetch:.
  @return `YES` if fetch was successful. Returns `NO` if an error occurred.
+ 
+ @see remoteFetch:
  */
 - (BOOL) remoteFetch:(NSError **)error changes:(BOOL *)changesPtr;
 
 
 /**
- Retrieves the latest remote data for sender and sets its properties to received response.
+ Retrieves the latest remote data for receiver and sets its properties to received response.
  
- Asynchronously sends a `GET` request to `/objects/1.json` (where `objects` is the pluralization of your subclass, and `1` is the sender's `remoteID`).
+ Asynchronously sends a `GET` request to `/objects/1.json` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
  
  Requires presence of `remoteID`, or will throw an `NSRailsRequiresRemoteIDException`.
 
@@ -315,14 +331,14 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 
 
 /**
- Updates sender's corresponding remote object.
+ Updates receiver's corresponding remote object.
  
- Sends an `UPDATE` request to `/objects/1.json` (where `objects` is the pluralization of your subclass, and `1` is the sender's `remoteID`).
+ Sends an `UPDATE` request to `/objects/1.json` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
  Request made synchronously. See remoteUpdateAsync: for asynchronous operation.
 
  Requires presence of `remoteID`, or will throw an `NSRailsRequiresRemoteIDException`.
  
- @param error Out parameter used if an error occurs while processing the request. May be NULL.
+ @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return `YES` if update was successful. Returns `NO` if an error occurred.
 
  @warning No local properties will be set, as Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.
@@ -330,9 +346,9 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 - (BOOL) remoteUpdate:(NSError **)error;
 
 /**
- Updates sender's corresponding remote object.
+ Updates receiver's corresponding remote object.
  
- Asynchronously sends an `UPDATE` request to `/objects/1.json` (where `objects` is the pluralization of your subclass, and `1` is the sender's `remoteID`).
+ Asynchronously sends an `UPDATE` request to `/objects/1.json` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
  
  Requires presence of `remoteID`, or will throw an `NSRailsRequiresRemoteIDException`.
  
@@ -344,20 +360,20 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 
 
 /**
- Creates the sender remotely. Sender's properties will be set to those given by Rails (including `remoteID`).
+ Creates the receiver remotely. Receiver's properties will be set to those given by Rails (including `remoteID`).
  
- Sends a `POST` request to `/objects.json` (where `objects` is the pluralization of your subclass), with the sender's remoteJSONRepresentation as its body.
+ Sends a `POST` request to `/objects.json` (where `objects` is the pluralization of receiver's model name), with the receiver's remoteJSONRepresentation as its body.
  Request made synchronously. See remoteCreateAsync: for asynchronous operation.
 
- @param error Out parameter used if an error occurs while processing the request. May be NULL.
+ @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return `YES` if create was successful. Returns `NO` if an error occurred.
  */
 - (BOOL) remoteCreate:(NSError **)error;
 
 /**
- Creates the sender remotely. Sender's properties will be set to those given by Rails (including `remoteID`).
+ Creates the receiver remotely. Receiver's properties will be set to those given by Rails (including `remoteID`).
  
- Asynchronously sends a `POST` request to `/objects.json` (where `objects` is the pluralization of your subclass), with the sender's remoteJSONRepresentation as its body.
+ Asynchronously sends a `POST` request to `/objects.json` (where `objects` is the pluralization of receiver's model name), with the receiver's remoteJSONRepresentation as its body.
  
  @param completionBlock Block to be executed when the request is complete.
  */
@@ -366,20 +382,20 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 
 
 /**
- Destroys sender's corresponding remote object. Local object will be unaffected.
+ Destroys receiver's corresponding remote object. Local object will be unaffected.
  
- Sends a `DELETE` request to `/objects/1.json` (where `objects` is the pluralization of your subclass, and `1` is the sender's `remoteID`).
+ Sends a `DELETE` request to `/objects/1.json` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
  Request made synchronously. See remoteDestroyAsync: for asynchronous operation.
  
- @param error Out parameter used if an error occurs while processing the request. May be NULL.
+ @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return `YES` if destroy was successful. Returns `NO` if an error occurred.
  */
 - (BOOL) remoteDestroy:(NSError **)error;
 
 /**
- Destroys sender's corresponding remote object. Local object will be unaffected.
+ Destroys receiver's corresponding remote object. Local object will be unaffected.
  
- Asynchronously sends a `DELETE` request to `/objects/1.json` (where `objects` is the pluralization of your subclass, and `1` is the sender's `remoteID`).
+ Asynchronously sends a `DELETE` request to `/objects/1.json` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
  
  @param completionBlock Block to be executed when the request is complete.
  */
@@ -397,8 +413,8 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  
  Request done synchronously. See remoteGET:async: for asynchronous operation.
  
- @param customRESTMethod Custom REST method to be called on the remote object corresponding to the sender. If `nil`, will route to only the sender (objects/1.json).
- @param error Out parameter used if an error occurs while processing the request. May be NULL.
+ @param customRESTMethod Custom REST method to be called on the remote object corresponding to the receiver. If `nil`, will route to only the receiver (objects/1.json).
+ @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return NSString response (in JSON).
  */
 - (NSString *) remoteGET:(NSString *)customRESTMethod error:(NSError **)error;
@@ -408,42 +424,42 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  
  Calls remoteRequest:method:body:async: with `GET` for *httpVerb* and `nil` for *body*.
  
- @param customRESTMethod Custom REST method to be called on the remote object corresponding to the sender. If `nil`, will route to only the sender (objects/1.json).
+ @param customRESTMethod Custom REST method to be called on the remote object corresponding to the receiver. If `nil`, will route to only the receiver (objects/1.json).
  @param completionBlock Block to be executed when the request is complete.
  */
 - (void) remoteGET:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock;
 
 
 /**
- Returns the JSON response for a request with a custom method, sending the JSON representation of the sender as the request body.
+ Returns the JSON response for a request with a custom method, sending the JSON representation of the receiver as the request body.
  
  Calls remoteRequest:method:body:error: with `obj`'s JSON representation for *body*. (Calls remoteJSONRepresentation on `obj`).
  
  Request done synchronously. See remoteRequest:method:bodyAsObject:async: for asynchronous operation.
  
  @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
- @param customRESTMethod Custom REST method to be called on the remote object corresponding to the sender. If `nil`, will route to only the sender (objects/1.json).
- @param error Out parameter used if an error occurs while processing the request. May be NULL.
+ @param customRESTMethod Custom REST method to be called on the remote object corresponding to the receiver. If `nil`, will route to only the receiver (objects/1.json).
+ @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return NSString response (in JSON).
  */
 - (NSString *) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod error:(NSError **)error;
 
 /**
- Makes a request with a custom method, sending the JSON representation of the sender as the request body.
+ Makes a request with a custom method, sending the JSON representation of the receiver as the request body.
  
- Calls remoteRequest:method:body:async: with sender's JSON representation for *body*. (Calls remoteJSONRepresentation).
+ Calls remoteRequest:method:body:async: with receiver's JSON representation for *body*. (Calls remoteJSONRepresentation).
  
  @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
- @param customRESTMethod Custom REST method to be called on the remote object corresponding to the sender. If `nil`, will route to only the sender (objects/1.json).
+ @param customRESTMethod Custom REST method to be called on the remote object corresponding to the receiver. If `nil`, will route to only the receiver (objects/1.json).
  @param completionBlock Block to be executed when the request is complete.
  */
 - (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock;
 
 
 /**
- Returns the JSON response for a request with a custom method on the sender's corresponding remote object.
+ Returns the JSON response for a request with a custom method on the receiver's corresponding remote object.
  
- Makes a request to `/objects/1/method` (where `objects` is the pluralization of your subclass, `1` is the sender's `remoteID`, and `method` is *customRESTMethod*).
+ Makes a request to `/objects/1/method` (where `objects` is the pluralization of receiver's model name, `1` is the receiver's `remoteID`, and `method` is *customRESTMethod*).
   
  `/method` is omitted if `customRESTMethod` is nil.
  
@@ -455,15 +471,15 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
  @param customRESTMethod The REST method to call (appended to the route). If `nil`, will call index. See above for examples.
  @param body Request body.
- @param error Out parameter used if an error occurs while processing the request. May be NULL.
+ @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return Response string (in JSON).
  */
 - (NSString *) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body error:(NSError **)error;
 
 /**
- Makes a request with a custom method on the sender's corresponding remote object.
+ Makes a request with a custom method on the receiver's corresponding remote object.
  
- Asynchronously akes a request to `/objects/1/method` (where `objects` is the pluralization of your subclass, `1` is the sender's `remoteID`, and `method` is *customRESTMethod*).
+ Asynchronously akes a request to `/objects/1/method` (where `objects` is the pluralization of receiver's model name, `1` is the receiver's `remoteID`, and `method` is *customRESTMethod*).
   
  `/method` is omitted if `customRESTMethod` is nil.
  
@@ -485,27 +501,27 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 
 
 /**
- Serializes the sender's properties into a JSON string.
+ Serializes the receiver's properties into a JSON string.
  
  Encapsulates the data with a key of the model name:
 	{"user"=>{"name"=>"x", "email"=>"y"}}
 
  
- @return The sender's properties as a JSON string (takes into account rules in NSRailsSync).
+ @return The receiver's properties as a JSON string (takes into account rules in NSRailsSync).
  */
 - (NSString *) remoteJSONRepresentation;
 
 /**
- Serializes the sender's properties into a dictionary.
+ Serializes the receiver's properties into a dictionary.
  
  Does not encapsulate as remoteJSONRepresentation does.
  
- @return The sender's properties as a dictionary (takes into account rules in NSRailsSync).
+ @return The receiver's properties as a dictionary (takes into account rules in NSRailsSync).
  */
 - (NSDictionary *) dictionaryOfRemoteProperties;
 
 /**
- Sets the sender's properties given a JSON string.
+ Sets the receiver's properties given a JSON string.
  
  Takes into account rules in NSRailsSync.
  
@@ -515,7 +531,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 - (BOOL) setPropertiesUsingRemoteJSON:(NSString *)json;
 
 /**
- Sets the sender's properties given a dictionary.
+ Sets the receiver's properties given a dictionary.
  
  Takes into account rules in NSRailsSync.
  
@@ -530,7 +546,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 
 
 /**
- Initializes a new instance of the sender's class with a given JSON input.
+ Initializes a new instance of the receiver's class with a given JSON input.
  
  Takes into account rules in NSRailsSync.
  
@@ -540,7 +556,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 - (id) initWithRemoteJSON:(NSString *)json;
 
 /**
- Initializes a new instance of the sender's class with a given dictionary input.
+ Initializes a new instance of the receiver's class with a given dictionary input.
  
  Takes into account rules in NSRailsSync.
  
@@ -550,7 +566,7 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
 - (id) initWithRemoteDictionary:(NSDictionary *)dictionary;
 
 /**
- Initializes a new instance of the sender's class with a custom NSRailsSync string.
+ Initializes a new instance of the receiver's class with a custom NSRailsSync string.
  
  The given NSRailsSync string will be used only for this **instance**. This instance will not use its class's NSRailsSync. This is very uncommon and triple checking is recommended before going with this implementation strategy.
  
