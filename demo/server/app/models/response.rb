@@ -1,6 +1,6 @@
 class Response < ActiveRecord::Base
   belongs_to :post
   
-  validate :content, :presence => true
-  validate :author, :presence => true
+  validates :content, :presence => true
+  validates :author, :presence => true
 end
