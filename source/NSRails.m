@@ -803,7 +803,7 @@
 	return [[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:error orAsync:nil];
 }
 
-+ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock;
++ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock
 {
 	NSString *route = [self routeForControllerMethod:customRESTMethod];
 	[[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
@@ -811,7 +811,7 @@
 
 //these are really just convenience methods that'll call the above method with the JSON representation of the object
 
-+ (NSString *)	remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj error:(NSError **)error;
++ (NSString *)	remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj error:(NSError **)error
 {
 	NSString *json = [obj remoteJSONRepresentation:error];
 	if (json)
@@ -819,7 +819,7 @@
 	return nil;
 }
 
-+ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj async:(NSRHTTPCompletionBlock)completionBlock;
++ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj async:(NSRHTTPCompletionBlock)completionBlock
 {
 	NSError *e = nil;
 	NSString *json = [obj remoteJSONRepresentation:&e];
@@ -852,8 +852,17 @@
 	NSString *jsonResponse = [[self class] remoteRequest:@"POST" method:nil bodyAsObject:self error:error];
 	if (!jsonResponse)
 		return NO;
-
-	[self setPropertiesUsingRemoteJSON:jsonResponse error:error];
+	
+	NSError *e;
+	[self setPropertiesUsingRemoteJSON:jsonResponse error:&e];
+	
+	//just make sure that setPropertiesUsingRemoteJSON went smoothly (in case there was a JSON error)
+	if (e)
+	{
+		if (error)
+			*error = e;
+		return NO;
+	}
 	
 	return YES;
 }
@@ -864,7 +873,7 @@
 	 
 	 ^(NSString *result, NSError *error) {
 		 if (result)
-			 [self setPropertiesUsingRemoteJSON:result];
+			 [self setPropertiesUsingRemoteJSON:result error:&error];
 		 completionBlock(error);
 	 }];
 }
@@ -910,9 +919,18 @@
 	if (!jsonResponse)
 		return NO;
 	
-	BOOL changes = [self setPropertiesUsingRemoteJSON:jsonResponse error:error];
+	NSError *e;
+	BOOL changes = [self setPropertiesUsingRemoteJSON:jsonResponse error:&e];
 	if (changesPtr)
 		*changesPtr = changes;
+	
+	//just make sure that setPropertiesUsingRemoteJSON went smoothly (in case there was a JSON error)
+	if (e)
+	{
+		if (error)
+			*error = e;
+		return NO;
+	}
 	
 	return YES;
 }
@@ -930,7 +948,7 @@
 	 {
 		 BOOL change = NO;
 		 if (result)
-			change = [self setPropertiesUsingRemoteJSON:result];
+			change = [self setPropertiesUsingRemoteJSON:result error:&error];
 		 completionBlock(change, error);
 	 }];
 }
@@ -942,24 +960,16 @@
 	NSRailsModel *obj = [[[self class] alloc] init];
 	obj.remoteID = [NSDecimalNumber numberWithInteger:mID];
 	
-	//make sure there's an error, we'll need to retrieve it
-	if (!error)
+	if (![obj remoteFetch:error])
 	{
-		__autoreleasing NSError *e = nil;
-		error = &e;
-	}
-	
-	[obj remoteFetch:error];
-	
-	if (*error)
 		obj = nil;
-		
+	}
+
 	return obj;
 }
 
 + (void) remoteObjectWithID:(NSInteger)mID async:(NSRGetObjectCompletionBlock)completionBlock
 {
-	//see comments for previous method
 	NSRailsModel *obj = [[[self class] alloc] init];
 	obj.remoteID = [NSDecimalNumber numberWithInteger:mID];
 		
@@ -985,14 +995,19 @@
 	
 	if (jsonError || !arr)
 	{
-		if (jsonError && error)
-			*error = jsonError;
+		if (jsonError)
+		{
+			NSRLogError(jsonError);
+			if (error)
+				*error = jsonError;
+		}
 		return nil;
 	}
 	
 	if (![arr isKindOfClass:[NSArray class]])
 	{
 		[NSException raise:@"NSRailsInternalError" format:@"getAll method (index) for %@ controller retuned this JSON: `%@`, which is not an array - check your Rails app.",NSStringFromClass([self class]), json];
+		return nil;
 	}
 	
 	//here comes actually making the array to return
@@ -1026,7 +1041,7 @@
 	[self remoteGET:nil async:
 	 ^(NSString *result, NSError *error) 
 	 {
-		 if (error || !result)
+		 if (!result)
 		 {
 			 completionBlock(nil, error);
 		 }

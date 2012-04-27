@@ -65,6 +65,7 @@ static NSString * const NSRailsSyncException				= @"NSRailsSyncException";
 static NSString * const NSRailsInvalidJSONEncodingException = @"NSRailsInvalidJSONEncodingException";
 static NSString * const NSRailsDateConversionException		= @"NSRailsDateConversionException";
 static NSString * const NSRailsMissingURLException			= @"NSRailsMissingURLException";
+static NSString * const NSRailsNullRemoteIDException		= @"NSRailsNullRemoteIDException";
 
 ////////////////////////////////
 

@@ -82,7 +82,6 @@ static int networkActivityRequests = 0;
 //purely for test purposes
 + (void) resetConfigs
 {
-	//taken from static definitions above ^
 	[configEnvironments removeAllObjects];
 	[overrideConfigStack removeAllObjects];
 	currentEnvironment = NSRConfigEnvironmentDevelopment;
