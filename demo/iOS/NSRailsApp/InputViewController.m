@@ -9,6 +9,13 @@
 #import "InputViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
+/*
+ =================================================
+ This class has nothing to do with NSRails - just
+ a method to get user input
+ =================================================
+ */
+
 @interface InputViewController (private)
 
 - (void) placehold;

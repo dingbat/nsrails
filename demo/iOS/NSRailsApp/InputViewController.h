@@ -8,6 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
+
+/*
+ =================================================
+ This class has nothing to do with NSRails - just
+ a method to get user input
+ =================================================
+ */
+
+
 //needs to resolve to a BOOL (whether or not we should dismiss the VC)
 //provides the two strings the user entered
 typedef BOOL (^PostInputBlock)(NSString *author, NSString *content);

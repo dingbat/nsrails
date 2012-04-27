@@ -12,17 +12,14 @@
 #import "InputViewController.h"
 
 @implementation ResponsesViewController
+@synthesize post;
 
-- (id)initWithPost:(Post *)p
-{
-    self = [super initWithStyle:UITableViewStyleGrouped];
-    if (self) {
-		post = p;
-    }
-    return self;
-}
+/*
+ =================================================
+ RELEVANT NSRAILS STUFF
+ =================================================
+ */
 
-#pragma mark - View lifecycle
 
 - (void) addResponse
 {
@@ -34,11 +31,20 @@
 											  Response *newResp = [[Response alloc] init];
 											  newResp.author = author;
 											  newResp.content = content;
-											  newResp.post = post;      //check out Response.m for more detail on this line
+											  newResp.post = post;    //check out Response.m for more detail on how this line is possible
 											  
 											  
-											  [newResp remoteCreate:&error];
+											  if (![newResp remoteCreate:&error])
+											  {
+												  [(AppDelegate *)[UIApplication sharedApplication].delegate alertForError:error];
+												  
+												  return NO;
+											  }
 
+											  [post.responses addObject:newResp]; 
+											  [self.tableView reloadData];
+											  
+											  return YES;
 											  
 											  /* 
 											   Instead of line 40 (the belongs_to trick), you could also add the new response to the post's "responses" array and then update it:
@@ -46,25 +52,9 @@
 											     [post.responses addObject:newResp];
 											     [post remoteUpdate:&error];
 											   
-											   Doing this may be better for your structure since it'd already be in post's "responses" array.
-											   However, you have to take into account the case where the Response validation fails and you'd have to remove it from the array. Also, creating the Response rather than updating the Post will set newResp's remoteID! And, doing it this way will demonstrate that doing a [post remoteFetch]; in the next line will update post.responses.
+											   Doing this may be tempting better for your structure since it'd already be in post's "responses" array, BUT:
+											   you'd have to take into account the case where the Response validation fails and then remove it from the array. Also, creating the Response rather than updating the Post will set newResp's remoteID, so we can do remote operations on it later!
 											  */
-											  
-											  
-											  if (!error)
-											  {
-												  //since it's not part of our post.responses array yet, let's remoteFetch
-												  //(we could also just do a simple [post.responses addObject:newResp])
-												  
-												  [post remoteFetch:nil];
-												  
-												  [self.tableView reloadData];
-												  return YES;
-											  }
-											  
-											  [(AppDelegate *)[UIApplication sharedApplication].delegate alertForError:error];
-
-											  return NO;
 										  }];
 	
 	newPostVC.header = [NSString stringWithFormat:@"Write your response to %@:",post.author];
@@ -72,6 +62,42 @@
 	
 	[self presentModalViewController:newPostVC animated:YES];
 }
+
+- (void) deleteResponseAtIndexPath:(NSIndexPath *)indexPath
+{
+	//here, on the delete, we're calling remoteDestroy to destroy our object remotely. remember to remove it from our local array, too.
+	NSError *error;
+	
+	Response *resp = [post.responses objectAtIndex:indexPath.row];
+	if ([resp remoteDestroy:&error])
+	{
+		[post.responses removeObject:post];
+		
+		[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+	}
+	else
+	{
+		[(AppDelegate *)[UIApplication sharedApplication].delegate alertForError:error];
+	}
+	
+	/* 
+	 If we wanted to batch-delete or something, we could also do:
+	 
+		resp.remoteDestroyOnNesting = YES;
+		//do the same for other post's other responses
+		[post remoteUpdate:&e];
+	 */
+}
+
+
+
+
+/*
+ =================================================
+ UI + TABLE STUFF
+ =================================================
+ */
+
 
 - (void)viewDidLoad
 {	
@@ -136,13 +162,7 @@
 
 - (void) tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	//here, on the delete, we're calling remoteDestroy to destroy our object remotely. remember to remove it from our local array, too.
-
-	Response *resp = [post.responses objectAtIndex:indexPath.row];
-	[resp remoteDestroy:nil];
-	[post.responses removeObject:resp];
-	
-	[tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+	[self deleteResponseAtIndexPath:indexPath];
 }
 
 @end

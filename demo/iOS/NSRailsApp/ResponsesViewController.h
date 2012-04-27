@@ -10,10 +10,7 @@
 #import "Post.h"
 
 @interface ResponsesViewController : UITableViewController
-{
-	Post *post;
-}
 
-- (id) initWithPost:(Post *)post;
+@property (nonatomic, strong) Post *post;
 
 @end

@@ -12,33 +12,33 @@
 @synthesize content, author, post;
 NSRailsSync(*, post -b)
 
-// Sync up all properties, and specially define the property "post" as belongs_to
+// The NSRailsSync above will sync all properties w/Rails, and specially flag "post" to behave as a belongs_to association
 
-
-
-//////////////////////////////////////////////////////////////////
-// Not really essential for NSRails, but for the advanced/curious:
-///////////////////////////////////////////////////////////////////////
-
-//    The "-b" flag for the "post" property indicates that a Response *belongs_to* a post!
-//    This flag is not necessary (even if it's a belongs_to relation), but it's useful we want to be able to create new Responses already attached to a specific Post, without having to update the Post object
-
-//    Here's an example:
 
 /*
- Response *newResp = [[Response alloc] init];
- newResp.author = author;
- newResp.content = content;
- newResp.post = preExistingPost;      //<------ this line
+ ==================
+ Not really essential for NSRails, but if you're curious about the "-b" flag:
+ ==================
  
+ The "-b" flag for the "post" property indicates that a Response belongs_to a post!
  
- [newResp remoteCreate];
+ This flag is not necessary (even if it's a belongs_to relation), but it allows us to create new Responses already attached to a specific Post, without having to update the Post object.
+ 
+ Here's an example:
+
+	 Response *newResp = [[Response alloc] init];
+	 newResp.author = author;
+	 newResp.content = content;
+	 newResp.post = preExistingPost;      //<------ this line
+	 
+	 [newResp remoteCreate];
+
+ In the marked line, we're setting the "post" property to a living, breathing, Post object, but NSRails knows to only send "post_id" instead of hashing out the entire Post object and sticking it into "post_attributes", which Rails would reject.
+ 
+ Of course, this is only relevant for belongs_to since you'd typically *want* the "_attributes" key in most cases.
+
+ See the Wiki ( https://github.com/dingbat/nsrails/wiki ) for more, specifically under NSRailsSync ( https://github.com/dingbat/nsrails/wiki/NSRailsSync )
+ 
  */
-
-// In the marked line, we're setting the "post" property to a living, breathing, Post object, but NSRails knows to only send "post_id" instead of hashing out the entire Post object and sticking it into "post_attributes", which Rails would reject.
-// This is only relevant for belongs_to - you *want* the "_attributes" key in most cases
-
-
-//See the Wiki ( https://github.com/dingbat/nsrails/wiki ) for more, specifically under NSRailsSync ( https://github.com/dingbat/nsrails/wiki/NSRailsSync )
 
 @end

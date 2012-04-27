@@ -22,10 +22,10 @@
 	//set app URL for defaultConfig -> will apply globally to all NSRails methods
 	
 	//live app! check it out
-	[[NSRConfig defaultConfig] setAppURL:@"http://nsrails.com/"];
+	//[[NSRConfig defaultConfig] setAppURL:@"http://nsrails.com/"];
 	
 	//for local server:
-	//[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
+	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
 	
 	//authentication
 	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
@@ -43,16 +43,14 @@
 
 - (void) alertForError:(NSError *)e
 {
-	//common method to display an alert given an NSRails error
-	
-	NSMutableString *errorString = [NSMutableString string];
+	NSString *errorString;
 	
 	//get the dictionary of validation errors, if any
 	NSDictionary *validationErrors = [[e userInfo] objectForKey:NSRValidationErrorsKey];
 	
 	if (validationErrors)
 	{
-		//iterate through each property in dict (keys)
+		//iterate through each failed property (keys)
 		for (NSString *failedProperty in validationErrors)
 		{
 			//for each key, it contains an array of reasons that property failed
@@ -61,23 +59,28 @@
 				if ([reason isEqualToString:@"profanity"])
 				{
 					//if it's profanity, it's profanity. shame!
-					[errorString appendString:@"No profanity please! "];
+					errorString = [errorString stringByAppendingString:@"No profanity please! "];
 				}
 				else
 				{
 					//otherwise, proper-case the property (it's currently something like "name")
 					NSString *properCase = [[[failedProperty substringToIndex:1] uppercaseString] stringByAppendingString:[failedProperty substringFromIndex:1]];
 					
-					//and add it to the string. message is something like "can't be blank"
-					[errorString appendFormat:@"%@ %@. ",properCase,reason];
+					errorString = [errorString stringByAppendingFormat:@"%@ %@. ",properCase,reason];
 				}
 			}
 		}
 	}
 	else
 	{
-		//if it's not a validation error, just display the error
-		errorString = (NSMutableString *)[e localizedDescription];
+		if ([e.domain isEqualToString:NSRRemoteErrorDomain])
+		{
+			errorString = @"Something went wrong! Please try again later or contact us if this error continues.";
+		}
+		else
+		{
+			errorString = @"There was an error connecting to the server.";
+		}
 	}
 	
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
@@ -87,6 +90,5 @@
 										  otherButtonTitles:nil];
 	[alert show];
 }
-
 
 @end

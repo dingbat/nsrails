@@ -15,28 +15,30 @@
 
 @implementation PostsViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) 
-	{
-		self.title = @"Posts";
-    }
-    return self;
-}
 
-#pragma mark - View lifecycle (relevant NSRails stuff!)
-
+/*
+ =================================================
+	RELEVANT NSRAILS STUFF
+ =================================================
+ */
 
 - (void) refresh
 {
-	//when the refresh button is hit, get latest array of posts with [Post remoteAll:] (error is unimportant for now)
-	NSArray *allPosts = [Post remoteAll:nil];
+	NSError *error;
+	//when the refresh button is hit, get latest array of posts
+	NSArray *allPosts = [Post remoteAll:&error];
 	
-	//set it to our ivar
-	posts = [NSMutableArray arrayWithArray:allPosts];
-	
-	[self.tableView reloadData];
+	if (allPosts)
+	{
+		//set it to our ivar
+		posts = [NSMutableArray arrayWithArray:allPosts];
+		
+		[self.tableView reloadData];		
+	}
+	else
+	{
+		[(AppDelegate *)[UIApplication sharedApplication].delegate alertForError:error];
+	}
 }
 
 - (void) addPost
@@ -52,21 +54,19 @@
 											  Post *newPost = [[Post alloc] init];
 											  newPost.author = author;
 											  newPost.content = content;
-											  
-											  //create the object remotely using NSRails, and retrieve any error
-											  [newPost remoteCreate:&error];
-											  
-											  if (!error)
+											  											  
+											  if (![newPost remoteCreate:&error])
 											  {
-												  //if there was no error, refresh our table and dismiss the InputViewController
-												  [self refresh];
-												  return YES;
+												  [(AppDelegate *)[UIApplication sharedApplication].delegate alertForError:error];
+												  
+												  //don't dismiss the input VC
+												  return NO;
 											  }
+											  											  
+											  [posts addObject:newPost];
+											  [self.tableView reloadData];
 											  
-											  //this means there was an error - alert it in the delegate
-											  [(AppDelegate *)[UIApplication sharedApplication].delegate alertForError:error];
-											  
-											  return NO;
+											  return YES;											  
 										  }];
 	
 	newPostVC.header = @"Post something to NSRails.com!";
@@ -75,9 +75,36 @@
 	[self presentModalViewController:newPostVC animated:YES];
 }
 
+- (void) deletePostAtIndexPath:(NSIndexPath *)indexPath
+{
+	//here, on the delete, we're calling remoteDestroy to destroy our object remotely. remember to remove it from our local array, too.
+	
+	NSError *error;
+	
+	Post *post = [posts objectAtIndex:indexPath.row];
+	if ([post remoteDestroy:&error])
+	{
+		[posts removeObject:post];
+		
+		[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+	}
+	else
+	{
+		[(AppDelegate *)[UIApplication sharedApplication].delegate alertForError:error];
+	}
+}
+
+/*
+ =================================================
+ UI + TABLE STUFF
+ =================================================
+ */
+
 - (void)viewDidLoad
 {
 	[self refresh];
+	
+	self.title = @"Posts";
 	
 	//add refresh button
 	UIBarButtonItem *refresh = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refresh)];
@@ -89,7 +116,6 @@
 	
     [super viewDidLoad];
 }
-
 
 #pragma mark - Table view data source
 
@@ -128,20 +154,15 @@
 
 - (void) tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	//here, on the delete, we're calling remoteDestroy to destroy our object remotely. remember to remove it from our local array, too.
-	
-	Post *post = [posts objectAtIndex:indexPath.row];
-	[post remoteDestroy:nil];
-	[posts removeObject:post];
-	
-	[tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+	[self deletePostAtIndexPath:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	Post *post = [posts objectAtIndex:indexPath.row];
 
-	ResponsesViewController *rvc = [[ResponsesViewController alloc] initWithPost:post];
+	ResponsesViewController *rvc = [[ResponsesViewController alloc] init];
+	rvc.post = post;
 	[self.navigationController pushViewController:rvc animated:YES];
 }
 

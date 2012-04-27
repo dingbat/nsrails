@@ -186,6 +186,7 @@
 			isa = PBXGroup;
 			children = (
 				59D2A89314F34B1800101C64 /* NSRailsApp */,
+				59D2A90F14F46C6100101C64 /* NSRails */,
 				59D2A88C14F34B1800101C64 /* Frameworks */,
 				59D2A88A14F34B1800101C64 /* Products */,
 			);
@@ -202,7 +203,6 @@
 		59D2A88C14F34B1800101C64 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				59D2A90F14F46C6100101C64 /* NSRails */,
 				59D2A8E914F3644400101C64 /* QuartzCore.framework */,
 				59D2A88D14F34B1800101C64 /* UIKit.framework */,
 				59D2A88F14F34B1800101C64 /* Foundation.framework */,
