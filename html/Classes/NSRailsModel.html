@@ -94,6 +94,8 @@
 	
 	<option value="//api/name/remoteFetch:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteFetch:</option>
 	
+	<option value="//api/name/remoteFetch:changes:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteFetch:changes:</option>
+	
 	<option value="//api/name/remoteFetchAsync:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteFetchAsync:</option>
 	
 	<option value="//api/name/remoteGET:async:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteGET:async:</option>
@@ -212,6 +214,8 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteFetch:">remoteFetch:</a></span></li>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteFetch:changes:">remoteFetch:changes:</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteFetchAsync:">remoteFetchAsync:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteGET:async:">remoteGET:async:</a></span></li>
@@ -280,25 +284,36 @@
 
 <p><code>NSRailsModel</code> is the primary class in NSRails &ndash; any classes that inherit from it will be treated with a &ldquo;remote correspondance&rdquo; and ActiveResource-like APIs will be available.</p>
 
-<p>You&rsquo;ll notice that almost all <code>NSRailsModel</code> properties and methods are prefixed with <code>remote</code>, so you can quickly navigate through them with autocomplete.</p>
-
 <p>Note that you do not have to define an <code>id</code> property for your Objective-C class, as your subclass will inherit <code>NSRailsModel</code>&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a> property. Foreign keys are optional but also unnecessary (see <a href="https://github.com/dingbat/nsrails/wiki/Nesting">nesting</a> on the NSRails wiki).</p>
 
+<p>About this document:</p>
+
 <ul>
-<li>Before exploring this document, make sure that your class inherits from <code>NSRailsModel</code>, or this API will not be available.</li>
+<li>You&rsquo;ll notice that almost all <code>NSRailsModel</code> properties and methods are prefixed with <code>remote</code>, so you can quickly navigate through them with autocomplete.</li>
+<li>When this document refers to an object&rsquo;s &ldquo;model name&rdquo;, that means (by default) the name of its class. If you wish to define a custom model name (if the name of your model in Rails is distinct from your class name), use the <code>NSRailsUseModelName()</code> macro.</li>
+<li>Before exploring this document, make sure that your class inherits from <code>NSRailsModel</code>, or of course these methods &amp; properties will not be available.</li>
 </ul>
 
 
 <h3>Available Macros</h3>
 
 <ul>
-<li>NSRailsSync ()</li>
-<li>NSRailsUseModelName ()</li>
-<li>NSRailsUseConfig ()</li>
+<li><code>NSRailsSync()</code> &ndash; define specific properties to be shared with Rails, along with configurable behaviors.</li>
+<li><code>NSRailsUseModelName()</code> &ndash; define a custom model name for your class, optionally with a custom plural. Takes string literal(s).</li>
+<li><code>NSRailsUseConfig()</code> &ndash; define a custom app URL for your class, optionally with username/password. Takes string literal(s).</li>
 </ul>
 
 
-<p>Please see their descriptions on <a href="https://github.com/dingbat/nsrails/wiki/Macros">the NSRails wiki</a>.</p>
+<p>These macros can be defined right inside your subclass&rsquo;s implementation:</p>
+
+<pre><code>@implementation Article  NSRailsUseModelName(@"post")
+@synthesize title, content;
+NSRailsSync(title, content)
+
+@end
+</code></pre>
+
+<p>Please see their detailed descriptions on <a href="https://github.com/dingbat/nsrails/wiki/Macros">the NSRails wiki</a>.</p>
 
 <h3>Validation Errors</h3>
 
@@ -366,28 +381,28 @@
 							<li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteAll:">+&nbsp;remoteAll:</a></code>
-		<span class="tooltip"><p>Returns an array of all remote objects (as instances of your subclass.) Each instance’s properties will be set to those returned by Rails.</p></span>
+		<span class="tooltip"><p>Returns an array of all remote objects (as instances of receiver&rsquo;s class.) Each instance’s properties will be set to those returned by Rails.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteAllAsync:">+&nbsp;remoteAllAsync:</a></code>
-		<span class="tooltip"><p>Retrieves an array of all remote objects (as instances of your subclass.) Each instance’s properties will be set to those returned by Rails.</p></span>
+		<span class="tooltip"><p>Retrieves an array of all remote objects (as instances of receiver&rsquo;s class.) Each instance’s properties will be set to those returned by Rails.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteObjectWithID:error:">+&nbsp;remoteObjectWithID:error:</a></code>
-		<span class="tooltip"><p>Returns an instance of your subclass corresponding to the remote object with that ID.</p></span>
+		<span class="tooltip"><p>Returns an instance of receiver&rsquo;s class corresponding to the remote object with that ID.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteObjectWithID:async:">+&nbsp;remoteObjectWithID:async:</a></code>
-		<span class="tooltip"><p>Retrieves an instance of your subclass corresponding to the remote object with that ID.</p></span>
+		<span class="tooltip"><p>Retrieves an instance receiver&rsquo;s class corresponding to the remote object with that ID.</p></span>
 	</span>
 	
 	
@@ -452,56 +467,63 @@
 							<li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteFetch:">&ndash;&nbsp;remoteFetch:</a></code>
-		<span class="tooltip"><p>Retrieves the latest remote data for sender and sets its properties to received response.</p></span>
+		<span class="tooltip"><p>Retrieves the latest remote data for receiver and sets its properties to received response.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/remoteFetch:changes:">&ndash;&nbsp;remoteFetch:changes:</a></code>
+		<span class="tooltip"><p>Retrieves the latest remote data for receiver and sets its properties to received response.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteFetchAsync:">&ndash;&nbsp;remoteFetchAsync:</a></code>
-		<span class="tooltip"><p>Retrieves the latest remote data for sender and sets its properties to received response.</p></span>
+		<span class="tooltip"><p>Retrieves the latest remote data for receiver and sets its properties to received response.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteUpdate:">&ndash;&nbsp;remoteUpdate:</a></code>
-		<span class="tooltip"><p>Updates sender&rsquo;s corresponding remote object.</p></span>
+		<span class="tooltip"><p>Updates receiver&rsquo;s corresponding remote object.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteUpdateAsync:">&ndash;&nbsp;remoteUpdateAsync:</a></code>
-		<span class="tooltip"><p>Updates sender&rsquo;s corresponding remote object.</p></span>
+		<span class="tooltip"><p>Updates receiver&rsquo;s corresponding remote object.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteCreate:">&ndash;&nbsp;remoteCreate:</a></code>
-		<span class="tooltip"><p>Creates the sender remotely. Sender&rsquo;s properties will be set to those given by Rails (including <a href="#//api/name/remoteID"><code>remoteID</code></a>).</p></span>
+		<span class="tooltip"><p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including <a href="#//api/name/remoteID"><code>remoteID</code></a>).</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteCreateAsync:">&ndash;&nbsp;remoteCreateAsync:</a></code>
-		<span class="tooltip"><p>Creates the sender remotely. Sender&rsquo;s properties will be set to those given by Rails (including <a href="#//api/name/remoteID"><code>remoteID</code></a>).</p></span>
+		<span class="tooltip"><p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including <a href="#//api/name/remoteID"><code>remoteID</code></a>).</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteDestroy:">&ndash;&nbsp;remoteDestroy:</a></code>
-		<span class="tooltip"><p>Destroys sender&rsquo;s corresponding remote object. Local object will be unaffected.</p></span>
+		<span class="tooltip"><p>Destroys receiver&rsquo;s corresponding remote object. Local object will be unaffected.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteDestroyAsync:">&ndash;&nbsp;remoteDestroyAsync:</a></code>
-		<span class="tooltip"><p>Destroys sender&rsquo;s corresponding remote object. Local object will be unaffected.</p></span>
+		<span class="tooltip"><p>Destroys receiver&rsquo;s corresponding remote object. Local object will be unaffected.</p></span>
 	</span>
 	
 	
@@ -530,28 +552,28 @@
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteRequest:method:error:">&ndash;&nbsp;remoteRequest:method:error:</a></code>
-		<span class="tooltip"><p>Returns the JSON response for a request with a custom method, sending the JSON representation of the sender as the request body.</p></span>
+		<span class="tooltip"><p>Returns the JSON response for a request with a custom method, sending the JSON representation of the receiver as the request body.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteRequest:method:async:">&ndash;&nbsp;remoteRequest:method:async:</a></code>
-		<span class="tooltip"><p>Makes a request with a custom method, sending the JSON representation of the sender as the request body.</p></span>
+		<span class="tooltip"><p>Makes a request with a custom method, sending the JSON representation of the receiver as the request body.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteRequest:method:body:error:">&ndash;&nbsp;remoteRequest:method:body:error:</a></code>
-		<span class="tooltip"><p>Returns the JSON response for a request with a custom method on the sender&rsquo;s corresponding remote object.</p></span>
+		<span class="tooltip"><p>Returns the JSON response for a request with a custom method on the receiver&rsquo;s corresponding remote object.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteRequest:method:body:async:">&ndash;&nbsp;remoteRequest:method:body:async:</a></code>
-		<span class="tooltip"><p>Makes a request with a custom method on the sender&rsquo;s corresponding remote object.</p></span>
+		<span class="tooltip"><p>Makes a request with a custom method on the receiver&rsquo;s corresponding remote object.</p></span>
 	</span>
 	
 	
@@ -566,28 +588,28 @@
 							<li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteJSONRepresentation">&ndash;&nbsp;remoteJSONRepresentation</a></code>
-		<span class="tooltip"><p>Serializes the sender&rsquo;s properties into a JSON string.</p></span>
+		<span class="tooltip"><p>Serializes the receiver&rsquo;s properties into a JSON string.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/dictionaryOfRemoteProperties">&ndash;&nbsp;dictionaryOfRemoteProperties</a></code>
-		<span class="tooltip"><p>Serializes the sender&rsquo;s properties into a dictionary.</p></span>
+		<span class="tooltip"><p>Serializes the receiver&rsquo;s properties into a dictionary.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/setPropertiesUsingRemoteJSON:">&ndash;&nbsp;setPropertiesUsingRemoteJSON:</a></code>
-		<span class="tooltip"><p>Sets the sender&rsquo;s properties given a JSON string.</p></span>
+		<span class="tooltip"><p>Sets the receiver&rsquo;s properties given a JSON string.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/setPropertiesUsingRemoteDictionary:">&ndash;&nbsp;setPropertiesUsingRemoteDictionary:</a></code>
-		<span class="tooltip"><p>Sets the sender&rsquo;s properties given a dictionary.</p></span>
+		<span class="tooltip"><p>Sets the receiver&rsquo;s properties given a dictionary.</p></span>
 	</span>
 	
 	
@@ -602,21 +624,21 @@
 							<li>
 	<span class="tooltip">
 		<code><a href="#//api/name/initWithRemoteJSON:">&ndash;&nbsp;initWithRemoteJSON:</a></code>
-		<span class="tooltip"><p>Initializes a new instance of the sender&rsquo;s class with a given JSON input.</p></span>
+		<span class="tooltip"><p>Initializes a new instance of the receiver&rsquo;s class with a given JSON input.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/initWithRemoteDictionary:">&ndash;&nbsp;initWithRemoteDictionary:</a></code>
-		<span class="tooltip"><p>Initializes a new instance of the sender&rsquo;s class with a given dictionary input.</p></span>
+		<span class="tooltip"><p>Initializes a new instance of the receiver&rsquo;s class with a given dictionary input.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/initWithCustomSyncProperties:">&ndash;&nbsp;initWithCustomSyncProperties:</a></code>
-		<span class="tooltip"><p>Initializes a new instance of the sender&rsquo;s class with a custom NSRailsSync string.</p></span>
+		<span class="tooltip"><p>Initializes a new instance of the receiver&rsquo;s class with a custom NSRailsSync string.</p></span>
 	</span>
 	
 	
@@ -656,7 +678,7 @@
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>This will include properties that you may not have defined in your Objective-C class, allowing you to dynamically add fields to your app if the server-side model changes.
-Moreover, this will not take into account anything in NSRailsSync.</p>
+Moreover, this will not take into account anything in NSRailsSync &ndash; it is exactly the hash as was sent by Rails.</p>
 	</div>
 	
 	
@@ -695,7 +717,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>If true, this object will include a <code>_destroy</code> key on send (ie, when the model nesting it is sent during a <code>remoteUpdate</code> or <code>remoteCreate</code>).</p>
+		<p>If true, this object will include a <code>_destroy</code> key on send (ie, when the model nesting it is sent during a <a href="#//api/name/remoteUpdate:">remoteUpdate:</a> or <a href="#//api/name/remoteCreate:">remoteCreate:</a>).</p>
 
 <p>This can be useful if you have a lot of nested models you need to destroy &ndash; you can do it in one request instead of several repeated destroys on each object.</p><div class="warning"><p><strong>Warning:</strong> Relevant for a nested object only. And, for this to work, make sure <code>:allow_destroy =&gt; true</code> <a href="https://github.com/dingbat/nsrails/wiki/Nesting">is set in your Rails model</a>.</p></div>
 	</div>
@@ -736,7 +758,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>It is notable that this property will be automatically updated after <code>remoteCreate</code>, as will anything else that is returned from that create.</p>
+		<p>It is notable that this property will be automatically updated after <a href="#//api/name/remoteCreate:">remoteCreate:</a>, as will anything else that is returned from that create.</p>
 	</div>
 	
 	
@@ -768,7 +790,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Returns an array of all remote objects (as instances of your subclass.) Each instance’s properties will be set to those returned by Rails.</p>
+		<p>Returns an array of all remote objects (as instances of receiver&rsquo;s class.) Each instance’s properties will be set to those returned by Rails.</p>
 	</div>		
 	
 	
@@ -780,7 +802,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be NULL.</p></dd>
+			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
 		</dl>
 		
 	</div>
@@ -789,7 +811,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>NSArray of instances of your subclass. Each object’s properties will be set to those returned by Rails.</p>
+		<p>NSArray of instances of receiver&rsquo;s class. Each object’s properties will be set to those returned by Rails.</p>
 	</div>
 	
 	
@@ -798,7 +820,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Makes a GET request to <code>/objects.json</code> (where <code>objects</code> is the pluralization of your subclass.)</p>
+		<p>Makes a GET request to <code>/objects.json</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name.)</p>
 
 <p>Request done synchronously. See <a href="#//api/name/remoteAllAsync:">remoteAllAsync:</a> for asynchronous operation.</p>
 	</div>
@@ -824,7 +846,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Retrieves an array of all remote objects (as instances of your subclass.) Each instance’s properties will be set to those returned by Rails.</p>
+		<p>Retrieves an array of all remote objects (as instances of receiver&rsquo;s class.) Each instance’s properties will be set to those returned by Rails.</p>
 	</div>		
 	
 	
@@ -849,7 +871,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Asynchronously makes a GET request to <code>/objects.json</code> (where <code>objects</code> is the pluralization of your subclass.)</p>
+		<p>Asynchronously makes a GET request to <code>/objects.json</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name.)</p>
 	</div>
 	
 	
@@ -944,7 +966,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be NULL.</p></dd>
+			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
 		</dl>
 		
 	</div>
@@ -988,7 +1010,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Retrieves an instance of your subclass corresponding to the remote object with that ID.</p>
+		<p>Retrieves an instance receiver&rsquo;s class corresponding to the remote object with that ID.</p>
 	</div>		
 	
 	
@@ -1000,7 +1022,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>objectID</em></dt>
-			<dd><p>The ID of your remote object.</p></dd>
+			<dd><p>The ID of the remote object.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -1018,7 +1040,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Asynchronously makes a GET request to <code>/objects/1.json</code> (where <code>objects</code> is the pluralization of your subclass, and <code>1</code> is <em>objectID</em>)</p>
+		<p>Asynchronously makes a GET request to <code>/objects/1.json</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is <em>objectID</em>)</p>
 	</div>
 	
 	
@@ -1042,7 +1064,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Returns an instance of your subclass corresponding to the remote object with that ID.</p>
+		<p>Returns an instance of receiver&rsquo;s class corresponding to the remote object with that ID.</p>
 	</div>		
 	
 	
@@ -1054,12 +1076,12 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>objectID</em></dt>
-			<dd><p>The ID of your remote object.</p></dd>
+			<dd><p>The ID of the remote object.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be NULL.</p></dd>
+			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
 		</dl>
 		
 	</div>
@@ -1068,7 +1090,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>Object of your subclass class with properties from the remote object with that ID.</p>
+		<p>Instance of receiver&rsquo;s class with properties from the remote object with that ID.</p>
 	</div>
 	
 	
@@ -1077,7 +1099,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Makes a GET request to <code>/objects/1.json</code> (where <code>objects</code> is the pluralization of your subclass, and <code>1</code> is <em>objectID</em></p>
+		<p>Makes a GET request to <code>/objects/1.json</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is <em>objectID</em></p>
 
 <p>)</p>
 
@@ -1145,7 +1167,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>If called on a subclass, makes the request to <code>/objects/method</code> (where <code>objects</code> is the pluralization of your subclass, and <code>method</code> is <em>customRESTMethod</em>).</p>
+		<p>If called on a subclass, makes the request to <code>/objects/method</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>method</code> is <em>customRESTMethod</em>).</p>
 
 <p>If called on <code>NSRailsModel</code>, makes the request to <code>/method</code> (where <code>method</code> is <em>customRESTMethod</em>).</p>
 
@@ -1205,7 +1227,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be NULL.</p></dd>
+			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
 		</dl>
 		
 	</div>
@@ -1223,7 +1245,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>If called on a subclass, makes the request to <code>/objects/method</code> (where <code>objects</code> is the pluralization of your subclass, and <code>method</code> is <em>customRESTMethod</em>).</p>
+		<p>If called on a subclass, makes the request to <code>/objects/method</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>method</code> is <em>customRESTMethod</em>).</p>
 
 <p>If called on <code>NSRailsModel</code>, makes the request to <code>/method</code> (where <code>method</code> is <em>customRESTMethod</em>).</p>
 
@@ -1349,7 +1371,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be NULL.</p></dd>
+			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
 		</dl>
 		
 	</div>
@@ -1401,7 +1423,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Serializes the sender&rsquo;s properties into a dictionary.</p>
+		<p>Serializes the receiver&rsquo;s properties into a dictionary.</p>
 	</div>		
 	
 	
@@ -1412,7 +1434,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>The sender&rsquo;s properties as a dictionary (takes into account rules in NSRailsSync).</p>
+		<p>The receiver&rsquo;s properties as a dictionary (takes into account rules in NSRailsSync).</p>
 	</div>
 	
 	
@@ -1445,7 +1467,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Initializes a new instance of the sender&rsquo;s class with a custom NSRailsSync string.</p>
+		<p>Initializes a new instance of the receiver&rsquo;s class with a custom NSRailsSync string.</p>
 	</div>		
 	
 	
@@ -1504,7 +1526,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Initializes a new instance of the sender&rsquo;s class with a given dictionary input.</p>
+		<p>Initializes a new instance of the receiver&rsquo;s class with a given dictionary input.</p>
 	</div>		
 	
 	
@@ -1558,7 +1580,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Initializes a new instance of the sender&rsquo;s class with a given JSON input.</p>
+		<p>Initializes a new instance of the receiver&rsquo;s class with a given JSON input.</p>
 	</div>		
 	
 	
@@ -1612,11 +1634,11 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Creates the sender remotely. Sender&rsquo;s properties will be set to those given by Rails (including <a href="#//api/name/remoteID"><code>remoteID</code></a>).</p>
+		<p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including <a href="#//api/name/remoteID"><code>remoteID</code></a>).</p>
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>- (void)remoteCreate:(NSError **)<em>error</em></code></div>
+	<div class="method-subsection method-declaration"><code>- (BOOL)remoteCreate:(NSError **)<em>error</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
@@ -1624,12 +1646,17 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be NULL.</p></dd>
+			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
 		</dl>
 		
 	</div>
 	
 	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if create was successful. Returns <code>NO</code> if an error occurred.</p>
+	</div>
 	
 	
 	
@@ -1637,7 +1664,7 @@ Moreover, this will not take into account anything in NSRailsSync.</p>
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Sends a <code>POST</code> request to <code>/objects.json</code> (where <code>objects</code> is the pluralization of your subclass), with the sender&rsquo;s <a href="#//api/name/remoteJSONRepresentation">remoteJSONRepresentation</a> as its body.
+		<p>Sends a <code>POST</code> request to <code>/objects.json</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name), with the receiver&rsquo;s <a href="#//api/name/remoteJSONRepresentation">remoteJSONRepresentation</a> as its body.
 Request made synchronously. See <a href="#//api/name/remoteCreateAsync:">remoteCreateAsync:</a> for asynchronous operation.</p>
 	</div>
 	
@@ -1662,7 +1689,7 @@ Request made synchronously. See <a href="#//api/name/remoteCreateAsync:">remoteC
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Creates the sender remotely. Sender&rsquo;s properties will be set to those given by Rails (including <a href="#//api/name/remoteID"><code>remoteID</code></a>).</p>
+		<p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including <a href="#//api/name/remoteID"><code>remoteID</code></a>).</p>
 	</div>		
 	
 	
@@ -1687,7 +1714,7 @@ Request made synchronously. See <a href="#//api/name/remoteCreateAsync:">remoteC
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Asynchronously sends a <code>POST</code> request to <code>/objects.json</code> (where <code>objects</code> is the pluralization of your subclass), with the sender&rsquo;s <a href="#//api/name/remoteJSONRepresentation">remoteJSONRepresentation</a> as its body.</p>
+		<p>Asynchronously sends a <code>POST</code> request to <code>/objects.json</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name), with the receiver&rsquo;s <a href="#//api/name/remoteJSONRepresentation">remoteJSONRepresentation</a> as its body.</p>
 	</div>
 	
 	
@@ -1711,11 +1738,11 @@ Request made synchronously. See <a href="#//api/name/remoteCreateAsync:">remoteC
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Destroys sender&rsquo;s corresponding remote object. Local object will be unaffected.</p>
+		<p>Destroys receiver&rsquo;s corresponding remote object. Local object will be unaffected.</p>
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>- (void)remoteDestroy:(NSError **)<em>error</em></code></div>
+	<div class="method-subsection method-declaration"><code>- (BOOL)remoteDestroy:(NSError **)<em>error</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
@@ -1723,12 +1750,17 @@ Request made synchronously. See <a href="#//api/name/remoteCreateAsync:">remoteC
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be NULL.</p></dd>
+			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
 		</dl>
 		
 	</div>
 	
 	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if destroy was successful. Returns <code>NO</code> if an error occurred.</p>
+	</div>
 	
 	
 	
@@ -1736,7 +1768,7 @@ Request made synchronously. See <a href="#//api/name/remoteCreateAsync:">remoteC
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Sends a <code>DELETE</code> request to <code>/objects/1.json</code> (where <code>objects</code> is the pluralization of your subclass, and <code>1</code> is the sender&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).
+		<p>Sends a <code>DELETE</code> request to <code>/objects/1.json</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).
 Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:">remoteDestroyAsync:</a> for asynchronous operation.</p>
 	</div>
 	
@@ -1761,7 +1793,7 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:">remote
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Destroys sender&rsquo;s corresponding remote object. Local object will be unaffected.</p>
+		<p>Destroys receiver&rsquo;s corresponding remote object. Local object will be unaffected.</p>
 	</div>		
 	
 	
@@ -1786,7 +1818,7 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:">remote
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Asynchronously sends a <code>DELETE</code> request to <code>/objects/1.json</code> (where <code>objects</code> is the pluralization of your subclass, and <code>1</code> is the sender&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).</p>
+		<p>Asynchronously sends a <code>DELETE</code> request to <code>/objects/1.json</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).</p>
 	</div>
 	
 	
@@ -1810,7 +1842,7 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:">remote
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Retrieves the latest remote data for sender and sets its properties to received response.</p>
+		<p>Retrieves the latest remote data for receiver and sets its properties to received response.</p>
 	</div>		
 	
 	
@@ -1822,7 +1854,7 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:">remote
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be NULL.</p></dd>
+			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
 		</dl>
 		
 	</div>
@@ -1831,7 +1863,7 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:">remote
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>BOOL whether or not there was a <em>local</em> change. This means changes in <code>updated_at</code>, etc, will only apply if your Objective-C class implement this as a property as well. This also applies when updating any of its nested objects (done recursively).</p>
+		<p><code>YES</code> if fetch was successful. Returns <code>NO</code> if an error occurred.</p>
 	</div>
 	
 	
@@ -1840,7 +1872,7 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:">remote
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Sends a <code>GET</code> request to <code>/objects/1.json</code> (where <code>objects</code> is the pluralization of your subclass, and <code>1</code> is the sender&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).
+		<p>Sends a <code>GET</code> request to <code>/objects/1.json</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).
 Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFetchAsync:</a> for asynchronous operation.</p>
 
 <p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRailsRequiresRemoteIDException</code>.</p>
@@ -1849,6 +1881,88 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	
 	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/remoteFetch:changes:">&ndash; remoteFetch:changes:</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRails.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/remoteFetch:changes:" title="remoteFetch:changes:"></a>
+	<h3 class="subsubtitle method-title">remoteFetch:changes:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Retrieves the latest remote data for receiver and sets its properties to received response.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (BOOL)remoteFetch:(NSError **)<em>error</em> changes:(BOOL *)<em>changesPtr</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>error</em></dt>
+			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>changesPtr</em></dt>
+			<dd><p>Pointer to boolean value set to whether or not the receiver changed in any way after the fetch (ie, if this fetch modified one of receiver&rsquo;s local properties due to a change in value server-side). This will also take into account diffs to any nested <code>NSRailsModel</code> objects that are affected by this fetch (done recursively).</p>
+
+<p>Note that because this only tracks differences in local changes, properties that changed server-side that are not defined in the receiver&rsquo;s class will <em>not</em> report back a change (ie, if receiver&rsquo;s class doesn&rsquo;t implement an <code>updated_at</code> property and <code>updated_at</code> is changed in your remote DB, no change will be reported.) This parameter may be <code>NULL</code> if this information is not useful, or use <a href="#//api/name/remoteFetch:">remoteFetch:</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if fetch was successful. Returns <code>NO</code> if an error occurred.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Sends a <code>GET</code> request to <code>/objects/1.json</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).
+Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFetchAsync:</a> for asynchronous operation.</p>
+
+<p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRailsRequiresRemoteIDException</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/remoteFetch:">&ndash; remoteFetch:</a></p></code></li>
+			
+		</ul>
+	</div>
 	
 	
 	
@@ -1867,7 +1981,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Retrieves the latest remote data for sender and sets its properties to received response.</p>
+		<p>Retrieves the latest remote data for receiver and sets its properties to received response.</p>
 	</div>		
 	
 	
@@ -1892,7 +2006,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Asynchronously sends a <code>GET</code> request to <code>/objects/1.json</code> (where <code>objects</code> is the pluralization of your subclass, and <code>1</code> is the sender&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).</p>
+		<p>Asynchronously sends a <code>GET</code> request to <code>/objects/1.json</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).</p>
 
 <p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRailsRequiresRemoteIDException</code>.</p>
 	</div>
@@ -1930,7 +2044,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>customRESTMethod</em></dt>
-			<dd><p>Custom REST method to be called on the remote object corresponding to the sender. If <code>nil</code>, will route to only the sender (objects/1.json).</p></dd>
+			<dd><p>Custom REST method to be called on the remote object corresponding to the receiver. If <code>nil</code>, will route to only the receiver (objects/1.json).</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -1984,12 +2098,12 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>customRESTMethod</em></dt>
-			<dd><p>Custom REST method to be called on the remote object corresponding to the sender. If <code>nil</code>, will route to only the sender (objects/1.json).</p></dd>
+			<dd><p>Custom REST method to be called on the remote object corresponding to the receiver. If <code>nil</code>, will route to only the receiver (objects/1.json).</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be NULL.</p></dd>
+			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
 		</dl>
 		
 	</div>
@@ -2033,7 +2147,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Serializes the sender&rsquo;s properties into a JSON string.</p>
+		<p>Serializes the receiver&rsquo;s properties into a JSON string.</p>
 	</div>		
 	
 	
@@ -2044,7 +2158,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>The sender&rsquo;s properties as a JSON string (takes into account rules in NSRailsSync).</p>
+		<p>The receiver&rsquo;s properties as a JSON string (takes into account rules in NSRailsSync).</p>
 	</div>
 	
 	
@@ -2080,7 +2194,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Makes a request with a custom method, sending the JSON representation of the sender as the request body.</p>
+		<p>Makes a request with a custom method, sending the JSON representation of the receiver as the request body.</p>
 	</div>		
 	
 	
@@ -2097,7 +2211,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>customRESTMethod</em></dt>
-			<dd><p>Custom REST method to be called on the remote object corresponding to the sender. If <code>nil</code>, will route to only the sender (objects/1.json).</p></dd>
+			<dd><p>Custom REST method to be called on the remote object corresponding to the receiver. If <code>nil</code>, will route to only the receiver (objects/1.json).</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -2115,7 +2229,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Calls <a href="#//api/name/remoteRequest:method:body:async:">remoteRequest:method:body:async:</a> with sender&rsquo;s JSON representation for <em>body</em>. (Calls <a href="#//api/name/remoteJSONRepresentation">remoteJSONRepresentation</a>).</p>
+		<p>Calls <a href="#//api/name/remoteRequest:method:body:async:">remoteRequest:method:body:async:</a> with receiver&rsquo;s JSON representation for <em>body</em>. (Calls <a href="#//api/name/remoteJSONRepresentation">remoteJSONRepresentation</a>).</p>
 	</div>
 	
 	
@@ -2139,7 +2253,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Makes a request with a custom method on the sender&rsquo;s corresponding remote object.</p>
+		<p>Makes a request with a custom method on the receiver&rsquo;s corresponding remote object.</p>
 	</div>		
 	
 	
@@ -2179,7 +2293,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Asynchronously akes a request to <code>/objects/1/method</code> (where <code>objects</code> is the pluralization of your subclass, <code>1</code> is the sender&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>, and <code>method</code> is <em>customRESTMethod</em>).</p>
+		<p>Asynchronously akes a request to <code>/objects/1/method</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>, and <code>method</code> is <em>customRESTMethod</em>).</p>
 
 <p><code>/method</code> is omitted if <code>customRESTMethod</code> is nil.</p>
 
@@ -2209,7 +2323,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Returns the JSON response for a request with a custom method on the sender&rsquo;s corresponding remote object.</p>
+		<p>Returns the JSON response for a request with a custom method on the receiver&rsquo;s corresponding remote object.</p>
 	</div>		
 	
 	
@@ -2236,7 +2350,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be NULL.</p></dd>
+			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
 		</dl>
 		
 	</div>
@@ -2254,7 +2368,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Makes a request to <code>/objects/1/method</code> (where <code>objects</code> is the pluralization of your subclass, <code>1</code> is the sender&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>, and <code>method</code> is <em>customRESTMethod</em>).</p>
+		<p>Makes a request to <code>/objects/1/method</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>, and <code>method</code> is <em>customRESTMethod</em>).</p>
 
 <p><code>/method</code> is omitted if <code>customRESTMethod</code> is nil.</p>
 
@@ -2286,7 +2400,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Returns the JSON response for a request with a custom method, sending the JSON representation of the sender as the request body.</p>
+		<p>Returns the JSON response for a request with a custom method, sending the JSON representation of the receiver as the request body.</p>
 	</div>		
 	
 	
@@ -2303,12 +2417,12 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>customRESTMethod</em></dt>
-			<dd><p>Custom REST method to be called on the remote object corresponding to the sender. If <code>nil</code>, will route to only the sender (objects/1.json).</p></dd>
+			<dd><p>Custom REST method to be called on the remote object corresponding to the receiver. If <code>nil</code>, will route to only the receiver (objects/1.json).</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be NULL.</p></dd>
+			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
 		</dl>
 		
 	</div>
@@ -2352,11 +2466,11 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Updates sender&rsquo;s corresponding remote object.</p>
+		<p>Updates receiver&rsquo;s corresponding remote object.</p>
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>- (void)remoteUpdate:(NSError **)<em>error</em></code></div>
+	<div class="method-subsection method-declaration"><code>- (BOOL)remoteUpdate:(NSError **)<em>error</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
@@ -2364,12 +2478,17 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be NULL.</p></dd>
+			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
 		</dl>
 		
 	</div>
 	
 	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if update was successful. Returns <code>NO</code> if an error occurred.</p>
+	</div>
 	
 	
 	
@@ -2377,7 +2496,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Sends an <code>UPDATE</code> request to <code>/objects/1.json</code> (where <code>objects</code> is the pluralization of your subclass, and <code>1</code> is the sender&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).
+		<p>Sends an <code>UPDATE</code> request to <code>/objects/1.json</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).
 Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteUpdateAsync:</a> for asynchronous operation.</p>
 
 <p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRailsRequiresRemoteIDException</code>.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
@@ -2404,7 +2523,7 @@ Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteU
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Updates sender&rsquo;s corresponding remote object.</p>
+		<p>Updates receiver&rsquo;s corresponding remote object.</p>
 	</div>		
 	
 	
@@ -2429,7 +2548,7 @@ Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteU
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Asynchronously sends an <code>UPDATE</code> request to <code>/objects/1.json</code> (where <code>objects</code> is the pluralization of your subclass, and <code>1</code> is the sender&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).</p>
+		<p>Asynchronously sends an <code>UPDATE</code> request to <code>/objects/1.json</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).</p>
 
 <p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRailsRequiresRemoteIDException</code>.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
 	</div>
@@ -2455,7 +2574,7 @@ Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteU
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Sets the sender&rsquo;s properties given a dictionary.</p>
+		<p>Sets the receiver&rsquo;s properties given a dictionary.</p>
 	</div>		
 	
 	
@@ -2509,7 +2628,7 @@ Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteU
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Sets the sender&rsquo;s properties given a JSON string.</p>
+		<p>Sets the receiver&rsquo;s properties given a JSON string.</p>
 	</div>		
 	
 	
@@ -2569,7 +2688,7 @@ Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteU
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-04-26)</span><br />
+						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-04-27)</span><br />
 						
 						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 789)</a>.</span></p>
 						
