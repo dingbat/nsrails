@@ -22,10 +22,10 @@
 	//set app URL for defaultConfig -> will apply globally to all NSRails methods
 	
 	//live app! check it out
-	//[[NSRConfig defaultConfig] setAppURL:@"http://nsrails.com/"];
+	[[NSRConfig defaultConfig] setAppURL:@"http://nsrails.com/"];
 	
 	//for local server:
-	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
+	//[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
 	
 	//authentication
 	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
