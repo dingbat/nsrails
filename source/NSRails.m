@@ -419,7 +419,7 @@
 
 - (id) initWithRemoteDictionary:(NSDictionary *)railsDict
 {
-	if ((self = [self init]))
+	if ((self = [super init]))
 	{
 		[self setPropertiesUsingRemoteDictionary:railsDict];
 	}
@@ -428,7 +428,7 @@
 
 - (id) initWithRemoteJSON:(NSString *)json
 {
-	if ((self = [self init]))
+	if ((self = [super init]))
 	{
 		[self setPropertiesUsingRemoteJSON:json];
 	}
