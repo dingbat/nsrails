@@ -43,7 +43,7 @@
 
 - (void) alertForError:(NSError *)e
 {
-	NSString *errorString;
+	NSString *errorString = [NSString string];
 	
 	//get the dictionary of validation errors, if any
 	NSDictionary *validationErrors = [[e userInfo] objectForKey:NSRValidationErrorsKey];
