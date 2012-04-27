@@ -603,7 +603,8 @@
 	GHAssertTrue([[dictionariesPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[dictionariesPost.responses objectAtIndex:0] class]));
 	
 	//same applies for retrieve
-	BOOL changes = [dictionariesPost remoteFetch:&e];
+	BOOL changes;
+	[dictionariesPost remoteFetch:&e changes:&changes];
 	GHAssertNil(e, @"There should've been no errors on the retrieve, even if no nested model defined.");
 	GHAssertTrue(dictionariesPost.responses.count == 1, @"Should still come back with one response");
 	GHAssertTrue([[dictionariesPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[dictionariesPost.responses objectAtIndex:0] class]));
@@ -651,7 +652,8 @@
 	
 	e = nil;
 	
-	BOOL changes = [post remoteFetch:&e];
+	BOOL changes;
+	[post remoteFetch:&e changes:&changes];
 	GHAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
 	GHAssertFalse(changes, @"remoteFetch should've returned false - there were no changes to Post");
 	
@@ -659,7 +661,7 @@
 	
 	post.content = @"Local change";
 	
-	changes = [post remoteFetch:&e];
+	[post remoteFetch:&e changes:&changes];
 	GHAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
 	GHAssertTrue(changes, @"remoteFetch should've returned true - there was a local change to Post");
 	
@@ -672,7 +674,7 @@
 	
 	[post.responses addObject:response];
 	
-	changes = [post remoteFetch:&e];
+	[post remoteFetch:&e changes:&changes];
 	GHAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
 	GHAssertTrue(post.responses.count == 0, @"remoteFetch should've overwritten post.responses");
 	GHAssertTrue(changes, @"remoteFetch should've returned true - there was a local change to Post (added a nested Response)");
@@ -697,21 +699,21 @@
 	e = nil;
 	
 	response.post = nil;
-	changes = [response remoteFetch:&e];
+	[response remoteFetch:&e changes:&changes];
 	GHAssertNil(e, @"There should be no error on a normal remoteFetch for existing Response obj");
 	GHAssertNotNil(response.post, @"remoteFetch should've added the tied Post object");
 	GHAssertTrue(changes, @"remoteFetch should've returned true - locally the post attr was set to nil.");
 	
 	e = nil;
 	
-	changes = [post remoteFetch:&e];
+	[post remoteFetch:&e changes:&changes];
 	GHAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
 	GHAssertTrue(post.responses.count == 1, @"remoteFetch should've added the newly created response");
 	GHAssertTrue(changes, @"remoteFetch should've returned true - there was a remote change to Post (Response was created)");
 
 	e = nil;
 	
-	changes = [post remoteFetch:&e];
+	[post remoteFetch:&e changes:&changes];
 	GHAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
 	GHAssertFalse(changes, @"remoteFetch should've returned false - there were no changes to Post");
 	
@@ -758,7 +760,8 @@
 	
 	e = nil;
 	
-	BOOL changes = [post remoteFetch:&e];
+	BOOL changes;
+	[post remoteFetch:&e changes:&changes];
 	
 	GHAssertNil(e, @"There should be no error in remoteFetch");
 	GHAssertNotNil(post.updatedAt,@"updatedAt should be present");

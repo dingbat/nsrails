@@ -757,7 +757,7 @@
 
 - (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock
 {
-	NSString *route = [self routeForInstanceMethod:route];
+	NSString *route = [self routeForInstanceMethod:customRESTMethod];
 	[[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
 }
 
@@ -805,7 +805,7 @@
 
 + (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock;
 {
-	NSString *route = [self routeForControllerMethod:route];
+	NSString *route = [self routeForControllerMethod:customRESTMethod];
 	[[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
 }
 
@@ -847,13 +847,15 @@
 
 #pragma mark Create
 
-- (void) remoteCreate:(NSError **)error
+- (BOOL) remoteCreate:(NSError **)error
 {
 	NSString *jsonResponse = [[self class] remoteRequest:@"POST" method:nil bodyAsObject:self error:error];
-	if (error && *error)
-		return;
+	if (!jsonResponse)
+		return NO;
 
 	[self setPropertiesUsingRemoteJSON:jsonResponse error:error];
+	
+	return YES;
 }
 
 - (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock
@@ -869,9 +871,9 @@
 
 #pragma mark Update
 
-- (void) remoteUpdate:(NSError **)error
+- (BOOL) remoteUpdate:(NSError **)error
 {
-	[self remoteRequest:@"PUT" method:nil error:error];
+	return !![self remoteRequest:@"PUT" method:nil error:error];
 }
 
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock
@@ -885,9 +887,9 @@
 
 #pragma mark Destroy
 
-- (void) remoteDestroy:(NSError **)error
+- (BOOL) remoteDestroy:(NSError **)error
 {
-	[self remoteRequest:@"DELETE" method:nil body:nil error:error];
+	return !![self remoteRequest:@"DELETE" method:nil body:nil error:error];
 }
 
 - (void) remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock
@@ -901,14 +903,23 @@
 
 #pragma mark Get latest
 
-- (BOOL) remoteFetch:(NSError **)error
+- (BOOL) remoteFetch:(NSError **)error changes:(BOOL *)changesPtr
 {
 	NSString *jsonResponse = [self remoteGET:nil error:error];
-
-	if (error && *error)
+	
+	if (!jsonResponse)
 		return NO;
 	
-	return [self setPropertiesUsingRemoteJSON:jsonResponse error:error];
+	BOOL changes = [self setPropertiesUsingRemoteJSON:jsonResponse error:error];
+	if (changesPtr)
+		*changesPtr = changes;
+	
+	return YES;
+}
+
+- (BOOL) remoteFetch:(NSError **)error
+{
+	return [self remoteFetch:error changes:NULL];
 }
 
 - (void) remoteFetchAsync:(NSRGetLatestCompletionBlock)completionBlock

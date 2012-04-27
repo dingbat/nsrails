@@ -283,9 +283,24 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  Requires presence of `remoteID`, or will throw an `NSRailsRequiresRemoteIDException`.
  
  @param error Out parameter used if an error occurs while processing the request. May be NULL. 
- @return BOOL whether or not there was a *local* change. This means changes in `updated_at`, etc, will only apply if your Objective-C class implement this as a property as well. This also applies when updating any of its nested objects (done recursively).
+ @return `YES` if fetch was successful. Returns `NO` if an error occurred.
  */
 - (BOOL) remoteFetch:(NSError **)error;
+
+/**
+ Retrieves the latest remote data for sender and sets its properties to received response.
+ 
+ Sends a `GET` request to `/objects/1.json` (where `objects` is the pluralization of your subclass, and `1` is the sender's `remoteID`).
+ Request made synchronously. See remoteFetchAsync: for asynchronous operation.
+ 
+ Requires presence of `remoteID`, or will throw an `NSRailsRequiresRemoteIDException`.
+ 
+ @param error Out parameter used if an error occurs while processing the request. May be NULL. 
+ @param changesPtr Pointer to BOOL whether or not there was a *local* change. This means changes in `updated_at`, etc, will only apply if your Objective-C class implement this as a property as well. This also applies when updating any of its nested objects (done recursively). May be `NULL`.
+ @return `YES` if fetch was successful. Returns `NO` if an error occurred.
+ */
+- (BOOL) remoteFetch:(NSError **)error changes:(BOOL *)changesPtr;
+
 
 /**
  Retrieves the latest remote data for sender and sets its properties to received response.
@@ -308,10 +323,11 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  Requires presence of `remoteID`, or will throw an `NSRailsRequiresRemoteIDException`.
  
  @param error Out parameter used if an error occurs while processing the request. May be NULL.
- 
+ @return `YES` if update was successful. Returns `NO` if an error occurred.
+
  @warning No local properties will be set, as Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.
  */
-- (void) remoteUpdate:(NSError **)error;
+- (BOOL) remoteUpdate:(NSError **)error;
 
 /**
  Updates sender's corresponding remote object.
@@ -334,8 +350,9 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  Request made synchronously. See remoteCreateAsync: for asynchronous operation.
 
  @param error Out parameter used if an error occurs while processing the request. May be NULL.
+ @return `YES` if create was successful. Returns `NO` if an error occurred.
  */
-- (void) remoteCreate:(NSError **)error;
+- (BOOL) remoteCreate:(NSError **)error;
 
 /**
  Creates the sender remotely. Sender's properties will be set to those given by Rails (including `remoteID`).
@@ -355,8 +372,9 @@ static NSString * const NSRailsNullRemoteIDException = @"NSRailsNullRemoteIDExce
  Request made synchronously. See remoteDestroyAsync: for asynchronous operation.
  
  @param error Out parameter used if an error occurs while processing the request. May be NULL.
+ @return `YES` if destroy was successful. Returns `NO` if an error occurred.
  */
-- (void) remoteDestroy:(NSError **)error;
+- (BOOL) remoteDestroy:(NSError **)error;
 
 /**
  Destroys sender's corresponding remote object. Local object will be unaffected.
