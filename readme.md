@@ -10,7 +10,7 @@ NSRails is a light-weight, drop-in Objective-C framework (iOS or OS X) for simpl
 What does NSRails do?
 ========
 
-NSRails provides simple, high-level APIs that gives your Objective-C classes ActiveResource-like support. This means CRUD and other operations on your corresponding Rails objects can be called natively via Objective-C methods.
+NSRails provides a simple, high-level API that gives your Objective-C classes ActiveResource-like support. This means CRUD and other operations on your corresponding Rails objects can be called natively via Objective-C methods.
 
 Instances will inherit methods to remotely create, read, update, or destroy a remote object:
 
@@ -32,11 +32,12 @@ Article *articleNumber1 = [Article remoteObjectWithID:1 error:&error];
 
 **Features:**
 
-* High-level APIs, yet flexible enough even to work with any RESTful server
+* High-level API, yet flexible enough even to work with any RESTful server
 * Keeping models and properties of your choice [in-sync](https://github.com/dingbat/nsrails/wiki/NSRailsSync) with those of Rails
 * [Nesting](https://github.com/dingbat/nsrails/wiki/Nesting) your related models (has-many, etc)
 * [Asynchronous](https://github.com/dingbat/nsrails/wiki/NSRailsModel) requests
 * Support for [basic HTTP authentication](https://github.com/dingbat/nsrails/wiki/NSRConfig)
+* No dependencies besides a JSON framework (already bundled)
 
 How do I get started?
 ========
@@ -46,13 +47,13 @@ It's fairly painless. Drop the source folder into your Xcode project, and see [t
 Some more resources:
 
 * Easily translate Rails models into Objective-C classes using [autogen tool](https://github.com/dingbat/nsrails/tree/master/autogen)
+* See the [documentation](http://dingbat.github.com/nsrails/) and [wiki](https://github.com/dingbat/nsrails/wiki)
 * Watch the [screencast](http://vimeo.com/dq/nsrails)
-* See the [Wiki](https://github.com/dingbat/nsrails/wiki)
 * Browse the included demo iPhone app - it goes straight to a live Rails app at [nsrails.com](http://nsrails.com), so you won't even have to launch a server to get started. The source for this site is also included. Have fun and be civil!
 
-Credits 
+Credits
 ========
 
 NSRails is published under the MIT license, meaning you can use the sources however you'd like.
 
-Thanks a lot to the [SB JSON framework](https://github.com/stig/json-framework) for JSON parsing and writing, and to [ObjectiveResource](https://github.com/yfactorial/objectiveresource) for being largely the inspiration for NSRails.
+Thanks a lot to the [SBJson framework](https://github.com/stig/json-framework) for JSON parsing and writing, and to [ObjectiveResource](https://github.com/yfactorial/objectiveresource) for being largely the inspiration for NSRails.
