@@ -56,58 +56,58 @@
 	[[NSRConfig defaultConfig] setAppURL:@"Default"];
 						  
 	//was explicitly set to "parent"
-	NSRAssertClassConfig([Parent class], @"parent");
+	NSRAssertClassAndInstanceConfig([Parent class], @"parent");
 	
 	//complacent child
 	//is complacent (doesn't explicitly set NSRailsUseConfig or NSRailsUseDefaultConfig), so will inherit the "parent" from Parent
-	NSRAssertClassConfig([Child class], @"parent");
+	NSRAssertClassAndInstanceConfig([Child class], @"parent");
 	
 	//is complacent (doesn't explicitly set NSRailsUseConfig or NSRailsUseDefaultConfig), so will inherit the "parent" from Child
-	NSRAssertClassConfig([Grandchild class], @"parent");
+	NSRAssertClassAndInstanceConfig([Grandchild class], @"parent");
 	
 	//is not complacent (defines NSRailsUseConfig), as set to "r_grandchild"
-	NSRAssertClassConfig([RebelliousGrandchild class], @"r_gchild");
+	NSRAssertClassAndInstanceConfig([RebelliousGrandchild class], @"r_gchild");
 	
 
 	//rebellious child
 	//is rebellious (explicitly defines NSRailsUseDefaultConfig for itself, so should be defaultConfig returned)
-	NSRAssertClassConfig([RebelliousChild class], @"Default");
+	NSRAssertClassAndInstanceConfig([RebelliousChild class], @"Default");
 	
 	//is complacent (doesn't explicitly set), BUT will inherit default behavior from R.Child, so default behavior
-	NSRAssertClassConfig([GrandchildOfRebellious class], @"Default");
+	NSRAssertClassAndInstanceConfig([GrandchildOfRebellious class], @"Default");
 	
 	//is rebellious (defines NSRailsUseConfig as "r_gchild_r"), so it'll use that name
-	NSRAssertClassConfig([RebelliousGrandchildOfRebellious class], @"r_gchild_r");
+	NSRAssertClassAndInstanceConfig([RebelliousGrandchildOfRebellious class], @"r_gchild_r");
 }
 
 - (void) test_property_inheritance
 {
 	//this is just normal
-	NSRAssertClassProperties([Parent class], @"remoteID", @"parentAttr");
+	NSRAssertClassAndInstanceProperties([Parent class], @"remoteID", @"parentAttr");
 	
 	//complacent child
 	//is complacent (doesn't explicitly define NSRNoCarryFromSuper), so will inherit parent's attributes too
 	//this is simultaneously a test that the "*" from Parent isn't carried over - child has 2 properties and only one is defined
 	//this will also test to see if syncing "parentAttr2" is allowed (attribute in parent class not synced by parent class)
-	NSRAssertClassProperties([Child class], @"remoteID", @"childAttr1", @"parentAttr2", @"parentAttr");
+	NSRAssertClassAndInstanceProperties([Child class], @"remoteID", @"childAttr1", @"parentAttr2", @"parentAttr");
 	
 	//is complacent, so should inherit everything! (parent+child), as well as its own
 	//however, excludes parentAttr2 as a test
-	NSRAssertClassProperties([Grandchild class], @"remoteID", @"childAttr1", @"gchildAttr", @"parentAttr");
+	NSRAssertClassAndInstanceProperties([Grandchild class], @"remoteID", @"childAttr1", @"gchildAttr", @"parentAttr");
 	
 	//is rebellious, so should inherit nothing! (only its own)
-	NSRAssertClassProperties([RebelliousGrandchild class], @"remoteID", @"r_gchildAttr");
+	NSRAssertClassAndInstanceProperties([RebelliousGrandchild class], @"remoteID", @"r_gchildAttr");
 	
 	
 	//rebellious child
 	//is rebellious, so should inherit nothing (only be using whatever attributes defined by itself)
-	NSRAssertClassProperties([RebelliousChild class], @"remoteID", @"r_childAttr");
+	NSRAssertClassAndInstanceProperties([RebelliousChild class], @"remoteID", @"r_childAttr");
 	
 	//is complacent, so should inherit everything until it sees the _NSR_NO_SUPER_ (which it omits), meaning won't inherit Parent
-	NSRAssertClassProperties([GrandchildOfRebellious class], @"remoteID", @"gchild_rAttr", @"r_childAttr");
+	NSRAssertClassAndInstanceProperties([GrandchildOfRebellious class], @"remoteID", @"gchild_rAttr", @"r_childAttr");
 	
 	//is rebellious, so should inherit nothing (only be using whatever attributes defined by itself)
-	NSRAssertClassProperties([RebelliousGrandchildOfRebellious class], @"remoteID", @"r_gchild_rAttr");
+	NSRAssertClassAndInstanceProperties([RebelliousGrandchildOfRebellious class], @"remoteID", @"r_gchild_rAttr");
 }
 
 - (void)setUpClass {

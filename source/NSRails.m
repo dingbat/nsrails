@@ -48,6 +48,7 @@
 @interface NSRailsModel (internal)
 
 + (NSRConfig *) getRelevantConfig;
+- (NSRConfig *) getRelevantConfig;
 
 + (NSString *) railsProperties;
 + (NSString *) getModelName;
@@ -225,6 +226,9 @@
 
 - (NSRConfig *) getRelevantConfig
 {
+	if (!customProperties)
+		return [[self class] getRelevantConfig];
+	
 	return [[self class] getRelevantConfigFromPropertyCollection:customProperties];
 }
 

@@ -51,7 +51,7 @@
 
 - (void) test_no_rails_sync
 {
-	NSRAssertClassProperties([ClassWithNoRailsSync class], @"remoteID", @"attribute");
+	NSRAssertClassAndInstanceProperties([ClassWithNoRailsSync class], @"remoteID", @"attribute");
 }
 
 - (void) test_property_flags

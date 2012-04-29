@@ -47,10 +47,17 @@ GHAssertEqualObjects(arr, test, nil); \
 }
 
 #define NSRAssertClassProperties(class, ...) NSRAssertEqualArrays([[class propertyCollection] sendableProperties], __VA_ARGS__)
+#define NSRAssertInstanceProperties(class, ...) NSRAssertEqualArrays([[[[class alloc] init] propertyCollection] sendableProperties], __VA_ARGS__)
+
+#define NSRAssertClassAndInstanceProperties(class, ...) NSRAssertClassProperties(class, __VA_ARGS__); NSRAssertInstanceProperties(class, __VA_ARGS__)
 
 #define NSRAssertEqualConfigs(config,teststring,desc, ...) GHAssertEqualStrings(config.appURL, [@"http://" stringByAppendingString:teststring], desc, __VA_ARGS__)
 
+#define NSRAssertInstanceConfig(class, teststring) NSRAssertEqualConfigs([[[class alloc] init] getRelevantConfig], teststring, @"%@ config failed", NSStringFromClass(class))
+
 #define NSRAssertClassConfig(class, teststring) NSRAssertEqualConfigs([class getRelevantConfig], teststring, @"%@ config failed", NSStringFromClass(class))
+
+#define NSRAssertClassAndInstanceConfig(class, teststring) NSRAssertInstanceConfig(class, teststring); NSRAssertClassConfig(class, teststring)
 
 #define NSRAssertRelevantConfigURL(teststring,desc) NSRAssertEqualConfigs([NSRailsModel getRelevantConfig], teststring, desc, nil)
 
