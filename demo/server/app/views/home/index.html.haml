@@ -4,8 +4,7 @@
 		.date= post.created_at.strftime("%b %e, %Y")
 		.author= post.author
 		said,
-		.comment
-			="“#{post.content}”"
+		.comment= "“#{post.content}”"
 		
 		-if !post.responses.empty?
 			.divider
@@ -15,5 +14,4 @@
 				-post.responses.each do |response|
 					.author= response.author
 					replied,
-					.comment
-						="“#{response.content}”"
+					.comment= "“#{response.content}”"
