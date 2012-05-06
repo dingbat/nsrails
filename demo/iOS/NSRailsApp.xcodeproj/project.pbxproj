@@ -24,21 +24,18 @@
 		591F9D251519981500E30253 /* SBJsonTokeniser.m in Sources */ = {isa = PBXBuildFile; fileRef = 591F9D121519981500E30253 /* SBJsonTokeniser.m */; };
 		591F9D261519981500E30253 /* SBJsonUTF8Stream.m in Sources */ = {isa = PBXBuildFile; fileRef = 591F9D141519981500E30253 /* SBJsonUTF8Stream.m */; };
 		591F9D271519981500E30253 /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 591F9D161519981500E30253 /* SBJsonWriter.m */; };
+		5989F63D15572EB5007D185F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5989F63C15572EB5007D185F /* AppDelegate.m */; };
+		5989F64B15572EC0007D185F /* InputViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5989F64015572EC0007D185F /* InputViewController.m */; };
+		5989F64C15572EC0007D185F /* InputViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5989F64115572EC0007D185F /* InputViewController.xib */; };
+		5989F64D15572EC0007D185F /* PostsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5989F64315572EC0007D185F /* PostsViewController.m */; };
+		5989F64E15572EC0007D185F /* ResponsesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5989F64515572EC0007D185F /* ResponsesViewController.m */; };
+		5989F64F15572EC0007D185F /* Post.m in Sources */ = {isa = PBXBuildFile; fileRef = 5989F64815572EC0007D185F /* Post.m */; };
+		5989F65015572EC0007D185F /* Response.m in Sources */ = {isa = PBXBuildFile; fileRef = 5989F64A15572EC0007D185F /* Response.m */; };
 		59D2A88E14F34B1800101C64 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D2A88D14F34B1800101C64 /* UIKit.framework */; };
 		59D2A89014F34B1800101C64 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D2A88F14F34B1800101C64 /* Foundation.framework */; };
 		59D2A89214F34B1800101C64 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D2A89114F34B1800101C64 /* CoreGraphics.framework */; };
-		59D2A89814F34B1800101C64 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 59D2A89614F34B1800101C64 /* InfoPlist.strings */; };
 		59D2A89A14F34B1800101C64 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D2A89914F34B1800101C64 /* main.m */; };
-		59D2A89E14F34B1800101C64 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D2A89D14F34B1800101C64 /* AppDelegate.m */; };
-		59D2A8A114F34B1800101C64 /* PostsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D2A8A014F34B1800101C64 /* PostsViewController.m */; };
-		59D2A8A714F34B1800101C64 /* PostsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 59D2A8A514F34B1800101C64 /* PostsViewController.xib */; };
-		59D2A8CE14F34C1D00101C64 /* Post.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D2A8CD14F34C1D00101C64 /* Post.m */; };
-		59D2A8D114F3542B00101C64 /* Response.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D2A8D014F3542B00101C64 /* Response.m */; };
-		59D2A8D614F3594100101C64 /* InputViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 59D2A8D414F3594100101C64 /* InputViewController.xib */; };
-		59D2A8DF14F359DA00101C64 /* ResponsesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D2A8DD14F359DA00101C64 /* ResponsesViewController.m */; };
-		59D2A8E014F359DA00101C64 /* ResponsesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 59D2A8DE14F359DA00101C64 /* ResponsesViewController.xib */; };
 		59D2A8EA14F3644400101C64 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D2A8E914F3644400101C64 /* QuartzCore.framework */; };
-		59D2A90414F459C700101C64 /* InputViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D2A90314F459C700101C64 /* InputViewController.m */; };
 		59D2A92914F46C6100101C64 /* NSRails.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D2A92014F46C6100101C64 /* NSRails.m */; };
 		59D2A92A14F46C6100101C64 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D2A92214F46C6100101C64 /* NSRConfig.m */; };
 /* End PBXBuildFile section */
@@ -79,30 +76,27 @@
 		591F9D141519981500E30253 /* SBJsonUTF8Stream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonUTF8Stream.m; sourceTree = "<group>"; };
 		591F9D151519981500E30253 /* SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonWriter.h; sourceTree = "<group>"; };
 		591F9D161519981500E30253 /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonWriter.m; sourceTree = "<group>"; };
+		5989F63B15572EB5007D185F /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Classes/AppDelegate.h; sourceTree = "<group>"; };
+		5989F63C15572EB5007D185F /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Classes/AppDelegate.m; sourceTree = "<group>"; };
+		5989F63F15572EC0007D185F /* InputViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputViewController.h; sourceTree = "<group>"; };
+		5989F64015572EC0007D185F /* InputViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputViewController.m; sourceTree = "<group>"; };
+		5989F64115572EC0007D185F /* InputViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InputViewController.xib; sourceTree = "<group>"; };
+		5989F64215572EC0007D185F /* PostsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostsViewController.h; sourceTree = "<group>"; };
+		5989F64315572EC0007D185F /* PostsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostsViewController.m; sourceTree = "<group>"; };
+		5989F64415572EC0007D185F /* ResponsesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponsesViewController.h; sourceTree = "<group>"; };
+		5989F64515572EC0007D185F /* ResponsesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResponsesViewController.m; sourceTree = "<group>"; };
+		5989F64715572EC0007D185F /* Post.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Post.h; sourceTree = "<group>"; };
+		5989F64815572EC0007D185F /* Post.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Post.m; sourceTree = "<group>"; };
+		5989F64915572EC0007D185F /* Response.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Response.h; sourceTree = "<group>"; };
+		5989F64A15572EC0007D185F /* Response.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Response.m; sourceTree = "<group>"; };
 		59D2A88914F34B1800101C64 /* NSRailsApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NSRailsApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D2A88D14F34B1800101C64 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		59D2A88F14F34B1800101C64 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		59D2A89114F34B1800101C64 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		59D2A89514F34B1800101C64 /* NSRailsApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NSRailsApp-Info.plist"; sourceTree = "<group>"; };
-		59D2A89714F34B1800101C64 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		59D2A89914F34B1800101C64 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		59D2A89B14F34B1800101C64 /* NSRailsApp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSRailsApp-Prefix.pch"; sourceTree = "<group>"; };
-		59D2A89C14F34B1800101C64 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		59D2A89D14F34B1800101C64 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		59D2A89F14F34B1800101C64 /* PostsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PostsViewController.h; sourceTree = "<group>"; };
-		59D2A8A014F34B1800101C64 /* PostsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PostsViewController.m; sourceTree = "<group>"; };
-		59D2A8A614F34B1800101C64 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/PostsViewController.xib; sourceTree = "<group>"; };
-		59D2A8CC14F34C1D00101C64 /* Post.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Post.h; sourceTree = "<group>"; };
-		59D2A8CD14F34C1D00101C64 /* Post.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Post.m; sourceTree = "<group>"; };
-		59D2A8CF14F3542B00101C64 /* Response.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Response.h; sourceTree = "<group>"; };
-		59D2A8D014F3542B00101C64 /* Response.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Response.m; sourceTree = "<group>"; };
-		59D2A8D214F3594000101C64 /* InputViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputViewController.h; sourceTree = "<group>"; };
-		59D2A8D414F3594100101C64 /* InputViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InputViewController.xib; sourceTree = "<group>"; };
-		59D2A8DC14F359DA00101C64 /* ResponsesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponsesViewController.h; sourceTree = "<group>"; };
-		59D2A8DD14F359DA00101C64 /* ResponsesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResponsesViewController.m; sourceTree = "<group>"; };
-		59D2A8DE14F359DA00101C64 /* ResponsesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ResponsesViewController.xib; sourceTree = "<group>"; };
 		59D2A8E914F3644400101C64 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		59D2A90314F459C700101C64 /* InputViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputViewController.m; sourceTree = "<group>"; };
 		59D2A91F14F46C6100101C64 /* NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRails.h; sourceTree = "<group>"; };
 		59D2A92014F46C6100101C64 /* NSRails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRails.m; sourceTree = "<group>"; };
 		59D2A92114F46C6100101C64 /* NSRConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRConfig.h; sourceTree = "<group>"; };
@@ -182,6 +176,33 @@
 			path = SBJson;
 			sourceTree = "<group>";
 		};
+		5989F63E15572EC0007D185F /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				5989F63F15572EC0007D185F /* InputViewController.h */,
+				5989F64015572EC0007D185F /* InputViewController.m */,
+				5989F64115572EC0007D185F /* InputViewController.xib */,
+				5989F64215572EC0007D185F /* PostsViewController.h */,
+				5989F64315572EC0007D185F /* PostsViewController.m */,
+				5989F64415572EC0007D185F /* ResponsesViewController.h */,
+				5989F64515572EC0007D185F /* ResponsesViewController.m */,
+			);
+			name = Controllers;
+			path = Classes/Controllers;
+			sourceTree = "<group>";
+		};
+		5989F64615572EC0007D185F /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				5989F64715572EC0007D185F /* Post.h */,
+				5989F64815572EC0007D185F /* Post.m */,
+				5989F64915572EC0007D185F /* Response.h */,
+				5989F64A15572EC0007D185F /* Response.m */,
+			);
+			name = Models;
+			path = Classes/Models;
+			sourceTree = "<group>";
+		};
 		59D2A87E14F34B1800101C64 = {
 			isa = PBXGroup;
 			children = (
@@ -214,11 +235,10 @@
 		59D2A89314F34B1800101C64 /* NSRailsApp */ = {
 			isa = PBXGroup;
 			children = (
-				59D2A89C14F34B1800101C64 /* AppDelegate.h */,
-				59D2A89D14F34B1800101C64 /* AppDelegate.m */,
-				59D2A90214F4598C00101C64 /* Models */,
-				59D2A90514F459D100101C64 /* Controllers */,
-				59D2A90114F4597F00101C64 /* Views */,
+				5989F63B15572EB5007D185F /* AppDelegate.h */,
+				5989F63C15572EB5007D185F /* AppDelegate.m */,
+				5989F64615572EC0007D185F /* Models */,
+				5989F63E15572EC0007D185F /* Controllers */,
 				59D2A89414F34B1800101C64 /* Supporting Files */,
 			);
 			path = NSRailsApp;
@@ -228,45 +248,10 @@
 			isa = PBXGroup;
 			children = (
 				59D2A89514F34B1800101C64 /* NSRailsApp-Info.plist */,
-				59D2A89614F34B1800101C64 /* InfoPlist.strings */,
 				59D2A89914F34B1800101C64 /* main.m */,
 				59D2A89B14F34B1800101C64 /* NSRailsApp-Prefix.pch */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		59D2A90114F4597F00101C64 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				59D2A8A514F34B1800101C64 /* PostsViewController.xib */,
-				59D2A8DE14F359DA00101C64 /* ResponsesViewController.xib */,
-				59D2A8D414F3594100101C64 /* InputViewController.xib */,
-			);
-			name = Views;
-			sourceTree = "<group>";
-		};
-		59D2A90214F4598C00101C64 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				59D2A8CC14F34C1D00101C64 /* Post.h */,
-				59D2A8CD14F34C1D00101C64 /* Post.m */,
-				59D2A8CF14F3542B00101C64 /* Response.h */,
-				59D2A8D014F3542B00101C64 /* Response.m */,
-			);
-			name = Models;
-			sourceTree = "<group>";
-		};
-		59D2A90514F459D100101C64 /* Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				59D2A89F14F34B1800101C64 /* PostsViewController.h */,
-				59D2A8A014F34B1800101C64 /* PostsViewController.m */,
-				59D2A8DC14F359DA00101C64 /* ResponsesViewController.h */,
-				59D2A8DD14F359DA00101C64 /* ResponsesViewController.m */,
-				59D2A8D214F3594000101C64 /* InputViewController.h */,
-				59D2A90314F459C700101C64 /* InputViewController.m */,
-			);
-			name = Controllers;
 			sourceTree = "<group>";
 		};
 		59D2A90F14F46C6100101C64 /* NSRails */ = {
@@ -333,10 +318,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59D2A89814F34B1800101C64 /* InfoPlist.strings in Resources */,
-				59D2A8A714F34B1800101C64 /* PostsViewController.xib in Resources */,
-				59D2A8D614F3594100101C64 /* InputViewController.xib in Resources */,
-				59D2A8E014F359DA00101C64 /* ResponsesViewController.xib in Resources */,
+				5989F64C15572EC0007D185F /* InputViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -348,12 +330,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				59D2A89A14F34B1800101C64 /* main.m in Sources */,
-				59D2A89E14F34B1800101C64 /* AppDelegate.m in Sources */,
-				59D2A8A114F34B1800101C64 /* PostsViewController.m in Sources */,
-				59D2A8CE14F34C1D00101C64 /* Post.m in Sources */,
-				59D2A8D114F3542B00101C64 /* Response.m in Sources */,
-				59D2A8DF14F359DA00101C64 /* ResponsesViewController.m in Sources */,
-				59D2A90414F459C700101C64 /* InputViewController.m in Sources */,
 				59D2A92914F46C6100101C64 /* NSRails.m in Sources */,
 				59D2A92A14F46C6100101C64 /* NSRConfig.m in Sources */,
 				591F9D171519981500E30253 /* NSData+Additions.m in Sources */,
@@ -373,29 +349,16 @@
 				591F9D251519981500E30253 /* SBJsonTokeniser.m in Sources */,
 				591F9D261519981500E30253 /* SBJsonUTF8Stream.m in Sources */,
 				591F9D271519981500E30253 /* SBJsonWriter.m in Sources */,
+				5989F63D15572EB5007D185F /* AppDelegate.m in Sources */,
+				5989F64B15572EC0007D185F /* InputViewController.m in Sources */,
+				5989F64D15572EC0007D185F /* PostsViewController.m in Sources */,
+				5989F64E15572EC0007D185F /* ResponsesViewController.m in Sources */,
+				5989F64F15572EC0007D185F /* Post.m in Sources */,
+				5989F65015572EC0007D185F /* Response.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		59D2A89614F34B1800101C64 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				59D2A89714F34B1800101C64 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		59D2A8A514F34B1800101C64 /* PostsViewController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				59D2A8A614F34B1800101C64 /* en */,
-			);
-			name = PostsViewController.xib;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		59D2A8AB14F34B1800101C64 /* Debug */ = {

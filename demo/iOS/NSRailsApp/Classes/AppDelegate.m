@@ -34,7 +34,7 @@
 	
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	
-	PostsViewController *masterViewController = [[PostsViewController alloc] initWithNibName:@"PostsViewController" bundle:nil];
+	PostsViewController *masterViewController = [[PostsViewController alloc] initWithStyle:UITableViewStyleGrouped];
 	self.navigationController = [[UINavigationController alloc] initWithRootViewController:masterViewController];
 	self.window.rootViewController = self.navigationController;
     [self.window makeKeyAndVisible];

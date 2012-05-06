@@ -71,7 +71,7 @@
 	Response *resp = [post.responses objectAtIndex:indexPath.row];
 	if ([resp remoteDestroy:&error])
 	{
-		[post.responses removeObject:post];
+		[post.responses removeObject:resp];
 		
 		[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 	}

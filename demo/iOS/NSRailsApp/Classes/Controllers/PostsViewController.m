@@ -161,7 +161,7 @@
 {
 	Post *post = [posts objectAtIndex:indexPath.row];
 
-	ResponsesViewController *rvc = [[ResponsesViewController alloc] init];
+	ResponsesViewController *rvc = [[ResponsesViewController alloc] initWithStyle:UITableViewStyleGrouped];
 	rvc.post = post;
 	[self.navigationController pushViewController:rvc animated:YES];
 }
