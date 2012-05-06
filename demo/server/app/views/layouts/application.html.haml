@@ -7,48 +7,29 @@
 	= javascript_include_tag "application"
 	= csrf_meta_tags
 	
-	= link_to image_tag("http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png", :style=>"position: absolute; top: 0; right: 0; border: 0;", :alt=>"Fork me on GitHub"), "http://github.com/dingbat/nsrails"
+%header
+	= fork_me_ribbon "http://github.com/dingbat/nsrails"
+	
+	#logo
+		NSRails
+	%table.links
+		%tr
+			%td= link_to_wiki image_tag("Notes.png", :size => "65x65")
+			%td= link_to_source image_tag("Settings.png", :size => "65x65")
+			%td= link_to_screencast image_tag("Browser.png", :size => "65x65")
+		%tr
+			%td= link_to_wiki "Wiki"
+			%td= link_to_source "Source"
+			%td= link_to_screencast "Screencast"
 
 %body
-	#head
-		#logo
-			NSRails		
-	%p
-		.incenter
-			.link
-				=wiki_link = "https://github.com/dingbat/nsrails/wiki"
-				=source_link = "https://github.com/dingbat/nsrails"
-				=screencast_link = "http://vimeo.com/dq/nsrails"
-			
-				%table{:class => "main", :cellpadding => "5px"}
-					%tr
-						%td
-							=link_to image_tag("Notes.png", :size => "65x65"), wiki_link
-						%td
-						%td
-							=link_to image_tag("Settings.png", :size => "65x65"), source_link
-						%td
-						%td
-							=link_to image_tag("Browser.png", :size => "65x65"), screencast_link
-					%tr
-						%td
-							=link_to "Wiki", wiki_link
-						%td
-						%td
-							=link_to "Source", source_link
-						%td
-						%td
-							=link_to "Screencast", screencast_link
-
-	.incenter
-		=yield
+	=yield
 		
 %footer
-	.centered
-		.text
-			%p
-				%b NSRails
-				is a light-weight Objective-C framework (iOS or OS X) for easy but powerful communication with your Rails server.
-				%br
-				The comments above were posted using the demo iOS app bundled with the source. Download it above and get started!
-		=image_tag("railsphone.png", :size => "373x250")
+	%p
+		%b NSRails
+		is a light-weight Objective-C framework (iOS or OS X) for easy but powerful communication with your Rails server.
+		%br
+		The comments above were posted using the demo iOS app bundled with the source. Download it above and get started!
+		
+	= image_tag("railsphone.png", :size => "373x250")

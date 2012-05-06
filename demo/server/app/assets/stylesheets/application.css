@@ -7,87 +7,107 @@
 */
 
 
-body {
-	font: 12px "Lucida Grande";
+header
+{	
+	margin-top:50px;
+	margin-bottom:20px;
+	text-align:center;
+	
+	font: 17px "Gill Sans", "Helvetica";
+}
+
+body 
+{
+	text-align:center;
+	font-weight: lighter;
+	font: 15px "Gill Sans", "Helvetica";
 }
 
 footer
 {
-	padding-top:10px;
+	text-align: center;
+	margin-top: 45px;
 }
 
-#head
+/* 
+
+Header stuff 
+
+*/
+
+#ribbon
 {
-	height: 130px;
-	width: 100%;
-	margin-top:50px;
+	position: absolute; 
+	top: 0; 
+	right: 0; 
+	border: 0;
 }
 
 #logo
 {
-	text-align:center;
-	font: 120px "Gill Sans";
+	font: 120px "Gill Sans", "Helvetica Neue";
 	color: #CC3300;
 	font-weight: lighter;
+	margin-bottom:20px;
 }
 
-.centered
+table.links
 {
-	text-align: center;
-	margin-top: 20px;
-	width: 100%;	
-}
-
-p.coming_soon
-{
-	font-style:oblique;
-	font-size: 14px;
-}
-
-.responseDivider
-{
-	margin-left: 3%;
-	margin-right: 3%;
-}
-
-.link
-{
+  margin-left:auto; 
+  margin-right:auto;
+	border-spacing:20px 5px;
 	text-align:center;
-	color:white;
-	font: 17px "Gill Sans";
 }
 
-.incenter
+/*
+
+Posts & responses
+
+*/
+
+.container
 {
-	font-size: 15px;
-}
-
-.shadow {
-  -moz-box-shadow:    inset 0 0 5px #000000;
-  -webkit-box-shadow: inset 0 0 5px #000000;
-  box-shadow:         inset 0 0 5px #000000;
+	/* Make the box nice - shadow & rounded corners */
+	
+	-moz-box-shadow:    inset 0 0 3px #000000;
+  -webkit-box-shadow: inset 0 0 3px #000000;
+  box-shadow:         inset 0 0 3px #000000;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 	background: #FBFBFB;
+		
 	margin-left: 19%;
 	margin-right: 19%;
+	
+	margin-bottom: 10px;
+	
+	padding:10px 10px 10px 10px;
+	text-align:left;
+	
+	/* Conversation isn't that heated yet... */
+	/* max-height:300px; */
+	
+	overflow: auto;
+	overflow-x: hidden;
+	
+	font: 15px "Helvetica Neue", "Helvetica";
 }
 
 .comment
 {
-	padding:10px 10px 5px 10px;
-	text-align:left;
-	max-height:204px;
+	font-size:15px;
+	margin: 10px;
+
 	text-shadow: 0.1em 0.1em 0.05em #FFFFFF;
 }
 
-.text
+.divider
 {
-	font-style:normal;
-	text-align:center;
-	font-weight: lighter;
-	font: 15px "Gill Sans";
+	padding-bottom: 5px;
+	
+	margin-left: 3%;
+	margin-right: 3%;
 }
 
 .response
@@ -95,42 +115,32 @@ p.coming_soon
 	padding-left:10px;
 }
 
-.comment_poster
+.author
 {
 	font-weight:bold;
+	display:inline;
 }
 
-table.main 
-{
-    margin-left:auto; 
-    margin-right:auto;
-}
-
-div::-webkit-scrollbar {
-    width: 11px;
-}
-
-div::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 1px rgba(1,1,1,0);
-    border-radius: 8px;
-}
-
-div::-webkit-scrollbar-thumb {
-    border-radius: 8px;
-    -webkit-box-shadow: inset 0 0 1px rgba(1,1,1,0.6);
-}
-
-.comment_date
+.date
 {
 	font-size:13px;
 	float:right;
 }
 
-.comment_body
-{
-	overflow: auto;
-	overflow-x: hidden;
-	max-height:162px;
-	font-size:15px;
-	margin: 10px;
+/* 
+
+Custom scrollbars for niceness 
+
+*/
+
+div::-webkit-scrollbar {
+    width: 8px;
 }
+
+div::-webkit-scrollbar-track {
+  border-radius: 8px;
+}
+
+div::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+background: rgba(0,0,0,0.3); }

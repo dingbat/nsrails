@@ -5,7 +5,7 @@ class ResponsesController < ApplicationController
     @responses = Response.all
 
     respond_to do |format|
-      format.json { render :json => @responses.to_json(:include => :post) }
+      format.json { render :json => @responses }
     end
   end
 
@@ -15,7 +15,7 @@ class ResponsesController < ApplicationController
     @response = Response.find(params[:id])
 
     respond_to do |format|
-      format.json { render :json => @response.to_json(:include => :post) }
+      format.json { render :json => @response }
     end
   end
 
@@ -41,7 +41,7 @@ class ResponsesController < ApplicationController
 
     respond_to do |format|
       if @response.save
-        format.json { render :json => @response.to_json(:include => :post), :status => :created, :location => @response }
+        format.json { render :json => @response, :status => :created, :location => @response }
       else
         format.json { render :json => @response.errors, :status => :unprocessable_entity }
       end

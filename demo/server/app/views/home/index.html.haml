@@ -1,26 +1,19 @@
 - Post.all.reverse.each do |post|
-	.centered
-		.incenter
-			.shadow
-				.comment
-					.comment_date
-						=post.created_at.strftime("%b %e, %Y")
-					%span{:class=>"comment_poster"}
-						=post.author
-					said,
-					.comment_body
-						=surround("\"") do
-							=post.content
-				-if post.responses.count > 0
-					.responseDivider
-						%hr
-					.response
-						.comment
-							-post.responses.reverse.each do |response|
-								%span{:class=>"comment_poster"}
-									=response.author
-								replied,
-								.comment_body
-									=surround("\"") do
-										=response.content
-								%br
+	.container
+
+		.date= post.created_at.strftime("%b %e, %Y")
+		.author= post.author
+		said,
+		.comment
+			="“#{post.content}”"
+		
+		-if !post.responses.empty?
+			.divider
+				%hr
+		
+			.response
+				-post.responses.each do |response|
+					.author= response.author
+					replied,
+					.comment
+						="“#{response.content}”"
