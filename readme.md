@@ -51,9 +51,9 @@ Some more resources:
 * Watch the [screencast](http://vimeo.com/dq/nsrails)
 * Browse the included demo iPhone app - it goes straight to a live Rails app at [nsrails.com](http://nsrails.com), so you won't even have to launch a server to get started. The source for this site is also included. Have fun and be civil!
 
-Credits
+License & Credits
 ========
 
-NSRails is published under the MIT license, meaning you can use the sources however you'd like.
+NSRails is written & maintained by Dan Hassin and published under the MIT license (ie, use the sources however you'd like.)
 
-Thanks a lot to the [SBJson framework](https://github.com/stig/json-framework) for JSON parsing and writing, and to [ObjectiveResource](https://github.com/yfactorial/objectiveresource) for being largely the inspiration for NSRails.
+I'd like to acknowledge [SBJson](https://github.com/stig/json-framework) for great JSON reading and writing, and thank the [ObjectiveResource](https://github.com/yfactorial/objectiveresource) project for being largely the inspiration for NSRails.
