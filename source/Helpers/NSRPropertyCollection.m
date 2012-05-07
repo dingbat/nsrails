@@ -464,9 +464,6 @@ static NSString * const NSRNoEquivalentMarker = @"";
 
 - (NSString *) objcPropertyForRemoteEquivalent:(NSString *)railsProperty autoinflect:(BOOL)autoinflect
 {
-	NSLog(@"***START***");
-	NSLog(@"looking for objcProperty for rails man '%@' ai=%d",railsProperty, autoinflect);
-	
 	NSSet *properties = [propertyEquivalents keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) 
 	{
 		return [railsProperty isEqualToString:obj];
@@ -475,23 +472,19 @@ static NSString * const NSRNoEquivalentMarker = @"";
 	NSString *objcProperty = [properties anyObject];
 	if (!objcProperty)
 	{
-		NSLog(@"couldn't find explicit match");
 		//no keys (rails equivs) match the railsProperty
 		//could mean that there's no PROPERTY or that there's no EQUIVALENCE
 		
 		//if the autoequivalence exists, send it back cause it's correct
 		NSString *autoObjcEquivalence = autoinflect ? [railsProperty camelize] : railsProperty;
-		NSLog(@"checking for autoequiv=%@",autoObjcEquivalence);
 		
 		if ([propertyEquivalents objectForKey:autoObjcEquivalence])
 			return autoObjcEquivalence;
 		
-		NSLog(@"doznt exist");
 		//prop does not exist, sorry. we tried.
 		return nil;
 	}
 	
-	NSLog(@"found explicit match! %@",objcProperty);
 	return objcProperty;
 }
 
