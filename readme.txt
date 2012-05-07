@@ -1,1 +1,1 @@
-Documentation.
+Documentation found at http://nsrails.com/docs
