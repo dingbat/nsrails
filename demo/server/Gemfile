@@ -23,6 +23,8 @@ group :development, :test do
   gem 'sqlite3'
 end
 
+gem 'heroku'
+
 gem 'jquery-rails'
 gem 'profanity_filter'
 
