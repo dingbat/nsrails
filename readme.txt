@@ -1,1 +1,1 @@
-Documentation found at http://nsrails.com/docs
+Documentation found at http://dingbat.github.com/nsrails.
