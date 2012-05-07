@@ -577,6 +577,20 @@
  */
 - (id) initWithCustomSyncProperties:(NSString *)str;
 
+/**
+ Initializes a new instance of the receiver's class with a custom NSRailsSync string and config.
+ 
+ The given NSRailsSync string and config will be used only for this **instance**. This instance will not use its class's NSRailsSync or NSRailsUseConfig or any default configs (although any config in a context block (with use or useIn) will take precedence). This is very uncommon and triple checking is recommended before going with this implementation strategy.
+ 
+ Pass in a string as you would type it into NSRailsSync():
+	Person *zombie = [[Person alloc] initWithCustomSyncProperties:@"*, brain -x" customConfig:nonInflectingConfig];
+ 
+ @param str String to become this instance's NSRailsSync - pass as you would an NSRailsSync string (see above).  
+ @param config Config to become this instance's config. 
+ @return YES if any changes were made to the local object, NO if object was identical before/after.
+ */
+- (id) initWithCustomSyncProperties:(NSString *)str customConfig:(NSRConfig *)config;
+
 
 @end
 

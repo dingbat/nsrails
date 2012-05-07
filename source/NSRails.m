@@ -232,17 +232,25 @@
 	return [[self class] getRelevantConfigFromPropertyCollection:customProperties];
 }
 
-- (id) initWithCustomSyncProperties:(NSString *)str
+- (id) initWithCustomSyncProperties:(NSString *)str customConfig:(NSRConfig *)config
 {
 	if ((self = [super init]))
 	{
-		//inheritance rules etc still apply
+		//apply inheritance rules etc to the string
 		str = [[self class] railsPropertiesWithCustomString:str];
+		
 		customProperties = [[NSRPropertyCollection alloc] initWithClass:[self class] properties:str];
+		if (config)
+			customProperties.customConfig = config;
 	}
 	return self;
 }
 
+- (id) initWithCustomSyncProperties:(NSString *)str
+{
+	self = [self initWithCustomSyncProperties:str customConfig:nil];
+	return self;
+}
 
 
 
