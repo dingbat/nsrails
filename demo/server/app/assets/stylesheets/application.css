@@ -46,7 +46,7 @@ Header stuff
 #ribbon
 {
 	position: absolute; 
-	top: 0; 
+	top: 50; 
 	right: 0; 
 	border: 0;
 }
@@ -111,26 +111,26 @@ Posts & responses
 	font: 15px "Helvetica Neue", "Helvetica";
 }
 
-.comment
+.body
 {
 	font-size:15px;
-	margin: 10px;
-	padding-bottom:7px;
+	margin:10px;
 
 	text-shadow: 0.1em 0.1em 0.05em #FFFFFF;
 }
 
-.divider
-{
-	padding-bottom: 5px;
-	
-	margin-left: 3%;
-	margin-right: 3%;
-}
-
 .response
 {
-	padding-left:10px;
+	margin-top:20px;
+	margin-bottom:17px;
+	padding-left:15px;
+}
+
+.divider
+{	
+	margin-top: 20px;
+	margin-left: 3%;
+	margin-right: 3%;
 }
 
 .author
