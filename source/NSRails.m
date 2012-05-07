@@ -393,7 +393,8 @@
 						if (![element isKindOfClass:[NSRailsModel class]])
 							continue;
 						
-						id encodedObj = [element dictionaryOfRemoteProperties];
+						//have to make it shallow so we don't loop infinitely (if that model defines us as an assc)
+						id encodedObj = [element dictionaryOfRemotePropertiesShallow:YES];
 						
 						[new addObject:encodedObj];
 					}
@@ -405,7 +406,8 @@
 				if (![val isKindOfClass:[NSRailsModel class]])
 					return nil;
 				
-				return [val dictionaryOfRemoteProperties];
+				//have to make it shallow so we don't loop infinitely (if that model defines us as an assc)
+				return [val dictionaryOfRemotePropertiesShallow:YES];
 			}
 			
 			//if the object is of class NSDate, we need to automatically convert it to string for the JSON framework to handle correctly
@@ -590,10 +592,19 @@
 
 - (NSDictionary *) dictionaryOfRemoteProperties
 {
-	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+	return [self dictionaryOfRemotePropertiesShallow:NO];
+}
 
+- (NSDictionary *) dictionaryOfRemotePropertiesShallow:(BOOL)shallow
+{
+	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+	
 	for (NSString *objcProperty in [self propertyCollection].sendableProperties)
 	{
+		//skip this property if it's nested and we're only looking shallow (to prevent infinite recursion)
+		if (shallow && [[[self propertyCollection] nestedModelProperties] objectForKey:objcProperty])
+			continue;
+		
 		NSString *railsEquivalent = [[self propertyCollection] equivalenceForProperty:objcProperty];
 		
 		//check to see if we should auto_underscore if no equivalence set
