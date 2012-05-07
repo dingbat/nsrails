@@ -36,7 +36,7 @@
 											  
 											  if (![newResp remoteCreate:&error])
 											  {
-												  [(AppDelegate *)[UIApplication sharedApplication].delegate alertForError:error];
+												  [AppDelegate alertForError:error];
 												  
 												  return NO;
 											  }
@@ -77,7 +77,7 @@
 	}
 	else
 	{
-		[(AppDelegate *)[UIApplication sharedApplication].delegate alertForError:error];
+		[AppDelegate alertForError:error];
 	}
 	
 	/* 
@@ -101,7 +101,7 @@
 
 - (void)viewDidLoad
 {	
-	self.title = [NSString stringWithFormat:@"Post #%@",post.remoteID];
+	self.title = [NSString stringWithFormat:@"Post ID #%@",post.remoteID];
 	
 	//add the + button
 	UIBarButtonItem *new = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemReply target:self action:@selector(addResponse)];

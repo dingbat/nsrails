@@ -19,21 +19,6 @@ class ResponsesController < ApplicationController
     end
   end
 
-  # GET /responses/new
-  # GET /responses/new.json
-  def new
-    @response = Response.new
-
-    respond_to do |format|
-      format.json { render :json => @response }
-    end
-  end
-
-  # GET /responses/1/edit
-  def edit
-    @response = Response.find(params[:id])
-  end
-
   # POST /responses
   # POST /responses.json
   def create

@@ -859,7 +859,7 @@
 	if (!jsonResponse)
 		return NO;
 	
-	NSError *e;
+	NSError *e = nil;
 	[self setPropertiesUsingRemoteJSON:jsonResponse error:&e];
 	
 	//just make sure that setPropertiesUsingRemoteJSON went smoothly (in case there was a JSON error)
@@ -925,7 +925,7 @@
 	if (!jsonResponse)
 		return NO;
 	
-	NSError *e;
+	NSError *e = nil;
 	BOOL changes = [self setPropertiesUsingRemoteJSON:jsonResponse error:&e];
 	if (changesPtr)
 		*changesPtr = changes;

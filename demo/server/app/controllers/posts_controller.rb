@@ -19,21 +19,6 @@ class PostsController < ApplicationController
     end
   end
 
-  # GET /posts/new
-  # GET /posts/new.json
-  def new
-    @post = Post.new
-
-    respond_to do |format|
-      format.json { render :json => @post }
-    end
-  end
-
-  # GET /posts/1/edit
-  def edit
-    @post = Post.find(params[:id])
-  end
-
   # POST /posts
   # POST /posts.json
   def create

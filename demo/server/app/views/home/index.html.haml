@@ -1,4 +1,4 @@
-- Post.all.reverse.each do |post|
+-Post.all.reverse.each do |post| 
 	.container
 		.date= post.created_at.strftime("%b %e, %Y")
 		.author= post.author
@@ -6,10 +6,8 @@
 		.body= "“#{post.content}”"
 		
 		-if !post.responses.empty?
-			.divider
-				%hr
-		
-			-post.responses.each do |response|
+			%hr.divider
+			-post.responses.each do |response| 
 				.response
 					.author= response.author
 					replied,

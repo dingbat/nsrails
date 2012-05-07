@@ -7,15 +7,12 @@
 //
 
 #import "AppDelegate.h"
+#import "NSRConfig.h"
 
 #import "PostsViewController.h"
 
-#import "NSRConfig.h"
-
 @implementation AppDelegate
-
-@synthesize window = _window;
-@synthesize navigationController = _navigationController;
+@synthesize window, navigationController;
 
 - (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -25,7 +22,7 @@
 	[[NSRConfig defaultConfig] setAppURL:@"http://nsrails.com/"];
 	
 	//for local server:
-	//[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
+	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
 	
 	//authentication
 	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
@@ -41,11 +38,11 @@
     return YES;
 }
 
-- (void) alertForError:(NSError *)e
++ (void) alertForError:(NSError *)e
 {
 	NSString *errorString = [NSString string];
 	
-	//get the dictionary of validation errors, if any
+	//get the dictionary of validation errors, if present
 	NSDictionary *validationErrors = [[e userInfo] objectForKey:NSRValidationErrorsKey];
 	
 	if (validationErrors)
@@ -53,21 +50,13 @@
 		//iterate through each failed property (keys)
 		for (NSString *failedProperty in validationErrors)
 		{
-			//for each key, it contains an array of reasons that property failed
+			//iterate through each reason the property failed
 			for (NSString *reason in [validationErrors objectForKey:failedProperty])
 			{
-				if ([reason isEqualToString:@"profanity"])
-				{
-					//if it's profanity, it's profanity. shame!
-					errorString = [errorString stringByAppendingString:@"No profanity please! "];
-				}
-				else
-				{
-					//otherwise, proper-case the property (it's currently something like "name")
-					NSString *properCase = [[[failedProperty substringToIndex:1] uppercaseString] stringByAppendingString:[failedProperty substringFromIndex:1]];
-					
-					errorString = [errorString stringByAppendingFormat:@"%@ %@. ",properCase,reason];
-				}
+				NSString *properCase = [[[failedProperty substringToIndex:1] uppercaseString] 
+										stringByAppendingString:[failedProperty substringFromIndex:1]];
+				
+				errorString = [errorString stringByAppendingFormat:@"%@ %@. ",properCase,reason]; //=> "Name can't be blank."
 			}
 		}
 	}

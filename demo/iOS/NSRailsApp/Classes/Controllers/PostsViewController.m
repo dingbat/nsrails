@@ -37,7 +37,7 @@
 	}
 	else
 	{
-		[(AppDelegate *)[UIApplication sharedApplication].delegate alertForError:error];
+		[AppDelegate alertForError:error];
 	}
 }
 
@@ -57,7 +57,7 @@
 											  											  
 											  if (![newPost remoteCreate:&error])
 											  {
-												  [(AppDelegate *)[UIApplication sharedApplication].delegate alertForError:error];
+												  [AppDelegate alertForError:error];
 												  
 												  //don't dismiss the input VC
 												  return NO;
@@ -90,7 +90,7 @@
 	}
 	else
 	{
-		[(AppDelegate *)[UIApplication sharedApplication].delegate alertForError:error];
+		[AppDelegate alertForError:error];
 	}
 }
 

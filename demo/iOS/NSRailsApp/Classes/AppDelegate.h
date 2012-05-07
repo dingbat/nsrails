@@ -13,6 +13,6 @@
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) UINavigationController *navigationController;
 
-- (void) alertForError:(NSError *)e;
++ (void) alertForError:(NSError *)e;
 
 @end
