@@ -63,7 +63,7 @@
 												  return NO;
 											  }
 											  											  
-											  [posts addObject:newPost];
+											  [posts insertObject:newPost atIndex:0];
 											  [self.tableView reloadData];
 											  
 											  return YES;											  
