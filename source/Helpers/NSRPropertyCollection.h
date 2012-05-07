@@ -46,7 +46,9 @@
 @property (nonatomic, strong) NSRConfig *customConfig;
 
 
-- (NSString *) equivalenceForProperty:(NSString *)objcProperty;
+- (NSString *) remoteEquivalentForObjcProperty:(NSString *)objcProperty;
+- (NSString *) objcPropertyForRemoteEquivalent:(NSString *)railsProperty;
+
 - (BOOL) propertyIsMarkedBelongsTo:(NSString *)prop;
 
 - (id) initWithClass:(Class)c;

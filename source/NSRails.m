@@ -293,11 +293,21 @@
 	return [self remoteJSONRepresentation:error];
 }
 
-- (id) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
+- (NSRailsModel *) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
 {
 	//make a new class to be entered for this property/array (we can assume it subclasses NSRailsModel)
 	NSRailsModel *model = [[NSClassFromString(classN) alloc] initWithRemoteDictionary:dict];
-		
+	
+	//see if we can assign an association from its parent (the receiver)
+	NSString *parentModelName = [[self class] getModelName];
+	NSString *property = [[model propertyCollection] objcPropertyForRemoteEquivalent:parentModelName];
+	if (property)
+	{
+		SEL setter = [[model class] getPropertySetter:property];
+		if (setter)
+			[model performSelector:setter withObject:self];
+	}
+	
 	return model;
 }
 
@@ -449,7 +459,7 @@
 	
 	for (NSString *objcProperty in [self propertyCollection].retrievableProperties) //marked as retrievable
 	{
-		NSString *railsEquivalent = [[self propertyCollection] equivalenceForProperty:objcProperty];
+		NSString *railsEquivalent = [[self propertyCollection] remoteEquivalentForObjcProperty:objcProperty];
 		if (!railsEquivalent)
 		{
 			//check to see if we should auto_underscore if no equivalence set
@@ -533,7 +543,7 @@
 						//add the remainder of dictionaries (new entries)
 						for (NSDictionary *dict in val)
 						{
-							id model = [self makeRelevantModelFromClass:nestedClass basedOn:dict];
+							NSRailsModel *model = [self makeRelevantModelFromClass:nestedClass basedOn:dict];
 							[previousVal addObject:model];
 							
 							changes = YES;
@@ -544,7 +554,7 @@
 					{
 						NSDictionary *objDict = [dict objectForKey:railsEquivalent];
 						
-						//if the nested object didn't exist before, make it
+						//if the nested object didn't exist before, make it & set it
 						if (!previousVal)
 						{
 							val = [self makeRelevantModelFromClass:nestedClass basedOn:objDict];
@@ -605,7 +615,7 @@
 		if (shallow && [[[self propertyCollection] nestedModelProperties] objectForKey:objcProperty])
 			continue;
 		
-		NSString *railsEquivalent = [[self propertyCollection] equivalenceForProperty:objcProperty];
+		NSString *railsEquivalent = [[self propertyCollection] remoteEquivalentForObjcProperty:objcProperty];
 		
 		//check to see if we should auto_underscore if no equivalence set
 		if (!railsEquivalent)

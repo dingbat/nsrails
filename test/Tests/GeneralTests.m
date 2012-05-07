@@ -521,7 +521,9 @@
 	Post *retrievedPost = [Post remoteObjectWithID:post.remoteID.integerValue error:&e];
 	GHAssertNil(e, @"There should be no errors in post retrieval");
 	GHAssertTrue(retrievedPost.responses.count == 1, @"The retrieved post should have one response (we just made it)");
-	GHAssertNotNil([[retrievedPost.responses objectAtIndex:0] remoteID], @"The response inside post's response should have a present remoteID (we just made it)");
+	GHAssertNotNil([[retrievedPost.responses objectAtIndex:0] remoteID], @"The response inside post's responses should have a present remoteID (we just made it)");
+	GHAssertNotNil([[retrievedPost.responses objectAtIndex:0] post], @"The response inside post's responses should have a post");
+	GHAssertTrue(retrievedPost == [[retrievedPost.responses objectAtIndex:0] post], @"The retrieved post's response should point to it in the 'post' property");
 	
 	NSNumber *responseID = response.remoteID;
 	response.remoteDestroyOnNesting = YES;
@@ -532,7 +534,7 @@
 	GHAssertNotNil(response, @"Local Response object should still be here (deleted properly)");
 	
 	e = nil;
-	
+		
 	NSRResponse *retrieveResponse = [NSRResponse remoteObjectWithID:[responseID integerValue] error:&e];
 	GHAssertNotNil(e, @"Response object should've been nest-deleted, where's the error in retrieving it?");
 	
@@ -559,6 +561,7 @@
 	[belongsTo remoteCreate:&e];
 	
 	GHAssertNil(e, @"There should be no error with sending response marked with 'belongs_to' - 'post_id' should've been used instead of _attributes");
+	GHAssertTrue(post == belongsTo.post, @"Belongs-to response's post should be the same after create");
 	GHAssertNotNil(belongsTo.remoteID, @"belongsTo response's ID should exist - there was no error in create.");
 	
 	e = nil;

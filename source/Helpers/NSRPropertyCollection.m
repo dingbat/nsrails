@@ -445,7 +445,7 @@ static NSString * const NSRNoEquivalentMarker = @"";
 	return !![nestedModelProperties objectForKey:NSRBelongsToKeyForProperty(prop)];
 }
 
-- (NSString *) equivalenceForProperty:(NSString *)objcProperty
+- (NSString *) remoteEquivalentForObjcProperty:(NSString *)objcProperty
 {
 	NSString *railsEquivalent = [propertyEquivalents objectForKey:objcProperty];
 	if ([railsEquivalent isEqualToString:NSRNoEquivalentMarker])
@@ -455,6 +455,27 @@ static NSString * const NSRNoEquivalentMarker = @"";
 	return railsEquivalent;
 }
 
+- (NSString *) objcPropertyForRemoteEquivalent:(NSString *)railsProperty;
+{
+	NSSet *properties = [propertyEquivalents keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) 
+	{
+		return [railsProperty isEqualToString:key];
+	}];
+	
+	NSString *key = [properties anyObject];
+	if (!key)
+	{
+		//no keys (rails equivs) match the railsProperty
+		//could mean that there's no PROPERTY or that there's no EQUIVALENCE
+		
+		if ([[self remoteEquivalentForObjcProperty:key] isEqualToString:NSRNoEquivalentMarker])
+			return key;
+		
+		return nil;
+	}
+	
+	return key;
+}
 
 #pragma mark -
 #pragma mark NSCoding
