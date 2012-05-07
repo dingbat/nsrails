@@ -298,10 +298,14 @@
 	//make a new class to be entered for this property/array (we can assume it subclasses NSRailsModel)
 	NSRailsModel *model = [[NSClassFromString(classN) alloc] initWithRemoteDictionary:dict];
 	
-	//see if we can assign an association from its parent (the receiver)
+	//see if we can assign an association from its parent (the receiver -- "me" ("self"))
 	NSString *parentModelName = [[self class] getModelName];
-	NSString *property = [[model propertyCollection] objcPropertyForRemoteEquivalent:parentModelName];
-	if (property)
+	NSString *property = [[model propertyCollection] objcPropertyForRemoteEquivalent:parentModelName 
+																		 autoinflect:[self getRelevantConfig].autoInflectsNamesAndProperties];
+	
+	//only assign me to the child if it has me defined as a property and it's marked as nested to me
+	if (property &&
+		[[model.propertyCollection.nestedModelProperties objectForKey:property] isEqualToString:[self.class description]])
 	{
 		SEL setter = [[model class] getPropertySetter:property];
 		if (setter)
@@ -459,20 +463,9 @@
 	
 	for (NSString *objcProperty in [self propertyCollection].retrievableProperties) //marked as retrievable
 	{
-		NSString *railsEquivalent = [[self propertyCollection] remoteEquivalentForObjcProperty:objcProperty];
-		if (!railsEquivalent)
-		{
-			//check to see if we should auto_underscore if no equivalence set
-			if ([self getRelevantConfig].autoInflectsNamesAndProperties)
-			{
-				railsEquivalent = [objcProperty underscore];
-			}
-			//otherwise, assume that the rails equivalent is precisely how it's defined in obj-c
-			else
-			{
-				railsEquivalent = objcProperty;
-			}
-		}
+		NSString *railsEquivalent = [[self propertyCollection] remoteEquivalentForObjcProperty:objcProperty 
+																				   autoinflect:[self getRelevantConfig].autoInflectsNamesAndProperties];
+
 		SEL setter = [[self class] getPropertySetter:objcProperty];
 		if ([self respondsToSelector:setter])
 			//means its marked as retrievable and is settable through setEtc:.
@@ -615,20 +608,8 @@
 		if (shallow && [[[self propertyCollection] nestedModelProperties] objectForKey:objcProperty])
 			continue;
 		
-		NSString *railsEquivalent = [[self propertyCollection] remoteEquivalentForObjcProperty:objcProperty];
-		
-		//check to see if we should auto_underscore if no equivalence set
-		if (!railsEquivalent)
-		{
-			if ([self getRelevantConfig].autoInflectsNamesAndProperties)
-			{
-				railsEquivalent = [[objcProperty underscore] lowercaseString];
-			}
-			else
-			{			
-				railsEquivalent = objcProperty;
-			}
-		}
+		NSString *railsEquivalent = [[self propertyCollection] remoteEquivalentForObjcProperty:objcProperty 
+																				   autoinflect:[self getRelevantConfig].autoInflectsNamesAndProperties];
 		
 		id val = [self representationOfObjectForProperty:objcProperty];
 		
