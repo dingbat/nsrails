@@ -45,20 +45,30 @@
 		591F9D731519983300E30253 /* SBJsonUTF8Stream.m in Sources */ = {isa = PBXBuildFile; fileRef = 591F9D511519983300E30253 /* SBJsonUTF8Stream.m */; };
 		591F9D741519983300E30253 /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 591F9D531519983300E30253 /* SBJsonWriter.m */; };
 		591F9D751519983300E30253 /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 591F9D531519983300E30253 /* SBJsonWriter.m */; };
+		598EAE4E1558646C00A2DC18 /* TNSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 598EAE4D1558646C00A2DC18 /* TNSRPropertyCollection.m */; };
+		598EAE4F1558646C00A2DC18 /* TNSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 598EAE4D1558646C00A2DC18 /* TNSRPropertyCollection.m */; };
+		598EAE51155864C700A2DC18 /* THelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 598EAE50155864C700A2DC18 /* THelpers.m */; };
+		598EAE52155864C700A2DC18 /* THelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 598EAE50155864C700A2DC18 /* THelpers.m */; };
+		598EAE54155864E800A2DC18 /* TIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 598EAE53155864E800A2DC18 /* TIntegration.m */; };
+		598EAE55155864E800A2DC18 /* TIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 598EAE53155864E800A2DC18 /* TIntegration.m */; };
+		598EAE571558657400A2DC18 /* TNSRailsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 598EAE561558657400A2DC18 /* TNSRailsModel.m */; };
+		598EAE581558657400A2DC18 /* TNSRailsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 598EAE561558657400A2DC18 /* TNSRailsModel.m */; };
+		598EAE5B1558672D00A2DC18 /* MockServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 598EAE5A1558672D00A2DC18 /* MockServer.m */; };
+		598EAE5C1558672D00A2DC18 /* MockServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 598EAE5A1558672D00A2DC18 /* MockServer.m */; };
+		598EAE7D1558859600A2DC18 /* TNSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 598EAE7C1558859600A2DC18 /* TNSRConfig.m */; };
+		598EAE7E1558859600A2DC18 /* TNSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 598EAE7C1558859600A2DC18 /* TNSRConfig.m */; };
+		59A3DFD81558D55100C0EBC5 /* 404-2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 59A3DFD51558D55100C0EBC5 /* 404-2.txt */; };
+		59A3DFD91558D55100C0EBC5 /* 404-2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 59A3DFD51558D55100C0EBC5 /* 404-2.txt */; };
+		59A3DFDA1558D55100C0EBC5 /* 404.txt in Resources */ = {isa = PBXBuildFile; fileRef = 59A3DFD61558D55100C0EBC5 /* 404.txt */; };
+		59A3DFDB1558D55100C0EBC5 /* 404.txt in Resources */ = {isa = PBXBuildFile; fileRef = 59A3DFD61558D55100C0EBC5 /* 404.txt */; };
+		59A3DFDC1558D55100C0EBC5 /* 500.txt in Resources */ = {isa = PBXBuildFile; fileRef = 59A3DFD71558D55100C0EBC5 /* 500.txt */; };
+		59A3DFDD1558D55100C0EBC5 /* 500.txt in Resources */ = {isa = PBXBuildFile; fileRef = 59A3DFD71558D55100C0EBC5 /* 500.txt */; };
 		59B58E751538AD0300DF8835 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59B58E711538AD0300DF8835 /* GHUnitIOS.framework */; };
 		59B58E771538AD0300DF8835 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 59B58E741538AD0300DF8835 /* main.m */; };
 		59B58E7D1538AD0A00DF8835 /* GHUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59B58E791538AD0A00DF8835 /* GHUnit.framework */; };
 		59B58E7F1538AD0A00DF8835 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 59B58E7C1538AD0A00DF8835 /* main.m */; };
 		59B58E821538AD4500DF8835 /* GHUnitIOS.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 59B58E711538AD0300DF8835 /* GHUnitIOS.framework */; };
 		59B58E831538AD4E00DF8835 /* GHUnit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 59B58E791538AD0A00DF8835 /* GHUnit.framework */; };
-		59D16342153880F90039BA21 /* GeneralTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D16339153880F90039BA21 /* GeneralTests.m */; };
-		59D16343153880F90039BA21 /* GeneralTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D16339153880F90039BA21 /* GeneralTests.m */; };
-		59D16344153880F90039BA21 /* InheritanceTestClasses.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D1633B153880F90039BA21 /* InheritanceTestClasses.m */; };
-		59D16345153880F90039BA21 /* InheritanceTestClasses.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D1633B153880F90039BA21 /* InheritanceTestClasses.m */; };
-		59D16346153880F90039BA21 /* InheritanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D1633C153880F90039BA21 /* InheritanceTests.m */; };
-		59D16347153880F90039BA21 /* InheritanceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D1633C153880F90039BA21 /* InheritanceTests.m */; };
-		59D16348153880F90039BA21 /* NestingTestClasses.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D1633E153880F90039BA21 /* NestingTestClasses.m */; };
-		59D16349153880F90039BA21 /* NestingTestClasses.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D1633E153880F90039BA21 /* NestingTestClasses.m */; };
 		59D1634A153880F90039BA21 /* TestClasses.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D16341153880F90039BA21 /* TestClasses.m */; };
 		59D1634B153880F90039BA21 /* TestClasses.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D16341153880F90039BA21 /* TestClasses.m */; };
 		59D16359153883430039BA21 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D16358153883420039BA21 /* Cocoa.framework */; };
@@ -131,6 +141,16 @@
 		591F9D511519983300E30253 /* SBJsonUTF8Stream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonUTF8Stream.m; sourceTree = "<group>"; };
 		591F9D521519983300E30253 /* SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonWriter.h; sourceTree = "<group>"; };
 		591F9D531519983300E30253 /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonWriter.m; sourceTree = "<group>"; };
+		598EAE4D1558646C00A2DC18 /* TNSRPropertyCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TNSRPropertyCollection.m; path = Tests/TNSRPropertyCollection.m; sourceTree = "<group>"; };
+		598EAE50155864C700A2DC18 /* THelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = THelpers.m; path = Tests/THelpers.m; sourceTree = "<group>"; };
+		598EAE53155864E800A2DC18 /* TIntegration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TIntegration.m; path = Tests/TIntegration.m; sourceTree = "<group>"; };
+		598EAE561558657400A2DC18 /* TNSRailsModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TNSRailsModel.m; path = Tests/TNSRailsModel.m; sourceTree = "<group>"; };
+		598EAE591558672D00A2DC18 /* MockServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MockServer.h; path = Tests/MockServer.h; sourceTree = "<group>"; };
+		598EAE5A1558672D00A2DC18 /* MockServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MockServer.m; path = Tests/MockServer.m; sourceTree = "<group>"; };
+		598EAE7C1558859600A2DC18 /* TNSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TNSRConfig.m; path = Tests/TNSRConfig.m; sourceTree = "<group>"; };
+		59A3DFD51558D55100C0EBC5 /* 404-2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "404-2.txt"; path = "Mocks/404-2.txt"; sourceTree = "<group>"; };
+		59A3DFD61558D55100C0EBC5 /* 404.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 404.txt; path = Mocks/404.txt; sourceTree = "<group>"; };
+		59A3DFD71558D55100C0EBC5 /* 500.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 500.txt; path = Mocks/500.txt; sourceTree = "<group>"; };
 		59B58E5D1538943E00DF8835 /* readme.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.md; sourceTree = "<group>"; };
 		59B58E711538AD0300DF8835 /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GHUnitIOS.framework; sourceTree = "<group>"; };
 		59B58E721538AD0300DF8835 /* iPhone Tests-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iPhone Tests-Info.plist"; sourceTree = "<group>"; };
@@ -140,15 +160,9 @@
 		59B58E7A1538AD0A00DF8835 /* Mac OS Tests-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Mac OS Tests-Info.plist"; sourceTree = "<group>"; };
 		59B58E7B1538AD0A00DF8835 /* Mac OS Tests-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Mac OS Tests-Prefix.pch"; sourceTree = "<group>"; };
 		59B58E7C1538AD0A00DF8835 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		59D16339153880F90039BA21 /* GeneralTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GeneralTests.m; path = Tests/GeneralTests.m; sourceTree = "<group>"; };
-		59D1633A153880F90039BA21 /* InheritanceTestClasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InheritanceTestClasses.h; sourceTree = "<group>"; };
-		59D1633B153880F90039BA21 /* InheritanceTestClasses.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InheritanceTestClasses.m; sourceTree = "<group>"; };
-		59D1633C153880F90039BA21 /* InheritanceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = InheritanceTests.m; path = Tests/InheritanceTests.m; sourceTree = "<group>"; };
-		59D1633D153880F90039BA21 /* NestingTestClasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NestingTestClasses.h; sourceTree = "<group>"; };
-		59D1633E153880F90039BA21 /* NestingTestClasses.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NestingTestClasses.m; sourceTree = "<group>"; };
 		59D1633F153880F90039BA21 /* NSRAsserts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSRAsserts.h; path = Tests/NSRAsserts.h; sourceTree = "<group>"; };
-		59D16340153880F90039BA21 /* TestClasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestClasses.h; sourceTree = "<group>"; };
-		59D16341153880F90039BA21 /* TestClasses.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestClasses.m; sourceTree = "<group>"; };
+		59D16340153880F90039BA21 /* TestClasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestClasses.h; path = Tests/TestClasses.h; sourceTree = "<group>"; };
+		59D16341153880F90039BA21 /* TestClasses.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestClasses.m; path = Tests/TestClasses.m; sourceTree = "<group>"; };
 		59D16358153883420039BA21 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		59E3187814E9CD8700B0FC39 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		59E3187A14E9CD8700B0FC39 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -196,10 +210,17 @@
 		591424AD14EAFE7400481815 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				598EAE591558672D00A2DC18 /* MockServer.h */,
+				598EAE5A1558672D00A2DC18 /* MockServer.m */,
 				59D1633F153880F90039BA21 /* NSRAsserts.h */,
-				59D1634C1538811D0039BA21 /* Test Classes */,
-				59D16339153880F90039BA21 /* GeneralTests.m */,
-				59D1633C153880F90039BA21 /* InheritanceTests.m */,
+				59D16340153880F90039BA21 /* TestClasses.h */,
+				59D16341153880F90039BA21 /* TestClasses.m */,
+				598EAE4D1558646C00A2DC18 /* TNSRPropertyCollection.m */,
+				598EAE561558657400A2DC18 /* TNSRailsModel.m */,
+				598EAE7C1558859600A2DC18 /* TNSRConfig.m */,
+				598EAE50155864C700A2DC18 /* THelpers.m */,
+				598EAE53155864E800A2DC18 /* TIntegration.m */,
+				59A3DFDE1558D9D100C0EBC5 /* Error dumps */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -262,6 +283,16 @@
 			path = SBJson;
 			sourceTree = "<group>";
 		};
+		59A3DFDE1558D9D100C0EBC5 /* Error dumps */ = {
+			isa = PBXGroup;
+			children = (
+				59A3DFD51558D55100C0EBC5 /* 404-2.txt */,
+				59A3DFD61558D55100C0EBC5 /* 404.txt */,
+				59A3DFD71558D55100C0EBC5 /* 500.txt */,
+			);
+			name = "Error dumps";
+			sourceTree = "<group>";
+		};
 		59B58E6F1538ACF900DF8835 /* Targets */ = {
 			isa = PBXGroup;
 			children = (
@@ -293,20 +324,6 @@
 			);
 			name = "Mac OS";
 			path = "Targets/Mac OS";
-			sourceTree = "<group>";
-		};
-		59D1634C1538811D0039BA21 /* Test Classes */ = {
-			isa = PBXGroup;
-			children = (
-				59D1633A153880F90039BA21 /* InheritanceTestClasses.h */,
-				59D1633B153880F90039BA21 /* InheritanceTestClasses.m */,
-				59D1633D153880F90039BA21 /* NestingTestClasses.h */,
-				59D1633E153880F90039BA21 /* NestingTestClasses.m */,
-				59D16340153880F90039BA21 /* TestClasses.h */,
-				59D16341153880F90039BA21 /* TestClasses.m */,
-			);
-			name = "Test Classes";
-			path = Tests;
 			sourceTree = "<group>";
 		};
 		59E3186914E9CD8700B0FC39 = {
@@ -411,6 +428,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59A3DFD91558D55100C0EBC5 /* 404-2.txt in Resources */,
+				59A3DFDB1558D55100C0EBC5 /* 404.txt in Resources */,
+				59A3DFDD1558D55100C0EBC5 /* 500.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -418,6 +438,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59A3DFD81558D55100C0EBC5 /* 404-2.txt in Resources */,
+				59A3DFDA1558D55100C0EBC5 /* 404.txt in Resources */,
+				59A3DFDC1558D55100C0EBC5 /* 500.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -447,12 +470,14 @@
 				591F9D711519983300E30253 /* SBJsonTokeniser.m in Sources */,
 				591F9D731519983300E30253 /* SBJsonUTF8Stream.m in Sources */,
 				591F9D751519983300E30253 /* SBJsonWriter.m in Sources */,
-				59D16343153880F90039BA21 /* GeneralTests.m in Sources */,
-				59D16345153880F90039BA21 /* InheritanceTestClasses.m in Sources */,
-				59D16347153880F90039BA21 /* InheritanceTests.m in Sources */,
-				59D16349153880F90039BA21 /* NestingTestClasses.m in Sources */,
 				59D1634B153880F90039BA21 /* TestClasses.m in Sources */,
 				59B58E7F1538AD0A00DF8835 /* main.m in Sources */,
+				598EAE4F1558646C00A2DC18 /* TNSRPropertyCollection.m in Sources */,
+				598EAE52155864C700A2DC18 /* THelpers.m in Sources */,
+				598EAE55155864E800A2DC18 /* TIntegration.m in Sources */,
+				598EAE581558657400A2DC18 /* TNSRailsModel.m in Sources */,
+				598EAE5C1558672D00A2DC18 /* MockServer.m in Sources */,
+				598EAE7E1558859600A2DC18 /* TNSRConfig.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -479,12 +504,14 @@
 				591F9D701519983300E30253 /* SBJsonTokeniser.m in Sources */,
 				591F9D721519983300E30253 /* SBJsonUTF8Stream.m in Sources */,
 				591F9D741519983300E30253 /* SBJsonWriter.m in Sources */,
-				59D16342153880F90039BA21 /* GeneralTests.m in Sources */,
-				59D16344153880F90039BA21 /* InheritanceTestClasses.m in Sources */,
-				59D16346153880F90039BA21 /* InheritanceTests.m in Sources */,
-				59D16348153880F90039BA21 /* NestingTestClasses.m in Sources */,
 				59D1634A153880F90039BA21 /* TestClasses.m in Sources */,
 				59B58E771538AD0300DF8835 /* main.m in Sources */,
+				598EAE4E1558646C00A2DC18 /* TNSRPropertyCollection.m in Sources */,
+				598EAE51155864C700A2DC18 /* THelpers.m in Sources */,
+				598EAE54155864E800A2DC18 /* TIntegration.m in Sources */,
+				598EAE571558657400A2DC18 /* TNSRailsModel.m in Sources */,
+				598EAE5B1558672D00A2DC18 /* MockServer.m in Sources */,
+				598EAE7D1558859600A2DC18 /* TNSRConfig.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,15 +10,22 @@
 #import "NSRPropertyCollection.h"
 #import "NSRConfig.h"
 #import "NSString+Inflection.h"
+#import "NSObject+Properties.h"
+
+
+#import "TestClasses.h"
+#import "MockServer.h"
 
 //Make some private methods accessible
 @interface NSRailsModel (internal)
 
 + (NSRConfig *) getRelevantConfig;
 
-+ (NSString *) railsProperties;
-+ (NSString *) getModelName;
-+ (NSString *) getPluralModelName;
++ (NSString *) masterNSRailsSync;
++ (NSString *) masterNSRailsSyncWithOverrideString:(NSString *)override;
+
++ (NSString *) masterModelName;
++ (NSString *) masterPluralName;
 
 + (NSRPropertyCollection *) propertyCollection;
 - (NSRPropertyCollection *) propertyCollection;
@@ -35,9 +42,9 @@
 @end
 
 
-#define NSRAssertClassModelName(mname, class)	GHAssertEqualStrings([class getModelName], mname, @"%@ model name failed.", NSStringFromClass(class))
+#define NSRAssertClassModelName(mname, class)	GHAssertEqualStrings([class masterModelName], mname, @"%@ model name failed.", NSStringFromClass(class))
 
-#define NSRAssertClassPluralName(mname, class)	GHAssertEqualStrings([class getPluralModelName], mname, @"%@ model name failed.", NSStringFromClass(class))
+#define NSRAssertClassPluralName(mname, class)	GHAssertEqualStrings([class masterPluralName], mname, @"%@ model name failed.", NSStringFromClass(class))
 
 //if statement, for limited scope
 #define NSRAssertEqualArrays(arr, ...) \
@@ -46,10 +53,15 @@ NSArray *test = [NSArray arrayWithObjects:__VA_ARGS__, nil];\
 GHAssertEqualObjects(arr, test, nil); \
 }
 
-#define NSRAssertClassProperties(class, ...) NSRAssertEqualArrays([[class propertyCollection] sendableProperties], __VA_ARGS__)
-#define NSRAssertInstanceProperties(class, ...) NSRAssertEqualArrays([[[[class alloc] init] propertyCollection] sendableProperties], __VA_ARGS__)
-
-#define NSRAssertClassAndInstanceProperties(class, ...) NSRAssertClassProperties(class, __VA_ARGS__); NSRAssertInstanceProperties(class, __VA_ARGS__)
+#define NSRAssertEqualArraysNoOrder(arr, ...) \
+if (YES) \
+{ \
+NSArray *test = [NSArray arrayWithObjects:__VA_ARGS__, nil];\
+if (test.count != arr.count) GHFail(@"%@ should be equal (order doesn't matter) to %@",arr,test); \
+for (id obj in test) { \
+if (![arr containsObject:obj]) GHFail(@"%@ should be equal (order doesn't matter) to %@",arr,test); \
+} \
+}
 
 #define NSRAssertEqualConfigs(config,teststring,desc, ...) GHAssertEqualStrings(config.appURL, [@"http://" stringByAppendingString:teststring], desc, __VA_ARGS__)
 

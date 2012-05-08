@@ -1,5 +1,5 @@
 //
-//  UniversalTests.m
+//  TIntegration.m
 //  NSRails
 //
 //  Created by Dan Hassin on 1/29/12.
@@ -8,179 +8,13 @@
 
 #import "NSRAsserts.h"
 
-#import "InheritanceTestClasses.h"
-#import "NestingTestClasses.h"
-#import "TestClasses.h"
-
-@interface GeneralTests : GHTestCase
+@interface TIntegration : GHTestCase
 {
 	BOOL noServer;
 }
 @end
 
-@implementation GeneralTests
-
-#define NSRInitTestClass(customProperties) [[TestClass alloc] initWithCustomSyncProperties:customProperties]
-
-- (void) test_invalid_sync_params
-{
-	GHAssertThrows(NSRInitTestClass(@"f8a asufoj as;lfkas [pfl;aksm jofaskf oasa"), @"Should've failed random mash");
-
-	GHAssertNoThrow(NSRInitTestClass(@"attr1,\nattr2"), @"Shouldn't crash if newline in the middle");
-
-	GHAssertThrows(NSRInitTestClass(@"primitiveAttr"), @"Should crash if a primitive attribute was defined in NSRailsSync");
-	
-	GHAssertThrows(NSRInitTestClass(@"remoteID -x"), @"Should crash if trying to modify remoteID in NSRS");
-	GHAssertThrows(NSRInitTestClass(@"myID=id"), @"Should crash if trying to set a property to ID equiv in NSRS");
-	GHAssertNoThrow(NSRInitTestClass(@"myID=id -r"), @"Shouldn't crash for setting a property to ID -r only");
-	
-	GHAssertThrows(NSRInitTestClass(@"nonexistent"), @"Should crash if trying to set a nonexistent property in NSRS");
-	
-	GHAssertThrows(NSRInitTestClass(@"attr1=hello, attr2=hello"), @"Should crash if trying to set two properties to the same rails equiv in NSRS");
-	GHAssertThrows(NSRInitTestClass(@"attr1=hello -r, attr2=hello, myID=hello"), @"Should crash if trying to set two sendable properties to the same rails equiv in NSRS");
-	GHAssertNoThrow(NSRInitTestClass(@"attr1=hello -r, attr2=hello"), @"Shouldn't crash if two properties are set to the same rails equiv in NSRS, but only one is sendable");
-	
-	GHAssertThrows(NSRInitTestClass(@"badRetrieve"), @"Should crash if trying to set a retrievable property without a getter in NSRS");
-	GHAssertNoThrow(NSRInitTestClass(@"badRetrieve -s"), @"Shouldn't crash if trying to set a sendable property without a getter in NSRS");
-
-	GHAssertThrows(NSRInitTestClass(@"array"), @"Should crash without class to fill array");
-	GHAssertThrows(NSRInitTestClass(@"array:FakeClass"), @"Should crash without real class to fill array");
-	GHAssertThrows(NSRInitTestClass(@"array:BadResponse"), @"Should crash because class exists but doesn't inherit from NSRM");
-	GHAssertNoThrow(NSRInitTestClass(@"array:"), @"Shouldn't crash when defaulting to NSDictionaries");
-}
-
-- (void) test_no_rails_sync
-{
-	NSRAssertClassAndInstanceProperties([ClassWithNoRailsSync class], @"remoteID", @"attribute");
-}
-
-- (void) test_property_flags
-{
-	TestClass *c = [[TestClass alloc] initWithCustomSyncProperties:@"retrieve -r, send -s, local -x, decode -d, encode -e, parent -b"];
-	NSRPropertyCollection *pc = [c propertyCollection];
-	
-	NSRAssertEqualArrays(pc.retrievableProperties, @"remoteID", @"retrieve", @"decode", @"encode", @"parent");
-	NSRAssertEqualArrays(pc.sendableProperties, @"remoteID", @"send", @"decode", @"encode", @"parent");
-	NSRAssertEqualArrays(pc.decodeProperties, @"decode");
-	NSRAssertEqualArrays(pc.encodeProperties, @"encode");
-	
-	c.encode = @"encode"; //should capitalize it
-
-	NSDictionary *sendDict = [c dictionaryOfRemoteProperties];
-	GHAssertNil([sendDict objectForKey:@"retrieve"], @"Retrieve was defined as -r only, should not be in send dict");
-	GHAssertNil([sendDict objectForKey:@"local"], @"Local was defined as -x, should not be in send dict");
-	GHAssertEqualStrings([sendDict objectForKey:@"encode"], [c.encode uppercaseString], @"Encode method failed");
-	GHAssertTrue([sendDict objectForKey:@"parent"] == [NSNull null], @"Even if belongs_to, should've sent nil if prop is nil");
-	
-	c.parent = [[TestClassParent alloc] init];
-	GHAssertNotNil([[c dictionaryOfRemoteProperties] objectForKey:@"parent_attributes"], @"'parent_attributes' should've been set, not _id");
-	GHAssertNil([[c dictionaryOfRemoteProperties] objectForKey:@"parent"], @"'parent' shouldn't been set, since it's not nil (should be _attributes)");
-
-	c.parent.remoteID = [NSNumber numberWithInt:5];
-	GHAssertTrue([[[c dictionaryOfRemoteProperties] objectForKey:@"parent_id"] intValue] == 5, @"parent_id should've been set, to 5");
-	GHAssertNil([[c dictionaryOfRemoteProperties] objectForKey:@"parent_attributes"], @"'parent_attributes' shouldn't have been set, since it has an id");
-	GHAssertNil([[c dictionaryOfRemoteProperties] objectForKey:@"parent"], @"'parent' shouldn't been set, since it's not nil (should be _attributes)");
-
-	NSMutableDictionary *remoteReturn = [[NSMutableDictionary alloc] init];
-	[remoteReturn setObject:@"DECODE" forKey:@"decode"];
-	[remoteReturn setObject:@"xxxxx" forKey:@"send"];
-	[remoteReturn setObject:@"xxxxx" forKey:@"local"];
-	[remoteReturn setObject:@"retrieve" forKey:@"retrieve"];
-	[remoteReturn setObject:@"ENCODE" forKey:@"encode"];
-	
-	[c setPropertiesUsingRemoteDictionary:remoteReturn];
-	GHAssertNil(c.send, @"Sendable-only property shouldn't have been set");
-	GHAssertNil(c.local, @"Local-only property shouldn't have been set");
-	GHAssertEqualStrings(c.decode, @"decode", @"Decodable property should've been downcased");
-	GHAssertEqualStrings(c.retrieve, @"retrieve", @"Retrievable property should've been set");
-	GHAssertEqualStrings(c.encode, @"ENCODE", @"Encodable-only property should've been untouched");
-}
-
-- (void) test_config_environments
-{
-	[NSRConfig resetConfigs];
-	
-	NSRConfig *defaultDev = [NSRConfig defaultConfig];
-	GHAssertNotNil(defaultDev, @"Calling defaultConfig should generate config if nil");
-	
-	[[NSRConfig defaultConfig] setAppURL:@"Default"];
-	NSRAssertRelevantConfigURL(@"Default", nil);
-	GHAssertEqualStrings([NSRConfig currentEnvironment], NSRConfigEnvironmentDevelopment, @"Should've set default to dev environment");
-	
-	[NSRConfig setCurrentEnvironment:NSRConfigEnvironmentProduction];
-	GHAssertEqualStrings([NSRConfig currentEnvironment], NSRConfigEnvironmentProduction, @"Should've set environment to Prod");
-	GHAssertNil([NSRConfig defaultConfig].appURL, @"App URL for Prod environment never set, should be nil.");
-	
-	[[NSRConfig defaultConfig] setAppURL:@"Prod"];
-	GHAssertEqualStrings([NSRConfig currentEnvironment], NSRConfigEnvironmentProduction, @"Environment should still be Prod from before");
-	NSRAssertRelevantConfigURL(@"Prod", @"Default URL set while in Prod, should have stuck");
-	
-	NSRConfig *testConfig = [NSRConfig configForEnvironment:@"test"];
-	testConfig.appURL = @"TestURL";
-	GHAssertEqualStrings([NSRConfig currentEnvironment], NSRConfigEnvironmentProduction, @"Environment still be Prod");
-	NSRAssertRelevantConfigURL(@"Prod", @"Default URL set while in Prod, should have stuck");
-	GHAssertNotNil(testConfig, @"Calling configForEnvironment: should generate a new config if non-existent");
-	
-	[NSRConfig setCurrentEnvironment:@"test"];
-	GHAssertEqualStrings([NSRConfig currentEnvironment], @"test", @"Environment should be test");
-	NSRAssertRelevantConfigURL(@"TestURL", @"Default URL should be one set for test");
-	
-	NSRConfig *newProd = [[NSRConfig alloc] initWithAppURL:@"NewProdURL"];
-	[NSRConfig setConfig:newProd asDefaultForEnvironment:NSRConfigEnvironmentProduction];
-	GHAssertEqualStrings([NSRConfig currentEnvironment], @"test", @"Environment should still be test");
-	NSRAssertRelevantConfigURL(@"TestURL", @"Default URL should be one set for test");
-	NSRAssertEqualConfigs([NSRConfig configForEnvironment:NSRConfigEnvironmentProduction], @"NewProdURL", @"Production environment config should change after overwriting its default", nil);
-	
-	//set it default for current env too (test)
-	[NSRConfig setConfigAsDefault:newProd];
-	NSRAssertRelevantConfigURL(@"NewProdURL", @"Default URL should be the new one set for prod");
-	
-	[NSRConfig setCurrentEnvironment:NSRConfigEnvironmentDevelopment];
-	GHAssertEqualStrings([NSRConfig currentEnvironment], NSRConfigEnvironmentDevelopment, @"Environment should have been set to Dev");
-	NSRAssertRelevantConfigURL(@"Default", @"Default URL should be one set for Dev");
-}
-
-- (void) test_config_nested_contexts
-{
-	[[NSRConfig defaultConfig] setAppURL:@"http://Default/"]; //also tests to see that it'll get rid of the /
-	
-	NSRAssertRelevantConfigURL(@"Default", @"default, exterior before nesting");
-	
-	[[NSRConfig defaultConfig] useIn:^
-	 {
-		 NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"Nested"]; //also tests to see that it'll add http://
-		 [c use];
-		 
-		 NSRAssertRelevantConfigURL(@"Nested", @"[use] nested inside of default block");
-		 
-		 [[NSRConfig defaultConfig] useIn:^
-		  {
-			  NSRAssertRelevantConfigURL(@"Default", @"default block nested inside [use] inside default block");
-			  
-			  [c useIn:^
-			   {
-				   NSRAssertRelevantConfigURL(@"Nested", @"triple nested");
-			   }];
-		  }];
-		 
-		 [c end];
-		 
-		 NSRAssertRelevantConfigURL(@"Default", @"default at the end of default block after nestings");
-	 }];
-	
-	GHAssertEqualStrings(@"class_with_no_rails_sync", [ClassWithNoRailsSync getModelName], @"auto-underscoring");
-	
-	NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"NoAuto/"]; //also tests to see that it'll add http:// and remove the /
-	c.autoInflectsNamesAndProperties = NO;
-	[c useIn:
-	 ^{
-		 NSRAssertRelevantConfigURL(@"NoAuto", @"custom block ^{} block");
-		 
-		 GHAssertEqualStrings(@"ClassWithNoRailsSync", [ClassWithNoRailsSync getModelName], @"No auto-underscoring");
-	 }];
-	
-	NSRAssertRelevantConfigURL(@"Default", @"default exterior after all nesting");
-}
+@implementation TIntegration
 
 - (void) test_crud_async
 {
@@ -188,17 +22,12 @@
 	
 	/////////////////
 	//TEST READ ALL
-	
-	[[NSRConfig defaultConfig] setAppURL:@"localhost:3000"];
-	
-	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
-	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
-	
+		
 	[Post remoteAllAsync:^(NSArray *allPeople, NSError *error) 
-	{
-		GHAssertNil(error, @"ASYNC remoteAll on Post should have worked.'");
-		GHAssertNotNil(allPeople, @"ASYNC No errors, allPeople should not be nil.");
-	}];
+	 {
+		 GHAssertNil(error, @"ASYNC remoteAll on Post should have worked.'");
+		 GHAssertNotNil(allPeople, @"ASYNC No errors, allPeople should not be nil.");
+	 }];
 	
 	
 	/////////////////
@@ -239,7 +68,7 @@
 			GHAssertNil(e2, @"ASYNC Retrieving post we just made, should be no errors.");
 			GHAssertNotNil(retrievedPost, @"ASYNC No errors retrieving post we just made, he should not be nil.");
 			GHAssertEqualObjects([retrievedPost remoteID], newPost.remoteID, @"ASYNC Retrieved post should have same remoteID as created post");
-		
+			
 			newPost.author = @"Dan 2";
 			
 			/////////////////
@@ -247,7 +76,7 @@
 			//update should go through
 			[newPost remoteUpdateAsync:^(NSError *e3) {
 				GHAssertNil(e3, @"ASYNC Update should've gone through, there should be no error");
-
+				
 				NSNumber *postID = newPost.remoteID;
 				newPost.remoteID = nil;
 				
@@ -275,7 +104,7 @@
 						
 						//see if there's an exception if trying to retrieve with a nil ID
 						GHAssertThrows([newPost remoteFetchAsync:^(BOOL changed, NSError *error) {}], @"ASYNC Tried to retrieve an instance with a nil ID, where's the exception?");
-
+						
 						///////////////////////
 						//TEST DESTROY
 						
@@ -302,37 +131,11 @@
 {
 	GHAssertFalse(noServer, @"Test app not running. Run 'rails s'.");
 	
-	///////////////////
-	//TEST NIL APP URL
-	
-	//point app to nil at first to test
-	[[NSRConfig defaultConfig] setAppURL:nil];
-	
-	NSError *e = nil;
-	
-	GHAssertThrows([Post remoteObjectWithID:1 error:&e], @"Should fail on no app URL set in config, where's the error?");
-	
-	e = nil;
-	
 	/////////////////
 	//TEST READ ALL
 	
-	//point app to localhost as it should be, but no authentication to test
-	[[NSRConfig defaultConfig] setAppURL:@"localhost:3000"];
-	[[NSRConfig defaultConfig] setAppUsername:nil];
-	[[NSRConfig defaultConfig] setAppPassword:nil];
-	
+	NSError *e;
 	NSArray *allPeople = [Post remoteAll:&e];
-	
-	GHAssertNotNil(e, @"Should fail on not authenticated, where's the error?");
-	GHAssertNil(allPeople, @"Array should be nil because there was an authentication error");
-	
-	e = nil;
-	
-	//add authentication
-	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
-	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
-	allPeople = [Post remoteAll:&e];
 	
 	GHAssertNil(e, @"remoteAll on Post should have worked.'");
 	GHAssertNotNil(allPeople, @"No errors, allPeople should not be nil.");
@@ -458,16 +261,12 @@
 - (void) test_nesting
 {
 	GHAssertFalse(noServer, @"Test app not running. Run 'rails s'.");
-	
-	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
-	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
-	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
-	
+		
 	NSError *e = nil;
-
+	
 	NSArray *resps = [NSRResponse remoteAll:&e];
 	GHAssertNotNil(e, @"Without 'prefix ignore' set it should fail trying to access nsr_response...");
-
+	
 	[[NSRConfig defaultConfig] setIgnoresClassPrefixes:YES];
 	
 	e = nil;
@@ -534,7 +333,7 @@
 	GHAssertNotNil(response, @"Local Response object should still be here (deleted properly)");
 	
 	e = nil;
-		
+	
 	NSRResponse *retrieveResponse = [NSRResponse remoteObjectWithID:[responseID integerValue] error:&e];
 	GHAssertNotNil(e, @"Response object should've been nest-deleted, where's the error in retrieving it?");
 	
@@ -629,17 +428,13 @@
 	
 	[dictionariesPost remoteDestroy:&e];	
 	GHAssertNil(e, @"Post object should've been destroyed fine (nothing to do with nesting, just cleaning up)");
-
+	
 	e = nil;
 }
 
 - (void) test_diff_detection
 {
 	GHAssertFalse(noServer, @"Test app not running. Run 'rails s'.");
-	
-	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
-	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
-	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
 	
 	NSError *e = nil;
 	
@@ -681,7 +476,7 @@
 	GHAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
 	GHAssertTrue(post.responses.count == 0, @"remoteFetch should've overwritten post.responses");
 	GHAssertTrue(changes, @"remoteFetch should've returned true - there was a local change to Post (added a nested Response)");
-
+	
 	e = nil;
 	
 	response.post = post;
@@ -695,7 +490,7 @@
 	//simultaneously test -[NSRConfig setIgnoresClassPrefixes:]
 	[[NSRConfig defaultConfig] setIgnoresClassPrefixes:YES];
 	[response remoteCreate:&e];
-
+	
 	GHAssertNil(e, @"There should be no error on a normal remoteCreate for Response obj");
 	GHAssertNotNil(response.remoteID, @"There should be a remoteID present for newly created object");
 	
@@ -713,7 +508,7 @@
 	GHAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
 	GHAssertTrue(post.responses.count == 1, @"remoteFetch should've added the newly created response");
 	GHAssertTrue(changes, @"remoteFetch should've returned true - there was a remote change to Post (Response was created)");
-
+	
 	e = nil;
 	
 	[post remoteFetch:&e changes:&changes];
@@ -721,7 +516,7 @@
 	GHAssertFalse(changes, @"remoteFetch should've returned false - there were no changes to Post");
 	
 	e = nil;
-
+	
 	//clean up
 	
 	[response remoteDestroy:&e];
@@ -735,10 +530,6 @@
 - (void) test_date_conversion
 {	
 	GHAssertFalse(noServer, @"Test app not running. Run 'rails s'.");
-	
-	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
-	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
-	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
 	
 	Post *post = [[Post alloc] init];
 	post.author = @"Author";
@@ -787,76 +578,10 @@
 	GHAssertNil(e,@"There should be no problem remotely destroying post - just cleaning up.");
 }
 
-- (void) test_custom_requests
-{
-	////////
-	//root
-	NSString *root = [NSRailsModel routeForControllerMethod:nil];
-	GHAssertEqualStrings(root, @"", @"Root route failed");	
-
-	NSString *rootAction = [NSRailsModel routeForControllerMethod:@"action"];
-	GHAssertEqualStrings(rootAction, @"action", @"Root route failed");	
-	
-	
-	/////////////////////
-	//controller (class)
-	NSString *getAll = [Post routeForControllerMethod:nil];
-	GHAssertEqualStrings(getAll, @"posts", @"Nil controller route failed");
-	
-	NSString *controllerAction = [Post routeForControllerMethod:@"action"];
-	GHAssertEqualStrings(controllerAction, @"posts/action", @"Controller route failed");
-	
-	
-	////////////
-	//instance
-	Post *post = [[Post alloc] init];
-	
-	//should fail, since post has nil ID
-	GHAssertThrows([post routeForInstanceMethod:nil], @"Should have been an exception when trying to get an instance route on instance with nil remoteID");
-	
-	post.remoteID = [NSNumber numberWithInt:1];
-	
-	NSString *get = [post routeForInstanceMethod:nil];
-	GHAssertEqualStrings(get, @"posts/1", @"Nil instance route failed");
-		
-	NSString *instanceAction = [post routeForInstanceMethod:@"action"];
-	GHAssertEqualStrings(instanceAction, @"posts/1/action", @"Instance route failed");
-}
-
-- (void) test_inflection
-{
-	NSRAssertEqualsUnderscored(@"post", @"post");
-	NSRAssertEqualsUnderscored(@"Post", @"post");
-	NSRAssertEqualsUnderscored(@"DHPost", @"dh_post");
-	NSRAssertEqualsUnderscored(@"postObject", @"post_object");
-	NSRAssertEqualsUnderscored(@"postObjectA", @"post_object_a");
-	NSRAssertEqualsUnderscored(@"postObjectAB", @"post_object_ab");
-	NSRAssertEqualsUnderscored(@"postObjectABCSomething", @"post_object_abc_something");
-	NSRAssertEqualsUnderscored(@"post_object", @"post_object");
-	NSRAssertEqualsUnderscored(@"post_Object", @"post_object");
-
-	GHAssertEqualStrings([@"post" underscoreIgnorePrefix:YES], @"post", nil);
-	GHAssertEqualStrings([@"Post" underscoreIgnorePrefix:YES], @"post", nil);
-	GHAssertEqualStrings([@"DPost" underscoreIgnorePrefix:YES], @"post", nil);
-	GHAssertEqualStrings([@"DHPost" underscoreIgnorePrefix:YES], @"post", nil);
-	GHAssertEqualStrings([@"PostDH" underscoreIgnorePrefix:YES], @"post_dh", nil);
-	GHAssertEqualStrings([@"DHPostDH" underscoreIgnorePrefix:YES], @"post_dh", nil);
-	
-	NSRAssertEqualsCamelized(@"post", @"post");
-	NSRAssertEqualsCamelized(@"Post", @"Post");
-	NSRAssertEqualsCamelized(@"post_object", @"postObject");
-	NSRAssertEqualsCamelized(@"post_object_abc", @"postObjectAbc");
-	NSRAssertEqualsCamelized(@"post_object_ABC", @"postObjectABC");
-	NSRAssertEqualsCamelized(@"post_object_ABC_something", @"postObjectABCSomething");
-	NSRAssertEqualsCamelized(@"post__object", @"postObject");
-	NSRAssertEqualsCamelized(@"postOBject", @"postOBject");
-	NSRAssertEqualsCamelized(@"postObject", @"postObject");
-}
-
 - (void)setUpClass
 {
 	// Run at start of all tests in the class
-
+	
 	NSError *e = nil;
 	
 	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
@@ -887,8 +612,13 @@
 
 - (void)setUp
 {
-	// Run before each test method
 	[NSRConfig resetConfigs];
+
+	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
+	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
+	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
+
+	// Run before each test method
 }
 
 - (void)tearDown {
