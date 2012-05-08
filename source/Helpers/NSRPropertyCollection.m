@@ -253,13 +253,6 @@ static NSString * const NSRNoEquivalentMarker = @"";
 					
 					prop = [[eqSplit objectAtIndex:0] stringByTrimmingCharactersInSet:wn];
 					
-					//check to see if a class is redefining remoteID (remoteID from NSRailsModel is the first property checked - if it's not the first, give a warning)
-					if ([prop isEqualToString:@"remoteID"] && i != 0)
-					{
-						NSRRaiseError(@"Found attempt to define 'remoteID' in NSRailsSync for class %@. This property is reserved by the NSRailsModel superclass and should not be modified.", NSStringFromClass(_class));
-						continue;
-					}
-					
 					NSString *options = [opSplit lastObject];
 					//if it was marked exclude, add to exclude list in case * was declared, and skip over anything else
 					if (opSplit.count > 1 && [options rangeOfString:@"x"].location != NSNotFound)
@@ -462,15 +455,14 @@ static NSString * const NSRNoEquivalentMarker = @"";
 	return railsEquivalent;
 }
 
-- (NSString *) objcPropertyForRemoteEquivalent:(NSString *)railsProperty autoinflect:(BOOL)autoinflect
+- (NSSet *) objcPropertiesForRemoteEquivalent:(NSString *)railsProperty autoinflect:(BOOL)autoinflect
 {
 	NSSet *properties = [propertyEquivalents keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) 
 	{
 		return [railsProperty isEqualToString:obj];
 	}];
-	
-	NSString *objcProperty = [properties anyObject];
-	if (!objcProperty)
+		
+	if (properties.count == 0)
 	{
 		//no keys (rails equivs) match the railsProperty
 		//could mean that there's no PROPERTY or that there's no EQUIVALENCE
@@ -479,13 +471,13 @@ static NSString * const NSRNoEquivalentMarker = @"";
 		NSString *autoObjcEquivalence = autoinflect ? [railsProperty camelize] : railsProperty;
 		
 		if ([propertyEquivalents objectForKey:autoObjcEquivalence])
-			return autoObjcEquivalence;
+			return [NSSet setWithObject:autoObjcEquivalence];
 		
 		//prop does not exist, sorry. we tried.
 		return nil;
 	}
 	
-	return objcProperty;
+	return properties;
 }
 
 #pragma mark -

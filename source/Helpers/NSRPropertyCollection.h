@@ -47,7 +47,7 @@
 
 
 - (NSString *) remoteEquivalentForObjcProperty:(NSString *)objcProperty autoinflect:(BOOL)autoinflect;
-- (NSString *) objcPropertyForRemoteEquivalent:(NSString *)railsProperty autoinflect:(BOOL)autoinflect;
+- (NSSet *) objcPropertiesForRemoteEquivalent:(NSString *)railsProperty autoinflect:(BOOL)autoinflect;
 
 - (BOOL) propertyIsMarkedBelongsTo:(NSString *)prop;
 

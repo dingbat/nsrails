@@ -308,16 +308,19 @@
 	
 	//see if we can assign an association from its parent (the receiver -- "me" ("self"))
 	NSString *parentModelName = [[self class] getModelName];
-	NSString *property = [[model propertyCollection] objcPropertyForRemoteEquivalent:parentModelName 
-																		 autoinflect:[self getRelevantConfig].autoInflectsNamesAndProperties];
+	NSSet *properties = [[model propertyCollection] objcPropertiesForRemoteEquivalent:parentModelName 
+																		  autoinflect:[self getRelevantConfig].autoInflectsNamesAndProperties];
 	
-	//only assign me to the child if it has me defined as a property and it's marked as nested to me
-	if (property &&
-		[[model.propertyCollection.nestedModelProperties objectForKey:property] isEqualToString:[self.class description]])
+	for (NSString *property in properties)
 	{
-		SEL setter = [[model class] getPropertySetter:property];
-		if (setter)
-			[model performSelector:setter withObject:self];
+		//only assign me to the child if it has me defined as a property and it's marked as nested to me
+		if (property &&
+			[[model.propertyCollection.nestedModelProperties objectForKey:property] isEqualToString:[self.class description]])
+		{
+			SEL setter = [[model class] getPropertySetter:property];
+			if (setter)
+				[model performSelector:setter withObject:self];
+		}
 	}
 	
 	return model;
