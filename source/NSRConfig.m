@@ -415,7 +415,7 @@ static int networkActivityRequests = 0;
 				
 - (NSURLRequest *) HTTPRequestForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route
 {
-	NSString *url = [NSString stringWithFormat:@"%@/%@",appURL,route];
+	NSString *url = [NSString stringWithFormat:@"%@/%@",appURL,route ? route : @""];
 	
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]
 														   cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
