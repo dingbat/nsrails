@@ -84,7 +84,13 @@
 	
 	<option value="//api/name/end">&nbsp;&nbsp;&nbsp;&nbsp;- end</option>
 	
+	<option value="//api/name/errorForResponse:statusCode:">&nbsp;&nbsp;&nbsp;&nbsp;- errorForResponse:statusCode:</option>
+	
 	<option value="//api/name/initWithAppURL:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithAppURL:</option>
+	
+	<option value="//api/name/makeRequest:requestBody:route:sync:orAsync:">&nbsp;&nbsp;&nbsp;&nbsp;- makeRequest:requestBody:route:sync:orAsync:</option>
+	
+	<option value="//api/name/responseForRequestType:requestBody:url:sync:orAsync:">&nbsp;&nbsp;&nbsp;&nbsp;- responseForRequestType:requestBody:url:sync:orAsync:</option>
 	
 	<option value="//api/name/stringFromDate:">&nbsp;&nbsp;&nbsp;&nbsp;- stringFromDate:</option>
 	
@@ -121,6 +127,10 @@
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Date conversions">Date conversions</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Initializing a config">Initializing a config</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Making custom requests">Making custom requests</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Methods to override">Methods to override</a></span></li>
 	
 </ul></li>
 
@@ -176,7 +186,13 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/end">end</a></span></li>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/errorForResponse:statusCode:">errorForResponse:statusCode:</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithAppURL:">initWithAppURL:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/makeRequest:requestBody:route:sync:orAsync:">makeRequest:requestBody:route:sync:orAsync:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/responseForRequestType:requestBody:url:sync:orAsync:">responseForRequestType:requestBody:url:sync:orAsync:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/stringFromDate:">stringFromDate:</a></span></li>
 	
@@ -300,7 +316,7 @@
 
 <p>Subclassing <code>NSRConfig</code> can be useful if you want to implement a connection method that&rsquo;s not HTTP (for example, HTTPS), or if you&rsquo;re using a non-Rails REST service with different standards. Moreover, it can be used to generate errors specific to your app.</p>
 
-<p>Please see <a href="https://github.com/dingbat/nsrails/wiki/NSRConfig">this wiki page</a> if this interests you.</p>
+<p>Please see the last two methods in this document if this interests you. See <a href="https://github.com/dingbat/nsrails/wiki/NSRConfig">this wiki page</a> for even <em>more</em> detail!</p>
 					</div>
 					
 					
@@ -508,6 +524,43 @@
 	<span class="tooltip">
 		<code><a href="#//api/name/initWithAppURL:">&ndash;&nbsp;initWithAppURL:</a></code>
 		<span class="tooltip"><p>Initializes a new <code>NSRConfig</code> instance with an app URL.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Making custom requests" name="task_Making custom requests"></a>
+						<h3 class="subsubtitle task-title">Making custom requests</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/makeRequest:requestBody:route:sync:orAsync:">&ndash;&nbsp;makeRequest:requestBody:route:sync:orAsync:</a></code>
+		<span class="tooltip"><p>Makes a custom request. Returns the response string if synchronous; otherwise executes given block.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Methods to override" name="task_Methods to override"></a>
+						<h3 class="subsubtitle task-title">Methods to override</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/responseForRequestType:requestBody:url:sync:orAsync:">&ndash;&nbsp;responseForRequestType:requestBody:url:sync:orAsync:</a></code>
+		<span class="tooltip"><p>If you wish to define your own method of making a connection that&rsquo;s not HTTP (eg HTTPS), or include a custom header, etc, this is the method to override.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/errorForResponse:statusCode:">&ndash;&nbsp;errorForResponse:statusCode:</a></code>
+		<span class="tooltip"><p>(Typically only used when subclassing NSRConfig.) It is recommended to <a href="#//api/name/use">use</a> this method after implementing your own request method, as it will generate some Rails-specific errors (like validation errors).</p></span>
 	</span>
 	
 	
@@ -1267,6 +1320,67 @@
 </div>
 						
 						<div class="section-method">
+	<a name="//api/name/errorForResponse:statusCode:" title="errorForResponse:statusCode:"></a>
+	<h3 class="subsubtitle method-title">errorForResponse:statusCode:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>(Typically only used when subclassing NSRConfig.) It is recommended to <a href="#//api/name/use">use</a> this method after implementing your own request method, as it will generate some Rails-specific errors (like validation errors).</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (NSError *)errorForResponse:(NSString *)<em>response</em> statusCode:(NSInteger)<em>statusCode</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>response</em></dt>
+			<dd><p>Response string given by a server.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>statusCode</em></dt>
+			<dd><p>Status code that was returned with the response.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>Error if one could be extracted &ndash; otherwise nil.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Will give you any Rails-specific errors (like validation errors) and make the error message succinct (if enabled).</p>
+
+<p>You can also override this on its own if you have errors you want handled that NSRails doesn&rsquo;t take of already.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRConfig.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
 	<a name="//api/name/initWithAppURL:" title="initWithAppURL:"></a>
 	<h3 class="subsubtitle method-title">initWithAppURL:</h3>
 	
@@ -1295,6 +1409,154 @@
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRConfig.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/makeRequest:requestBody:route:sync:orAsync:" title="makeRequest:requestBody:route:sync:orAsync:"></a>
+	<h3 class="subsubtitle method-title">makeRequest:requestBody:route:sync:orAsync:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Makes a custom request. Returns the response string if synchronous; otherwise executes given block.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (NSString *)makeRequest:(NSString *)<em>httpVerb</em> requestBody:(NSString *)<em>body</em> route:(NSString *)<em>route</em> sync:(NSError **)<em>error</em> orAsync:(NSRHTTPCompletionBlock)<em>completionBlock</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>httpVerb</em></dt>
+			<dd><p>The HTTP method to <a href="#//api/name/use">use</a> (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, etc.)</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>body</em></dt>
+			<dd><p>The request body.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>route</em></dt>
+			<dd><p>The route to which the request will be made. This is appended to the <a href="#//api/name/appURL"><code>appURL</code></a>, so not the full URL. For instance, <code>articles/1</code>.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>completionBlock</em></dt>
+			<dd><p>If this parameter is not <code>NULL</code>, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is <code>NULL</code>, request will be made synchronously and the <em>sync</em> paramter may be used.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>sync</em></dt>
+			<dd><p>Pointer to an <code>NSError</code> object. Only used if <em>completionBlock</em> is <code>NULL</code>. May be <code>NULL</code>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The response string, only if request is made synchronously. Otherwise, will return <code>nil</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Used by every remote <a href="../Classes/NSRailsModel.html">NSRailsModel</a> method.</p><div class="warning"><p><strong>Warning:</strong> Do not override this method if you wish to override NSRConfig, since this method contains important workflows such as checking if the <a href="#//api/name/appURL">appURL</a> is nil, managing the network activity indicator, and logging. Rather, override <a href="#//api/name/responseForRequestType:requestBody:url:sync:orAsync:">responseForRequestType:requestBody:url:sync:orAsync:</a>.</p></div>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRConfig.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/responseForRequestType:requestBody:url:sync:orAsync:" title="responseForRequestType:requestBody:url:sync:orAsync:"></a>
+	<h3 class="subsubtitle method-title">responseForRequestType:requestBody:url:sync:orAsync:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>If you wish to define your own method of making a connection that&rsquo;s not HTTP (eg HTTPS), or include a custom header, etc, this is the method to override.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (NSString *)responseForRequestType:(NSString *)<em>httpVerb</em> requestBody:(NSString *)<em>body</em> url:(NSString *)<em>url</em> sync:(NSError **)<em>error</em> orAsync:(NSRHTTPCompletionBlock)<em>completionBlock</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>httpVerb</em></dt>
+			<dd><p>The HTTP method to <a href="#//api/name/use">use</a> (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, etc.)</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>body</em></dt>
+			<dd><p>The request body.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>url</em></dt>
+			<dd><p>The url to which the request will be made (full URL.)</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>completionBlock</em></dt>
+			<dd><p>If this parameter is not <code>NULL</code>, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is <code>NULL</code>, request will be made synchronously and the <em>sync</em> paramter may be used.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>sync</em></dt>
+			<dd><p>Pointer to an <code>NSError</code> object. Only used if <em>completionBlock</em> is <code>NULL</code>. May be <code>NULL</code>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The response string, only if request is made synchronously. Otherwise, will return <code>nil</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>You should continue to make calls to <a href="#//api/name/makeRequest:requestBody:route:sync:orAsync:">makeRequest:requestBody:route:sync:orAsync:</a> &ndash; it will call this method internally. It is important to do so beca<a href="#//api/name/use">use</a> it contains workflows that your override will hide.</p>
+	</div>
 	
 	
 	
@@ -1479,7 +1741,7 @@
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-04-27)</span><br />
+						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-05-08)</span><br />
 						
 						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 789)</a>.</span></p>
 						
