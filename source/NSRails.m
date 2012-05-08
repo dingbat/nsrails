@@ -317,7 +317,7 @@
 		if (property &&
 			[[model.propertyCollection.nestedModelProperties objectForKey:property] isEqualToString:[self.class description]])
 		{
-			SEL setter = [[model class] getPropertySetter:property];
+			SEL setter = [[model class] setterForProperty:property];
 			if (setter)
 				[model performSelector:setter withObject:self];
 		}
@@ -376,7 +376,7 @@
 		return [self getCustomDecodingForProperty:prop value:rep];
 	}
 	//if the object is of class NSDate and the representation in JSON is a string, automatically convert it to an NSDate
-	else if (rep && [rep isKindOfClass:[NSString class]] && [[[self class] getPropertyType:prop] isEqualToString:@"NSDate"])
+	else if (rep && [rep isKindOfClass:[NSString class]] && [[[self class] typeForProperty:prop] isEqualToString:@"NSDate"])
 	{
 		return [[self getRelevantConfig] dateFromString:rep];
 	}
@@ -395,7 +395,7 @@
 	}
 	else
 	{
-		SEL sel = [[self class] getPropertyGetter:prop];	
+		SEL sel = [[self class] getterForProperty:prop];	
 		if ([self respondsToSelector:sel])
 		{
 			id val = [self performSelector:sel];
@@ -477,7 +477,7 @@
 		NSString *railsEquivalent = [[self propertyCollection] remoteEquivalentForObjcProperty:objcProperty 
 																				   autoinflect:[self getRelevantConfig].autoInflectsNamesAndProperties];
 
-		SEL setter = [[self class] getPropertySetter:objcProperty];
+		SEL setter = [[self class] setterForProperty:objcProperty];
 		if ([self respondsToSelector:setter])
 			//means its marked as retrievable and is settable through setEtc:.
 		{
@@ -489,7 +489,7 @@
 			//get the intended value
 			val = [self objectForProperty:objcProperty representation:([val isKindOfClass:[NSNull class]] ? nil : val)];
 			
-			SEL getter = [[self class] getPropertyGetter:objcProperty];
+			SEL getter = [[self class] getterForProperty:objcProperty];
 			id previousVal = [self performSelector:getter];
 			
 			if (val)
@@ -630,7 +630,7 @@
 		//but only do it for non-ID properties - we want to omit ID if it's null (could be for create)
 		if (!val && ![railsEquivalent isEqualToString:@"id"])
 		{
-			NSString *string = [[self class] getPropertyType:objcProperty];
+			NSString *string = [[self class] typeForProperty:objcProperty];
 			if ([string isEqualToString:@"NSArray"] || [string isEqualToString:@"NSMutableArray"])
 			{
 				//there's an array, and because the value is nil, make it an empty array (rails will get angry if you send null)

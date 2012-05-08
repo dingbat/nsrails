@@ -59,7 +59,7 @@ static NSString * const NSRNoEquivalentMarker = @"";
 
 + (BOOL) classHasGetterSetter:(BOOL)getter forProperty:(NSString *)str
 {
-	SEL sel = (getter ? [self getPropertyGetter:str] : [self getPropertySetter:str]);
+	SEL sel = (getter ? [self getterForProperty:str] : [self setterForProperty:str]);
 	if (!sel || ![self instancesRespondToSelector:sel])
 	{
 		NSRRaiseError(@"Property '%@' declared in NSRailsSync for class %@ was marked as %@, but there was no %@ method found. Maybe you forgot to @synthesize it?", str, NSStringFromClass(self), getter ? @"sendable" : @"retrievable", getter ? @"getter" : @"setter");
@@ -198,7 +198,7 @@ static NSString * const NSRNoEquivalentMarker = @"";
 					
 					//if there's a *, add all ivars from that class
 					if ([properties rangeOfString:@"*"].location != NSNotFound)
-						[relevantIvars addObjectsFromArray:[c classPropertyNames]];
+						[relevantIvars addObjectsFromArray:[c allProperties]];
 					
 					//if there's a NoCarryFromSuper, stop the loop right there since we don't want stuff from any more superclasses
 					if ([properties rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
@@ -264,8 +264,10 @@ static NSString * const NSRNoEquivalentMarker = @"";
 					//if it's sendable & encodable but not part of the class
 					BOOL remoteOnly = NO;
 					
+					BOOL primitive;
+					
 					//check to see if the listed property even exists
-					NSString *ivarType = [_class getPropertyType:prop];
+					NSString *ivarType = [_class typeForProperty:prop isPrimitive:&primitive];
 					if (!ivarType)
 					{
 						//could be that it's encodable (rails-only attr)
@@ -289,10 +291,9 @@ static NSString * const NSRNoEquivalentMarker = @"";
 					}
 					
 					//make sure that the property type is not a primitive
-					NSString *primitive = [_class propertyIsPrimitive:prop];
 					if (primitive)
 					{
-						NSRRaiseError(@"Property '%@' declared in NSRailsSync for class %@ was found to be of primitive type '%@' - please use NSNumber*.", prop, NSStringFromClass(_class), primitive);
+						NSRRaiseError(@"Property '%@' declared in NSRailsSync for class %@ was found to be of primitive type '%@' - please use NSNumber*.", prop, NSStringFromClass(_class), ivarType);
 						continue;
 					}
 					

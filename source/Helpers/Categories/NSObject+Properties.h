@@ -33,19 +33,18 @@
 @interface NSObject (NSRPropertySupport)
 
 //returns an array of all properties declared in class
-+ (NSMutableArray *) classPropertyNames;
++ (NSMutableArray *) allProperties;
 
 //returns type of the given property for that instance variable (ie, NSString)
-+ (NSString *) getPropertyType:(NSString *)property;
++ (NSString *) typeForProperty:(NSString *)property;
+
+//accepts pointer to a BOOL that will be set on whether or not property is primitive (also includes enums and structs)
++ (NSString *) typeForProperty:(NSString *)property isPrimitive:(BOOL *)primitive;
 
 //returns SEL for the setter of given property
-+ (SEL) getPropertySetter:(NSString *)property;
++ (SEL) setterForProperty:(NSString *)property;
 
 //returns SEL for the getter of given property
-+ (SEL) getPropertyGetter:(NSString *)property;
-
-//returns nil if property is not primitive
-//otherwise, returns property type (int, double, float, etc)
-+ (NSString *) propertyIsPrimitive:(NSString *)property;
++ (SEL) getterForProperty:(NSString *)property;
 
 @end
