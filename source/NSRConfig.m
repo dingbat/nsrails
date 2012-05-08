@@ -57,14 +57,6 @@
 
 
 
-//NSRConfig implementation
-
-@interface NSRConfig (private) 
-
-- (NSString *) makeHTTPRequestWithRequest:(NSURLRequest *)request sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock;
-
-@end
-
 @implementation NSRConfig
 @synthesize appURL, appUsername, appPassword;
 @synthesize autoInflectsNamesAndProperties, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages;
@@ -214,12 +206,15 @@ static int networkActivityRequests = 0;
 	return date;
 }
 
+
+
+
 #pragma mark -
 #pragma mark HTTP stuff
 
 
 //Do not override this method - it includes a check to see if there's no AppURL specified
-- (NSString *) resultForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock
+- (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock
 {
 #if TARGET_OS_IPHONE
 	//manage network activity, currently only supported on async
@@ -239,7 +234,7 @@ static int networkActivityRequests = 0;
 	}
 	
 	NSRHTTPCompletionBlock blockPlusNetworkActivity = completionBlock;
-
+	
 #if TARGET_OS_IPHONE
 	if (self.managesNetworkActivityIndicator && completionBlock)
 	{
@@ -256,45 +251,20 @@ static int networkActivityRequests = 0;
 	}
 #endif
 	
-	//If you want to override handling the connection, override this method
-	NSString *result = [self makeRequestType:type requestBody:requestStr route:route sync:error orAsync:blockPlusNetworkActivity];	
+	NSString *url = [NSString stringWithFormat:@"%@/%@",appURL,route ? route : @""];
+	
+	[self logRequestWithBody:body httpVerb:httpVerb url:[url description]];
+
+	//If you want to override handling the connection, override the following method	
+	NSString *result = [self responseForRequestType:httpVerb requestBody:body url:url sync:error orAsync:blockPlusNetworkActivity];	
 	return result;
-}
-
-- (void) logRequestWithBody:(NSString *)requestStr httpVerb:(NSString *)httpVerb url:(NSString *)url
-{
-#if NSRLog > 0
-	NSLog(@" ");
-	NSLog(@"%@ to %@",httpVerb,url);
-#if NSRLog > 1
-	NSLog(@"OUT===> %@",requestStr);
-#endif
-#endif
-}
-
-- (void) logResponse:(NSString *)response statusCode:(int)code
-{
-#if NSRLog == 1
-	NSLog(@"<== Code %d",code);
-#elif NSRLog > 1
-	NSLog(@"IN<=== Code %d; %@\n\n",code,((code < 0 || code >= 400) ? @"[see ERROR]" : response));
-#endif
 }
 
 //Overide THIS method if necessary (for SSL etc)
-- (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock
-{	
-	NSURLRequest *request = [self HTTPRequestForRequestType:type requestBody:requestStr route:route];
-	
-	[self logRequestWithBody:requestStr httpVerb:type url:[[request URL] absoluteString]];
-	
-	//send request using HTTP!
-	NSString *result = [self makeHTTPRequestWithRequest:request sync:error orAsync:completionBlock];
-	return result;
-}
-
-- (NSString *) makeHTTPRequestWithRequest:(NSURLRequest *)request sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock
+- (NSString *) responseForRequestType:(NSString *)type requestBody:(NSString *)requestStr url:(NSString *)url sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock
 {
+	NSURLRequest *request = [self HTTPRequestForRequestType:type requestBody:requestStr url:url];
+		
 	//ASYNC
 	if (completionBlock)
 	{
@@ -305,7 +275,7 @@ static int networkActivityRequests = 0;
 			 if (appleError)
 			 {
 				 NSRLogError(appleError);
-
+				 
 				 completionBlock(nil,appleError);
 			 }
 			 else
@@ -313,7 +283,7 @@ static int networkActivityRequests = 0;
 				 NSInteger code = [(NSHTTPURLResponse *)response statusCode];
 				 
 				 NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-				 				 
+				 
 				 //int casting done to suppress Mac OS precision loss warnings
 				 [self logResponse:rawResult statusCode:(int)code];
 				 
@@ -332,7 +302,7 @@ static int networkActivityRequests = 0;
 	{
 		NSError *appleError = nil;
 		NSURLResponse *response = nil;
-
+		
 		NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&appleError];
 		
 		//if there's an error here there must have been an issue connecting to the server.
@@ -347,12 +317,12 @@ static int networkActivityRequests = 0;
 		}
 		
 		NSInteger code = [(NSHTTPURLResponse *)response statusCode];
-
+		
 		NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
 		
 		//int casting done to suppress Mac OS precision loss warnings
 		[self logResponse:rawResult statusCode:(int)code];
-
+		
 		//see if there's an error from this response using this helper method
 		NSError *railsError = [self errorForResponse:rawResult statusCode:[(NSHTTPURLResponse *)response statusCode]];
 		if (railsError)
@@ -366,7 +336,39 @@ static int networkActivityRequests = 0;
 	}
 	return nil;
 }
-
+			
+- (NSURLRequest *) HTTPRequestForRequestType:(NSString *)type requestBody:(NSString *)requestStr url:(NSString *)url
+{	
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]
+														   cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
+													   timeoutInterval:timeoutInterval];
+	
+	[request setHTTPMethod:type];
+	[request setHTTPShouldHandleCookies:NO];
+    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+	
+	if (self.appUsername && self.appPassword)
+	{
+		//add auth header encoded in base64
+		NSString *authStr = [NSString stringWithFormat:@"%@:%@", self.appUsername, self.appPassword];
+		NSData *authData = [authStr dataUsingEncoding:NSUTF8StringEncoding];
+		NSString *authHeader = [NSString stringWithFormat:@"Basic %@", [authData base64Encoding]];
+		
+		[request setValue:authHeader forHTTPHeaderField:@"Authorization"]; 
+	}
+	
+	if (requestStr)
+	{
+		NSData *requestData = [NSData dataWithBytes:[requestStr UTF8String] length:[requestStr length]];
+		
+		[request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+		[request setHTTPBody: requestData];
+		
+		[request setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];
+ 	}
+	
+	return request;
+}
 
 - (NSError *) errorForResponse:(NSString *)response statusCode:(NSInteger)statusCode
 {
@@ -412,41 +414,28 @@ static int networkActivityRequests = 0;
 	
 	return nil;
 }
-				
-- (NSURLRequest *) HTTPRequestForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route
+
+- (void) logRequestWithBody:(NSString *)body httpVerb:(NSString *)httpVerb url:(NSString *)url
 {
-	NSString *url = [NSString stringWithFormat:@"%@/%@",appURL,route ? route : @""];
-	
-	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]
-														   cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
-													   timeoutInterval:timeoutInterval];
-	
-	[request setHTTPMethod:type];
-	[request setHTTPShouldHandleCookies:NO];
-    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-	
-	if (self.appUsername && self.appPassword)
-	{
-		//add auth header encoded in base64
-		NSString *authStr = [NSString stringWithFormat:@"%@:%@", self.appUsername, self.appPassword];
-		NSData *authData = [authStr dataUsingEncoding:NSUTF8StringEncoding];
-		NSString *authHeader = [NSString stringWithFormat:@"Basic %@", [authData base64Encoding]];
-		
-		[request setValue:authHeader forHTTPHeaderField:@"Authorization"]; 
-	}
-	
-	if (requestStr)
-	{
-		NSData *requestData = [NSData dataWithBytes:[requestStr UTF8String] length:[requestStr length]];
-		
-		[request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-		[request setHTTPBody: requestData];
-		
-		[request setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];
- 	}
-	
-	return request;
+#if NSRLog > 0
+	NSLog(@" ");
+	NSLog(@"%@ to %@",httpVerb,url);
+#if NSRLog > 1
+	NSLog(@"OUT===> %@",body);
+#endif
+#endif
 }
+
+- (void) logResponse:(NSString *)response statusCode:(int)code
+{
+#if NSRLog == 1
+	NSLog(@"<== Code %d",code);
+#elif NSRLog > 1
+	NSLog(@"IN<=== Code %d; %@\n\n",code,((code < 0 || code >= 400) ? @"[see ERROR]" : response));
+#endif
+}
+
+
 
 #pragma mark -
 #pragma mark Contextual stuff

@@ -145,7 +145,7 @@ static NSString * const NSRailsNullRemoteIDException		= @"NSRailsNullRemoteIDExc
  
  Subclassing `NSRConfig` can be useful if you want to implement a connection method that's not HTTP (for example, HTTPS), or if you're using a non-Rails REST service with different standards. Moreover, it can be used to generate errors specific to your app.
  
- Please see [this wiki page](https://github.com/dingbat/nsrails/wiki/NSRConfig) if this interests you.
+ Please see the last two methods in this document if this interests you. See [this wiki page](https://github.com/dingbat/nsrails/wiki/NSRConfig) for even *more* detail!
  
  */
 
@@ -359,34 +359,58 @@ static NSString * const NSRailsNullRemoteIDException		= @"NSRailsNullRemoteIDExc
  */
 - (id) initWithAppURL:(NSString *)url;
 
-////////////////////////////
-//SUBCLASSING NSRAILSCONFIG
-////////////////////////////
 
-//If you wish to define your own method of making a connection that's not HTTP (SSL, etc)
-//this is the method to override:
+/// =============================================================================================
+/// @name Making custom requests
+/// =============================================================================================
 
-- (NSString *) makeRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock;
+/**
+ Makes a custom request. Returns the response string if synchronous; otherwise executes given block.
+ 
+ Used by every remote NSRailsModel method.
+ 
+ @warning Do not override this method if you wish to override NSRConfig, since this method contains important workflows such as checking if the appURL is nil, managing the network activity indicator, and logging. Rather, override responseForRequestType:requestBody:url:sync:orAsync:.
+ 
+ @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
+ @param body The request body.
+ @param route The route to which the request will be made. This is appended to the `appURL`, so not the full URL. For instance, `articles/1`.
+ @param sync Pointer to an `NSError` object. Only used if *completionBlock* is `NULL`. May be `NULL`.
+ @param completionBlock If this parameter is not `NULL`, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is `NULL`, request will be made synchronously and the *sync* paramter may be used.
+ @return The response string, only if request is made synchronously. Otherwise, will return `nil`.
+ */
+- (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock;
 
-///////////////////////////////////////////////////////
-//Some helper methods that could be useful
-//These shouldn't really be used outside of subclassing NSRailsConfig
 
-//Will give you any rails-specific errors (like validation errors) and make the error message succinct
-//Highly recommended that you use this on your result string to check for errors
-//You can also override this on its own if you have server-specific errors you want handled
+/// =============================================================================================
+/// @name Methods to override
+/// =============================================================================================
 
+/**
+ If you wish to define your own method of making a connection that's not HTTP (eg HTTPS), or include a custom header, etc, this is the method to override.
+ 
+ You should continue to make calls to makeRequest:requestBody:route:sync:orAsync: - it will call this method internally. It is important to do so because it contains workflows that your override will hide.
+ 
+ @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
+ @param body The request body.
+ @param url The url to which the request will be made (full URL.)
+ @param sync Pointer to an `NSError` object. Only used if *completionBlock* is `NULL`. May be `NULL`.
+ @param completionBlock If this parameter is not `NULL`, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is `NULL`, request will be made synchronously and the *sync* paramter may be used.
+ @return The response string, only if request is made synchronously. Otherwise, will return `nil`. 
+ */
+- (NSString *) responseForRequestType:(NSString *)httpVerb requestBody:(NSString *)body url:(NSString *)url sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock;
+
+/**
+ (Typically only used when subclassing NSRConfig.) It is recommended to use this method after implementing your own request method, as it will generate some Rails-specific errors (like validation errors).
+ 
+ Will give you any Rails-specific errors (like validation errors) and make the error message succinct (if enabled).
+ 
+ You can also override this on its own if you have errors you want handled that NSRails doesn't take of already.
+ 
+ @param response Response string given by a server.
+ @param statusCode Status code that was returned with the response.
+ @return Error if one could be extracted - otherwise nil.
+ */
 - (NSError *) errorForResponse:(NSString *)response statusCode:(NSInteger)statusCode;
-
-//Will return an NSURLRequest object with the given params
-//Should only be used if you're overriding the makeRequestType:requestBody:route:sync:orAsync: method above
-
-- (NSURLRequest *) HTTPRequestForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route;
-
-//Will log stuff for you
-
-- (void) logRequestWithBody:(NSString *)requestStr httpVerb:(NSString *)httpVerb url:(NSString *)url;
-- (void) logResponse:(NSString *)response statusCode:(int)code;
 
 @end
 

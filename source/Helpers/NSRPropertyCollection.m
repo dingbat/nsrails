@@ -263,7 +263,7 @@ static NSString * const NSRNoEquivalentMarker = @"";
 						}
 						else
 						{
-							NSRRaiseSyncError(@"Property '%@' declared in NSRailsSync for class %@ was not found in this class or in superclasses.", prop, NSStringFromClass(_class));
+							NSRRaiseSyncError(@"Property '%@' declared in NSRailsSync for class %@ was not found in this class or in superclasses (and there's no encode method found for it (%@) if it's gonna be send-only).", prop, NSStringFromClass(_class),maybeEncodable);
 							continue;
 						}
 					}

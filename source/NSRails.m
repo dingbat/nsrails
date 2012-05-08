@@ -58,10 +58,9 @@
 
 @end
 
-@interface NSRConfig (access)
+@interface NSRConfig (override)
 
 + (NSRConfig *) overrideConfig;
-- (NSString *) resultForRequestType:(NSString *)type requestBody:(NSString *)requestStr route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock;
 
 @end
 
@@ -754,13 +753,13 @@
 - (NSString *) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body error:(NSError **)error
 {
 	NSString *route = [self routeForInstanceMethod:customRESTMethod];
-	return [[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:error orAsync:nil];
+	return [[self getRelevantConfig] makeRequest:httpVerb requestBody:body route:route sync:error orAsync:nil];
 }
 
 - (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock
 {
 	NSString *route = [self routeForInstanceMethod:customRESTMethod];
-	[[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
+	[[self getRelevantConfig] makeRequest:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
 }
 
 //these are really just convenience methods that'll call the above method sending the object data as request body
@@ -802,13 +801,13 @@
 + (NSString *)	remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body error:(NSError **)error
 {
 	NSString *route = [self routeForControllerMethod:customRESTMethod];
-	return [[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:error orAsync:nil];
+	return [[self getRelevantConfig] makeRequest:httpVerb requestBody:body route:route sync:error orAsync:nil];
 }
 
 + (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock
 {
 	NSString *route = [self routeForControllerMethod:customRESTMethod];
-	[[self getRelevantConfig] resultForRequestType:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
+	[[self getRelevantConfig] makeRequest:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
 }
 
 //these are really just convenience methods that'll call the above method with the JSON representation of the object
