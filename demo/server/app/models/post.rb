@@ -8,7 +8,8 @@ class Post < ActiveRecord::Base
     
   private
   def deny_profanity
-    errors.add :content, "can't have profanity" if ProfanityFilter::Base.profane?(content)
-    errors.add :author, "can't have profanity" if ProfanityFilter::Base.profane?(author)
+    error = "can't be profane (!)"
+    errors.add :content, error if ProfanityFilter::Base.profane?(content)
+    errors.add :author, error if ProfanityFilter::Base.profane?(author)
   end
 end
