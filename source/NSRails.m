@@ -330,29 +330,25 @@
 {
 	NSString *sel = [NSString stringWithFormat:@"encode%@", [prop properCase]];
 	SEL selector = NSSelectorFromString(sel);
-	if ([self respondsToSelector:selector])
+	id obj = [self performSelector:selector];
+	
+	//send back an NSNull object instead of nil since we'll be encoding it into JSON, where that's relevant
+	if (!obj)
 	{
-		id obj = [self performSelector:selector];
-		
-		//send back an NSNull object instead of nil since we'll be encoding it into JSON, where that's relevant
-		if (!obj)
-		{
-			return [NSNull null];
-		}
-		
-		//make sure that the result is a JSON parse-able
-		if (![obj isKindOfClass:[NSArray class]] &&
-			![obj isKindOfClass:[NSDictionary class]] &&
-			![obj isKindOfClass:[NSString class]] &&
-			![obj isKindOfClass:[NSNumber class]] &&
-			![obj isKindOfClass:[NSNull class]])
-		{
-			[NSException raise:NSRailsInvalidJSONEncodingException format:@"Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return NSDictionary, NSArray, NSString, NSNumber, or NSNull here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop, NSStringFromClass([self class]),sel];
-		}
-		
-		return obj;
+		return [NSNull null];
 	}
-	return nil;
+	
+	//make sure that the result is a JSON parse-able
+	if (![obj isKindOfClass:[NSArray class]] &&
+		![obj isKindOfClass:[NSDictionary class]] &&
+		![obj isKindOfClass:[NSString class]] &&
+		![obj isKindOfClass:[NSNumber class]] &&
+		![obj isKindOfClass:[NSNull class]])
+	{
+		[NSException raise:NSRailsInvalidJSONEncodingException format:@"Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return NSDictionary, NSArray, NSString, NSNumber, or NSNull here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop, NSStringFromClass([self class]),sel];
+	}
+	
+	return obj;
 }
 
 - (id) getCustomDecodingForProperty:(NSString *)prop value:(id)val
@@ -360,12 +356,8 @@
 	NSString *sel = [NSString stringWithFormat:@"decode%@:",[prop properCase]];
 	
 	SEL selector = NSSelectorFromString(sel);
-	if ([self respondsToSelector:selector])
-	{
-		id obj = [self performSelector:selector withObject:val];
-		return obj;
-	}
-	return nil;
+	id obj = [self performSelector:selector withObject:val];
+	return obj;
 }
 
 - (id) objectForProperty:(NSString *)prop representation:(id)rep
@@ -396,54 +388,51 @@
 	else
 	{
 		SEL sel = [[self class] getterForProperty:prop];	
-		if ([self respondsToSelector:sel])
+		id val = [self performSelector:sel];
+		BOOL isArray = [val isKindOfClass:[NSArray class]];
+		
+		//see if this property actually links to a custom NSRailsModel subclass, or it WASN'T declared, but is an array
+		if ([[self propertyCollection].nestedModelProperties objectForKey:prop] || isArray)
 		{
-			id val = [self performSelector:sel];
-			BOOL isArray = [val isKindOfClass:[NSArray class]];
-			
-			//see if this property actually links to a custom NSRailsModel subclass, or it WASN'T declared, but is an array
-			if ([[self propertyCollection].nestedModelProperties objectForKey:prop] || isArray)
+			//if the ivar is an array, we need to make every element into JSON and then put them back in the array
+			if (isArray)
 			{
-				//if the ivar is an array, we need to make every element into JSON and then put them back in the array
-				if (isArray)
+				NSMutableArray *new = [NSMutableArray arrayWithCapacity:[val count]];
+				
+				for (int i = 0; i < [val count]; i++)
 				{
-					NSMutableArray *new = [NSMutableArray arrayWithCapacity:[val count]];
-
-					for (int i = 0; i < [val count]; i++)
-					{
-						id element = [val objectAtIndex:i];
-						
-						//use the NSRailsModel dictionaryOfRemoteProperties method to get that object in dictionary form
-						//but first make sure it's an NSRailsModel subclass
-						if (![element isKindOfClass:[NSRailsModel class]])
-							continue;
-						
-						//have to make it shallow so we don't loop infinitely (if that model defines us as an assc)
-						id encodedObj = [element dictionaryOfRemotePropertiesShallow:YES];
-						
-						[new addObject:encodedObj];
-					}
-					return new;
+					id element = [val objectAtIndex:i];
+					
+					//use the NSRailsModel dictionaryOfRemoteProperties method to get that object in dictionary form
+					//but first make sure it's an NSRailsModel subclass
+					if (![element isKindOfClass:[NSRailsModel class]])
+						continue;
+					
+					//have to make it shallow so we don't loop infinitely (if that model defines us as an assc)
+					id encodedObj = [element dictionaryOfRemotePropertiesShallow:YES];
+					
+					[new addObject:encodedObj];
 				}
-				
-				//otherwise, make that nested object a dictionary through NSRailsModel
-				//first make sure it's an NSRailsModel subclass
-				if (![val isKindOfClass:[NSRailsModel class]])
-					return nil;
-				
-				//have to make it shallow so we don't loop infinitely (if that model defines us as an assc)
-				return [val dictionaryOfRemotePropertiesShallow:YES];
+				return new;
 			}
 			
-			//if the object is of class NSDate, we need to automatically convert it to string for the JSON framework to handle correctly
-			if ([val isKindOfClass:[NSDate class]])
-			{
-				return [[self getRelevantConfig] stringFromDate:val];
-			}
+			//otherwise, make that nested object a dictionary through NSRailsModel
+			//first make sure it's an NSRailsModel subclass
+			if (![val isKindOfClass:[NSRailsModel class]])
+				return nil;
 			
-			//otherwise, just return the value from the get method
-			return val;
+			//have to make it shallow so we don't loop infinitely (if that model defines us as an assc)
+			return [val dictionaryOfRemotePropertiesShallow:YES];
 		}
+		
+		//if the object is of class NSDate, we need to automatically convert it to string for the JSON framework to handle correctly
+		if ([val isKindOfClass:[NSDate class]])
+		{
+			return [[self getRelevantConfig] stringFromDate:val];
+		}
+		
+		//otherwise, just return the value from the get method
+		return val;
 	}
 	return nil;
 }
@@ -478,126 +467,122 @@
 																				   autoinflect:[self getRelevantConfig].autoInflectsNamesAndProperties];
 
 		SEL setter = [[self class] setterForProperty:objcProperty];
-		if ([self respondsToSelector:setter])
-			//means its marked as retrievable and is settable through setEtc:.
+		id val = [dict objectForKey:railsEquivalent];
+		//skip if the key doesn't exist (we probably guessed wrong above (or if the explicit equivalence was wrong))
+		if (!val)
+			continue;
+		
+		//get the intended value
+		val = [self objectForProperty:objcProperty representation:([val isKindOfClass:[NSNull class]] ? nil : val)];
+		
+		SEL getter = [[self class] getterForProperty:objcProperty];
+		id previousVal = [self performSelector:getter];
+		
+		if (val)
 		{
-			id val = [dict objectForKey:railsEquivalent];
-			//skip if the key doesn't exist (we probably guessed wrong above (or if the explicit equivalence was wrong))
-			if (!val)
-				continue;
-			
-			//get the intended value
-			val = [self objectForProperty:objcProperty representation:([val isKindOfClass:[NSNull class]] ? nil : val)];
-			
-			SEL getter = [[self class] getterForProperty:objcProperty];
-			id previousVal = [self performSelector:getter];
-			
-			if (val)
+			NSString *nestedClass = [[self propertyCollection].nestedModelProperties objectForKey:objcProperty];
+			//instantiate it as the class specified in NSRailsSync if it hadn't already been custom-decoded
+			if (nestedClass && ![[self propertyCollection].decodeProperties containsObject:objcProperty])
 			{
-				NSString *nestedClass = [[self propertyCollection].nestedModelProperties objectForKey:objcProperty];
-				//instantiate it as the class specified in NSRailsSync if it hadn't already been custom-decoded
-				if (nestedClass && ![[self propertyCollection].decodeProperties containsObject:objcProperty])
-				{
-					if ([val isKindOfClass:[NSArray class]])
-					{			
-						//array is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
+				if ([val isKindOfClass:[NSArray class]])
+				{			
+					//array is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
+					
+					if (!previousVal)
+					{
+						//array was nil, make a new one and set it!
+						NSMutableArray *newArray = [[NSMutableArray alloc] init];
+						[self performSelector:setter withObject:newArray];
 						
-						if (!previousVal)
-						{
-							//array was nil, make a new one and set it!
-							NSMutableArray *newArray = [[NSMutableArray alloc] init];
-							[self performSelector:setter withObject:newArray];
-
-							//set previousVal so the rest of the method can work
-							previousVal = newArray;
-							changes = YES;
-						}
-						
-						for (int i = 0; i < [previousVal count]; i++)
-						{
-							NSRailsModel *element = [previousVal objectAtIndex:i];
-							NSDictionary *correspondingElement = nil;
-							for (NSDictionary *dict in val)
-							{
-								if ([[dict objectForKey:@"id"] isEqual:element.remoteID])
-								{
-									correspondingElement = dict;
-									break;
-								}
-							}
-							
-							if (!correspondingElement)
-							{
-								//if not present in rails array, remove it from local
-								changes = YES;
-								[previousVal removeObject:element];
-								i--;
-							}
-							else
-							{
-								BOOL neededChange = [element setPropertiesUsingRemoteDictionary:correspondingElement];
-								if (neededChange)
-									changes = YES;
-
-								//remove it from rails array so we know we counted it
-								[val removeObject:correspondingElement];
-							}
-						}
-						
-						//add the remainder of dictionaries (new entries)
+						//set previousVal so the rest of the method can work
+						previousVal = newArray;
+						changes = YES;
+					}
+					
+					for (int i = 0; i < [previousVal count]; i++)
+					{
+						NSRailsModel *element = [previousVal objectAtIndex:i];
+						NSDictionary *correspondingElement = nil;
 						for (NSDictionary *dict in val)
 						{
-							NSRailsModel *model = [self makeRelevantModelFromClass:nestedClass basedOn:dict];
-							[previousVal addObject:model];
-							
-							changes = YES;
+							if ([[dict objectForKey:@"id"] isEqual:element.remoteID])
+							{
+								correspondingElement = dict;
+								break;
+							}
 						}
-					}
-					//if it's not an array and just a dict
-					else
-					{
-						NSDictionary *objDict = [dict objectForKey:railsEquivalent];
 						
-						//if the nested object didn't exist before, make it & set it
-						if (!previousVal)
+						if (!correspondingElement)
 						{
-							val = [self makeRelevantModelFromClass:nestedClass basedOn:objDict];
-							[self performSelector:setter withObject:val];
+							//if not present in rails array, remove it from local
 							changes = YES;
+							[previousVal removeObject:element];
+							i--;
 						}
 						else
 						{
-							//otherwise, mark as change if ITS properties changed (recursive)
-							
-							BOOL objChange = [previousVal setPropertiesUsingRemoteDictionary:objDict];
-							if (objChange)
+							BOOL neededChange = [element setPropertiesUsingRemoteDictionary:correspondingElement];
+							if (neededChange)
 								changes = YES;
+							
+							//remove it from rails array so we know we counted it
+							[val removeObject:correspondingElement];
 						}
 					}
 					
-					//since it's a nested class, we're only setting properties to the existing nested object(s)
-					//we don't have to use the setter, so go to next property
-					continue;
-				}
-				else
-				{
-					//if it's not a nested class, check for simple equality
-					if (![previousVal isEqual:val])
+					//add the remainder of dictionaries (new entries)
+					for (NSDictionary *dict in val)
 					{
+						NSRailsModel *model = [self makeRelevantModelFromClass:nestedClass basedOn:dict];
+						[previousVal addObject:model];
+						
 						changes = YES;
 					}
 				}
-				//if there was no nested class specified, simply give it what JSON decoded (in the case of a nested model, it will be a dictionary, or, an array of dictionaries. don't worry, the user got ample warning)
-				[self performSelector:setter withObject:val];
+				//if it's not an array and just a dict
+				else
+				{
+					NSDictionary *objDict = [dict objectForKey:railsEquivalent];
+					
+					//if the nested object didn't exist before, make it & set it
+					if (!previousVal)
+					{
+						val = [self makeRelevantModelFromClass:nestedClass basedOn:objDict];
+						[self performSelector:setter withObject:val];
+						changes = YES;
+					}
+					else
+					{
+						//otherwise, mark as change if ITS properties changed (recursive)
+						
+						BOOL objChange = [previousVal setPropertiesUsingRemoteDictionary:objDict];
+						if (objChange)
+							changes = YES;
+					}
+				}
+				
+				//since it's a nested class, we're only setting properties to the existing nested object(s)
+				//we don't have to use the setter, so go to next property
+				continue;
 			}
 			else
 			{
-				//if previous object existed but now it's nil, mark a change
-				if (previousVal)
+				//if it's not a nested class, check for simple equality
+				if (![previousVal isEqual:val])
+				{
 					changes = YES;
-				
-				[self performSelector:setter withObject:nil];
+				}
 			}
+			//if there was no nested class specified, simply give it what JSON decoded (in the case of a nested model, it will be a dictionary, or, an array of dictionaries. don't worry, the user got ample warning)
+			[self performSelector:setter withObject:val];
+		}
+		else
+		{
+			//if previous object existed but now it's nil, mark a change
+			if (previousVal)
+				changes = YES;
+			
+			[self performSelector:setter withObject:nil];
 		}
 	}
 	

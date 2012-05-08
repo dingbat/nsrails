@@ -40,34 +40,12 @@ static NSString * const NSRNoEquivalentMarker = @"";
 //this gonna go in the nestedModelProperties (properties can never have a comma/space in them so we're safe from any conflicts)
 #define NSRBelongsToKeyForProperty(prop) [prop stringByAppendingString:@", belongs_to"]
 
-#define NSRRaiseError(x, ...) [NSException raise:NSRailsSyncException format:x,__VA_ARGS__,nil]
+#define NSRRaiseSyncError(x, ...) [NSException raise:NSRailsSyncException format:x,__VA_ARGS__,nil]
 
 @interface NSRailsModel (internal)
 
 + (NSString *) railsProperties;
 + (NSString *) NSRailsSync;
-
-@end
-
-@interface NSObject (getterSetter)
-
-+ (BOOL) classHasGetterSetter:(BOOL)getter forProperty:(NSString *)str;
-
-@end
-
-@implementation NSObject (getterSetter)
-
-+ (BOOL) classHasGetterSetter:(BOOL)getter forProperty:(NSString *)str
-{
-	SEL sel = (getter ? [self getterForProperty:str] : [self setterForProperty:str]);
-	if (!sel || ![self instancesRespondToSelector:sel])
-	{
-		NSRRaiseError(@"Property '%@' declared in NSRailsSync for class %@ was marked as %@, but there was no %@ method found. Maybe you forgot to @synthesize it?", str, NSStringFromClass(self), getter ? @"sendable" : @"retrievable", getter ? @"getter" : @"setter");
-		return NO;
-	}
-	
-	return YES;
-}
 
 @end
 
@@ -97,11 +75,11 @@ static NSString * const NSRNoEquivalentMarker = @"";
 	{
 		if ([equivalent isEqualToString:@"id"])
 		{
-			NSRRaiseError(@"Obj-C property %@ (class %@) found to set equivalence with 'id'. This is fine for retrieving but should not be marked as sendable.", prop, NSStringFromClass(_class));
+			NSRRaiseSyncError(@"Obj-C property %@ (class %@) found to set equivalence with 'id'. This is fine for retrieving but should not be marked as sendable.", prop, NSStringFromClass(_class));
 		}
 		else
 		{
-			NSRRaiseError(@"Multiple Obj-C properties marked as sendable (%@) found pointing to the same Rails attribute ('%@'). Only using data from the first Obj-C property listed. Please fix by only having one sendable property per Rails attribute (you can make the others retrieve-only with the -r flag).", sendables, equivalent);
+			NSRRaiseSyncError(@"Multiple Obj-C properties marked as sendable (%@) found pointing to the same Rails attribute ('%@'). Only using data from the first Obj-C property listed. Please fix by only having one sendable property per Rails attribute (you can make the others retrieve-only with the -r flag).", sendables, equivalent);
 		}
 	}
 	else
@@ -285,7 +263,7 @@ static NSString * const NSRNoEquivalentMarker = @"";
 						}
 						else
 						{
-							NSRRaiseError(@"Property '%@' declared in NSRailsSync for class %@ was not found in this class or in superclasses.", prop, NSStringFromClass(_class));
+							NSRRaiseSyncError(@"Property '%@' declared in NSRailsSync for class %@ was not found in this class or in superclasses.", prop, NSStringFromClass(_class));
 							continue;
 						}
 					}
@@ -293,7 +271,7 @@ static NSString * const NSRNoEquivalentMarker = @"";
 					//make sure that the property type is not a primitive
 					if (primitive)
 					{
-						NSRRaiseError(@"Property '%@' declared in NSRailsSync for class %@ was found to be of primitive type '%@' - please use NSNumber*.", prop, NSStringFromClass(_class), ivarType);
+						NSRRaiseSyncError(@"Property '%@' declared in NSRailsSync for class %@ was found to be of primitive type '%@' - please use NSNumber*.", prop, NSStringFromClass(_class), ivarType);
 						continue;
 					}
 					
@@ -317,20 +295,12 @@ static NSString * const NSRNoEquivalentMarker = @"";
 					{
 						if ([options rangeOfString:@"r"].location != NSNotFound && !remoteOnly)
 						{
-							//check to see if setter exists
-							if ([_class classHasGetterSetter:NO forProperty:prop])
-							{
-								[retrievableProperties addObject:prop];
-							}
+							[retrievableProperties addObject:prop];
 						}
 						
 						if ([options rangeOfString:@"s"].location != NSNotFound && !remoteOnly)
 						{
-							//check to see if getter exists
-							if ([_class classHasGetterSetter:YES forProperty:prop])
-							{
-								[self addPropertyAsSendable:prop equivalent:equivalent class:_class];
-							}
+							[self addPropertyAsSendable:prop equivalent:equivalent class:_class];
 						}
 						
 						if ([options rangeOfString:@"e"].location != NSNotFound && !remoteOnly)
@@ -351,14 +321,8 @@ static NSString * const NSRNoEquivalentMarker = @"";
 						//if remoteOnly, means we already added as sendable and we do NOT want to retrieve it
 						if (!remoteOnly)
 						{
-							if ([_class classHasGetterSetter:YES forProperty:prop])
-							{
-								[self addPropertyAsSendable:prop equivalent:equivalent class:_class];
-							}
-							if ([_class classHasGetterSetter:NO forProperty:prop])
-							{
-								[retrievableProperties addObject:prop];
-							}
+							[self addPropertyAsSendable:prop equivalent:equivalent class:_class];
+							[retrievableProperties addObject:prop];
 						}
 					}
 					
@@ -371,12 +335,12 @@ static NSString * const NSRNoEquivalentMarker = @"";
 							//class entered is not a real class
 							if (!NSClassFromString(otherModel))
 							{
-								NSRRaiseError(@"Failed to find class '%@', declared as class for nested property '%@' of class '%@'. Nesting relation not set.",otherModel,prop,NSStringFromClass(_class));
+								NSRRaiseSyncError(@"Failed to find class '%@', declared as class for nested property '%@' of class '%@'. Nesting relation not set.",otherModel,prop,NSStringFromClass(_class));
 							}
 							//class entered is not a subclass of NSRailsModel
 							else if (![NSClassFromString(otherModel) isSubclassOfClass:[NSRailsModel class]])
 							{
-								NSRRaiseError(@"'%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel.",otherModel,prop, NSStringFromClass(_class),otherModel);
+								NSRRaiseSyncError(@"'%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel.",otherModel,prop, NSStringFromClass(_class),otherModel);
 							}
 							else
 							{
@@ -391,7 +355,7 @@ static NSString * const NSRNoEquivalentMarker = @"";
 						if ([ivarType isEqualToString:@"NSArray"] ||
 							[ivarType isEqualToString:@"NSMutableArray"])
 						{
-							NSRRaiseError(@"Property '%@' in class %@ was found to be an array, but no nesting model was set. Note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved Rails attributes will be set. If NSDictionaries are desired, to suppress this error, simply add a colon with nothing following to the property in NSRailsSync: `%@:`",prop,NSStringFromClass(_class),element);
+							NSRRaiseSyncError(@"Property '%@' in class %@ was found to be an array, but no nesting model was set. Note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved Rails attributes will be set. If NSDictionaries are desired, to suppress this error, simply add a colon with nothing following to the property in NSRailsSync: `%@:`",prop,NSStringFromClass(_class),element);
 						}
 						else if (!([ivarType isEqualToString:@"NSString"] ||
 								   [ivarType isEqualToString:@"NSMutableString"] ||
