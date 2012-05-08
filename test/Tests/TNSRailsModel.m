@@ -31,14 +31,14 @@ NSRailsSync(local -x, retrieveOnly -r, shared, sharedExplicit -rs, sendOnly -s)
 
 @property (nonatomic) BOOL encodeNonJSON;
 @property (nonatomic, strong) NSURL *locallyURL;
-@property (nonatomic, strong) NSString *locallyLowercase, *remotelyUppercase;
+@property (nonatomic, strong) NSString *locallyLowercase, *remotelyUppercase, *codeToNil;
 @property (nonatomic, strong) PickyCoderComponent *componentWithFlippingName;
 
 @end
 
 @implementation PickyCoder
-@synthesize locallyURL, locallyLowercase, remotelyUppercase, componentWithFlippingName, encodeNonJSON;
-NSRailsSync(locallyURL -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnly -se, componentWithFlippingName=component -de);
+@synthesize locallyURL, locallyLowercase, remotelyUppercase, componentWithFlippingName, codeToNil, encodeNonJSON;
+NSRailsSync(locallyURL -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnly -se, codeToNil -ed, componentWithFlippingName=component -de);
 
 - (id) encodeRemoteOnly
 {
@@ -47,6 +47,16 @@ NSRailsSync(locallyURL -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnl
 		return [[NSScanner alloc] init];
 	}
 	return @"remote";
+}
+
+- (NSString *) decodeCodeToNil:(NSString *)str
+{
+	return nil;
+}
+
+- (NSString *) encodeCodeToNil
+{
+	return nil;
 }
 
 - (NSURL *) decodeLocallyURL:(NSString *)remoteUrl
@@ -92,7 +102,7 @@ NSRailsSync(locallyURL -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnl
 + (NSString *) newPickyCoder
 {
 	//replacing ' with ", using \" every other char makes it unreadable
-	return [@"{'locally_lowercase':'LoweRCasE?','remotely_uppercase':'upper','locally_url':'http://nsrails.com','remote_only':'invisible','component':{'component_name':'COMP LOWERCASE?'}}" stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
+	return [@"{'locally_lowercase':'LoweRCasE?','remotely_uppercase':'upper','locally_url':'http://nsrails.com','remote_only':'invisible','code_to_nil':'something','component':{'component_name':'COMP LOWERCASE?'}}" stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
 }
 
 + (NSString *) newPickySender
@@ -178,13 +188,17 @@ NSRailsSync(childProperty1, childProperty2)
 	p.encodeNonJSON = NO;
 	
 	GHAssertTrue([p.locallyURL isKindOfClass:[NSURL class]], @"Should've decoded into a URL");
+	GHAssertNil(p.codeToNil, @"Should've decoded codeToNil into nil");
 	GHAssertEqualStrings([p.locallyURL description], @"http://nsrails.com", @"Should've decoded into URL & retain content");
 	GHAssertEqualStrings(p.locallyLowercase, @"lowercase?", @"Should've decoded into lowercase");
 	GHAssertEqualStrings(p.remotelyUppercase, @"upper", @"Should've kept the same");
 	GHAssertEqualStrings(p.componentWithFlippingName.componentName, @"comp lowercase?", @"Should've decoded comp name into lowercase");
 	
+	p.codeToNil = @"Something";
+	
 	NSDictionary *sendDict = [p dictionaryOfRemoteProperties];
 	GHAssertTrue([[sendDict objectForKey:@"locally_url"] isKindOfClass:[NSString class]],@"Should've encoded NSURL -> string");
+	GHAssertTrue([[sendDict objectForKey:@"code_to_nil"] isKindOfClass:[NSNull class]], @"Should've encoded codeToNil into NSNull");
 	GHAssertEqualStrings([sendDict objectForKey:@"locally_url"], @"http://nsrails.com", @"Should've encoded into string & retain content");
 	GHAssertEqualStrings([sendDict objectForKey:@"locally_lowercase"], @"lowercase?", @"Should've kept as lowercase");
 	GHAssertEqualStrings([sendDict objectForKey:@"remotely_uppercase"], @"UPPER", @"Should've encoded to uppercase");
