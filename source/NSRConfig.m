@@ -386,9 +386,17 @@ static int networkActivityRequests = 0;
 				{
 					//get the value between <pre> and </pre>
 					response = [[[pres objectAtIndex:1] componentsSeparatedByString:@"</pre"] objectAtIndex:0];
-					//some weird thing rails does, will send html tags &quot; for quotes
-					response = [response stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
 				}
+				else
+				{
+					NSArray *h1s = [response componentsSeparatedByString:@"<h1>"];
+					if (h1s.count > 1)
+					{
+						//get the value between <h1> and </h1>
+						response = [[[h1s objectAtIndex:1] componentsSeparatedByString:@"</h1"] objectAtIndex:0];
+					}
+				}
+				response = [response stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
 			}
 		}
 		
