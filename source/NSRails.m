@@ -371,7 +371,7 @@
 - (id) objectForProperty:(NSString *)prop representation:(id)rep
 {
 	//if object is marked as decodable, use the decode method
-	if ([[self propertyCollection].decodeProperties indexOfObject:prop] != NSNotFound)
+	if ([[self propertyCollection].decodeProperties containsObject:prop])
 	{
 		return [self getCustomDecodingForProperty:prop value:rep];
 	}
@@ -387,7 +387,7 @@
 
 - (id) representationOfObjectForProperty:(NSString *)prop
 {
-	BOOL encodable = [[self propertyCollection].encodeProperties indexOfObject:prop] != NSNotFound;
+	BOOL encodable = [[self propertyCollection].encodeProperties containsObject:prop];
 
 	if (encodable)
 	{
@@ -496,7 +496,7 @@
 			{
 				NSString *nestedClass = [[self propertyCollection].nestedModelProperties objectForKey:objcProperty];
 				//instantiate it as the class specified in NSRailsSync if it hadn't already been custom-decoded
-				if (nestedClass && [[self propertyCollection].decodeProperties indexOfObject:objcProperty] == NSNotFound)
+				if (nestedClass && ![[self propertyCollection].decodeProperties containsObject:objcProperty])
 				{
 					if ([val isKindOfClass:[NSArray class]])
 					{			

@@ -89,7 +89,7 @@ static NSString * const NSRNoEquivalentMarker = @"";
 	NSMutableArray *sendables = [NSMutableArray arrayWithObject:prop];
 	for (NSString *sendable in objs)
 	{
-		if ([sendableProperties indexOfObject:sendable] != NSNotFound)
+		if ([sendableProperties containsObject:sendable])
 			[sendables addObject:sendable];
 	}
 	//greater than 1 cause we're including this property
