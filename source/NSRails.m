@@ -327,7 +327,7 @@
 
 - (id) getCustomEncodingForProperty:(NSString *)prop
 {
-	NSString *sel = [NSString stringWithFormat:@"encode%@", [prop properCase]];
+	NSString *sel = [NSString stringWithFormat:@"encode%@", [prop firstLetterCapital]];
 	SEL selector = NSSelectorFromString(sel);
 	id obj = [self performSelector:selector];
 	
@@ -352,7 +352,7 @@
 
 - (id) getCustomDecodingForProperty:(NSString *)prop value:(id)val
 {
-	NSString *sel = [NSString stringWithFormat:@"decode%@:",[prop properCase]];
+	NSString *sel = [NSString stringWithFormat:@"decode%@:",[prop firstLetterCapital]];
 	
 	SEL selector = NSSelectorFromString(sel);
 	id obj = [self performSelector:selector withObject:val];

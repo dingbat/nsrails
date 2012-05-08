@@ -53,10 +53,8 @@
 			//iterate through each reason the property failed
 			for (NSString *reason in [validationErrors objectForKey:failedProperty])
 			{
-				NSString *properCase = [[[failedProperty substringToIndex:1] uppercaseString] 
-										stringByAppendingString:[failedProperty substringFromIndex:1]];
-				
-				errorString = [errorString stringByAppendingFormat:@"%@ %@. ",properCase,reason]; //=> "Name can't be blank."
+				errorString = [errorString stringByAppendingFormat:@"%@ %@. ", [failedProperty capitalizedString], reason];
+					//=> "Name can't be blank."
 			}
 		}
 	}

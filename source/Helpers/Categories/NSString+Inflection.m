@@ -92,12 +92,7 @@
 	return underscored;
 }
 
-- (NSString *) toClassName
-{
-	return [[self camelize] properCase];
-}
-
-- (NSString *) properCase
+- (NSString *) firstLetterCapital
 {
 	if (self.length == 0)
 		return self;

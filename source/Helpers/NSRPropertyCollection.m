@@ -242,14 +242,14 @@ static NSString * const NSRNoEquivalentMarker = @"";
 					//if it's sendable & encodable but not part of the class
 					BOOL remoteOnly = NO;
 					
-					BOOL primitive;
+					BOOL primitive = NO;
 					
 					//check to see if the listed property even exists
 					NSString *ivarType = [_class typeForProperty:prop isPrimitive:&primitive];
 					if (!ivarType)
 					{
 						//could be that it's encodable (rails-only attr)
-						NSString *maybeEncodable = [@"encode" stringByAppendingString:[prop properCase]];
+						NSString *maybeEncodable = [@"encode" stringByAppendingString:[prop firstLetterCapital]];
 						if ([_class instancesRespondToSelector:NSSelectorFromString(maybeEncodable)])
 						{
 							//TODO inform the user that this is going on, there also should be no "retrievable" declared etc

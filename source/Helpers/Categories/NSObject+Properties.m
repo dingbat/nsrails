@@ -133,7 +133,7 @@
 	//if no custom setter specified, return the standard "setEtc:"
 	if (!s)
 	{
-		s = NSSelectorFromString([NSString stringWithFormat:@"set%@:",[prop properCase]]);
+		s = NSSelectorFromString([NSString stringWithFormat:@"set%@:",[prop firstLetterCapital]]);
 	}	
 	return s;
 }
