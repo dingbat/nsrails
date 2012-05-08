@@ -47,11 +47,10 @@
 
 
 - (NSString *) remoteEquivalentForObjcProperty:(NSString *)objcProperty autoinflect:(BOOL)autoinflect;
-- (NSSet *) objcPropertiesForRemoteEquivalent:(NSString *)railsProperty autoinflect:(BOOL)autoinflect;
+- (NSArray *) objcPropertiesForRemoteEquivalent:(NSString *)railsProperty autoinflect:(BOOL)autoinflect;
 
 - (BOOL) propertyIsMarkedBelongsTo:(NSString *)prop;
 
-- (id) initWithClass:(Class)c;
-- (id) initWithClass:(Class)c properties:(NSString *)str;
+- (id) initWithClass:(Class)c syncString:(NSString *)str customConfig:(NSRConfig *)config;
 
 @end

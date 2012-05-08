@@ -16,6 +16,15 @@
     return json;
 }
 
+- (BOOL) isJSONParsable
+{
+	return ([self isKindOfClass:[NSArray class]] ||
+			[self isKindOfClass:[NSDictionary class]] ||
+			[self isKindOfClass:[NSString class]] ||
+			[self isKindOfClass:[NSNumber class]] ||
+			[self isKindOfClass:[NSNull class]]);
+}
+
 @end
 
 

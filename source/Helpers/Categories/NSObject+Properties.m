@@ -34,21 +34,21 @@
 
 @implementation NSObject (NSRPropertySupport)
 
-
-+ (NSMutableArray *) allProperties
++ (NSDictionary *) allProperties
 {
 	unsigned int propertyCount;
 	//copy all properties for self (will be a Class)
 	objc_property_t *properties = class_copyPropertyList(self, &propertyCount);
 	if (properties)
 	{
-		NSMutableArray *results = [NSMutableArray arrayWithCapacity:propertyCount];
+		NSMutableDictionary *results = [NSMutableDictionary dictionaryWithCapacity:propertyCount];
 		
 		while (propertyCount--)
 		{
 			//get each ivar name and add it to the results
 			const char *propName = property_getName(properties[propertyCount]);
-			[results addObject:[NSString stringWithCString:propName encoding:NSASCIIStringEncoding]];
+			NSString *prop = [NSString stringWithCString:propName encoding:NSASCIIStringEncoding];
+			[results setObject:[self typeForProperty:prop] forKey:prop];
 		}
 		
 		free(properties);	
@@ -138,5 +138,16 @@
 	return s;
 }
 
++ (BOOL) propertyIsArray:(NSString *)prop
+{
+	NSString *type = [self typeForProperty:prop];
+	return [type isEqualToString:@"NSArray"] || [type isEqualToString:@"NSMutableArray"];
+}
+
++ (BOOL) propertyIsDate:(NSString *)prop
+{
+	NSString *type = [self typeForProperty:prop];
+	return [type isEqualToString:@"NSDate"];
+}
 
 @end

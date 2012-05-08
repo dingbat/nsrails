@@ -50,11 +50,8 @@
 + (NSRConfig *) getRelevantConfig;
 - (NSRConfig *) getRelevantConfig;
 
-+ (NSString *) railsProperties;
-+ (NSString *) getModelName;
-+ (NSString *) getPluralModelName;
-
 + (NSRPropertyCollection *) propertyCollection;
+- (NSRPropertyCollection *) propertyCollection;
 
 @end
 
@@ -76,11 +73,100 @@
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 
 
+// Use default config + model name by default
+NSRailsUseDefaultModelName;
+NSRailsUseDefaultConfig;
+
 + (NSString *) NSRailsSync
 {
 	// If NSRailsSync isn't overriden (ie, if NSRailsSync() macro is not declared in subclass), this will be called
 	// Default to inlcude all properties
 	return @"*";
+}
+
+//returns the sync string expanded + inherited
++ (NSString *) masterNSRailsSyncWithOverrideString:(NSString *)override
+{
+	//base case
+	if (self == [NSRailsModel class])
+		return @"remoteID=id";
+	
+	NSString *syncStr = (override ? override : [self NSRailsSync]);
+	if ([syncStr rangeOfString:@"*"].location != NSNotFound)
+	{
+		syncStr = [syncStr stringByReplacingOccurrencesOfString:@"*" withString:@""];
+
+		//expand the star to everything in the class
+		NSString *expanded = [self.allProperties.allKeys componentsJoinedByString:@", "];	
+		//properties need to be appended to existing sync string since they can be overridden like with -x (and stripped of *)
+		syncStr = [syncStr stringByAppendingFormat:@", %@", expanded];
+	}
+	
+	if ([syncStr rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
+	{
+		syncStr = [syncStr stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
+
+		//skip right up the hierarchy to NSRailsModel
+		return [syncStr stringByAppendingFormat:@", %@", [NSRailsModel masterNSRailsSyncWithOverrideString:nil]];
+	}
+	
+	//traverse up the hierarchy (always getting the default NSRailsSync -- custom sync string instances are subject to inheritance too!)
+	return [syncStr stringByAppendingFormat:@", %@", [self.superclass masterNSRailsSyncWithOverrideString:nil]];
+}
+
++ (NSString *) masterNSRailsSync
+{
+	return [self masterNSRailsSyncWithOverrideString:nil];
+}
+
++ (NSRConfig *) masterClassConfig
+{
+	//check for a custom config for the class
+	
+	NSString *url = [self NSRailsUseConfigURL];
+	if (url)
+	{
+		NSRConfig *custom = [[NSRConfig alloc] initWithAppURL:url];
+		custom.appUsername = [self NSRailsUseConfigUsername];
+		custom.appPassword = [self NSRailsUseConfigPassword];
+		
+		return custom;
+	}
+	
+	return nil;
+}
+
++ (NSString *) masterModelName
+{
+	if (self == [NSRailsModel class])
+		return nil;
+	
+	NSString *defined = [self NSRailsUseModelName];
+	if (defined)
+		return defined;
+	
+	//otherwise, return name of the class
+	NSString *class = NSStringFromClass(self);
+	
+	if ([self getRelevantConfig].autoInflectsNamesAndProperties)
+	{
+		NSString *railsified = [class underscoreIgnorePrefix:[self getRelevantConfig].ignoresClassPrefixes];
+		return [railsified lowercaseString];
+	}
+	else
+	{
+		return class;
+	}
+}
+
++ (NSString *) masterPluralName
+{
+	NSString *defined = [self NSRailsUsePluralName];
+	if (defined)
+		return defined;
+
+	//otherwise, pluralize ModelName
+	return [[self masterModelName] pluralize];
 }
 
 + (NSRPropertyCollection *) propertyCollection
@@ -97,7 +183,10 @@
 	NSRPropertyCollection *collection = [propertyCollections objectForKey:class];
 	if (!collection)
 	{
-		collection = [[NSRPropertyCollection alloc] initWithClass:self];
+		collection = [[NSRPropertyCollection alloc] initWithClass:self 
+													   syncString:[self masterNSRailsSync] 
+													 customConfig:[self masterClassConfig]];
+		
 		[propertyCollections setObject:collection forKey:class];
 	}
 	
@@ -112,100 +201,15 @@
 	return [[self class] propertyCollection];
 }
 
-+ (NSString *) railsPropertiesWithCustomString:(NSString *)custom
-{
-	//start it off with the NSRails base ("remoteID=id")
-	NSMutableString *finalProperties = [NSMutableString stringWithString:@"remoteID=id"];
-	
-	BOOL stopInheriting = NO;
-	
-	//go up the class hierarchy, starting at self, adding the property list from each class
-	for (Class c = self; (c != [NSRailsModel class] && !stopInheriting); c = [c superclass])
-	{
-		NSString *syncString = [NSString string];
-		if (c == self && custom)
-		{
-			syncString = custom;
-		}
-		else if ([c respondsToSelector:@selector(NSRailsSync)])
-		{
-			syncString = [c NSRailsSync];
-			
-			//if that class defines NSRNoCarryFromSuper, mark that we should stop rising classes
-			if ([syncString rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
-			{
-				stopInheriting = YES;
-				
-				//we strip the flag so that later on, we'll know exactly WHICH class defined the flag.
-				//	otherwise, it'd be tacked on to every subclass.
-				//this is why if this class is evaluating itself here, it shouldn't strip it, to signify that IT defined it
-				if (c != self)
-				{
-					syncString = [syncString stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
-				}
-			}
-		}
-		[finalProperties appendFormat:@", %@", syncString];
-	}
-	
-	return finalProperties;
-}
-
-+ (NSString *) railsProperties
-{
-	return [self railsPropertiesWithCustomString:nil];
-}
-
-+ (NSString *) getModelName
-{
-	SEL sel = @selector(NSRailsUseModelName);
-	
-	//check to see if mname defined manually, then check to see if not nil (nil signifies that it's a UseDefault definition)
-	if ([self respondsToSelector:sel] && [self performSelector:sel])
-	{
-		return [self performSelector:sel];
-	}
-	
-	//otherwise, return name of the class
-	NSString *class = NSStringFromClass(self);
-	if ([class isEqualToString:@"NSRailsModel"])
-		class = nil;
-	
-	if ([self getRelevantConfig].autoInflectsNamesAndProperties)
-	{
-		NSString *railsified = [class underscoreIgnorePrefix:[self getRelevantConfig].ignoresClassPrefixes];
-		return [railsified lowercaseString];
-	}
-	else
-	{
-		return class;
-	}
-}
-
-+ (NSString *) getPluralModelName
-{
-	//if defined through NSRailsUseModelName as second parameter, use that instead
-	SEL sel = @selector(NSRailsUsePluralName);
-	if ([self respondsToSelector:sel] && [self performSelector:sel])
-	{
-		return [self performSelector:sel];
-	}
-	//otherwise, pluralize ModelName
-	return [[self getModelName] pluralize];
-}
-
 + (NSRConfig *) getRelevantConfigFromPropertyCollection:(NSRPropertyCollection *)propertyCollection
-{
-	//get the config for this class
-	
+{	
 	//if there's an overriding config in this context (an -[NSRConfig use] was called (explicitly or implicity via a block))
-	//use the overrider
 	if ([NSRConfig overrideConfig])
 	{
 		return [NSRConfig overrideConfig];
 	}
 	
-	//if this class defines NSRailsUseConfig, use it over the default
+	//if this class/instance defines NSRailsUseConfig, use it over the default
 	else if (propertyCollection.customConfig)
 	{
 		return propertyCollection.customConfig;
@@ -235,12 +239,12 @@
 {
 	if ((self = [super init]))
 	{
-		//apply inheritance rules etc to the string
-		str = [[self class] railsPropertiesWithCustomString:str];
+		//apply inheritance rules etc to the given string
+		str = [[self class] masterNSRailsSyncWithOverrideString:str];
 		
-		customProperties = [[NSRPropertyCollection alloc] initWithClass:[self class] properties:str];
-		if (config)
-			customProperties.customConfig = config;
+		customProperties = [[NSRPropertyCollection alloc] initWithClass:[self class] 
+															 syncString:str 
+														   customConfig:config];
 	}
 	return self;
 }
@@ -269,7 +273,7 @@
 	// enveloped meaning with the model name out front, {"user"=>{"name"=>"x", "password"=>"y"}}
 	
 	NSDictionary *enveloped = [NSDictionary dictionaryWithObject:[self dictionaryOfRemoteProperties]
-														  forKey:[[self class] getModelName]];
+														  forKey:[[self class] masterModelName]];
 	
 	NSError *error = nil;
 	NSString *json = [enveloped JSONRepresentation:&error];
@@ -306,8 +310,8 @@
 	NSRailsModel *model = [[NSClassFromString(classN) alloc] initWithRemoteDictionary:dict];
 	
 	//see if we can assign an association from its parent (the receiver -- "me" ("self"))
-	NSString *parentModelName = [[self class] getModelName];
-	NSSet *properties = [[model propertyCollection] objcPropertiesForRemoteEquivalent:parentModelName 
+	NSString *parentModelName = [[self class] masterModelName];
+	NSArray *properties = [[model propertyCollection] objcPropertiesForRemoteEquivalent:parentModelName 
 																		  autoinflect:[self getRelevantConfig].autoInflectsNamesAndProperties];
 	
 	for (NSString *property in properties)
@@ -337,12 +341,8 @@
 		return [NSNull null];
 	}
 	
-	//make sure that the result is a JSON parse-able
-	if (![obj isKindOfClass:[NSArray class]] &&
-		![obj isKindOfClass:[NSDictionary class]] &&
-		![obj isKindOfClass:[NSString class]] &&
-		![obj isKindOfClass:[NSNumber class]] &&
-		![obj isKindOfClass:[NSNull class]])
+	//make sure that the result is a JSON parsable
+	if (![obj isJSONParsable])
 	{
 		[NSException raise:NSRailsInvalidJSONEncodingException format:@"Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return NSDictionary, NSArray, NSString, NSNumber, or NSNull here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop, NSStringFromClass([self class]),sel];
 	}
@@ -367,7 +367,7 @@
 		return [self getCustomDecodingForProperty:prop value:rep];
 	}
 	//if the object is of class NSDate and the representation in JSON is a string, automatically convert it to an NSDate
-	else if (rep && [rep isKindOfClass:[NSString class]] && [[[self class] typeForProperty:prop] isEqualToString:@"NSDate"])
+	else if (rep && [rep isKindOfClass:[NSString class]] && [[self class] propertyIsDate:prop])
 	{
 		return [[self getRelevantConfig] dateFromString:rep];
 	}
@@ -614,8 +614,7 @@
 		//but only do it for non-ID properties - we want to omit ID if it's null (could be for create)
 		if (!val && ![railsEquivalent isEqualToString:@"id"])
 		{
-			NSString *string = [[self class] typeForProperty:objcProperty];
-			if ([string isEqualToString:@"NSArray"] || [string isEqualToString:@"NSMutableArray"])
+			if ([[self class] propertyIsArray:objcProperty])
 			{
 				//there's an array, and because the value is nil, make it an empty array (rails will get angry if you send null)
 				val = [NSArray array];
@@ -718,7 +717,7 @@
 
 + (NSString *) routeForControllerMethod:(NSString *)customRESTMethod
 {
-	NSString *controller = [self getPluralModelName];
+	NSString *controller = [self masterPluralName];
 	NSString *route = customRESTMethod;
 	if (controller)
 	{

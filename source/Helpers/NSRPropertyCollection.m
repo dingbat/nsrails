@@ -88,19 +88,12 @@ static NSString * const NSRNoEquivalentMarker = @"";
 	}
 }
 
-- (id) initWithClass:(Class)_class
-{
-	self = [self initWithClass:_class properties:[_class railsProperties]];
-	return self;
-}
-
-- (id) initWithClass:(Class)_class properties:(NSString *)props
+- (id) initWithClass:(Class)class syncString:(NSString *)syncString customConfig:(NSRConfig *)config
 {
 	if ((self = [super init]))
-	{		
-		//log on param string for testing
-		//NSLog(@"found props %@",props);
-		
+	{
+		customConfig = config;
+				
 		//initialize property categories
 		sendableProperties = [[NSMutableArray alloc] init];
 		retrievableProperties = [[NSMutableArray alloc] init];
@@ -108,288 +101,154 @@ static NSString * const NSRNoEquivalentMarker = @"";
 		propertyEquivalents = [[NSMutableDictionary alloc] init];
 		encodeProperties = [[NSMutableArray alloc] init];
 		decodeProperties = [[NSMutableArray alloc] init];
-		
-		//check for a custom config for the class
 
-		customConfig = nil;
-//this will suppress the compiler warnings that come with ARC when doing performSelector
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+		NSCharacterSet *wn = [NSCharacterSet whitespaceAndNewlineCharacterSet];
 
-		SEL urlSEL = @selector(NSRailsUseConfigURL);
-		SEL usernameSEL = @selector(NSRailsUseConfigUsername);
-		SEL passwordSEL = @selector(NSRailsUseConfigPassword);
+		//parse the sync string
+		//will be something like "property -abc, property2:etc, property3=p"
+		NSMutableArray *propsToProcess = [NSMutableArray arrayWithArray:[syncString componentsSeparatedByString:@","]];
 		
-		if ([_class respondsToSelector:urlSEL])
+		NSMutableArray *alreadyAdded = [NSMutableArray array];
+		
+		for (NSString *rawPropWithFlags in propsToProcess)
 		{
-			NSString *url = [_class performSelector:urlSEL];
-			if (url)
+			NSString *propWithFlags = [rawPropWithFlags stringByTrimmingCharactersInSet:wn];
+			if (propWithFlags.length == 0)
+				continue;
+			
+			//prop can be something like "username=user_name:Class -etc"
+			//find string sets between =, :, and -
+			NSArray *opSplit = [propWithFlags componentsSeparatedByString:@"-"];
+			NSString *options = (opSplit.count == 1 ? nil : [opSplit lastObject]);
+			
+			NSArray *modSplit = [[opSplit objectAtIndex:0] componentsSeparatedByString:@":"];
+			NSString *nestedModel = (modSplit.count == 1 ? nil : [[modSplit lastObject] stringByTrimmingCharactersInSet:wn]);
+
+			NSArray *eqSplit = [[modSplit objectAtIndex:0] componentsSeparatedByString:@"="];
+			NSString *equivalent = (eqSplit.count == 1 ? nil : [[eqSplit lastObject] stringByTrimmingCharactersInSet:wn]);
+
+			NSString *objcProp = [[eqSplit objectAtIndex:0] stringByTrimmingCharactersInSet:wn];
+						
+			//if it's previously been marked with the '-x' flag OR was already added, ignore it
+			if ([alreadyAdded containsObject:objcProp])
+				continue;
+
+			//now ignore it (done so that explicit flags can override the * (which comes after), and so subclasses can  override their parents' NSRS - properties furthest up the list will have greatest priority)
+			[alreadyAdded addObject:objcProp];
+
+			//if options contain an -x, skip the rest of this
+			if (options && [options rangeOfString:@"x"].location != NSNotFound)
 			{
-				customConfig = [[NSRConfig alloc] initWithAppURL:url];
-				if ([_class respondsToSelector:usernameSEL])
+				continue;
+			}
+			
+			//if -r or -s aren't declared, use -rs by default
+			BOOL missingBothRS = (!options || 
+								  ([options rangeOfString:@"r"].location == NSNotFound && 
+								   [options rangeOfString:@"s"].location == NSNotFound));
+
+			BOOL primitive = NO;
+			
+			//make sure property exists in this class or superclasses
+			NSString *type = [class typeForProperty:objcProp isPrimitive:&primitive];
+			if (!type)
+			{
+				// Property not found. Could be remote-only, but for that needs to be non-retrievable & encodable
+				BOOL remoteOnly = (!missingBothRS && 
+								   [options rangeOfString:@"r"].location == NSNotFound && 
+								   [options rangeOfString:@"e"].location != NSNotFound);
+				if (!remoteOnly)
 				{
-					NSString *username = [_class performSelector:usernameSEL];
-					customConfig.appUsername = username;
-					if ([_class respondsToSelector:passwordSEL])
-					{
-						NSString *password = [_class performSelector:passwordSEL];
-						customConfig.appPassword = password;
-					}
+					NSRRaiseSyncError(@"Property '%@' declared in NSRailsSync for class %@ was not found in this class or in superclasses. If you intend it to be a remote-only property, make sure it's defined as encodable and send-only (-es).", objcProp, NSStringFromClass(class),@"");
+					
+					continue;		
 				}
 			}
-		}
-
-//pop the warning suppressor defined above (for calling performSelector's in ARC)
-#pragma clang diagnostic pop
-
-		//here begins the code used for parsing the NSRailsSync param string
-		
-		NSCharacterSet *wn = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-		
-		//exclusion array for any properties declared as -x (will later remove properties from * definition)
-		NSMutableArray *exclude = [NSMutableArray array];
-		
-		//check to see if we should even consider *
-		BOOL markedAll = ([props rangeOfString:@"*"].location != NSNotFound);
-		
-		//marked as NO for the first time in the loop
-		//if a * appeared (markedAll is true), this will enable by the end of the loop and the whole thing will loop again, for the *
-		BOOL onStarIteration = NO;
-		
-		do
-		{
-			NSMutableArray *elements;
 			
-			if (onStarIteration)
+			//make sure that the property type is not a primitive
+			if (primitive)
 			{
-				//make sure we don't loop again
-				onStarIteration = NO;
-				markedAll = NO;
-				
-				NSMutableArray *relevantIvars = [NSMutableArray array];
-				
-				//go up the class hierarchy
-				Class c = _class;				
-				while (c != [NSRailsModel class])
-				{
-					NSString *properties = [c NSRailsSync];
-					
-					//if there's a *, add all ivars from that class
-					if ([properties rangeOfString:@"*"].location != NSNotFound)
-						[relevantIvars addObjectsFromArray:[c allProperties]];
-					
-					//if there's a NoCarryFromSuper, stop the loop right there since we don't want stuff from any more superclasses
-					if ([properties rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
-						break;
-					
-					c = [c superclass];
-				}
-				
-				
-				elements = [NSMutableArray array];
-				//go through all the ivars we found
-				for (NSString *ivar in relevantIvars)
-				{
-					//if it hasn't been previously declared (from the first run), add it to the list we have to process
-					if (![propertyEquivalents objectForKey:ivar])
-					{
-						[elements addObject:ivar];
-					}
-				}
+				NSRRaiseSyncError(@"Property '%@' declared in NSRailsSync for class %@ was found to be of primitive type '%@' - please use NSNumber*.", objcProp, NSStringFromClass(class), type);
+				continue;
+			}
+			
+			// Looks like we're ready to officially add this property
+			
+			//Check for =
+			if (equivalent)
+			{
+				[propertyEquivalents setObject:equivalent forKey:objcProp];
 			}
 			else
 			{
-				//if on the first run, split properties by commas ("username=user_name, password"=>["username=user_name","password"]
-				elements = [NSMutableArray arrayWithArray:[props componentsSeparatedByString:@","]];
+				//if no property explicitly set, make it NSRNoEquivalentMarker
+				//later on we'll see if automaticallyCamelize is on for the config and get the equivalence accordingly
+				[propertyEquivalents setObject:NSRNoEquivalentMarker forKey:objcProp];
 			}
-			for (int i = 0; i < elements.count; i++)
+			
+			if ([options rangeOfString:@"r"].location != NSNotFound || missingBothRS)
 			{
-				NSString *element = [[elements objectAtIndex:i] stringByTrimmingCharactersInSet:wn];
-				
-				//remove any NSRNoCarryFromSuper's to not screw anything up
-				NSString *prop = [element stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
-				
-				if (prop.length > 0)
+				[retrievableProperties addObject:objcProp];
+			}
+			
+			if ([options rangeOfString:@"s"].location != NSNotFound || missingBothRS)
+			{
+				[self addPropertyAsSendable:objcProp equivalent:equivalent class:class];
+			}
+			
+			//Check for all other flags (-)
+			if (options)
+			{
+				if ([options rangeOfString:@"e"].location != NSNotFound)
 				{
-					if ([prop rangeOfString:@"*"].location != NSNotFound)
-					{
-						//if there's a * in this piece, skip it (we already accounted for stars above)
-						continue;
-					}
-					
-					if ([exclude containsObject:prop])
-					{
-						//if it's been marked with '-x' flag previously, ignore it
-						continue;
-					}
-					
-					//prop can be something like "username=user_name:Class -etc"
-					//find string sets between =, :, and -
-					NSArray *opSplit = [prop componentsSeparatedByString:@"-"];
-					NSArray *modSplit = [[opSplit objectAtIndex:0] componentsSeparatedByString:@":"];
-					NSArray *eqSplit = [[modSplit objectAtIndex:0] componentsSeparatedByString:@"="];
-					
-					prop = [[eqSplit objectAtIndex:0] stringByTrimmingCharactersInSet:wn];
-					
-					NSString *options = [opSplit lastObject];
-					//if it was marked exclude, add to exclude list in case * was declared, and skip over anything else
-					if (opSplit.count > 1 && [options rangeOfString:@"x"].location != NSNotFound)
-					{
-						[exclude addObject:prop];
-						continue;
-					}
-					
-					//if it's sendable & encodable but not part of the class
-					BOOL remoteOnly = NO;
-					
-					BOOL primitive = NO;
-					
-					//check to see if the listed property even exists
-					NSString *ivarType = [_class typeForProperty:prop isPrimitive:&primitive];
-					if (!ivarType)
-					{
-						//could be that it's encodable (rails-only attr)
-						NSString *maybeEncodable = [@"encode" stringByAppendingString:[prop firstLetterCapital]];
-						if ([_class instancesRespondToSelector:NSSelectorFromString(maybeEncodable)])
-						{
-							//TODO inform the user that this is going on, there also should be no "retrievable" declared etc
-							
-							//if it has encode, make sure it's added as encodable & sendable
-							[encodeProperties addObject:prop];
-							[sendableProperties addObject:prop];
-							
-							//later on we'll skip those two
-							remoteOnly = YES;
-						}
-						else
-						{
-							NSRRaiseSyncError(@"Property '%@' declared in NSRailsSync for class %@ was not found in this class or in superclasses (and there's no encode method found for it (%@) if it's gonna be send-only).", prop, NSStringFromClass(_class),maybeEncodable);
-							continue;
-						}
-					}
-					
-					//make sure that the property type is not a primitive
-					if (primitive)
-					{
-						NSRRaiseSyncError(@"Property '%@' declared in NSRailsSync for class %@ was found to be of primitive type '%@' - please use NSNumber*.", prop, NSStringFromClass(_class), ivarType);
-						continue;
-					}
-					
-					//see if there are any = declared
-					NSString *equivalent = nil;
-					if (eqSplit.count > 1)
-					{
-						//set the equivalence to the last element after the =
-						equivalent = [[eqSplit lastObject] stringByTrimmingCharactersInSet:wn];
-						
-						[propertyEquivalents setObject:equivalent forKey:prop];
-					}
-					else
-					{
-						//if no property explicitly set, make it NSRNoEquivalentMarker
-						//later on we'll see if automaticallyCamelize is on for the config and get the equivalence accordingly
-						[propertyEquivalents setObject:NSRNoEquivalentMarker forKey:prop];
-					}
-					
-					if (opSplit.count > 1)
-					{
-						if ([options rangeOfString:@"r"].location != NSNotFound && !remoteOnly)
-						{
-							[retrievableProperties addObject:prop];
-						}
-						
-						if ([options rangeOfString:@"s"].location != NSNotFound && !remoteOnly)
-						{
-							[self addPropertyAsSendable:prop equivalent:equivalent class:_class];
-						}
-						
-						if ([options rangeOfString:@"e"].location != NSNotFound && !remoteOnly)
-							[encodeProperties addObject:prop];
-						
-						if ([options rangeOfString:@"d"].location != NSNotFound)
-							[decodeProperties addObject:prop];
-						
-						//add a special marker in nestedModelProperties dict
-						if ([options rangeOfString:@"b"].location != NSNotFound)
-							[nestedModelProperties setObject:[NSNumber numberWithBool:YES] forKey:NSRBelongsToKeyForProperty(prop)];
-					}
-					
-					//if no options are defined or some are but neither -s nor -r are defined, by default add sendable+retrievable
-					if (opSplit.count == 1 ||
-						([options rangeOfString:@"s"].location == NSNotFound && [options rangeOfString:@"r"].location == NSNotFound))
-					{
-						//if remoteOnly, means we already added as sendable and we do NOT want to retrieve it
-						if (!remoteOnly)
-						{
-							[self addPropertyAsSendable:prop equivalent:equivalent class:_class];
-							[retrievableProperties addObject:prop];
-						}
-					}
-					
-					//see if there was a : declared
-					if (modSplit.count > 1)
-					{
-						NSString *otherModel = [[modSplit lastObject] stringByTrimmingCharactersInSet:wn];
-						if (otherModel.length > 0)
-						{
-							//class entered is not a real class
-							if (!NSClassFromString(otherModel))
-							{
-								NSRRaiseSyncError(@"Failed to find class '%@', declared as class for nested property '%@' of class '%@'. Nesting relation not set.",otherModel,prop,NSStringFromClass(_class));
-							}
-							//class entered is not a subclass of NSRailsModel
-							else if (![NSClassFromString(otherModel) isSubclassOfClass:[NSRailsModel class]])
-							{
-								NSRRaiseSyncError(@"'%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel.",otherModel,prop, NSStringFromClass(_class),otherModel);
-							}
-							else
-							{
-								[nestedModelProperties setObject:otherModel forKey:prop];
-							}
-						}
-					}
-					else
-					{
-						//if no : was declared for this property, check to see if we should link it anyway
-						
-						if ([ivarType isEqualToString:@"NSArray"] ||
-							[ivarType isEqualToString:@"NSMutableArray"])
-						{
-							NSRRaiseSyncError(@"Property '%@' in class %@ was found to be an array, but no nesting model was set. Note that without knowing with which models NSR should populate the array, NSDictionaries with the retrieved Rails attributes will be set. If NSDictionaries are desired, to suppress this error, simply add a colon with nothing following to the property in NSRailsSync: `%@:`",prop,NSStringFromClass(_class),element);
-						}
-						else if (!([ivarType isEqualToString:@"NSString"] ||
-								   [ivarType isEqualToString:@"NSMutableString"] ||
-								   [ivarType isEqualToString:@"NSDictionary"] ||
-								   [ivarType isEqualToString:@"NSMutableDictionary"] ||
-								   [ivarType isEqualToString:@"NSNumber"] ||
-								   [ivarType isEqualToString:@"NSDate"]))
-						{
-							//must be custom obj, see if its a railsmodel, if it is, link it automatically
-							Class c = NSClassFromString(ivarType);
-							if (c && [c isSubclassOfClass:[NSRailsModel class]])
-							{
-								//automatically link that ivar type (ie, Pet) for that property (ie, pets)
-								[nestedModelProperties setObject:ivarType forKey:prop];
-							}
-						}
-					}
+					[encodeProperties addObject:objcProp];
+				}
+				
+				if ([options rangeOfString:@"d"].location != NSNotFound)
+				{
+					[decodeProperties addObject:objcProp];
+				}
+				
+				//add a special marker in nestedModelProperties dict
+				if ([options rangeOfString:@"b"].location != NSNotFound)
+				{
+					[nestedModelProperties setObject:[NSNumber numberWithBool:YES] forKey:NSRBelongsToKeyForProperty(objcProp)];
 				}
 			}
 			
-			//if markedAll (a * was encountered somewhere), loop again one more time to add all properties not already listed (*)
-			if (markedAll)
-				onStarIteration = YES;
-		} 
-		while (onStarIteration);
-		
-		// for testing's sake
-		//		NSLog(@"-------- %@ ----------",[_class getModelName]);
-		//		NSLog(@"list: %@",props);
-		//		NSLog(@"sendable: %@",sendableProperties);
-		//		NSLog(@"retrievable: %@",retrievableProperties);
-		//		NSLog(@"NMP: %@",nestedModelProperties);
-		//		NSLog(@"eqiuvalents: %@",propertyEquivalents);
-		//		NSLog(@"\n");
+			//Check for :
+			if (nestedModel.length > 0) //check for length because length=0 is valid to indicate dicts (`nestedArray:`)
+			{
+				Class class = NSClassFromString(nestedModel);
+				
+				if (!class)
+				{
+					NSRRaiseSyncError(@"Failed to find class '%@', declared as class for nested property '%@' of class '%@'. Nesting relation not set.",nestedModel,objcProp,NSStringFromClass(class));
+				}
+				else if (![class isSubclassOfClass:[NSRailsModel class]])
+				{
+					NSRRaiseSyncError(@"'%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel.",nestedModel,objcProp, NSStringFromClass(class),nestedModel);
+				}
+				else
+				{
+					[nestedModelProperties setObject:nestedModel forKey:objcProp];
+				}
+			}
+			else if (!nestedModel)
+			{
+				//even if no : was declared for this property, check to see if we should link it anyway
+				
+				if ([class propertyIsArray:objcProp])
+				{
+					NSRRaiseSyncError(@"Property '%@' in class %@ was found to be an array, but no nesting model was set. If you don't want to nest instances of other objects, you can have it populate with NSDictionaries with the retrieved remote attributes by adding a colon to the end of this property in NSRailsSync: `%@:`",objcProp,NSStringFromClass(class),objcProp);
+				}
+				else if ([NSClassFromString(type) isSubclassOfClass:[NSRailsModel class]])
+				{
+					//automatically link that ivar type (ie, Pet) for that property (ie, pets)
+					[nestedModelProperties setObject:type forKey:objcProp];
+				}
+			}
+		}
 	}
 	
 	return self;
@@ -420,12 +279,9 @@ static NSString * const NSRNoEquivalentMarker = @"";
 	return railsEquivalent;
 }
 
-- (NSSet *) objcPropertiesForRemoteEquivalent:(NSString *)railsProperty autoinflect:(BOOL)autoinflect
+- (NSArray *) objcPropertiesForRemoteEquivalent:(NSString *)railsProperty autoinflect:(BOOL)autoinflect
 {
-	NSSet *properties = [propertyEquivalents keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) 
-	{
-		return [railsProperty isEqualToString:obj];
-	}];
+	NSArray *properties = [propertyEquivalents allKeysForObject:railsProperty];
 		
 	if (properties.count == 0)
 	{
@@ -436,7 +292,7 @@ static NSString * const NSRNoEquivalentMarker = @"";
 		NSString *autoObjcEquivalence = autoinflect ? [railsProperty camelize] : railsProperty;
 		
 		if ([propertyEquivalents objectForKey:autoObjcEquivalence])
-			return [NSSet setWithObject:autoObjcEquivalence];
+			return [NSArray arrayWithObject:autoObjcEquivalence];
 		
 		//prop does not exist, sorry. we tried.
 		return nil;

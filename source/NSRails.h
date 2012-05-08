@@ -629,11 +629,11 @@
 #define NSRailsSync(...) \
 + (NSString*) NSRailsSync { return _MAKE_STR(__VA_ARGS__); }
 
-//define NSRNoCarryFromSuper as "_NSR_NO_SUPER" - not a string, since it's placed directly in the macro
-#define NSRNoCarryFromSuper			_NSR_NO_SUPER_
+//define NSRNoCarryFromSuper as NSRNoCarryFromSuper - not a string, since it's placed directly in the macro
+#define NSRNoCarryFromSuper			NSRNoCarryFromSuper
 
 //returns the string version of NSRNoCarryFromSuper so we can find it when evaluating NSRailsSync string
-#define _NSRNoCarryFromSuper_STR	_MAKE_STR(_NSR_NO_SUPER_)
+#define _NSRNoCarryFromSuper_STR	_MAKE_STR(NSRNoCarryFromSuper)
 
 
 /// =============================================================================================

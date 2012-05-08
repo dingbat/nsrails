@@ -33,7 +33,7 @@
 @interface NSObject (NSRPropertySupport)
 
 //returns an array of all properties declared in class
-+ (NSMutableArray *) allProperties;
++ (NSDictionary *) allProperties;
 
 //returns type of the given property for that instance variable (ie, NSString)
 + (NSString *) typeForProperty:(NSString *)property;
@@ -46,5 +46,11 @@
 
 //returns SEL for the getter of given property
 + (SEL) getterForProperty:(NSString *)property;
+
+//returns YES if property is an NSDate
++ (BOOL) propertyIsDate:(NSString *)prop;
+
+//returns YES if property is an NSArray or NSMutableArray
++ (BOOL) propertyIsArray:(NSString *)prop;
 
 @end

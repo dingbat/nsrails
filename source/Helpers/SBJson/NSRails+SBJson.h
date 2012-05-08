@@ -16,6 +16,8 @@
 
 - (NSString *)JSONRepresentation:(NSError **)error;
 
+- (BOOL) isJSONParsable;
+
 @end
 
 
