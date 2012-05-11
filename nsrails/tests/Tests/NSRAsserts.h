@@ -25,11 +25,15 @@
 + (NSString *) masterModelName;
 + (NSString *) masterPluralName;
 
++ (NSDictionary *) NSRailsProperties;
+
 + (NSRPropertyCollection *) propertyCollection;
 - (NSRPropertyCollection *) propertyCollection;
 
 - (NSString *) routeForInstanceMethod:(NSString *)route;
 + (NSString *) routeForControllerMethod:(NSString *)route;
+
++ (NSString *) typeForProperty:(NSString *)prop;
 
 @end
 

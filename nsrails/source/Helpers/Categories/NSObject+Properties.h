@@ -47,10 +47,4 @@
 //returns SEL for the getter of given property
 + (SEL) getterForProperty:(NSString *)property;
 
-//returns YES if property is an NSDate
-+ (BOOL) propertyIsDate:(NSString *)prop;
-
-//returns YES if property is an NSArray or NSMutableArray
-+ (BOOL) propertyIsArray:(NSString *)prop;
-
 @end

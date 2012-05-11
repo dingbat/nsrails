@@ -12,6 +12,15 @@ project.xcworkspace
 
 *.gen/
 
+
+# Ignore build folders made by RubyMotion
+
+build-iPhoneOS
+build-iPhoneSimulator
+build
+*.bridgesupport
+
+
 # Ignore the server app's git repo - for my own use when pushing to Heroku.
 
 extras/nsrails.com/.git/

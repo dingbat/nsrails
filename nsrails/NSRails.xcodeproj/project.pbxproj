@@ -23,6 +23,7 @@
 		599D3118155CAA4200C17A52 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 599D310D155CAA4100C17A52 /* NSRConfig.m */; };
 		599D3119155CAA4200C17A52 /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 599D310E155CAA4100C17A52 /* NSRPropertyCollection.m */; };
 		599D311A155CAA4200C17A52 /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 599D310E155CAA4100C17A52 /* NSRPropertyCollection.m */; };
+		599D3139155CD53E00C17A52 /* GHUnit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 599D3101155CA9F800C17A52 /* GHUnit.framework */; };
 		59C46514155C5BC400920FD5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59C464D1155C59DF00920FD5 /* Cocoa.framework */; };
 		59C46603155C603500920FD5 /* libNSRails.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 59C4654B155C5DD100920FD5 /* libNSRails.a */; };
 		59C46606155C604700920FD5 /* libNSRails.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 59C4654B155C5DD100920FD5 /* libNSRails.a */; };
@@ -140,6 +141,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				599D3139155CD53E00C17A52 /* GHUnit.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

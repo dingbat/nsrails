@@ -77,12 +77,9 @@
 NSRailsUseDefaultModelName;
 NSRailsUseDefaultConfig;
 
-+ (NSString *) NSRailsSync
-{
-	// If NSRailsSync isn't overriden (ie, if NSRailsSync() macro is not declared in subclass), this will be called
-	// Default to inlcude all properties
-	return @"*";
-}
+// If NSRailsSync isn't overriden (ie, if NSRailsSync() macro is not declared in subclass), default to *
+NSRailsSync(*);
+
 
 //returns the sync string expanded + inherited
 + (NSString *) masterNSRailsSyncWithOverrideString:(NSString *)override
@@ -321,7 +318,7 @@ NSRailsUseDefaultConfig;
 	{
 		//only assign me to the child if it has me defined as a property and it's marked as nested to me
 		if (property &&
-			[[model.propertyCollection.nestedModelProperties objectForKey:property] isEqualToString:[self.class description]])
+			[[model.propertyCollection nestedClassNameForProperty:property] isEqualToString:[self.class description]])
 		{
 			SEL setter = [[model class] setterForProperty:property];
 			if (setter)
@@ -370,7 +367,7 @@ NSRailsUseDefaultConfig;
 		return [self getCustomDecodingForProperty:prop value:rep];
 	}
 	//if the object is of class NSDate and the representation in JSON is a string, automatically convert it to an NSDate
-	else if (rep && [rep isKindOfClass:[NSString class]] && [[self class] propertyIsDate:prop])
+	else if (rep && [rep isKindOfClass:[NSString class]] && [[self propertyCollection] propertyIsDate:prop])
 	{
 		return [[self getRelevantConfig] dateFromString:rep];
 	}
@@ -394,7 +391,7 @@ NSRailsUseDefaultConfig;
 		BOOL isArray = [val isKindOfClass:[NSArray class]];
 		
 		//see if this property actually links to a custom NSRailsModel subclass, or it WASN'T declared, but is an array
-		if ([[self propertyCollection].nestedModelProperties objectForKey:prop] || isArray)
+		if ([[self propertyCollection] nestedClassNameForProperty:prop] || isArray)
 		{
 			//if the ivar is an array, we need to make every element into JSON and then put them back in the array
 			if (isArray)
@@ -482,7 +479,7 @@ NSRailsUseDefaultConfig;
 		
 		if (val)
 		{
-			NSString *nestedClass = [[self propertyCollection].nestedModelProperties objectForKey:objcProperty];
+			NSString *nestedClass = [[self propertyCollection] nestedClassNameForProperty:objcProperty];
 			//instantiate it as the class specified in NSRailsSync if it hadn't already been custom-decoded
 			if (nestedClass && ![[self propertyCollection].decodeProperties containsObject:objcProperty])
 			{
@@ -603,7 +600,7 @@ NSRailsUseDefaultConfig;
 	for (NSString *objcProperty in [self propertyCollection].sendableProperties)
 	{
 		//skip this property if it's nested and we're only looking shallow (to prevent infinite recursion)
-		if (shallow && [[[self propertyCollection] nestedModelProperties] objectForKey:objcProperty])
+		if (shallow && [[self propertyCollection] nestedClassNameForProperty:objcProperty])
 			continue;
 		
 		NSString *railsEquivalent = [[self propertyCollection] remoteEquivalentForObjcProperty:objcProperty 
@@ -617,7 +614,7 @@ NSRailsUseDefaultConfig;
 		//but only do it for non-ID properties - we want to omit ID if it's null (could be for create)
 		if (!val && ![railsEquivalent isEqualToString:@"id"])
 		{
-			if ([[self class] propertyIsArray:objcProperty])
+			if ([[self propertyCollection] propertyIsArray:objcProperty])
 			{
 				//there's an array, and because the value is nil, make it an empty array (rails will get angry if you send null)
 				val = [NSArray array];
@@ -659,7 +656,7 @@ NSRailsUseDefaultConfig;
 			}
 			
 			//otherwise, if it's associative, use "_attributes" if not null (/empty for arrays)
-			else if (([[self propertyCollection].nestedModelProperties objectForKey:objcProperty] || isArray) && !null)
+			else if (([[self propertyCollection] nestedClassNameForProperty:objcProperty] || isArray) && !null)
 			{
 				railsEquivalent = [railsEquivalent stringByAppendingString:@"_attributes"];
 			}

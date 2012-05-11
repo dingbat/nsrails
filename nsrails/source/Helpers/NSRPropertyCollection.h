@@ -49,7 +49,10 @@
 - (NSString *) remoteEquivalentForObjcProperty:(NSString *)objcProperty autoinflect:(BOOL)autoinflect;
 - (NSArray *) objcPropertiesForRemoteEquivalent:(NSString *)railsProperty autoinflect:(BOOL)autoinflect;
 
+- (NSString *) nestedClassNameForProperty:(NSString *)prop;
 - (BOOL) propertyIsMarkedBelongsTo:(NSString *)prop;
+- (BOOL) propertyIsArray:(NSString *)prop;
+- (BOOL) propertyIsDate:(NSString *)prop;
 
 - (id) initWithClass:(Class)c syncString:(NSString *)str customConfig:(NSRConfig *)config;
 

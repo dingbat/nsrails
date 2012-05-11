@@ -53,8 +53,6 @@
 
 - (void) test_invalid_sync_params
 {
-	GHAssertThrows(NSRInitTestClass(@"f8a asufoj as;lfkas [pfl;aksm jofaskf oasa"), @"Should've failed random mash");
-
 	GHAssertNoThrow(NSRInitTestClass(@"attr1,\nattr2"), @"Shouldn't crash if newline in the middle");
 
 	GHAssertThrows(NSRInitTestClass(@"primitiveAttr"), @"Should crash if a primitive attribute was defined in NSRailsSync");
@@ -62,7 +60,7 @@
 	GHAssertThrows(NSRInitTestClass(@"remoteID=id, myID=id"), @"Should crash if trying to set a property to ID equiv in NSRS");
 	GHAssertNoThrow(NSRInitTestClass(@"remoteID=id, myID=id -r"), @"Shouldn't crash for setting a property to ID -r only");
 	
-	GHAssertThrows(NSRInitTestClass(@"nonexistent"), @"Should crash if trying to set a nonexistent property in NSRS");
+	GHAssertNoThrow(NSRInitTestClass(@"nonexistent"), @"Shouldn't crash if trying to set a nonexistent property in NSRS");
 	
 	GHAssertThrows(NSRInitTestClass(@"attr1=hello, attr2=hello"), @"Should crash if trying to set two properties to the same rails equiv in NSRS");
 	GHAssertThrows(NSRInitTestClass(@"attr1=hello -r, attr2=hello, myID=hello"), @"Should crash if trying to set two sendable properties to the same rails equiv in NSRS");

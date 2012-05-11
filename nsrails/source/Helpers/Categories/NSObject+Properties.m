@@ -138,16 +138,4 @@
 	return s;
 }
 
-+ (BOOL) propertyIsArray:(NSString *)prop
-{
-	NSString *type = [self typeForProperty:prop];
-	return [type isEqualToString:@"NSArray"] || [type isEqualToString:@"NSMutableArray"];
-}
-
-+ (BOOL) propertyIsDate:(NSString *)prop
-{
-	NSString *type = [self typeForProperty:prop];
-	return [type isEqualToString:@"NSDate"];
-}
-
 @end

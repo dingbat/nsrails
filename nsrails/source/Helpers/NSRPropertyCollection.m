@@ -151,20 +151,6 @@ static NSString * const NSRNoEquivalentMarker = @"";
 			
 			//make sure property exists in this class or superclasses
 			NSString *type = [class typeForProperty:objcProp isPrimitive:&primitive];
-			if (!type)
-			{
-				// Property not found. Could be remote-only, but for that needs to be non-retrievable & encodable
-				BOOL remoteOnly = (!missingBothRS && 
-								   [options rangeOfString:@"r"].location == NSNotFound && 
-								   [options rangeOfString:@"e"].location != NSNotFound);
-				if (!remoteOnly)
-				{
-					NSRRaiseSyncError(@"Property '%@' declared in NSRailsSync for class %@ was not found in this class or in superclasses. If you intend it to be a remote-only property, make sure it's defined as encodable and send-only (-es).", objcProp, NSStringFromClass(class),@"");
-					
-					continue;		
-				}
-			}
-			
 			//make sure that the property type is not a primitive
 			if (primitive)
 			{
@@ -238,9 +224,13 @@ static NSString * const NSRNoEquivalentMarker = @"";
 			{
 				//even if no : was declared for this property, check to see if we should link it anyway
 				
-				if ([class propertyIsArray:objcProp])
+				if ([type isEqualToString:@"NSArray"] || [type isEqualToString:@"NSMutableArray"])
 				{
 					NSRRaiseSyncError(@"Property '%@' in class %@ was found to be an array, but no nesting model was set. If you don't want to nest instances of other objects, you can have it populate with NSDictionaries with the retrieved remote attributes by adding a colon to the end of this property in NSRailsSync: `%@:`",objcProp,NSStringFromClass(class),objcProp);
+				}
+				else if ([type isEqualToString:@"NSDate"])
+				{
+					[nestedModelProperties setObject:@"NSDate" forKey:objcProp];
 				}
 				else if ([NSClassFromString(type) isSubclassOfClass:[NSRailsModel class]])
 				{
@@ -260,6 +250,21 @@ static NSString * const NSRNoEquivalentMarker = @"";
 - (BOOL) propertyIsMarkedBelongsTo:(NSString *)prop
 {
 	return !![nestedModelProperties objectForKey:NSRBelongsToKeyForProperty(prop)];
+}
+
+- (NSString *) nestedClassNameForProperty:(NSString *)prop
+{
+	return [self propertyIsDate:prop] ? nil : [nestedModelProperties objectForKey:prop];
+}
+
+- (BOOL) propertyIsArray:(NSString *)prop
+{
+	return [nestedModelProperties objectForKey:prop] && ![self propertyIsDate:prop];
+}
+
+- (BOOL) propertyIsDate:(NSString *)prop
+{
+	return [[nestedModelProperties objectForKey:prop] isEqualToString:@"NSDate"];
 }
 
 - (NSString *) remoteEquivalentForObjcProperty:(NSString *)objcProperty autoinflect:(BOOL)autoinflect
