@@ -1,4 +1,5 @@
-# NSRails with RubyMotion
+NSRails with RubyMotion
+--------
 
 To run this project you'll need [RubyMotion](http://www.rubymotion.com/) installed and licensed. This is the same demo app as the Objective-C version, also going to [nsrails.com](http://nsrails.com), just written in Ruby!
 
@@ -6,10 +7,11 @@ NSRails is **fully supported** in this environment but with a few quirks:
 
 1. Macros (like `NSRailsSync`) should be defined with a class method named after the macro and should return a string
 2. Gets and sets have to be manually entered since `attr_accessor` and `@property` aren't quite that well integrated (yet!)
+3. `NSRailsSync` is required. And due to quirk 2, `*` isn't available. You'll have to declare every property you wish to share
 
- * This also means `*` is not available for `NSRailsSync` - you'll have to explicitly define each property you want to share
 
 Example:
+--------
 
 ```ruby
 class Post < NSRailsModel
