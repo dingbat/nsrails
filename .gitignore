@@ -11,3 +11,7 @@ project.xcworkspace
 # Ignore folders made with autogen
 
 *.gen/
+
+# Ignore the server app's git repo - for my own use when pushing to Heroku.
+
+extras/nsrails.com/.git/
