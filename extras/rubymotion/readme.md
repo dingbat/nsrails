@@ -10,7 +10,7 @@ NSRails is **fully supported** in this environment but with a few quirks:
 3. `NSRailsSync` is required. And due to quirk 2, `*` isn't available. You'll have to declare every property you wish to share
 
 
-Example:
+Example
 --------
 
 ```ruby
