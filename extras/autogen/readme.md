@@ -3,7 +3,7 @@ Usage:
 
 ```
 $ cd path/to/nsrails_repo
-$ autogen/generate path/to/your_rails_project [options]
+$ extras/autogen/generate path/to/your_rails_project [options]
 ```
 
 Files will be created in the `autogen/` directory with the extension `.gen`, whose contained files can then be added to your Xcode project. Sample output for our [demo app](https://github.com/dingbat/nsrails/tree/master/demo/iOS):
