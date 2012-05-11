@@ -11,7 +11,3 @@ project.xcworkspace
 # Ignore folders made with autogen
 
 *.gen/
-
-# Comes up for some reason
-
-demo/
