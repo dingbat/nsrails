@@ -7,6 +7,8 @@
 // Original development by Dave Winer.
 //
 
+#import <Foundation/Foundation.h>
+
 @interface NSData (NSDataAdditions)
 + (NSData *) dataWithBase64EncodedString:(NSString *) string;
 - (id) initWithBase64EncodedString:(NSString *) string;

@@ -28,6 +28,12 @@
  
  */
 
+#import <Foundation/Foundation.h>
+#if TARGET_OS_IPHONE
+//UIKit needed for managing activity indicator
+#import <UIKit/UIKit.h>
+#endif
+
 //Logging
 /////////
                      //undefined, NSRails will log nothing

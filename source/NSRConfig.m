@@ -154,27 +154,6 @@ static int networkActivityRequests = 0;
 	return self;
 }
 
-- (void) setAppURL:(NSString *)str
-{
-	if (!str)
-	{
-		appURL = nil;
-		return;
-	}
-	
-	//get rid of trailing / if it's there
-	if (str.length > 0 && [[str substringFromIndex:str.length-1] isEqualToString:@"/"])
-		str = [str substringToIndex:str.length-1];
-	
-	//add http:// if not included already
-	NSString *http = (str.length < 7 ? nil : [str substringToIndex:7]);
-	if (![http isEqualToString:@"http://"] && ![http isEqualToString:@"https:/"])
-	{
-		str = [@"http://" stringByAppendingString:str];
-	}
-	
-	appURL = str;
-}
 
 #pragma mark - Date Formatting
 

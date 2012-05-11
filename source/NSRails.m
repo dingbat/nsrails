@@ -91,15 +91,18 @@ NSRailsUseDefaultConfig;
 	if (self == [NSRailsModel class])
 		return @"remoteID=id";
 	
-	NSString *syncStr = (override ? override : [self NSRailsSync]);
+	NSString *syncStr = (override ? override : [self NSRailsSync]);	
 	if ([syncStr rangeOfString:@"*"].location != NSNotFound)
 	{
 		syncStr = [syncStr stringByReplacingOccurrencesOfString:@"*" withString:@""];
 
 		//expand the star to everything in the class
-		NSString *expanded = [self.allProperties.allKeys componentsJoinedByString:@", "];	
-		//properties need to be appended to existing sync string since they can be overridden like with -x (and stripped of *)
-		syncStr = [syncStr stringByAppendingFormat:@", %@", expanded];
+		NSString *expanded = [self.allProperties.allKeys componentsJoinedByString:@", "];
+		if (expanded)
+		{
+			//properties need to be appended to existing sync string since they can be overridden like with -x (and stripped of *)
+			syncStr = [syncStr stringByAppendingFormat:@", %@", expanded];
+		}
 	}
 	
 	if ([syncStr rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)

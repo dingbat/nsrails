@@ -28,6 +28,8 @@
  
  */
 
+#import <Foundation/Foundation.h>
+
 @interface NSString (NSR_Inflection)
 
 - (NSString *) underscore;
