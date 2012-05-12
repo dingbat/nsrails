@@ -55,20 +55,20 @@
 {
 	GHAssertNoThrow(NSRInitTestClass(@"attr1,\nattr2"), @"Shouldn't crash if newline in the middle");
 
-	GHAssertThrows(NSRInitTestClass(@"primitiveAttr"), @"Should crash if a primitive attribute was defined in NSRailsSync");
+	GHAssertThrowsSpecificNamed(NSRInitTestClass(@"primitiveAttr"), NSException, NSRailsSyncException, @"Should crash if a primitive attribute was defined in NSRailsSync");
 	
-	GHAssertThrows(NSRInitTestClass(@"remoteID=id, myID=id"), @"Should crash if trying to set a property to ID equiv in NSRS");
+	GHAssertThrowsSpecificNamed(NSRInitTestClass(@"remoteID=id, myID=id"), NSException, NSRailsSyncException, @"Should crash if trying to set a property to ID equiv in NSRS");
 	GHAssertNoThrow(NSRInitTestClass(@"remoteID=id, myID=id -r"), @"Shouldn't crash for setting a property to ID -r only");
 	
 	GHAssertNoThrow(NSRInitTestClass(@"nonexistent"), @"Shouldn't crash if trying to set a nonexistent property in NSRS");
 	
-	GHAssertThrows(NSRInitTestClass(@"attr1=hello, attr2=hello"), @"Should crash if trying to set two properties to the same rails equiv in NSRS");
-	GHAssertThrows(NSRInitTestClass(@"attr1=hello -r, attr2=hello, myID=hello"), @"Should crash if trying to set two sendable properties to the same rails equiv in NSRS");
+	GHAssertThrowsSpecificNamed(NSRInitTestClass(@"attr1=hello, attr2=hello"), NSException, NSRailsSyncException, @"Should crash if trying to set two properties to the same rails equiv in NSRS");
+	GHAssertThrowsSpecificNamed(NSRInitTestClass(@"attr1=hello -r, attr2=hello, myID=hello"), NSException, NSRailsSyncException, @"Should crash if trying to set two sendable properties to the same rails equiv in NSRS");
 	GHAssertNoThrow(NSRInitTestClass(@"attr1=hello -r, attr2=hello"), @"Shouldn't crash if two properties are set to the same rails equiv in NSRS, but only one is sendable");
 	
-	GHAssertThrows(NSRInitTestClass(@"array"), @"Should crash without class to fill array");
-	GHAssertThrows(NSRInitTestClass(@"array:FakeClass"), @"Should crash without real class to fill array");
-	GHAssertThrows(NSRInitTestClass(@"array:BadResponse"), @"Should crash because class exists but doesn't inherit from NSRM");
+	GHAssertThrowsSpecificNamed(NSRInitTestClass(@"array"), NSException, NSRailsSyncException, @"Should crash without class to fill array");
+	GHAssertThrowsSpecificNamed(NSRInitTestClass(@"array:FakeClass"), NSException, NSRailsSyncException, @"Should crash without real class to fill array");
+	GHAssertThrowsSpecificNamed(NSRInitTestClass(@"array:BadResponse"), NSException, NSRailsSyncException, @"Should crash because class exists but doesn't inherit from NSRM");
 	GHAssertNoThrow(NSRInitTestClass(@"array:"), @"Shouldn't crash when defaulting to NSDictionaries");
 }
 

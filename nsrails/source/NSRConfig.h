@@ -59,19 +59,19 @@ typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
 
 
 //Environments
-static NSString * const NSRConfigEnvironmentDevelopment = @"NSRConfigEnvironmentDevelopment";
-static NSString * const NSRConfigEnvironmentProduction	= @"NSRConfigEnvironmentProduction";
+extern NSString * const NSRConfigEnvironmentDevelopment;
+extern NSString * const NSRConfigEnvironmentProduction;
 
 //Keys
-static NSString * const NSRValidationErrorsKey			= @"NSRValidationErrorsKey";
+extern NSString * const NSRValidationErrorsKey;
 
 //Exceptions+Domains
-static NSString * const NSRRemoteErrorDomain				= @"NSRRemoteErrorDomain";
-static NSString * const NSRailsSyncException				= @"NSRailsSyncException";
-static NSString * const NSRailsInvalidJSONEncodingException = @"NSRailsInvalidJSONEncodingException";
-static NSString * const NSRailsDateConversionException		= @"NSRailsDateConversionException";
-static NSString * const NSRailsMissingURLException			= @"NSRailsMissingURLException";
-static NSString * const NSRailsNullRemoteIDException		= @"NSRailsNullRemoteIDException";
+extern NSString * const NSRRemoteErrorDomain;
+extern NSString * const NSRailsSyncException;
+extern NSString * const NSRailsInvalidJSONEncodingException;
+extern NSString * const NSRailsDateConversionException;
+extern NSString * const NSRailsMissingURLException;
+extern NSString * const NSRailsNullRemoteIDException;
 
 ////////////////////////////////
 

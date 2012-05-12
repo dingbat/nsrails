@@ -135,7 +135,7 @@
 	[[NSRConfig defaultConfig] setDateFormat:@"yyyy"];
 	
 	//string -> date
-	GHAssertThrows([[NSRConfig defaultConfig] dateFromString:mockDatetime], @"Should throw exception - receiving config format != server format");
+	GHAssertThrowsSpecificNamed([[NSRConfig defaultConfig] dateFromString:mockDatetime], NSException, NSRailsDateConversionException, @"Should throw exception - receiving config format != server format");
 
 	//date -> string
 	NSString *string2 = [[NSRConfig defaultConfig] stringFromDate:date];
@@ -235,12 +235,12 @@
 
 }
 
-- (void) test_against_server
+- (void) test_authentication_and_url
 {
 	NSError *e = nil;
 	
-	GHAssertThrows([[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts.json" sync:&e orAsync:nil], @"Should fail on no app URL set in config, where's the error?");
-	
+	GHAssertThrowsSpecificNamed([[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts.json" sync:&e orAsync:nil], NSException, NSRailsMissingURLException, @"Should fail on no app URL set in config, where's the error?");
+
 	e = nil;
 	
 	//point app to localhost as it should be, but no authentication
@@ -262,6 +262,12 @@
 	index = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts.json" sync:&e orAsync:nil];
 	GHAssertNil(e, @"Authenticated, should be no error");
 	GHAssertNotNil(index, @"Authenticated, reponse should be present");
+	
+	e = nil;
+	
+	//test error domain
+	[[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"///missing" sync:&e orAsync:nil];
+	GHAssertTrue(e.domain == NSRRemoteErrorDomain, @"Server error should have NSRRemoteErrorDomain");
 }
 
 - (void)setUpClass

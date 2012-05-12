@@ -55,6 +55,20 @@
 @end
 
 
+//Environments
+NSString * const NSRConfigEnvironmentDevelopment		= @"NSRConfigEnvironmentDevelopment";
+NSString * const NSRConfigEnvironmentProduction			= @"NSRConfigEnvironmentProduction";
+
+
+NSString * const NSRValidationErrorsKey					= @"NSRValidationErrorsKey";
+
+NSString * const NSRRemoteErrorDomain					= @"NSRRemoteErrorDomain";
+NSString * const NSRailsSyncException					= @"NSRailsSyncException";
+NSString * const NSRailsInvalidJSONEncodingException	= @"NSRailsInvalidJSONEncodingException";
+NSString * const NSRailsDateConversionException			= @"NSRailsDateConversionException";
+NSString * const NSRailsMissingURLException				= @"NSRailsMissingURLException";
+NSString * const NSRailsNullRemoteIDException			= @"NSRailsNullRemoteIDException";
+
 
 
 @implementation NSRConfig

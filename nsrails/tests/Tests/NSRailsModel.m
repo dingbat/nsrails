@@ -184,7 +184,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	// Instance
 	
 	Empty *smth = [[Empty alloc] init];
-	GHAssertThrows([smth routeForInstanceMethod:nil], @"Should have been an exception getting instance route if nil remoteID");
+	GHAssertThrowsSpecificNamed([smth routeForInstanceMethod:nil], NSException, NSRailsNullRemoteIDException, @"Should have been an exception getting instance route if nil remoteID");
 	
 	smth.remoteID = [NSNumber numberWithInt:1];
 	GHAssertEqualStrings([smth routeForInstanceMethod:nil], @"empties/1", @"Nil instance route failed");
@@ -217,7 +217,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	
 	p.encodeNonJSON = YES;
 	
-	GHAssertThrows([p dictionaryOfRemoteProperties], @"Encoding into non-JSON for sendable dict - where's the error?");
+	GHAssertThrowsSpecificNamed([p dictionaryOfRemoteProperties], NSException, NSRailsInvalidJSONEncodingException, @"Encoding into non-JSON for sendable dict - where's the error?");
 }
 
 - (void) test_send_retrieve

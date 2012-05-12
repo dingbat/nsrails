@@ -34,7 +34,7 @@
 #import "NSString+Inflection.h"
 
 //this is the marker (blank string) for the propertyEquivalents dictionary if there's no explicit equivalence set
-static NSString * const NSRNoEquivalentMarker = @"";
+static NSString const * NSRNoEquivalentMarker = @"";
 
 //this will be the marker for any property that has the "-b flag"
 //this gonna go in the nestedModelProperties (properties can never have a comma/space in them so we're safe from any conflicts)
@@ -270,7 +270,7 @@ static NSString * const NSRNoEquivalentMarker = @"";
 - (NSString *) remoteEquivalentForObjcProperty:(NSString *)objcProperty autoinflect:(BOOL)autoinflect
 {
 	NSString *railsEquivalent = [propertyEquivalents objectForKey:objcProperty];
-	if ([railsEquivalent isEqualToString:NSRNoEquivalentMarker])
+	if (railsEquivalent == NSRNoEquivalentMarker)
 	{
 		if (autoinflect)
 		{

@@ -124,7 +124,7 @@ NSRailsSync(*)
 				newPost.remoteID = nil;
 				
 				//test to see that it'll fail on trying to update instance with nil ID
-				GHAssertThrows([newPost remoteUpdateAsync:^(NSError *error) {}], @"ASYNC Tried to update an instance with a nil ID, where's the exception?");
+				GHAssertThrowsSpecificNamed([newPost remoteUpdateAsync:^(NSError *error) {}], NSException, NSRailsNullRemoteIDException, @"ASYNC Tried to update an instance with a nil ID, where's the exception?");
 				
 				newPost.remoteID = postID;
 				
@@ -146,13 +146,13 @@ NSRailsSync(*)
 						newPost.remoteID = nil;
 						
 						//see if there's an exception if trying to retrieve with a nil ID
-						GHAssertThrows([newPost remoteFetchAsync:^(BOOL changed, NSError *error) {}], @"ASYNC Tried to retrieve an instance with a nil ID, where's the exception?");
+						GHAssertThrowsSpecificNamed([newPost remoteFetchAsync:^(BOOL changed, NSError *error) {}], NSException, NSRailsNullRemoteIDException, @"ASYNC Tried to retrieve an instance with a nil ID, where's the exception?");
 						
 						///////////////////////
 						//TEST DESTROY
 						
 						//test trying to destroy instance with nil ID
-						GHAssertThrows([newPost remoteDestroyAsync:^(NSError *error) {}], @"ASYNC Tried to delete an instance with a nil ID, where's the exception?");
+						GHAssertThrowsSpecificNamed([newPost remoteDestroyAsync:^(NSError *error) {}], NSException, NSRailsNullRemoteIDException, @"ASYNC Tried to delete an instance with a nil ID, where's the exception?");
 						newPost.remoteID = postID;
 						
 						[newPost remoteDestroyAsync:^(NSError *e6) {
@@ -248,7 +248,7 @@ NSRailsSync(*)
 	newPost.remoteID = nil;
 	
 	//test to see that it'll fail on trying to update instance with nil ID
-	GHAssertThrows([newPost remoteUpdate:&e], @"Tried to update an instance with a nil ID, where's the exception?");
+	GHAssertThrowsSpecificNamed([newPost remoteUpdate:&e], NSException, NSRailsNullRemoteIDException, @"Tried to update an instance with a nil ID, where's the exception?");
 	newPost.remoteID = postID;
 	
 	e = nil;
@@ -277,7 +277,7 @@ NSRailsSync(*)
 	//see if there's an error if trying to retrieve with a nil ID
 	newPost.remoteID = nil;
 	
-	GHAssertThrows([newPost remoteFetch:&e], @"Tried to retrieve an instance with a nil ID, where's the exception?");
+	GHAssertThrowsSpecificNamed([newPost remoteFetch:&e], NSException, NSRailsNullRemoteIDException, @"Tried to retrieve an instance with a nil ID, where's the exception?");
 	
 	e = nil;
 	
@@ -285,7 +285,7 @@ NSRailsSync(*)
 	//TEST DESTROY
 	
 	//test trying to destroy instance with nil ID
-	GHAssertThrows([newPost remoteDestroy:&e], @"Tried to delete an instance with a nil ID, where's the exception?");
+	GHAssertThrowsSpecificNamed([newPost remoteDestroy:&e], NSException, NSRailsNullRemoteIDException, @"Tried to delete an instance with a nil ID, where's the exception?");
 	newPost.remoteID = postID;
 	
 	e = nil;
@@ -458,7 +458,7 @@ NSRailsSync(*)
 	e = nil;
 	
 	//testResponse will fail destroy
-	GHAssertThrows([testResponse remoteDestroy:&e], @"testResponse object was never set an ID (since the retrieve only returned dictionaries), so it should throw an exception on destroy.");
+	GHAssertThrowsSpecificNamed([testResponse remoteDestroy:&e], NSException, NSRailsNullRemoteIDException, @"testResponse object was never set an ID (since the retrieve only returned dictionaries), so it should throw an exception on destroy.");
 	
 	e = nil;
 	
@@ -608,7 +608,7 @@ NSRailsSync(*)
 	
 	//invalid date format
 	[[NSRConfig defaultConfig] setDateFormat:@"!@#@$"];
-	GHAssertThrows([post remoteFetch:&e], @"There should be an exception in setting to a bad format");
+	GHAssertThrowsSpecificNamed([post remoteFetch:&e], NSException, NSRailsDateConversionException, @"There should be an exception in setting to a bad format");
 	
 	NSDictionary *dict = [post dictionaryOfRemoteProperties];
 	GHAssertNotNil(dict, @"There should be no problem making a dict, even if format is bad");

@@ -60,7 +60,7 @@
 	}
 	else
 	{
-		if ([e.domain isEqualToString:NSRRemoteErrorDomain])
+		if (e.domain == NSRRemoteErrorDomain)
 		{
 			errorString = @"Something went wrong! Please try again later or contact us if this error continues.";
 		}
