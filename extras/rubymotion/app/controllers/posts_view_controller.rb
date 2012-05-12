@@ -3,25 +3,24 @@ class PostsViewController < UITableViewController
     #when the + button is hit, display an InputViewController (this is the shared input view for both posts and responses)
     #it has an init method that accepts a completion block - this block of code will be executed when the user hits "save"
 
-  	new_post_vc = InputViewController.alloc.init
-  	new_post_vc.completion_block = lambda do |author, content|
-  	  new_post = Post.alloc.init
-		  new_post.author = author
-		  new_post.content = content
+    new_post_vc = InputViewController.alloc.init
+    new_post_vc.completion_block = lambda do |author, content|
+      new_post = Post.alloc.init
+      new_post.author = author
+      new_post.content = content
 
       ptr = Pointer.new(:object)
-		  if (!new_post.remoteCreate(ptr))
-			  AppDelegate.alertForError ptr[0]
-			  
-			  #don't dismiss the input VC
-			  return false
-		  end
+      if (!new_post.remoteCreate(ptr))
+        AppDelegate.alertForError ptr[0]
+        #don't dismiss the input VC
+        return false
+      end
 
-		  @posts.insert(0, new_post)
-		  self.tableView.reloadData
-		  
-		  true
-	  end
+      @posts.insert(0, new_post)
+      self.tableView.reloadData
+
+      true
+    end
 
     new_post_vc.header = "Post something to NSRails.com!"
     new_post_vc.message_placeholder = "A comment about NSRails, a philosophical inquiry, or simply a \"Hello world\"!"
@@ -35,26 +34,23 @@ class PostsViewController < UITableViewController
     ptr = Pointer.new(:object)
     @posts = Post.remoteAll(ptr)
     if (!@posts)
-		  AppDelegate.alertForError ptr[0]
+      AppDelegate.alertForError ptr[0]
     end
-    
     self.tableView.reloadData
   end
   
   def deletePostAtIndexPath(indexPath)
-  	#here, on the delete, we're calling remoteDestroy to destroy our object remotely. remember to remove it from our local array, too.
-
-  	post = @posts[indexPath.row]
+    #here, on the delete, we're calling remoteDestroy to destroy our object remotely. remember to remove it from our local array, too.
+    post = @posts[indexPath.row]
 
     p = Pointer.new(:object)
-  	if (post.remoteDestroy(p))
-  		@posts.delete(post)
-    
-  		self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationAutomatic);
-  	else
-  		AppDelegate.alertForError(p[0])
-  	end
-	end
+    if (post.remoteDestroy(p))
+      @posts.delete(post)
+      self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationAutomatic);
+    else
+      AppDelegate.alertForError(p[0])
+    end
+  end
   
   #
   # UI and table stuff
@@ -65,11 +61,11 @@ class PostsViewController < UITableViewController
     self.title = "Posts"
     self.tableView.rowHeight = 60
 
-    #add refresh button
+    # add refresh button
     refreshBtn = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemRefresh, target:self, action:(:refresh))
     self.navigationItem.leftBarButtonItem = refreshBtn
     
-    #add + button
+    # add + button
     addBtn = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd, target:self, action:(:add))
     self.navigationItem.rightBarButtonItem = addBtn
 
@@ -104,11 +100,10 @@ class PostsViewController < UITableViewController
   end
 
   def tableView(tableView, didSelectRowAtIndexPath:indexPath)
-  	post = @posts[indexPath.row]
+    post = @posts[indexPath.row]
 
-  	rvc = ResponsesViewController.alloc.initWithStyle(UITableViewStyleGrouped)
-  	rvc.post = post
-  	self.navigationController.pushViewController rvc, animated:true;
+    rvc = ResponsesViewController.alloc.initWithStyle(UITableViewStyleGrouped)
+    rvc.post = post
+    self.navigationController.pushViewController rvc, animated:true;
   end
-  
 end

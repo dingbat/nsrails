@@ -25,7 +25,7 @@ class Response < NSRailsModel
   #       new_resp = Response.alloc.init
   #       new_resp.author = author
   #       new_resp.content = content
-  #       new_resp.post = pre_existing_post      //<------ this line
+  #       new_resp.post = pre_existing_post    <-- this line
   # 
   #       newResp.remoteCreate(p)
   # 
