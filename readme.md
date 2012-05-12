@@ -30,7 +30,7 @@ Features:
 * [Nesting](https://github.com/dingbat/nsrails/wiki/Nesting) your related models (has-many, etc)
 * [Asynchronous](https://github.com/dingbat/nsrails/wiki/NSRailsModel) requests
 * [Basic HTTP authentication](https://github.com/dingbat/nsrails/wiki/NSRConfig)
-* Fully supported in (RubyMotion)[https://github.com/dingbat/nsrails/tree/master/extras/rubymotion]
+* Fully supported in [RubyMotion](https://github.com/dingbat/nsrails/tree/master/extras/rubymotion)
 * No dependencies besides a JSON framework (already bundled)
 
 Getting started
@@ -43,7 +43,7 @@ Some more resources:
 * Easily translate Rails models into Objective-C classes using [autogen tool](https://github.com/dingbat/nsrails/tree/master/extras/autogen)
 * See the [documentation](http://dingbat.github.com/nsrails/) and [wiki](https://github.com/dingbat/nsrails/wiki)
 * Watch the [screencast](http://vimeo.com/dq/nsrails)
-* Browse the included demo iPhone app - it goes straight to a live Rails app at [nsrails.com](http://nsrails.com), so you won't even have to launch a server to get started. The source for this site is also included. Have fun and be civil!
+* Browse the included [demo iPhone app](https://github.com/dingbat/nsrails/tree/master/nsrails) - it goes straight to a live Rails app at [nsrails.com](http://nsrails.com), so you won't even have to launch a server to get started. The [source for this site](https://github.com/dingbat/nsrails/tree/master/extras/nsrails.com) is also included. Have fun and be civil!
 
 License & Credits
 ----------
