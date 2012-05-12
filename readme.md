@@ -2,15 +2,7 @@
 
 ***
 
-Welcome!
-
-NSRails is a light-weight, drop-in Objective-C framework (iOS or OS X) for simple but powerful communication with your Rails server.
-
-
-What does NSRails do?
-========
-
-NSRails provides a simple, high-level API that gives your Objective-C classes ActiveResource-like support. This means CRUD and other operations on your corresponding Rails objects can be called natively via Objective-C methods.
+NSRails is a light-weight Objective-C framework that provides a high-level, ActiveResource-like API. This means CRUD and other operations on your corresponding Rails objects can be called natively via Objective-C methods.
 
 Instances will inherit methods to remotely create, read, update, or destroy a remote object:
 
@@ -30,29 +22,31 @@ Article *articleNumber1 = [Article remoteObjectWithID:1 error:&error];
 // Display your article(s)! They're ready with their properties populated directly from your remote DB
 ```
 
-**Features:**
+Features:
+--------
 
 * High-level API, yet flexible enough even to work with any RESTful server
 * Keeping models and properties of your choice [in-sync](https://github.com/dingbat/nsrails/wiki/NSRailsSync) with those of Rails
 * [Nesting](https://github.com/dingbat/nsrails/wiki/Nesting) your related models (has-many, etc)
 * [Asynchronous](https://github.com/dingbat/nsrails/wiki/NSRailsModel) requests
-* Support for [basic HTTP authentication](https://github.com/dingbat/nsrails/wiki/NSRConfig)
+* [Basic HTTP authentication](https://github.com/dingbat/nsrails/wiki/NSRConfig)
+* Fully supported in (RubyMotion)[https://github.com/dingbat/nsrails/tree/master/extras/rubymotion]
 * No dependencies besides a JSON framework (already bundled)
 
-How do I get started?
-========
+Getting started
+---------
 
 It's fairly painless. Drop the source folder into your Xcode project, and see [this page](https://github.com/dingbat/nsrails/wiki/Getting-Started).
 
 Some more resources:
 
-* Easily translate Rails models into Objective-C classes using [autogen tool](https://github.com/dingbat/nsrails/tree/master/autogen)
+* Easily translate Rails models into Objective-C classes using [autogen tool](https://github.com/dingbat/nsrails/tree/master/extras/autogen)
 * See the [documentation](http://dingbat.github.com/nsrails/) and [wiki](https://github.com/dingbat/nsrails/wiki)
 * Watch the [screencast](http://vimeo.com/dq/nsrails)
 * Browse the included demo iPhone app - it goes straight to a live Rails app at [nsrails.com](http://nsrails.com), so you won't even have to launch a server to get started. The source for this site is also included. Have fun and be civil!
 
 License & Credits
-========
+----------
 
 NSRails is written & maintained by Dan Hassin and published under the MIT license (ie, use the sources however you'd like.)
 
