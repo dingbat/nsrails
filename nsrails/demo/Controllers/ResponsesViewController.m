@@ -52,8 +52,7 @@
 											     [post.responses addObject:newResp];
 											     [post remoteUpdate:&error];
 											   
-											   Doing this may be tempting better for your structure since it'd already be in post's "responses" array, BUT:
-											   you'd have to take into account the case where the Response validation fails and then remove it from the array. Also, creating the Response rather than updating the Post will set newResp's remoteID, so we can do remote operations on it later!
+											   Doing this may be tempting since it'd already be in post's "responses" array, BUT: you'd have to take into account the Response validation failing (you'd then have to remove it from the array). Also, creating the Response rather than updating the Post will set newResp's remoteID, so we can do remote operations on it later!
 											  */
 										  }];
 	
@@ -65,12 +64,12 @@
 
 - (void) deleteResponseAtIndexPath:(NSIndexPath *)indexPath
 {
-	//here, on the delete, we're calling remoteDestroy to destroy our object remotely. remember to remove it from our local array, too.
 	NSError *error;
 	
 	Response *resp = [post.responses objectAtIndex:indexPath.row];
 	if ([resp remoteDestroy:&error])
 	{
+		// Remember to delete the object from our local array too
 		[post.responses removeObject:resp];
 		
 		[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -86,6 +85,8 @@
 		resp.remoteDestroyOnNesting = YES;
 		//do the same for other post's other responses
 		[post remoteUpdate:&e];
+	 
+	 For this to work, you need to set `:allow_destroy => true` in Rails
 	 */
 }
 
@@ -103,7 +104,7 @@
 {	
 	self.title = @"Responses";
 	
-	//add the + button
+	// Add the reply button
 	UIBarButtonItem *new = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemReply target:self action:@selector(addResponse)];
 	self.navigationItem.rightBarButtonItem = new;
 	

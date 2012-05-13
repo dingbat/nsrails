@@ -2,32 +2,34 @@ class InputViewController < UIViewController
   attr_accessor :completion_block, :header, :message_placeholder
   attr_reader :author_field, :content_field, :header_label
   
+  # # # # # # # # #
+  #
+  #  This class has nothing to do with NSRails - all it does to get user input
+  #
+  # # # # # # # # #
+  
   def cancel
     self.dismissModalViewControllerAnimated true
   end
   
   def save
     author = @author_field.text
-    message = (@content_field.tag == 0 ? "" : @content_field.text); #blank if still on placeholder (tag 0)
+    message = (@content_field.tag == 0 ? "" : @content_field.text); # blank if still on placeholder (tag 0)
 
-    #if the block returned true (it worked), we should dismiss
+    # If the block returned true (it worked), we should dismiss
     self.cancel if @completion_block.call(author, message)
   end
   
-  
-  #
-  #  UI, that's all
-  #
   def viewDidLoad
     super
 
     self.view.backgroundColor = UIColor.colorWithWhite(0.95, alpha:1.0)
 
-    #add cancel button
+    # Add cancel button
     cancel = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemCancel, target:self, action:(:cancel))
     self.navigationItem.leftBarButtonItem = cancel
     
-    #add save button
+    # Add save button
     save = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemSave, target:self, action:(:save))
     self.navigationItem.rightBarButtonItem = save
     
@@ -52,11 +54,8 @@ class InputViewController < UIViewController
     @content_field.backgroundColor = UIColor.whiteColor
     @content_field.font = UIFont.systemFontOfSize(16)
     self.view.addSubview(@content_field)
-    
-    #focus on authorField
-    @author_field.becomeFirstResponder
 
-    #make the fields look nice and round
+    # Make the fields look nice and round
     @content_field.layer.cornerRadius = 4
     @content_field.layer.borderColor = UIColor.grayColor.CGColor
     @content_field.layer.borderWidth = 1
@@ -65,17 +64,20 @@ class InputViewController < UIViewController
     @author_field.layer.borderColor = UIColor.grayColor.CGColor
     @author_field.layer.borderWidth = 1;
     
-    #add some space to side of authorField
+    # Add some space to side of authorField
     padding_view = UIView.alloc.initWithFrame CGRectMake(0, 0, 5, 20)
     @author_field.leftView = padding_view;
     @author_field.leftViewMode = UITextFieldViewModeAlways
     
-    #start off the textview with the placeholder
+    # Start off the textview with the placeholder text
     placehold
+    
+    # Focus on authorField
+    @author_field.becomeFirstResponder
   end
   
   #
-  # Code for the placeholder in the message textview, which isn't built-in into iOS
+  #  Code for the placeholder in the message textview, which isn't built-in into iOS
   #
   
   def select_beginning
@@ -121,11 +123,11 @@ class InputViewController < UIViewController
 
   def textViewDidChangeSelection(textView)
     if (textView.tag == 0)
-      #make it temporarily -1 to not start an infinite loop after next line
+      # Make it temporarily -1 to not start an infinite loop after next line
       textView.tag = -1
-      #move selection to beginning (now with tag -1)
+      # Move selection to beginning (now with tag -1)
       select_beginning
-      #back to 0
+      # Back to 0
       textView.tag = 0
     end
   end

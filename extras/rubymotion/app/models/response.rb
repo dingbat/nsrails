@@ -22,12 +22,12 @@ class Response < NSRailsModel
   # 
   # Here's an example:
   # 
-  #       new_resp = Response.alloc.init
-  #       new_resp.author = author
-  #       new_resp.content = content
-  #       new_resp.post = pre_existing_post    <-- this line
+  #    new_resp = Response.alloc.init
+  #    new_resp.author = author
+  #    new_resp.content = content
+  #    new_resp.post = pre_existing_post   <-- this line
   # 
-  #       newResp.remoteCreate(p)
+  #    newResp.remoteCreate(p)
   # 
   # In the marked line, we're setting the "post" property to a living, breathing, Post object, but NSRails knows to only send "post_id" instead of hashing out the entire Post object and sticking it into "post_attributes", which Rails would reject.
   # 

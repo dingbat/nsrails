@@ -45,7 +45,6 @@
 	NSString *author = authorField.text;
 	NSString *message = (contentField.tag == 0 ? @"" : contentField.text); //blank if still on placeholder (tag 0)
 	
-	//if the block returned true (it worked), we should dismiss
 	BOOL shouldDismiss = block(author, message);
 	if (shouldDismiss)
 		[self dismissModalViewControllerAnimated:YES];
@@ -56,16 +55,16 @@
 
 - (void)viewDidLoad
 {
-	///////////////
-	//boring UI stuff
-	///////////////
+	/*
+	 Boring UI stuff
+	 */
 	
 	headerLabel.text = header;
 	
-	//focus on authorField
+	// Focus on authorField
 	[authorField becomeFirstResponder];
 	
-	//make the fields look nice and round
+	// Make the fields look nice and round
 	contentField.layer.cornerRadius = 4;
 	contentField.layer.borderColor = [[UIColor grayColor] CGColor];
 	contentField.layer.borderWidth = 1;
@@ -74,20 +73,20 @@
 	authorField.layer.borderColor = [[UIColor grayColor] CGColor];
 	authorField.layer.borderWidth = 1;
 
-	//add some space to side of authorField
+	// Add some space to side of authorField
 	UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 20)];
 	authorField.leftView = paddingView;
 	authorField.leftViewMode = UITextFieldViewModeAlways;
 	
-	//start off the textview with the placeholder
+	// Start off the textview with the placeholder
 	[self placehold];
 	
     [super viewDidLoad];
 }
 
-/////////////
-//everything below is code for the placeholder in the message textview, which isn't built-in into iOS
-///////////
+/*
+ Everything below is code for the placeholder in the message textview, which isn't built-in into iOS
+ */
 
 - (void) placehold
 {

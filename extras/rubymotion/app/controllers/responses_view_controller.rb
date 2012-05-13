@@ -7,7 +7,7 @@ class ResponsesViewController < UITableViewController
       new_resp = Response.alloc.init
       new_resp.author = author
       new_resp.content = content
-      new_resp.post = @post #check out response.rb for more detail on how this line is possible
+      new_resp.post = @post    # check out response.rb for more detail on how this line is possible
       
       p = Pointer.new(:object)
       if (!new_resp.remoteCreate(p))
@@ -17,16 +17,16 @@ class ResponsesViewController < UITableViewController
 
       @post.responses.insert(0, new_resp)
       self.tableView.reloadData
-
-      true
 		  
       # Instead of line 10 (the belongs_to trick), you could also add the new response to the post's "responses" array and then update it:
       # 
-      #          [post.responses addObject:newResp];
-      #          [post remoteUpdate:&error];
+      #    post.responses << newResp
+      #    post.remoteUpdate(error_ptr)
       # 
-      #        Doing this may be tempting better for your structure since it'd already be in post's "responses" array, BUT: you'd have to take into account the case where the Response validation fails and then remove it from the array. Also, creating the Response rather than updating the Post will set newResp's remoteID, so we can do remote operations on it later!
-	  end
+      # Doing this may be tempting since it'd already be in post's "responses" array, BUT: you'd have to take into account the Response validation failing (you'd then have to *remove it* from the array). Also, creating the Response rather than updating the Post will set newResp's remoteID, so we can do remote operations on it later!
+      
+      true
+    end
 
     new_post_vc.header = "Write your response to #{@post.author}"
     new_post_vc.message_placeholder = "Your response"
@@ -37,12 +37,11 @@ class ResponsesViewController < UITableViewController
   end
   
   def deleteResponseAtIndexPath(indexPath)
-    #here, on the delete, we're calling remoteDestroy to destroy our object remotely. remember to remove it from our local array, too.
-
     resp = @post.responses[indexPath.row]
 
     ptr = Pointer.new(:object)
     if (resp.remoteDestroy(ptr))
+      # Remember to delete the object from our local array too
       @post.responses.delete(resp)
 
       self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationAutomatic);
@@ -50,12 +49,13 @@ class ResponsesViewController < UITableViewController
       AppDelegate.alertForError(ptr[0])
     end
   	
-	 # If we wanted to batch-delete or something, we could also do:
-	 # 
-	 #    resp.remoteDestroyOnNesting = true
-	 #    #do the same for other post's other responses
-	 #    post.remoteUpdate(p)
-	 #
+    # If we wanted to batch-delete or something, we could also do:
+    # 
+    #    resp.remoteDestroyOnNesting = true
+    #    # ... do the same for other post's other responses
+    #    post.remoteUpdate(p)
+    #
+    # For this to work, you need to set `:allow_destroy => true` in Rails
   end
   
   #
@@ -65,7 +65,7 @@ class ResponsesViewController < UITableViewController
     self.title = "Post ID ##{@post.remoteID}"
     self.tableView.rowHeight = 60
 
-    # add + button
+    # Add reply button
     addBtn = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemReply, target:self, action:(:add))
     self.navigationItem.rightBarButtonItem = addBtn
 

@@ -16,12 +16,9 @@
 
 - (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-	//set app URL for defaultConfig -> will apply globally to all NSRails methods
-	
-	//live app! check it out
 	[[NSRConfig defaultConfig] setAppURL:@"http://nsrails.com"];
 	
-	//for local server:
+	// For testing on local server:
 	//[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
 	
 	//authentication
@@ -31,26 +28,29 @@
 	
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	
-	PostsViewController *masterViewController = [[PostsViewController alloc] initWithStyle:UITableViewStyleGrouped];
-	self.navigationController = [[UINavigationController alloc] initWithRootViewController:masterViewController];
+	PostsViewController *posts = [[PostsViewController alloc] initWithStyle:UITableViewStyleGrouped];
+	self.navigationController = [[UINavigationController alloc] initWithRootViewController:posts];
+	
 	self.window.rootViewController = self.navigationController;
     [self.window makeKeyAndVisible];
+	
     return YES;
 }
 
 + (void) alertForError:(NSError *)e
 {
-	NSString *errorString = [NSString string];
+	NSString *errorString;
 	
-	//get the dictionary of validation errors, if present
 	NSDictionary *validationErrors = [[e userInfo] objectForKey:NSRValidationErrorsKey];
 	
 	if (validationErrors)
 	{
-		//iterate through each failed property (keys)
+		errorString = [NSString string];
+		
+		// Iterate through each failed property (keys)
 		for (NSString *failedProperty in validationErrors)
 		{
-			//iterate through each reason the property failed
+			// Iterate through each reason the property failed
 			for (NSString *reason in [validationErrors objectForKey:failedProperty])
 			{
 				errorString = [errorString stringByAppendingFormat:@"%@ %@. ", [failedProperty capitalizedString], reason];

@@ -24,13 +24,13 @@
 
 - (void) refresh
 {
+	// When the refresh button is hit, get latest array of posts
 	NSError *error;
-	//when the refresh button is hit, get latest array of posts
 	NSArray *allPosts = [Post remoteAll:&error];
 	
 	if (allPosts)
 	{
-		//set it to our ivar
+		// Set it to our ivar
 		posts = [NSMutableArray arrayWithArray:allPosts];
 		
 		[self.tableView reloadData];		
@@ -43,8 +43,8 @@
 
 - (void) addPost
 {
-	//when the + button is hit, display an InputViewController (this is the shared input view for both posts and responses)
-	//it has an init method that accepts a completion block - this block of code will be executed when the user hits "save"
+	// When the + button is hit, display an InputViewController (this is the shared input view for both posts and responses)
+	// It has an init method that accepts a completion block - this block of code will be executed when the user hits "save"
 	
 	InputViewController *newPostVC = [[InputViewController alloc] initWithCompletionHandler:
 										  ^BOOL (NSString *author, NSString *content) 
@@ -77,13 +77,12 @@
 
 - (void) deletePostAtIndexPath:(NSIndexPath *)indexPath
 {
-	//here, on the delete, we're calling remoteDestroy to destroy our object remotely. remember to remove it from our local array, too.
-	
 	NSError *error;
 	
 	Post *post = [posts objectAtIndex:indexPath.row];
 	if ([post remoteDestroy:&error])
 	{
+		// Remember to delete the object from our local array too
 		[posts removeObject:post];
 		
 		[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -106,12 +105,16 @@
 	
 	self.title = @"Posts";
 	
-	//add refresh button
-	UIBarButtonItem *refresh = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refresh)];
+	// Add refresh button
+	UIBarButtonItem *refresh = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh 
+																			 target:self 
+																			 action:@selector(refresh)];
 	self.navigationItem.leftBarButtonItem = refresh;
 	
-	//add the + button
-	UIBarButtonItem *new = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addPost)];
+	// Add the + button
+	UIBarButtonItem *new = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd 
+																		 target:self 
+																		 action:@selector(addPost)];
 	self.navigationItem.rightBarButtonItem = new;
 	
     [super viewDidLoad];

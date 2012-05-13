@@ -3,6 +3,8 @@ class AppDelegate
     @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
 
     NSRConfig.defaultConfig.appURL = "http://nsrails.com"
+    # For testing on local server:
+    # NSRConfig.defaultConfig.appURL = "http://localhost:3000"
     NSRConfig.defaultConfig.appUsername = "NSRails"
     NSRConfig.defaultConfig.appPassword = "iphone"
 
@@ -18,13 +20,13 @@ class AppDelegate
   def self.alertForError(e)
     errorString = ""
 
-    #get the dictionary of validation errors, if present
+    # Get the dictionary of validation errors, if present
     validationErrors = e.userInfo[NSRValidationErrorsKey]
 
     if (validationErrors)
-      #iterate through each failed property (keys)
+      # Iterate through each failed property (keys)
       validationErrors.each do |failed_property, reasons|
-        #iterate through each reason the property failed
+        # Iterate through each reason the property failed
         reasons.each do |reason|
           errorString += "#{failed_property.capitalizedString} #{reason}. " #=> "Name can't be blank."
         end
@@ -37,6 +39,6 @@ class AppDelegate
       end
     end
 
-  	UIAlertView.alloc.initWithTitle("Error", message:errorString, delegate:nil, cancelButtonTitle:"OK", otherButtonTitles:nil).show
+    UIAlertView.alloc.initWithTitle("Error", message:errorString, delegate:nil, cancelButtonTitle:"OK", otherButtonTitles:nil).show
   end
 end
