@@ -2,7 +2,7 @@
 
 ***
 
-NSRails is a light-weight Objective-C framework that provides a high-level, ActiveResource-like API. This means CRUD and other operations on your corresponding Rails objects can be called natively via Objective-C methods.
+NSRails is a light-weight Objective-C framework that provides your classes with a high-level, ActiveResource-like API. This means CRUD and other operations on your corresponding Rails objects can be called natively via Objective-C methods.
 
 Instances will inherit methods to remotely create, read, update, or destroy a remote object:
 
@@ -30,7 +30,7 @@ Features:
 * [Nesting](https://github.com/dingbat/nsrails/wiki/Nesting) your related models (has-many, etc)
 * [Asynchronous](https://github.com/dingbat/nsrails/wiki/NSRailsModel) requests
 * [Basic HTTP authentication](https://github.com/dingbat/nsrails/wiki/NSRConfig)
-* Fully supported in [RubyMotion](https://github.com/dingbat/nsrails/tree/master/extras/rubymotion)
+* [Supported](https://github.com/dingbat/nsrails/tree/master/extras/rubymotion) in RubyMotion and MacRuby
 * No dependencies besides a JSON framework (already bundled)
 
 Getting started
