@@ -7,7 +7,7 @@ Getting started
 -------
 
 * Add a `vendor` directory on the main level of your RubyMotion app if you don't have one already.
-* Copy the `nsrails` directory ([the main Xcode project](https://github.com/dingbat/nsrails/tree/master/nsrails)) into `vendor`. (You don't need anything but the `source` folder - you can delete `tests/` and `demo/`).
+* Copy the `nsrails` directory ([the main Xcode project](https://github.com/dingbat/nsrails/tree/master/nsrails)) into `vendor`. (You don't need anything but `source/` and the Xcode project - you can delete `tests/` and `demo/`).
 * Modify your Rakefile to vendor NSRails:
 
   ```ruby
@@ -18,9 +18,9 @@ Getting started
   ```
 
 * You're ready! Be aware of a few quirks in this environment:
- 1. Macros (like `NSRailsSync`) should be defined with a class method named after the macro and should return a string
+ 1. Macros should be defined with a class method named exactly like the macro and should return a string
  2. Gets and sets have to be manually entered since `attr_accessor` and `@property` aren't quite that well integrated (yet!)
- 3. `NSRailsSync` is required. And due to the 2nd quirk, `*` isn't available. You'll have to declare every property you wish to share
+ 3. `NSRailsSync` is required. And due to the second quirk, `*` isn't available - every property needs to be explicitly declared
 
 
 Example
@@ -48,7 +48,7 @@ NSRConfig.defaultConfig.appURL = "http://nsrails.com"
 # get all posts (synchronously)
 error_ptr = Pointer.new(:object)
 posts = Post.remoteAll(error_ptr)
-error = error_ptr[0]               # retrieve error
+error = error_ptr[0]
 
 # get all posts (asynchronously)
 Post.remoteAllAsync(lambda do |posts, error| 
