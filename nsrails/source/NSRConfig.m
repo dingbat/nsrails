@@ -153,6 +153,8 @@ static int networkActivityRequests = 0;
 		
 		self.autoinflectsClassNames = YES;
 		self.autoinflectsPropertyNames = YES;
+		self.ignoresClassPrefixes = YES;
+		
 		self.succinctErrorMessages = YES;
 		self.timeoutInterval = 60;
 		

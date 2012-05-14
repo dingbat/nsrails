@@ -209,7 +209,7 @@ extern NSString * const NSRailsNullRemoteIDException;
  
  Example: `NSRClass` will simply become `class`, instead of `nsr_class`.
  
- **Default:** `NO`.
+ **Default:** `YES`.
  */
 @property (nonatomic) BOOL ignoresClassPrefixes;
 
