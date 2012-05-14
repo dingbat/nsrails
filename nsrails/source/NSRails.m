@@ -278,7 +278,7 @@ NSRailsSync(*);
 - (NSString *) description
 {
 	if (remoteAttributes)
-		return [remoteAttributes description];
+		return [[super description] stringByAppendingFormat:@"=> Remote attr: %@", remoteAttributes];
 	return [super description];
 }
 
@@ -387,9 +387,8 @@ NSRailsSync(*);
 		id val = [self performSelector:getter];
 		BOOL isArray = [val isKindOfClass:[NSArray class]];
 		
-		NSString *nesting = [[self propertyCollection] nestedClassNameForProperty:prop];
-		//see if this property actually links to a custom NSRailsModel subclass, or it WASN'T declared, but is an array
-		if (nesting || isArray)
+		if ([[self propertyCollection] propertyIsNestedClass:prop] ||
+			[[self propertyCollection] propertyIsArray:prop])
 		{
 			//if the ivar is an array, we need to make every element into JSON and then put them back in the array
 			if (isArray)
@@ -407,6 +406,10 @@ NSRailsSync(*);
 					{
 						//have to make it shallow so we don't loop infinitely (if that model defines us as an assc)
 						encodedObj = [element dictionaryOfRemotePropertiesShallow:YES];
+					}
+					else if ([element isKindOfClass:[NSDate class]])
+					{
+						encodedObj = [self nsrails_encodeDate:element];
 					}
 					
 					[new addObject:encodedObj];
@@ -466,19 +469,32 @@ NSRailsSync(*);
 		
 		//get the intended value
 		val = [self objectForProperty:objcProperty representation:([val isKindOfClass:[NSNull class]] ? nil : val)];
-		
+
 		SEL getter = [[self class] getterForProperty:objcProperty];
 		id previousVal = [self performSelector:getter];
 		
 		if (val)
 		{
-			NSString *nestedClass = [[self propertyCollection] nestedClassNameForProperty:objcProperty];
 			//instantiate it as the class specified in NSRailsSync if it hadn't already been custom-decoded
-			if (nestedClass && ![[self propertyCollection] decodeSelectorForProperty:objcProperty])
+
+			if ([[self propertyCollection] propertyIsNestedClass:objcProperty] && 
+				![[self propertyCollection] decodeSelectorForProperty:objcProperty])
 			{
-				if ([val isKindOfClass:[NSArray class]])
+				NSString *nestedClass = [[self propertyCollection] nestedClassNameForProperty:objcProperty];
+
+				if ([nestedClass isEqualToString:@"NSDate"])
+				{
+					NSMutableArray *dates = [NSMutableArray array];
+					for (NSString *date in val)
+					{
+						[dates addObject:[self nsrails_decodeDate:date]];
+					}
+					
+					val = dates;
+				}
+				else if ([val isKindOfClass:[NSArray class]])
 				{			
-					//array is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
+					//array of NSRailsModels is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
 					
 					if (!previousVal)
 					{
@@ -530,6 +546,10 @@ NSRailsSync(*);
 						
 						changes = YES;
 					}
+					
+					//since this array is nested, we're only setting properties to the existing array
+					//we don't have to use the setter, so go to next property (if it's a new array it was already set)
+					continue;
 				}
 				//if it's not an array and just a dict
 				else
@@ -540,7 +560,7 @@ NSRailsSync(*);
 					if (!previousVal)
 					{
 						val = [self makeRelevantModelFromClass:nestedClass basedOn:objDict];
-						[self performSelector:setter withObject:val];
+
 						changes = YES;
 					}
 					else
@@ -550,21 +570,20 @@ NSRailsSync(*);
 						BOOL objChange = [previousVal setPropertiesUsingRemoteDictionary:objDict];
 						if (objChange)
 							changes = YES;
+						
+						//since it's a nested class, we're only setting properties to the existing nested object
+						//we don't have to use the setter, so go to next property
+						continue;
 					}
 				}
-				
-				//since it's a nested class, we're only setting properties to the existing nested object(s)
-				//we don't have to use the setter, so go to next property
-				continue;
 			}
-			else
+			
+			//if it's not a nested class, check for simple equality
+			if (![previousVal isEqual:val])
 			{
-				//if it's not a nested class, check for simple equality
-				if (![previousVal isEqual:val])
-				{
-					changes = YES;
-				}
+				changes = YES;
 			}
+			
 			//if there was no nested class specified, simply give it what JSON decoded (in the case of a nested model, it will be a dictionary, or, an array of dictionaries. don't worry, the user got ample warning)
 			[self performSelector:setter withObject:val];
 		}
@@ -593,7 +612,7 @@ NSRailsSync(*);
 	for (NSString *objcProperty in [self propertyCollection].sendableProperties)
 	{
 		//skip this property if it's nested and we're only looking shallow (to prevent infinite recursion)
-		if (shallow && [[self propertyCollection] nestedClassNameForProperty:objcProperty])
+		if (shallow && [[self propertyCollection] propertyIsNestedClass:objcProperty])
 			continue;
 		
 		NSString *railsEquivalent = [[self propertyCollection] remoteEquivalentForObjcProperty:objcProperty 
@@ -649,7 +668,9 @@ NSRailsSync(*);
 			}
 			
 			//otherwise, if it's associative, use "_attributes" if not null (/empty for arrays)
-			else if (([[self propertyCollection] nestedClassNameForProperty:objcProperty] || isArray) && !null)
+			else if (([[self propertyCollection] propertyIsNestedClass:objcProperty] ||
+					  [[self propertyCollection] propertyIsArray:objcProperty]) 
+					 && !null)
 			{
 				railsEquivalent = [railsEquivalent stringByAppendingString:@"_attributes"];
 			}

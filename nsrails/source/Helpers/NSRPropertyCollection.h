@@ -53,6 +53,7 @@
 - (BOOL) propertyIsMarkedBelongsTo:(NSString *)prop;
 - (BOOL) propertyIsArray:(NSString *)prop;
 - (BOOL) propertyIsDate:(NSString *)prop;
+- (BOOL) propertyIsNestedClass:(NSString *)prop;
 
 - (SEL) encodeSelectorForProperty:(NSString *)prop;
 - (SEL) decodeSelectorForProperty:(NSString *)prop;

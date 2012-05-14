@@ -107,27 +107,6 @@ NSRailsSync(locallyURL -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnl
 
 @end
 
-@implementation MockServer (pickys)
-
-+ (NSString *) newPickyCoder
-{
-	//replacing ' with ", using \" every other char makes it unreadable
-	return [@"{'locally_lowercase':'LoweRCasE?','remotely_uppercase':'upper','locally_url':'http://nsrails.com','remote_only':'invisible','code_to_nil':'something','date_override_send':'2012-05-07T04:41:52Z','date_override_ret':'afsofauh','component':{'component_name':'COMP LOWERCASE?'}}" stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
-}
-
-+ (NSString *) newPickySender
-{
-	//replacing ' with ", using \" every other char makes it unreadable
-	return [@"{'retrieve_only':'retrieve','send_only':'send','shared':'shared','shared_explicit':'shared explicit','undefined':'x'}" stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
-}
-
-+ (NSString *) newDictionaryNester
-{
-	return [@"{'dictionaries':[{'im':'so','hip':'!'}, {}]}" stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
-}
-
-@end
-
 @interface NoSyncStringTester : NSRailsModel
 @property (nonatomic, strong) NSString *property1;
 @end
@@ -166,6 +145,41 @@ NSRailsSync(childProperty1, childProperty2)
 @implementation DictionaryNester
 @synthesize dictionaries;
 NSRailsSync(dictionaries:);
+@end
+
+@interface LadiesMan : NSRailsModel
+@property (nonatomic, strong) NSArray *lotsOfDates;
+@end
+
+@implementation LadiesMan
+@synthesize lotsOfDates;
+NSRailsSync(lotsOfDates:NSDate);
+
+@end
+
+@implementation MockServer (pickys)
+
++ (NSString *) newPickyCoder
+{
+	//replacing ' with ", using \" every other char makes it unreadable
+	return [@"{'locally_lowercase':'LoweRCasE?','remotely_uppercase':'upper','locally_url':'http://nsrails.com','remote_only':'invisible','code_to_nil':'something','date_override_send':'2012-05-07T04:41:52Z','date_override_ret':'afsofauh','component':{'component_name':'COMP LOWERCASE?'}}" stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
+}
+
++ (NSString *) newPickySender
+{
+	//replacing ' with ", using \" every other char makes it unreadable
+	return [@"{'retrieve_only':'retrieve','send_only':'send','shared':'shared','shared_explicit':'shared explicit','undefined':'x'}" stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
+}
+
++ (NSString *) newDictionaryNester
+{
+	return [@"{'dictionaries':[{'im':'so','hip':'!'}, {}]}" stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
+}
+
++ (NSString *) newLadiesMan
+{
+	return [@"{'lots_of_dates':['2012-05-07T04:41:52Z','2012-05-07T04:41:52Z','2012-05-07T04:41:52Z']}" stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
+}
 
 @end
 
@@ -290,7 +304,21 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	GHAssertTrue([[send objectForKey:@"dictionaries_attributes"] count] == 2, @"Dictionaries should have 2 elements");
 	GHAssertTrue([[[send objectForKey:@"dictionaries_attributes"] objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Dictionaries obj should be of type NSDictionary");
 	GHAssertEqualStrings([[[send objectForKey:@"dictionaries_attributes"] objectAtIndex:0] objectForKey:@"key"], @"obj", @"Dict elements should've been set");
+}
 
+- (void) test_array_of_dates
+{
+	LadiesMan *guy = [[LadiesMan alloc] initWithRemoteJSON:[MockServer newLadiesMan]];
+	GHAssertNotNil(guy.lotsOfDates, @"Dates shouldn't be nil after JSON set");
+	GHAssertTrue(guy.lotsOfDates.count == 3, @"Should have 3 dates");
+	GHAssertTrue([[guy.lotsOfDates objectAtIndex:0] isKindOfClass:[NSDate class]], @"Date obj should be of type NSDate");
+
+	NSDictionary *send = [guy dictionaryOfRemoteProperties];
+	
+	GHAssertNotNil([send objectForKey:@"lots_of_dates_attributes"], @"Dates shouldn't be nil after remote dict");
+	GHAssertTrue([[send objectForKey:@"lots_of_dates_attributes"] count] == 3, @"Send should have 3 dates");
+	GHAssertTrue([[[send objectForKey:@"lots_of_dates_attributes"] lastObject] isKindOfClass:[NSString class]], @"Date obj should be of type NSString on send");
+	GHAssertEqualStrings([[send objectForKey:@"lots_of_dates_attributes"] lastObject], @"2012-05-07T04:41:52Z", @"Converted date should be equal to original val");
 }
 
 - (void)setUpClass

@@ -213,30 +213,27 @@ static NSString const * NSRNoEquivalentMarker = @"";
 				}
 			}
 			
+			BOOL dicts = (nestedModel && nestedModel.length == 0); // dicts if indicated (length=0; `nestedArray:`)
+
 			//Check for :
-			if (nestedModel || has_many)
+			if ((nestedModel || has_many) && !dicts)
 			{
-				BOOL dicts = (nestedModel && nestedModel.length == 0); // dicts if indicated (length=0; `nestedArray:`)
+				Class class = NSClassFromString(nestedModel);
 				
-				if (!dicts)
+				if (!class)
 				{
-					Class class = NSClassFromString(nestedModel);
-					
-					if (!class)
-					{
-						NSRRaiseSyncError(@"Failed to find class '%@', declared as class for nested property '%@' of class '%@'. Nesting relation not set.",nestedModel,objcProp,NSStringFromClass(class));
-					}
-					else if (![class isSubclassOfClass:[NSRailsModel class]] && ![nestedModel isEqualToString:@"NSDate"])
-					{
-						NSRRaiseSyncError(@"'%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel.",nestedModel,objcProp, NSStringFromClass(class),nestedModel);
-					}
-					else
-					{
-						[nestedModelProperties setObject:nestedModel forKey:objcProp];
-					}
+					NSRRaiseSyncError(@"Failed to find class '%@', declared as class for nested property '%@' of class '%@'. Nesting relation not set.",nestedModel,objcProp,NSStringFromClass(class));
+				}
+				else if (![class isSubclassOfClass:[NSRailsModel class]] && ![nestedModel isEqualToString:@"NSDate"])
+				{
+					NSRRaiseSyncError(@"'%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel.",nestedModel,objcProp, NSStringFromClass(class),nestedModel);
+				}
+				else if (nestedModel)
+				{
+					[nestedModelProperties setObject:nestedModel forKey:objcProp];
 				}
 			}
-			else if (!nestedModel)
+			if (!nestedModel)
 			{
 				//even if no : was declared for this property, check to see if we should link it anyway
 				
@@ -273,9 +270,14 @@ static NSString const * NSRNoEquivalentMarker = @"";
 	return !![nestedModelProperties objectForKey:NSRHasManyKeyForProperty(prop)];
 }
 
+- (BOOL) propertyIsNestedClass:(NSString *)prop
+{
+	return [nestedModelProperties objectForKey:prop] && ![self propertyIsDate:prop];
+}
+
 - (NSString *) nestedClassNameForProperty:(NSString *)prop
 {
-	return [self propertyIsDate:prop] ? nil : [nestedModelProperties objectForKey:prop];
+	return [nestedModelProperties objectForKey:prop];
 }
 
 - (BOOL) propertyIsArray:(NSString *)prop

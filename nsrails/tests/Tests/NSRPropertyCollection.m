@@ -10,6 +10,8 @@
 
 @interface TestClassParent : NSRailsModel
 @end
+@implementation TestClassParent
+@end
 
 @interface TestClass : NSRailsModel
 
@@ -26,9 +28,6 @@
 
 @end
 
-@implementation TestClassParent
-@end
-
 @implementation TestClass
 @synthesize primitiveAttr, myID, attr1, attr2, array;
 @synthesize retrieve, send, local, decode, encode, parent, badRetrieve;
@@ -36,9 +35,9 @@
 
 @interface FlagTestClass : NSRailsModel
 @property (nonatomic, strong) NSDate *date;
-@property (nonatomic, strong) NSString *sendretrieve, *nothing, *retrieve, *send, *local, *decode, *encode, *sendOnly, *parent, *encodedecode, *objc, *fakeDate;
+@property (nonatomic, strong) NSString *sendretrieve, *nothing, *retrieve, *send, *local, *decode, *encode, *sendOnly, *encodedecode, *objc, *fakeDate;
 @property (nonatomic, strong) NSArray *nestedArrayExplicit, *nestedArrayNothing, *dateArray;
-@property (nonatomic, strong) TestClass *nestedExplicit, *nestedNothing;
+@property (nonatomic, strong) TestClass *nestedExplicit, *nestedNothing, *parent;
 @end
 
 @implementation FlagTestClass
@@ -107,17 +106,34 @@
 	GHAssertEqualObjects(pc.encodeProperties, NSRArray(@"encode", @"encodedecode"), @"");
 	
 	GHAssertTrue([pc propertyIsMarkedBelongsTo:@"parent"], @"parent should be marked belongs-to (-b included)");
+	GHAssertTrue([pc propertyIsNestedClass:@"parent"], @"parent should be marked as nested class");
+
 	GHAssertFalse([pc propertyIsMarkedBelongsTo:@"nestedNothing"], @"nestedNothing shouldn't be marked belongs-to (no -b)");
+	GHAssertTrue([pc propertyIsNestedClass:@"nestedNothing"], @"nestedNothing should be marked as nested class");
+	
 	GHAssertFalse([pc propertyIsArray:@"nestedNothing"], @"nestedNothing shouldn't be seen as array");
+	GHAssertTrue([pc propertyIsNestedClass:@"nestedNothing"], @"nestedNothing should be marked as nested class");
+	
 	GHAssertFalse([pc propertyIsArray:@"nestedExplicit"], @"nestedExplicit shouldn't be seen as array");
+	GHAssertTrue([pc propertyIsNestedClass:@"nestedExplicit"], @"nestedExplicit should be marked as nested class");
+	
 	GHAssertTrue([pc propertyIsArray:@"nestedArrayExplicit"], @"nestedNothingExplicit should be seen as array");
+	GHAssertTrue([pc propertyIsNestedClass:@"nestedArrayExplicit"], @"nestedArrayExplicit should be marked as nested class");
+	
 	GHAssertTrue([pc propertyIsArray:@"nestedArrayNothing"], @"nestedArrayNothing should be seen as array");
+	GHAssertFalse([pc propertyIsNestedClass:@"nestedArrayNothing"], @"nestedArrayNothing shouldn't be marked as nested class");
+	
 	GHAssertFalse([pc propertyIsArray:@"date"], @"date shouldn't be seen as array");
 	GHAssertTrue([pc propertyIsDate:@"date"], @"date should be seen as date");
+	GHAssertFalse([pc propertyIsNestedClass:@"date"], @"date should not be marked as nested class");
+
 	GHAssertTrue([pc propertyIsDate:@"fakeDate"], @"fakedate should be seen as date, even if string");
+	GHAssertFalse([pc propertyIsNestedClass:@"fakeDate"], @"fakeDate should not be marked as nested class");
+
 	GHAssertFalse([pc propertyIsDate:@"dateArray"], @"dateArray shouldn't be seen as date");
 	GHAssertTrue([pc propertyIsArray:@"dateArray"], @"dateArray should be seen as array");
-	
+	GHAssertTrue([pc propertyIsNestedClass:@"dateArray"], @"dateArray should be marked as nested class");
+
 	GHAssertEqualStrings([pc.nestedModelProperties objectForKey:@"nestedNothing"], @"TestClass", @"Should automatically pick up class of nestedNothing");
 	GHAssertEqualStrings([pc.nestedModelProperties objectForKey:@"nestedExplicit"], @"TestClass", @"Should pick up class of nestedNothing");
 	GHAssertEqualStrings([pc.nestedModelProperties objectForKey:@"dateArray"], @"NSDate", @"Should pick up class of NSDate");
