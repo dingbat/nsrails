@@ -131,12 +131,14 @@
 }
 
 - (NSString *) tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
-{
-	if (post.responses.count == 0)
-	{
-		return @"There are no responses to this post.\nSay something!";
-	}
-	return nil;
+{	
+	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+	[formatter setDateFormat:@"MM/dd/yy"];
+	NSString *timestamp = [@"Posted on " stringByAppendingString:[formatter stringFromDate:post.createdAt]];
+
+	NSString *encouragement = @"There are no responses to this post.\nSay something!\n\n";
+
+	return [NSString stringWithFormat:@"%@%@", (post.responses.count == 0) ? encouragement : @"", timestamp];
 }
 
 - (NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section

@@ -77,11 +77,11 @@ class ResponsesViewController < UITableViewController
   end
   
   def tableView(tableView, titleForFooterInSection:section)
+    str = ""
     if @post.responses.empty?
-      "There are no responses to this post.\nSay something!"
-    else
-      nil
+      str += "There are no responses to this post.\nSay something!\n\n"
     end
+    str += "Posted on #{@post.createdAt.strftime("%m/%d/%y")}"
   end
   
   def tableView(tableView, titleForHeaderInSection:section)

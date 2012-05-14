@@ -9,8 +9,8 @@
 #import "Post.h"
 
 @implementation Post
-@synthesize content, author, responses;
-NSRailsSync(content, author, responses:Response)
+@synthesize content, author, createdAt, responses;
+NSRailsSync(content, author, createdAt, responses:Response)
 
 // The NSRailsSync above will tell NSRails to sync up content, author, and responses w/Rails
 // Could also be done like:
