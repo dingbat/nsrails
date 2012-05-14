@@ -1,10 +1,11 @@
 class Response < NSRailsModel  
+  attr_writer :author, :content, :post
+
+  # Right now there's a bug in RubyMotion that requires you to define getter methods manually
+  # Soon you'll be able just do "attr_accessor" above instead of this
   def author; @author; end  
   def content; @content; end
   def post; @post; end
-  def setAuthor(a); @author = a; end
-  def setContent(a); @content = a; end
-  def setPost(a); @post = a; end
   
   def self.NSRailsSync
     'author, content, post:Post -b'
