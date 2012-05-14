@@ -121,6 +121,11 @@ NSRailsSync(locallyURL -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnl
 	return [@"{'retrieve_only':'retrieve','send_only':'send','shared':'shared','shared_explicit':'shared explicit','undefined':'x'}" stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
 }
 
++ (NSString *) newDictionaryNester
+{
+	return [@"{'dictionaries':[{'im':'so','hip':'!'}, {}]}" stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
+}
+
 @end
 
 @interface NoSyncStringTester : NSRailsModel
@@ -152,6 +157,16 @@ NSRailsSync(childProperty1, childProperty2)
 @end
 
 @implementation Empty
+@end
+
+@interface DictionaryNester : NSRailsModel
+@property (nonatomic, strong) NSArray *dictionaries;
+@end
+
+@implementation DictionaryNester
+@synthesize dictionaries;
+NSRailsSync(dictionaries:);
+
 @end
 
 @interface TNSRailsModel : GHTestCase
@@ -257,6 +272,25 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	GHAssertEqualStrings([sendDict objectForKey:@"send_only"], @"send--local", @"Should've sent send... -s");
 	GHAssertEqualStrings([sendDict objectForKey:@"shared"], @"shared", @"Should've sent shared... blank");
 	GHAssertEqualStrings([sendDict objectForKey:@"shared_explicit"], @"shared explicit", @"Should've sent sharedExplicit... -rs");
+}
+
+- (void) test_nesting_dictionaries
+{
+	DictionaryNester *nester = [[DictionaryNester alloc] initWithRemoteJSON:[MockServer newDictionaryNester]];
+	GHAssertNotNil(nester.dictionaries, @"Dictionaries shouldn't be nil after JSON set");
+	GHAssertTrue(nester.dictionaries.count == 2, @"Dictionaries should have 2 elements");
+	GHAssertTrue([[nester.dictionaries objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Dictionaries obj should be of type NSDictionary");
+	GHAssertEqualStrings([[nester.dictionaries objectAtIndex:0] objectForKey:@"im"], @"so", @"Dict elements should've been set");
+	
+	nester.dictionaries = [NSArray arrayWithObjects:[NSDictionary dictionaryWithObject:@"obj" forKey:@"key"], [NSDictionary dictionaryWithObject:@"obj2" forKey:@"key2"], nil];
+	
+	NSDictionary *send = [nester dictionaryOfRemoteProperties];
+
+	GHAssertNotNil(send, @"Dictionaries shouldn't be nil after trying to make it");
+	GHAssertTrue([[send objectForKey:@"dictionaries_attributes"] count] == 2, @"Dictionaries should have 2 elements");
+	GHAssertTrue([[[send objectForKey:@"dictionaries_attributes"] objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Dictionaries obj should be of type NSDictionary");
+	GHAssertEqualStrings([[[send objectForKey:@"dictionaries_attributes"] objectAtIndex:0] objectForKey:@"key"], @"obj", @"Dict elements should've been set");
+
 }
 
 - (void)setUpClass

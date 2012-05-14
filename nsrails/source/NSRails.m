@@ -358,13 +358,13 @@ NSRailsSync(*);
 - (id) representationOfObjectForProperty:(NSString *)prop
 {
 	SEL encoder = [[self propertyCollection] encodeSelectorForProperty:prop];
+	SEL getter = [self.class getterForProperty:prop];
 
 	if (encoder)
 	{
-		//perform selector with the object itself in case it takes it
-		SEL getter = [self.class getterForProperty:prop];
 		id obj = [self respondsToSelector:getter] ? [self performSelector:getter] : nil;
 		
+		//perform selector with the object itself in case it takes it
 		id representation = [self performSelector:encoder withObject:obj];
 
 		//send back an NSNull object instead of nil since we'll be encoding it into JSON, where that's relevant
@@ -384,12 +384,12 @@ NSRailsSync(*);
 	}
 	else
 	{
-		SEL sel = [[self class] getterForProperty:prop];	
-		id val = [self performSelector:sel];
+		id val = [self performSelector:getter];
 		BOOL isArray = [val isKindOfClass:[NSArray class]];
 		
+		NSString *nesting = [[self propertyCollection] nestedClassNameForProperty:prop];
 		//see if this property actually links to a custom NSRailsModel subclass, or it WASN'T declared, but is an array
-		if ([[self propertyCollection] nestedClassNameForProperty:prop] || isArray)
+		if (nesting || isArray)
 		{
 			//if the ivar is an array, we need to make every element into JSON and then put them back in the array
 			if (isArray)
@@ -400,13 +400,14 @@ NSRailsSync(*);
 				{
 					id element = [val objectAtIndex:i];
 					
-					//use the NSRailsModel dictionaryOfRemoteProperties method to get that object in dictionary form
-					//but first make sure it's an NSRailsModel subclass
-					if (![element isKindOfClass:[NSRailsModel class]])
-						continue;
+					id encodedObj = element;
 					
-					//have to make it shallow so we don't loop infinitely (if that model defines us as an assc)
-					id encodedObj = [element dictionaryOfRemotePropertiesShallow:YES];
+					//if it's an NSRailsModel, we can use its dictionaryOfRemoteProperties
+					if ([element isKindOfClass:[NSRailsModel class]])
+					{
+						//have to make it shallow so we don't loop infinitely (if that model defines us as an assc)
+						encodedObj = [element dictionaryOfRemotePropertiesShallow:YES];
+					}
 					
 					[new addObject:encodedObj];
 				}
