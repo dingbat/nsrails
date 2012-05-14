@@ -11,3 +11,7 @@ project.xcworkspace
 # Ignore folders made with autogen
 
 *.gen/
+
+extras/
+extras/nsrails.com
+nsrails/
