@@ -73,7 +73,7 @@ NSString * const NSRailsNullRemoteIDException			= @"NSRailsNullRemoteIDException
 
 @implementation NSRConfig
 @synthesize appURL, appUsername, appPassword;
-@synthesize autoInflectsNamesAndProperties, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages;
+@synthesize autoinflectsClassNames, autoinflectsPropertyNames, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages;
 @dynamic dateFormat;
 
 #pragma mark -
@@ -150,7 +150,9 @@ static int networkActivityRequests = 0;
 		//by default, set to accept datestring like "2012-02-01T00:56:24Z"
 		//this format (ISO 8601) is default in rails
 		self.dateFormat = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
-		self.autoInflectsNamesAndProperties = YES;
+		
+		self.autoinflectsClassNames = YES;
+		self.autoinflectsPropertyNames = YES;
 		self.succinctErrorMessages = YES;
 		self.timeoutInterval = 60;
 		

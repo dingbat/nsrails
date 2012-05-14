@@ -60,7 +60,7 @@
 	GHAssertEqualStrings(@"some_class", [SomeClass masterModelName], @"auto-underscoring");
 	
 	NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"NoAuto"];
-	c.autoInflectsNamesAndProperties = NO;
+	c.autoinflectsClassNames = NO;
 	[c useIn:
 	 ^{
 		 NSRAssertRelevantConfigURL(@"NoAuto", @"custom block ^{} block");

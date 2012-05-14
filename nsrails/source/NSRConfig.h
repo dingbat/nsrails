@@ -168,17 +168,30 @@ extern NSString * const NSRailsNullRemoteIDException;
 
 
 /**
- When true, all Obj-C property and class names will have a default equivalent for their under_scored versions.
+ When true, all Objective-C class names will have a default equivalence to their under_scored versions.
+ 
+ For instance, the class `DataType` in Objective-C will change to `data_type` when sending/receiving to/from Rails.
+ 
+ When false, names must be identical to their corresponding models in Rails.
+ 
+ If there are just a few cases where you don't want this, see the NSRailsUseModelName macro to override model names.
+ 
+ **Default:** `YES`.
+ */
+@property (nonatomic) BOOL autoinflectsClassNames;
+
+/**
+ When true, all Objective-C property names will have a default equivalence to their under_scored versions.
  
  For instance, `myProperty` in Obj-C will change to `my_property` when sending/receiving to/from Rails.
  
- When false, names must be identical to their corresponding elements in Rails.
+ When false, names must be identical to their corresponding attributes in Rails.
  
  If there are just a few cases where you don't want this, see the NSRailsSync macro to override equivalents.
  
  **Default:** `YES`.
  */
-@property (nonatomic) BOOL autoInflectsNamesAndProperties;
+@property (nonatomic) BOOL autoinflectsPropertyNames;
 
 /**
  The network activity indicator (gray spinning wheel on the status bar) will automatically turn on and off with requests.

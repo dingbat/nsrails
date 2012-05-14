@@ -148,7 +148,7 @@ NSRailsSync(*);
 	//otherwise, return name of the class
 	NSString *class = NSStringFromClass(self);
 	
-	if ([self getRelevantConfig].autoInflectsNamesAndProperties)
+	if ([self getRelevantConfig].autoinflectsClassNames)
 	{
 		NSString *railsified = [class underscoreIgnorePrefix:[self getRelevantConfig].ignoresClassPrefixes];
 		return [railsified lowercaseString];
@@ -326,7 +326,7 @@ NSRailsSync(*);
 	//see if we can assign an association from its parent (the receiver -- "me" ("self"))
 	NSString *parentModelName = [[self class] masterModelName];
 	NSArray *properties = [[model propertyCollection] objcPropertiesForRemoteEquivalent:parentModelName 
-																		  autoinflect:[self getRelevantConfig].autoInflectsNamesAndProperties];
+																		  autoinflect:[self getRelevantConfig].autoinflectsPropertyNames];
 	
 	for (NSString *property in properties)
 	{
@@ -459,7 +459,7 @@ NSRailsSync(*);
 	for (NSString *objcProperty in [self propertyCollection].retrievableProperties) //marked as retrievable
 	{
 		NSString *railsEquivalent = [[self propertyCollection] remoteEquivalentForObjcProperty:objcProperty 
-																				   autoinflect:[self getRelevantConfig].autoInflectsNamesAndProperties];
+																				   autoinflect:[self getRelevantConfig].autoinflectsPropertyNames];
 
 		SEL setter = [[self class] setterForProperty:objcProperty];
 		id val = [dict objectForKey:railsEquivalent];
@@ -616,7 +616,7 @@ NSRailsSync(*);
 			continue;
 		
 		NSString *railsEquivalent = [[self propertyCollection] remoteEquivalentForObjcProperty:objcProperty 
-																				   autoinflect:[self getRelevantConfig].autoInflectsNamesAndProperties];
+																				   autoinflect:[self getRelevantConfig].autoinflectsPropertyNames];
 		
 		id val = [self representationOfObjectForProperty:objcProperty];
 
