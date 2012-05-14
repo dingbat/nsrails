@@ -35,13 +35,14 @@
 @end
 
 @interface FlagTestClass : NSRailsModel
+@property (nonatomic, strong) NSDate *date;
 @property (nonatomic, strong) NSString *sendretrieve, *nothing, *retrieve, *send, *local, *decode, *encode, *sendOnly, *parent, *encodedecode, *objc;
 @property (nonatomic, strong) NSArray *nestedArrayExplicit, *nestedArrayNothing;
 @property (nonatomic, strong) TestClass *nestedExplicit, *nestedNothing;
 @end
 
 @implementation FlagTestClass
-@synthesize sendretrieve, nothing, retrieve, send, local, decode, encode, sendOnly, parent, encodedecode, objc;
+@synthesize sendretrieve, nothing, retrieve, send, local, decode, encode, sendOnly, parent, encodedecode, objc, date;
 @synthesize nestedNothing, nestedExplicit, nestedArrayNothing, nestedArrayExplicit;
 @end
 
@@ -67,18 +68,22 @@
 	GHAssertNoThrow(NSRInitTestClass(@"attr1=hello -r, attr2=hello"), @"Shouldn't crash if two properties are set to the same rails equiv in NSRS, but only one is sendable");
 	
 	GHAssertThrowsSpecificNamed(NSRInitTestClass(@"array"), NSException, NSRailsSyncException, @"Should crash without class to fill array");
+	GHAssertThrowsSpecificNamed(NSRInitTestClass(@"attr1 -m"), NSException, NSRailsSyncException, @"Should crash without class to fill array");
+	GHAssertNoThrow(NSRInitTestClass(@"attr1: -m"), @"Shouldn't crash when defaulting to NSDictionaries, even if attr1 isn't array");
+	GHAssertThrowsSpecificNamed(NSRInitTestClass(@"array -m"), NSException, NSRailsSyncException, @"Should crash without class to fill array");
 	GHAssertThrowsSpecificNamed(NSRInitTestClass(@"array:FakeClass"), NSException, NSRailsSyncException, @"Should crash without real class to fill array");
 	GHAssertThrowsSpecificNamed(NSRInitTestClass(@"array:BadResponse"), NSException, NSRailsSyncException, @"Should crash because class exists but doesn't inherit from NSRM");
 	GHAssertNoThrow(NSRInitTestClass(@"array:"), @"Shouldn't crash when defaulting to NSDictionaries");
+	GHAssertNoThrow(NSRInitTestClass(@"array: -m"), @"Shouldn't crash when defaulting to NSDictionaries (with -m)");
 }
 
 - (void) test_property_flags
 {
 	NSRPropertyCollection *pc = [[NSRPropertyCollection alloc] initWithClass:[FlagTestClass class]
-																  syncString:@"sendretrieve -rs, nothing, retrieve=rails -r, send -s, local -x, decode -d, encode -e, parent -b, encodedecode -ed, nestedNothing, objc=rails, nestedExplicit:TestClass, nestedArrayNothing=nestedArrayNothing:, nestedArrayExplicit:TestClass" 
+																  syncString:@"sendretrieve -rs, nothing, retrieve=rails -r, send -s, local -x, decode -d, encode -e, parent -b, encodedecode -ed, nestedNothing, objc=rails, nestedExplicit:TestClass, nestedArrayNothing=nestedArrayNothing:, nestedArrayExplicit:TestClass -m, date" 
 																customConfig:nil];
 	
-	NSRAssertEqualArraysNoOrder(pc.propertyEquivalents.allKeys, NSRArray(@"sendretrieve", @"nothing", @"retrieve", @"send", @"decode", @"encode", @"parent", @"nestedNothing", @"nestedExplicit", @"nestedArrayNothing", @"nestedArrayExplicit", @"encodedecode", @"objc"));
+	NSRAssertEqualArraysNoOrder(pc.propertyEquivalents.allKeys, NSRArray(@"sendretrieve", @"date", @"nothing", @"retrieve", @"send", @"decode", @"encode", @"parent", @"nestedNothing", @"nestedExplicit", @"nestedArrayNothing", @"nestedArrayExplicit", @"encodedecode", @"objc"));
 	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"rails" autoinflect:NO] containsObject:@"retrieve"], @"Should pick up that remote rails is defined as retrieve");
 	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"rails" autoinflect:NO] containsObject:@"objc"], @"Should pick up that remote rails is also defined as objc");
 
@@ -96,13 +101,19 @@
 	
 	GHAssertEqualStrings([pc remoteEquivalentForObjcProperty:@"objc" autoinflect:NO], @"rails", @"Should pick up that objc is defined as remote rails");
 	
-	NSRAssertEqualArraysNoOrder(pc.retrievableProperties, NSRArray(@"sendretrieve", @"nothing", @"retrieve", @"decode", @"encode", @"parent", @"nestedNothing", @"nestedExplicit", @"nestedArrayNothing", @"nestedArrayExplicit", @"encodedecode", @"objc"));
-	NSRAssertEqualArraysNoOrder(pc.sendableProperties, NSRArray(@"sendretrieve", @"nothing", @"send", @"decode", @"encode", @"parent", @"nestedNothing", @"nestedExplicit", @"nestedArrayNothing", @"nestedArrayExplicit", @"encodedecode", @"objc"));
+	NSRAssertEqualArraysNoOrder(pc.retrievableProperties, NSRArray(@"sendretrieve", @"nothing", @"retrieve", @"decode", @"encode", @"parent", @"nestedNothing", @"nestedExplicit", @"nestedArrayNothing", @"nestedArrayExplicit", @"encodedecode", @"objc", @"date"));
+	NSRAssertEqualArraysNoOrder(pc.sendableProperties, NSRArray(@"sendretrieve", @"nothing", @"send", @"decode", @"encode", @"parent", @"nestedNothing", @"nestedExplicit", @"nestedArrayNothing", @"nestedArrayExplicit", @"encodedecode", @"objc", @"date"));
 	GHAssertEqualObjects(pc.decodeProperties, NSRArray(@"decode", @"encodedecode"), @"");
 	GHAssertEqualObjects(pc.encodeProperties, NSRArray(@"encode", @"encodedecode"), @"");
 	
 	GHAssertTrue([pc propertyIsMarkedBelongsTo:@"parent"], @"parent should be marked belongs-to (-b included)");
 	GHAssertFalse([pc propertyIsMarkedBelongsTo:@"nestedNothing"], @"nestedNothing shouldn't be marked belongs-to (no -b)");
+	GHAssertFalse([pc propertyIsArray:@"nestedNothing"], @"nestedNothing shouldn't be seen as array");
+	GHAssertFalse([pc propertyIsArray:@"nestedExplicit"], @"nestedExplicit shouldn't be seen as array");
+	GHAssertTrue([pc propertyIsArray:@"nestedArrayExplicit"], @"nestedNothingExplicit should be seen as array");
+	GHAssertTrue([pc propertyIsArray:@"nestedArrayNothing"], @"nestedArrayNothing should be seen as array");
+	GHAssertFalse([pc propertyIsArray:@"date"], @"date shouldn't be seen as array");
+	GHAssertTrue([pc propertyIsDate:@"date"], @"date should be seen as array");
 	
 	GHAssertEqualStrings([pc.nestedModelProperties objectForKey:@"nestedNothing"], @"TestClass", @"Should automatically pick up class of nestedNothing");
 	GHAssertEqualStrings([pc.nestedModelProperties objectForKey:@"nestedExplicit"], @"TestClass", @"Should pick up class of nestedNothing");

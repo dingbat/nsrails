@@ -38,7 +38,8 @@ static NSString const * NSRNoEquivalentMarker = @"";
 
 //this will be the marker for any property that has the "-b flag"
 //this gonna go in the nestedModelProperties (properties can never have a comma/space in them so we're safe from any conflicts)
-#define NSRBelongsToKeyForProperty(prop) [prop stringByAppendingString:@", belongs_to"]
+#define NSRBelongsToKeyForProperty(prop)	[prop stringByAppendingString:@", belongs_to"]
+#define NSRHasManyKeyForProperty(prop)		[prop stringByAppendingString:@", has_many"]
 
 #define NSRRaiseSyncError(x, ...) [NSException raise:NSRailsSyncException format:x,__VA_ARGS__,nil]
 
@@ -149,14 +150,15 @@ static NSString const * NSRNoEquivalentMarker = @"";
 
 			BOOL primitive = NO;
 			
-			//make sure property exists in this class or superclasses
-			NSString *type = [class typeForProperty:objcProp isPrimitive:&primitive];
 			//make sure that the property type is not a primitive
+			NSString *type = [class typeForProperty:objcProp isPrimitive:&primitive];
 			if (primitive)
 			{
 				NSRRaiseSyncError(@"Property '%@' declared in NSRailsSync for class %@ was found to be of primitive type '%@' - please use NSNumber*.", objcProp, NSStringFromClass(class), type);
 				continue;
 			}
+			
+			BOOL typeIsArray = [type isEqualToString:@"NSArray"] || [type isEqualToString:@"NSMutableArray"];
 			
 			// Looks like we're ready to officially add this property
 			
@@ -182,6 +184,15 @@ static NSString const * NSRNoEquivalentMarker = @"";
 				[self addPropertyAsSendable:objcProp equivalent:equivalent class:class];
 			}
 			
+			BOOL has_many = NO;
+			
+			//mark as h_m if -m is declared (or if property is found to be array)
+			if ((options && [options rangeOfString:@"m"].location != NSNotFound) || typeIsArray)
+			{
+				has_many = YES;
+				[nestedModelProperties setObject:[NSNumber numberWithBool:YES] forKey:NSRHasManyKeyForProperty(objcProp)];
+			}
+			
 			//Check for all other flags (-)
 			if (options)
 			{
@@ -195,7 +206,7 @@ static NSString const * NSRNoEquivalentMarker = @"";
 					[decodeProperties addObject:objcProp];
 				}
 				
-				//add a special marker in nestedModelProperties dict
+				//add a special marker for b_t in nestedModelProperties dict
 				if ([options rangeOfString:@"b"].location != NSNotFound)
 				{
 					[nestedModelProperties setObject:[NSNumber numberWithBool:YES] forKey:NSRBelongsToKeyForProperty(objcProp)];
@@ -203,28 +214,33 @@ static NSString const * NSRNoEquivalentMarker = @"";
 			}
 			
 			//Check for :
-			if (nestedModel.length > 0) //check for length because length=0 is valid to indicate dicts (`nestedArray:`)
+			if (nestedModel || has_many)
 			{
-				Class class = NSClassFromString(nestedModel);
+				BOOL dicts = (nestedModel && nestedModel.length == 0); // dicts if indicated (length=0; `nestedArray:`)
 				
-				if (!class)
+				if (!dicts)
 				{
-					NSRRaiseSyncError(@"Failed to find class '%@', declared as class for nested property '%@' of class '%@'. Nesting relation not set.",nestedModel,objcProp,NSStringFromClass(class));
-				}
-				else if (![class isSubclassOfClass:[NSRailsModel class]])
-				{
-					NSRRaiseSyncError(@"'%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel.",nestedModel,objcProp, NSStringFromClass(class),nestedModel);
-				}
-				else
-				{
-					[nestedModelProperties setObject:nestedModel forKey:objcProp];
+					Class class = NSClassFromString(nestedModel);
+					
+					if (!class)
+					{
+						NSRRaiseSyncError(@"Failed to find class '%@', declared as class for nested property '%@' of class '%@'. Nesting relation not set.",nestedModel,objcProp,NSStringFromClass(class));
+					}
+					else if (![class isSubclassOfClass:[NSRailsModel class]])
+					{
+						NSRRaiseSyncError(@"'%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel.",nestedModel,objcProp, NSStringFromClass(class),nestedModel);
+					}
+					else
+					{
+						[nestedModelProperties setObject:nestedModel forKey:objcProp];
+					}
 				}
 			}
 			else if (!nestedModel)
 			{
 				//even if no : was declared for this property, check to see if we should link it anyway
 				
-				if ([type isEqualToString:@"NSArray"] || [type isEqualToString:@"NSMutableArray"])
+				if (typeIsArray)
 				{
 					NSRRaiseSyncError(@"Property '%@' in class %@ was found to be an array, but no nesting model was set. If you don't want to nest instances of other objects, you can have it populate with NSDictionaries with the retrieved remote attributes by adding a colon to the end of this property in NSRailsSync: `%@:`",objcProp,NSStringFromClass(class),objcProp);
 				}
@@ -252,6 +268,11 @@ static NSString const * NSRNoEquivalentMarker = @"";
 	return !![nestedModelProperties objectForKey:NSRBelongsToKeyForProperty(prop)];
 }
 
+- (BOOL) propertyIsMarkedHasMany:(NSString *)prop
+{
+	return !![nestedModelProperties objectForKey:NSRHasManyKeyForProperty(prop)];
+}
+
 - (NSString *) nestedClassNameForProperty:(NSString *)prop
 {
 	return [self propertyIsDate:prop] ? nil : [nestedModelProperties objectForKey:prop];
@@ -259,7 +280,7 @@ static NSString const * NSRNoEquivalentMarker = @"";
 
 - (BOOL) propertyIsArray:(NSString *)prop
 {
-	return [nestedModelProperties objectForKey:prop] && ![self propertyIsDate:prop];
+	return !![nestedModelProperties objectForKey:NSRHasManyKeyForProperty(prop)];
 }
 
 - (BOOL) propertyIsDate:(NSString *)prop
