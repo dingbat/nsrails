@@ -288,6 +288,36 @@ static NSString const * NSRNoEquivalentMarker = @"";
 	return ![self propertyIsArray:prop] && [[nestedModelProperties objectForKey:prop] isEqualToString:@"NSDate"];
 }
 
+
+- (SEL) encodeSelectorForProperty:(NSString *)prop
+{
+	if (![encodeProperties containsObject:prop])
+	{
+		if ([self propertyIsDate:prop])
+			return @selector(nsrails_encodeDate:);
+
+		return NULL;
+	}
+	
+	NSString *sel = [NSString stringWithFormat:@"encode%@", [prop firstLetterCapital]];
+	return NSSelectorFromString(sel);	
+}
+
+- (SEL) decodeSelectorForProperty:(NSString *)prop
+{
+	if (![decodeProperties containsObject:prop])
+	{
+		if ([self propertyIsDate:prop])
+			return @selector(nsrails_decodeDate:);
+		
+		return NULL;
+	}
+	
+	NSString *sel = [NSString stringWithFormat:@"decode%@:",[prop firstLetterCapital]];
+	return NSSelectorFromString(sel);
+}
+
+
 - (NSString *) remoteEquivalentForObjcProperty:(NSString *)objcProperty autoinflect:(BOOL)autoinflect
 {
 	NSString *railsEquivalent = [propertyEquivalents objectForKey:objcProperty];

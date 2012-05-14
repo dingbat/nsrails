@@ -33,12 +33,13 @@ NSRailsSync(local -x, retrieveOnly -r, shared, sharedExplicit -rs, sendOnly -s)
 @property (nonatomic, strong) NSURL *locallyURL;
 @property (nonatomic, strong) NSString *locallyLowercase, *remotelyUppercase, *codeToNil;
 @property (nonatomic, strong) PickyCoderComponent *componentWithFlippingName;
+@property (nonatomic, strong) NSDate *dateOverrideSend, *dateOverrideRet;
 
 @end
 
 @implementation PickyCoder
-@synthesize locallyURL, locallyLowercase, remotelyUppercase, componentWithFlippingName, codeToNil, encodeNonJSON;
-NSRailsSync(locallyURL -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnly -se, codeToNil -ed, componentWithFlippingName=component -de);
+@synthesize locallyURL, locallyLowercase, remotelyUppercase, componentWithFlippingName, codeToNil, encodeNonJSON, dateOverrideSend, dateOverrideRet;
+NSRailsSync(locallyURL -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnly -se, codeToNil -ed, componentWithFlippingName=component -de, dateOverrideSend -e, dateOverrideRet -d);
 
 - (id) encodeRemoteOnly
 {
@@ -47,6 +48,16 @@ NSRailsSync(locallyURL -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnl
 		return [[NSScanner alloc] init];
 	}
 	return @"remote";
+}
+
+- (id) encodeDateOverrideSend
+{
+	return @"override!";
+}
+
+- (id) decodeDateOverrideRet:(NSString *)json
+{
+	return [NSDate dateWithTimeIntervalSince1970:0];
 }
 
 - (NSString *) decodeCodeToNil:(NSString *)str
@@ -101,7 +112,7 @@ NSRailsSync(locallyURL -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnl
 + (NSString *) newPickyCoder
 {
 	//replacing ' with ", using \" every other char makes it unreadable
-	return [@"{'locally_lowercase':'LoweRCasE?','remotely_uppercase':'upper','locally_url':'http://nsrails.com','remote_only':'invisible','code_to_nil':'something','component':{'component_name':'COMP LOWERCASE?'}}" stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
+	return [@"{'locally_lowercase':'LoweRCasE?','remotely_uppercase':'upper','locally_url':'http://nsrails.com','remote_only':'invisible','code_to_nil':'something','date_override_send':'2012-05-07T04:41:52Z','date_override_ret':'afsofauh','component':{'component_name':'COMP LOWERCASE?'}}" stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
 }
 
 + (NSString *) newPickySender
@@ -197,6 +208,8 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	p.encodeNonJSON = NO;
 	
 	GHAssertTrue([p.locallyURL isKindOfClass:[NSURL class]], @"Should've decoded into a URL");
+	GHAssertTrue([p.dateOverrideSend isKindOfClass:[NSDate class]], @"Should've decoded into an NSDate");
+	GHAssertTrue([p.dateOverrideRet isEqualToDate:[NSDate dateWithTimeIntervalSince1970:0]], @"Should've used custom decode");
 	GHAssertNil(p.codeToNil, @"Should've decoded codeToNil into nil");
 	GHAssertEqualStrings([p.locallyURL description], @"http://nsrails.com", @"Should've decoded into URL & retain content");
 	GHAssertEqualStrings(p.locallyLowercase, @"lowercase?", @"Should've decoded into lowercase");
@@ -211,6 +224,8 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	GHAssertEqualStrings([sendDict objectForKey:@"locally_url"], @"http://nsrails.com", @"Should've encoded into string & retain content");
 	GHAssertEqualStrings([sendDict objectForKey:@"locally_lowercase"], @"lowercase?", @"Should've kept as lowercase");
 	GHAssertEqualStrings([sendDict objectForKey:@"remotely_uppercase"], @"UPPER", @"Should've encoded to uppercase");
+	GHAssertEqualStrings([sendDict objectForKey:@"date_override_send"], @"override!", @"Should've overriden NSDate encode");
+	GHAssertEqualStrings([sendDict objectForKey:@"date_override_ret"], @"1969-12-31T19:00:00Z", @"Should've overriden NSDate decode");
 	GHAssertEqualStrings(p.componentWithFlippingName.componentName, @"COMP LOWERCASE?", @"Should've encoded comp name into uppercase");
 	
 	GHAssertEqualStrings([sendDict objectForKey:@"remote_only"], @"remote", @"Should've captured remoteOnly!");

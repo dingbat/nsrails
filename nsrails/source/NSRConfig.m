@@ -190,7 +190,7 @@ static int networkActivityRequests = 0;
 {
 	NSDate *date = [dateFormatter dateFromString:string];
 	
-	if (!date)
+	if (!date && string)
 	{
 		[NSException raise:NSRailsDateConversionException format:@"Attempted to convert remote date string (\"%@\") into an NSDate object, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation).",string,dateFormatter.dateFormat];
 		return nil;

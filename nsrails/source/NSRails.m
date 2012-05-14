@@ -235,6 +235,20 @@ NSRailsSync(*);
 	return [[self class] getRelevantConfigFromPropertyCollection:customProperties];
 }
 
+
+// Encode/decode date objects by default (will be added as custom en/de coders if they aren't declared)
+
+- (NSString *) nsrails_encodeDate:(NSDate *)date
+{
+	return [[self getRelevantConfig] stringFromDate:date];
+}
+
+- (NSDate *) nsrails_decodeDate:(NSString *)dateRep
+{
+	return [[self getRelevantConfig] dateFromString:dateRep];
+}
+
+
 - (id) initWithCustomSyncProperties:(NSString *)str customConfig:(NSRConfig *)config
 {
 	if ((self = [super init]))
@@ -329,47 +343,12 @@ NSRailsSync(*);
 	return model;
 }
 
-- (id) getCustomEncodingForProperty:(NSString *)prop
-{
-	NSString *sel = [NSString stringWithFormat:@"encode%@", [prop firstLetterCapital]];
-	SEL selector = NSSelectorFromString(sel);
-	id obj = [self performSelector:selector];
-	
-	//send back an NSNull object instead of nil since we'll be encoding it into JSON, where that's relevant
-	if (!obj)
-	{
-		return [NSNull null];
-	}
-	
-	//make sure that the result is a JSON parsable
-	if (![obj isJSONParsable])
-	{
-		[NSException raise:NSRailsInvalidJSONEncodingException format:@"Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return NSDictionary, NSArray, NSString, NSNumber, or NSNull here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop, NSStringFromClass([self class]),sel];
-	}
-	
-	return obj;
-}
-
-- (id) getCustomDecodingForProperty:(NSString *)prop value:(id)val
-{
-	NSString *sel = [NSString stringWithFormat:@"decode%@:",[prop firstLetterCapital]];
-	
-	SEL selector = NSSelectorFromString(sel);
-	id obj = [self performSelector:selector withObject:val];
-	return obj;
-}
-
 - (id) objectForProperty:(NSString *)prop representation:(id)rep
 {
-	//if object is marked as decodable, use the decode method
-	if ([[self propertyCollection].decodeProperties containsObject:prop])
+	SEL customDecode = [[self propertyCollection] decodeSelectorForProperty:prop];
+	if (customDecode)
 	{
-		return [self getCustomDecodingForProperty:prop value:rep];
-	}
-	//if the object is of class NSDate and the representation in JSON is a string, automatically convert it to an NSDate
-	else if (rep && [rep isKindOfClass:[NSString class]] && [[self propertyCollection] propertyIsDate:prop])
-	{
-		return [[self getRelevantConfig] dateFromString:rep];
+		return [self performSelector:customDecode withObject:rep];
 	}
 	
 	//otherwise, return whatever it is
@@ -378,11 +357,30 @@ NSRailsSync(*);
 
 - (id) representationOfObjectForProperty:(NSString *)prop
 {
-	BOOL encodable = [[self propertyCollection].encodeProperties containsObject:prop];
+	SEL encoder = [[self propertyCollection] encodeSelectorForProperty:prop];
 
-	if (encodable)
+	if (encoder)
 	{
-		return [self getCustomEncodingForProperty:prop];
+		//perform selector with the object itself in case it takes it
+		SEL getter = [self.class getterForProperty:prop];
+		id obj = [self respondsToSelector:getter] ? [self performSelector:getter] : nil;
+		
+		id representation = [self performSelector:encoder withObject:obj];
+
+		//send back an NSNull object instead of nil since we'll be encoding it into JSON, where that's relevant
+		if (!representation)
+		{
+			return [NSNull null];
+		}
+		
+		//make sure that the result is a JSON parsable
+		if (![representation isJSONParsable])
+		{
+			[NSException raise:NSRailsInvalidJSONEncodingException format:@"Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return NSDictionary, NSArray, NSString, NSNumber, or NSNull here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop, NSStringFromClass([self class]),NSStringFromSelector(encoder)];
+			return nil;
+		}
+		
+		return representation;
 	}
 	else
 	{
@@ -423,13 +421,7 @@ NSRailsSync(*);
 			//have to make it shallow so we don't loop infinitely (if that model defines us as an assc)
 			return [val dictionaryOfRemotePropertiesShallow:YES];
 		}
-		
-		//if the object is of class NSDate, we need to automatically convert it to string for the JSON framework to handle correctly
-		if ([val isKindOfClass:[NSDate class]])
-		{
-			return [[self getRelevantConfig] stringFromDate:val];
-		}
-		
+				
 		//otherwise, just return the value from the get method
 		return val;
 	}
@@ -481,7 +473,7 @@ NSRailsSync(*);
 		{
 			NSString *nestedClass = [[self propertyCollection] nestedClassNameForProperty:objcProperty];
 			//instantiate it as the class specified in NSRailsSync if it hadn't already been custom-decoded
-			if (nestedClass && ![[self propertyCollection].decodeProperties containsObject:objcProperty])
+			if (nestedClass && ![[self propertyCollection] decodeSelectorForProperty:objcProperty])
 			{
 				if ([val isKindOfClass:[NSArray class]])
 				{			
@@ -607,7 +599,7 @@ NSRailsSync(*);
 																				   autoinflect:[self getRelevantConfig].autoInflectsNamesAndProperties];
 		
 		id val = [self representationOfObjectForProperty:objcProperty];
-		
+
 		BOOL null = !val;
 		
 		//if we got back nil, we want to change that to the [NSNull null] object so it'll show up in the JSON

@@ -54,6 +54,10 @@
 - (BOOL) propertyIsArray:(NSString *)prop;
 - (BOOL) propertyIsDate:(NSString *)prop;
 
+- (SEL) encodeSelectorForProperty:(NSString *)prop;
+- (SEL) decodeSelectorForProperty:(NSString *)prop;
+
+
 - (id) initWithClass:(Class)c syncString:(NSString *)str customConfig:(NSRConfig *)config;
 
 @end
