@@ -36,14 +36,14 @@
 
 @interface FlagTestClass : NSRailsModel
 @property (nonatomic, strong) NSDate *date;
-@property (nonatomic, strong) NSString *sendretrieve, *nothing, *retrieve, *send, *local, *decode, *encode, *sendOnly, *parent, *encodedecode, *objc;
-@property (nonatomic, strong) NSArray *nestedArrayExplicit, *nestedArrayNothing;
+@property (nonatomic, strong) NSString *sendretrieve, *nothing, *retrieve, *send, *local, *decode, *encode, *sendOnly, *parent, *encodedecode, *objc, *fakeDate;
+@property (nonatomic, strong) NSArray *nestedArrayExplicit, *nestedArrayNothing, *dateArray;
 @property (nonatomic, strong) TestClass *nestedExplicit, *nestedNothing;
 @end
 
 @implementation FlagTestClass
-@synthesize sendretrieve, nothing, retrieve, send, local, decode, encode, sendOnly, parent, encodedecode, objc, date;
-@synthesize nestedNothing, nestedExplicit, nestedArrayNothing, nestedArrayExplicit;
+@synthesize sendretrieve, nothing, retrieve, send, local, decode, encode, sendOnly, parent, encodedecode, objc, date, fakeDate;
+@synthesize nestedNothing, nestedExplicit, nestedArrayNothing, nestedArrayExplicit, dateArray;
 @end
 
 @interface TNSRPropertyCollection : GHTestCase
@@ -80,10 +80,10 @@
 - (void) test_property_flags
 {
 	NSRPropertyCollection *pc = [[NSRPropertyCollection alloc] initWithClass:[FlagTestClass class]
-																  syncString:@"sendretrieve -rs, nothing, retrieve=rails -r, send -s, local -x, decode -d, encode -e, parent -b, encodedecode -ed, nestedNothing, objc=rails, nestedExplicit:TestClass, nestedArrayNothing=nestedArrayNothing:, nestedArrayExplicit:TestClass -m, date" 
+																  syncString:@"sendretrieve -rs, nothing, retrieve=rails -r, send -s, local -x, decode -d, encode -e, parent -b, encodedecode -ed, nestedNothing, objc=rails, nestedExplicit:TestClass, nestedArrayNothing=nestedArrayNothing:, nestedArrayExplicit:TestClass -m, date, fakeDate:NSDate, dateArray:NSDate -m" 
 																customConfig:nil];
 	
-	NSRAssertEqualArraysNoOrder(pc.propertyEquivalents.allKeys, NSRArray(@"sendretrieve", @"date", @"nothing", @"retrieve", @"send", @"decode", @"encode", @"parent", @"nestedNothing", @"nestedExplicit", @"nestedArrayNothing", @"nestedArrayExplicit", @"encodedecode", @"objc"));
+	NSRAssertEqualArraysNoOrder(pc.propertyEquivalents.allKeys, NSRArray(@"sendretrieve", @"date", @"fakeDate", @"dateArray", @"nothing", @"retrieve", @"send", @"decode", @"encode", @"parent", @"nestedNothing", @"nestedExplicit", @"nestedArrayNothing", @"nestedArrayExplicit", @"encodedecode", @"objc"));
 	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"rails" autoinflect:NO] containsObject:@"retrieve"], @"Should pick up that remote rails is defined as retrieve");
 	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"rails" autoinflect:NO] containsObject:@"objc"], @"Should pick up that remote rails is also defined as objc");
 
@@ -101,8 +101,8 @@
 	
 	GHAssertEqualStrings([pc remoteEquivalentForObjcProperty:@"objc" autoinflect:NO], @"rails", @"Should pick up that objc is defined as remote rails");
 	
-	NSRAssertEqualArraysNoOrder(pc.retrievableProperties, NSRArray(@"sendretrieve", @"nothing", @"retrieve", @"decode", @"encode", @"parent", @"nestedNothing", @"nestedExplicit", @"nestedArrayNothing", @"nestedArrayExplicit", @"encodedecode", @"objc", @"date"));
-	NSRAssertEqualArraysNoOrder(pc.sendableProperties, NSRArray(@"sendretrieve", @"nothing", @"send", @"decode", @"encode", @"parent", @"nestedNothing", @"nestedExplicit", @"nestedArrayNothing", @"nestedArrayExplicit", @"encodedecode", @"objc", @"date"));
+	NSRAssertEqualArraysNoOrder(pc.retrievableProperties, NSRArray(@"sendretrieve", @"nothing", @"retrieve", @"decode", @"encode", @"parent", @"nestedNothing", @"nestedExplicit", @"nestedArrayNothing", @"nestedArrayExplicit", @"encodedecode", @"objc", @"date", @"fakeDate", @"dateArray"));
+	NSRAssertEqualArraysNoOrder(pc.sendableProperties, NSRArray(@"sendretrieve", @"nothing", @"send", @"decode", @"encode", @"parent", @"nestedNothing", @"nestedExplicit", @"nestedArrayNothing", @"nestedArrayExplicit", @"encodedecode", @"objc", @"date", @"fakeDate", @"dateArray"));
 	GHAssertEqualObjects(pc.decodeProperties, NSRArray(@"decode", @"encodedecode"), @"");
 	GHAssertEqualObjects(pc.encodeProperties, NSRArray(@"encode", @"encodedecode"), @"");
 	
@@ -113,10 +113,14 @@
 	GHAssertTrue([pc propertyIsArray:@"nestedArrayExplicit"], @"nestedNothingExplicit should be seen as array");
 	GHAssertTrue([pc propertyIsArray:@"nestedArrayNothing"], @"nestedArrayNothing should be seen as array");
 	GHAssertFalse([pc propertyIsArray:@"date"], @"date shouldn't be seen as array");
-	GHAssertTrue([pc propertyIsDate:@"date"], @"date should be seen as array");
+	GHAssertTrue([pc propertyIsDate:@"date"], @"date should be seen as date");
+	GHAssertTrue([pc propertyIsDate:@"fakeDate"], @"fakedate should be seen as date, even if string");
+	GHAssertFalse([pc propertyIsDate:@"dateArray"], @"dateArray shouldn't be seen as date");
+	GHAssertTrue([pc propertyIsArray:@"dateArray"], @"dateArray should be seen as array");
 	
 	GHAssertEqualStrings([pc.nestedModelProperties objectForKey:@"nestedNothing"], @"TestClass", @"Should automatically pick up class of nestedNothing");
 	GHAssertEqualStrings([pc.nestedModelProperties objectForKey:@"nestedExplicit"], @"TestClass", @"Should pick up class of nestedNothing");
+	GHAssertEqualStrings([pc.nestedModelProperties objectForKey:@"dateArray"], @"NSDate", @"Should pick up class of NSDate");
 
 	GHAssertNil([pc.nestedModelProperties objectForKey:@"nestedArrayNothing"], @"Should automatically use dictionaries for array nestedArrayNothing");
 	GHAssertEqualStrings([pc.nestedModelProperties objectForKey:@"nestedArrayExplicit"], @"TestClass", @"Should pick up explicit assc of nestedArrayNothing");

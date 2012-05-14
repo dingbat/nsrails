@@ -226,7 +226,7 @@ static NSString const * NSRNoEquivalentMarker = @"";
 					{
 						NSRRaiseSyncError(@"Failed to find class '%@', declared as class for nested property '%@' of class '%@'. Nesting relation not set.",nestedModel,objcProp,NSStringFromClass(class));
 					}
-					else if (![class isSubclassOfClass:[NSRailsModel class]])
+					else if (![class isSubclassOfClass:[NSRailsModel class]] && ![nestedModel isEqualToString:@"NSDate"])
 					{
 						NSRRaiseSyncError(@"'%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel.",nestedModel,objcProp, NSStringFromClass(class),nestedModel);
 					}
@@ -285,7 +285,7 @@ static NSString const * NSRNoEquivalentMarker = @"";
 
 - (BOOL) propertyIsDate:(NSString *)prop
 {
-	return [[nestedModelProperties objectForKey:prop] isEqualToString:@"NSDate"];
+	return ![self propertyIsArray:prop] && [[nestedModelProperties objectForKey:prop] isEqualToString:@"NSDate"];
 }
 
 - (NSString *) remoteEquivalentForObjcProperty:(NSString *)objcProperty autoinflect:(BOOL)autoinflect
