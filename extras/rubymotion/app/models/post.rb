@@ -1,18 +1,18 @@
 class Post < NSRailsModel
-  attr_writer :author, :content, :responses, :createdAt
+  attr_writer :author, :content, :responses, :created_at
 
   # Right now there's a bug in RubyMotion that requires you to define getter methods manually
   # Soon you'll be able just do "attr_accessor" above instead of this
   def author; @author; end  
   def content; @content; end
   def responses; @responses; end
-  def createdAt; @createdAt; end
+  def created_at; @created_at; end
   
    
   # Define the NSRailsSync macro as usual, only as a class method returning a string
   # Remember that in the Ruby environment, * is not supported, has_many relationships have to be indicated with '-m', and dates must declared with NSDate
   def self.NSRailsSync
-    'author, content, createdAt:NSDate, responses:Response -m'
+    'author, content, created_at:NSDate, responses:Response -m'
   end
     
   # For responses, since it's an array, -m is required (has-many). The ":" is required to define an association with another class.

@@ -62,7 +62,7 @@ class ResponsesViewController < UITableViewController
   # UI and table stuff
   #
   def viewDidLoad
-    self.title = "Post ID ##{@post.remoteID}"
+    self.title = "Responses"
     self.tableView.rowHeight = 60
 
     # Add reply button
@@ -81,7 +81,7 @@ class ResponsesViewController < UITableViewController
     if @post.responses.empty?
       str += "There are no responses to this post.\nSay something!\n\n"
     end
-    str += "Posted on #{@post.createdAt.strftime("%m/%d/%y")}"
+    str += "Posted on #{@post.created_at.strftime("%m/%d/%y")}"
   end
   
   def tableView(tableView, titleForHeaderInSection:section)

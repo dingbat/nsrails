@@ -7,6 +7,10 @@ class AppDelegate
     # NSRConfig.defaultConfig.appURL = "http://localhost:3000"
     NSRConfig.defaultConfig.appUsername = "NSRails"
     NSRConfig.defaultConfig.appPassword = "iphone"
+    
+    # Autoinflection will underscore and camelize ("created_at" from Rails will look for "createdAt")
+    # We don't want this since we're in Ruby and our properties are underscored anyway!
+    NSRConfig.defaultConfig.autoinflectsPropertyNames = false
 
     posts = PostsViewController.alloc.initWithStyle(UITableViewStyleGrouped)
     nav = UINavigationController.alloc.initWithRootViewController(posts)
