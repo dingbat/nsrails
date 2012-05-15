@@ -18,5 +18,5 @@ class Post < NSRailsModel
   # For responses, since it's an array, -m is required (has-many). The ":" is required to define an association with another class.
   # In this case, the class of objects we want to fill our responses array with is Response (must be an NSRailsModel subclass)
   
-  # For createdAt, :NSDate makes it so NSRails will automatically convert to a formatted date object (string) when sending to Rails, and return a Time object when retrieving. Handy.
+  # For created_at, :NSDate makes it so NSRails will automatically convert to a formatted date object (string) when sending to Rails, and return a Time object when retrieving.
 end
