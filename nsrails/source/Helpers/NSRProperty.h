@@ -33,27 +33,16 @@
 //There's not much to do here.
 
 #import <Foundation/Foundation.h>
-#import "NSRConfig.h"
 
-@interface NSRPropertyCollection : NSObject <NSCoding>
+@interface NSRProperty : NSObject
 
-@property (nonatomic, strong) NSMutableDictionary *properties;
-@property (nonatomic, strong) NSRConfig *customConfig;
-
-
-- (NSString *) remoteEquivalentForObjcProperty:(NSString *)objcProperty autoinflect:(BOOL)autoinflect;
-- (NSArray *) objcPropertiesForRemoteEquivalent:(NSString *)railsProperty autoinflect:(BOOL)autoinflect;
-
-- (NSString *) nestedClassNameForProperty:(NSString *)prop;
-- (BOOL) propertyIsMarkedBelongsTo:(NSString *)prop;
-- (BOOL) propertyIsArray:(NSString *)prop;
-- (BOOL) propertyIsDate:(NSString *)prop;
-- (BOOL) propertyIsNestedClass:(NSString *)prop;
-
-- (SEL) encodeSelectorForProperty:(NSString *)prop;
-- (SEL) decodeSelectorForProperty:(NSString *)prop;
-
-
-- (id) initWithClass:(Class)c syncString:(NSString *)str customConfig:(NSRConfig *)config;
+@property (nonatomic, getter = isSendable) BOOL sendable;
+@property (nonatomic, getter = isRetrievable) BOOL retrievable;
+@property (nonatomic, getter = isEncodable) BOOL encodable;
+@property (nonatomic, getter = isDecodable) BOOL decodable;
+@property (nonatomic, getter = isHasMany) BOOL hasMany;
+@property (nonatomic, getter = isBelongsTo) BOOL belongsTo;
+@property (nonatomic, getter = isDate) BOOL date;
+@property (nonatomic, strong) NSString *nestedClass, *remoteEquivalent, *propertyName;
 
 @end

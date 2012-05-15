@@ -33,60 +33,34 @@
 #import "NSObject+Properties.h"
 #import "NSString+Inflection.h"
 
-//this is the marker (blank string) for the propertyEquivalents dictionary if there's no explicit equivalence set
-static NSString const * NSRNoEquivalentMarker = @"";
+#import "NSRProperty.h"
 
-//this will be the marker for any property that has the "-b flag"
-//this gonna go in the nestedModelProperties (properties can never have a comma/space in them so we're safe from any conflicts)
-#define NSRBelongsToKeyForProperty(prop)	[prop stringByAppendingString:@", belongs_to"]
-#define NSRHasManyKeyForProperty(prop)		[prop stringByAppendingString:@", has_many"]
 
 #define NSRRaiseSyncError(x, ...) [NSException raise:NSRailsSyncException format:x,__VA_ARGS__,nil]
 
-@interface NSRailsModel (internal)
-
-+ (NSString *) railsProperties;
-+ (NSString *) NSRailsSync;
-
-@end
-
-
 @implementation NSRPropertyCollection
-@synthesize sendableProperties, retrievableProperties, encodeProperties, decodeProperties;
-@synthesize nestedModelProperties, propertyEquivalents, customConfig;
+@synthesize properties;
+@synthesize customConfig;
 
 #pragma mark -
 #pragma mark Parser
 
-- (void) addPropertyAsSendable:(NSString *)prop equivalent:(NSString *)equivalent class:(Class)_class
+- (void) addPropertyAsSendable:(NSRProperty *)prop
 {
 	//for sendable, we can only have ONE property which per Rails attribute which is marked as sendable
 	//  (otherwise, which property's value should we stick in the json?)
 	
 	//so, see if there are any other properties defined so far with the same Rails equivalent that are marked as sendable
-	NSArray *objs = [propertyEquivalents allKeysForObject:equivalent];
-	NSMutableArray *sendables = [NSMutableArray arrayWithObject:prop];
-	for (NSString *sendable in objs)
+	for (NSString *otherPropName in properties)
 	{
-		if ([sendableProperties containsObject:sendable])
-			[sendables addObject:sendable];
-	}
-	//greater than 1 cause we're including this property
-	if (equivalent && sendables.count > 1)
-	{
-		if ([equivalent isEqualToString:@"id"])
+		NSRProperty *otherProp = [properties objectForKey:otherPropName];
+		if (otherProp.sendable && [otherProp.remoteEquivalent isEqualToString:prop.remoteEquivalent])
 		{
-			NSRRaiseSyncError(@"Obj-C property %@ (class %@) found to set equivalence with 'id'. This is fine for retrieving but should not be marked as sendable.", prop, NSStringFromClass(_class));
-		}
-		else
-		{
-			NSRRaiseSyncError(@"Multiple Obj-C properties marked as sendable (%@) found pointing to the same Rails attribute ('%@'). Only using data from the first Obj-C property listed. Please fix by only having one sendable property per Rails attribute (you can make the others retrieve-only with the -r flag).", sendables, equivalent);
+			NSRRaiseSyncError(@"Multiple Obj-C properties marked as sendable found pointing to the same Rails attribute ('%@'). It's okay to have >1 retrievable property, but only one sendable property per Rails attribute is allowed (you can make the others retrieve-only with the -r flag).", prop.remoteEquivalent);
 		}
 	}
-	else
-	{
-		[sendableProperties addObject:prop];
-	}
+	
+	prop.sendable = YES;
 }
 
 - (id) initWithClass:(Class)class syncString:(NSString *)syncString customConfig:(NSRConfig *)config
@@ -96,13 +70,8 @@ static NSString const * NSRNoEquivalentMarker = @"";
 		customConfig = config;
 				
 		//initialize property categories
-		sendableProperties = [[NSMutableArray alloc] init];
-		retrievableProperties = [[NSMutableArray alloc] init];
-		nestedModelProperties = [[NSMutableDictionary alloc] init];
-		propertyEquivalents = [[NSMutableDictionary alloc] init];
-		encodeProperties = [[NSMutableArray alloc] init];
-		decodeProperties = [[NSMutableArray alloc] init];
-
+		properties = [[NSMutableDictionary alloc] init];
+		
 		NSCharacterSet *wn = [NSCharacterSet whitespaceAndNewlineCharacterSet];
 
 		//parse the sync string
@@ -124,7 +93,9 @@ static NSString const * NSRNoEquivalentMarker = @"";
 			
 			NSArray *modSplit = [[opSplit objectAtIndex:0] componentsSeparatedByString:@":"];
 			NSString *nestedModel = (modSplit.count == 1 ? nil : [[modSplit lastObject] stringByTrimmingCharactersInSet:wn]);
-
+			if (nestedModel.length == 0)
+				nestedModel = nil;
+			
 			NSArray *eqSplit = [[modSplit objectAtIndex:0] componentsSeparatedByString:@"="];
 			NSString *equivalent = (eqSplit.count == 1 ? nil : [[eqSplit lastObject] stringByTrimmingCharactersInSet:wn]);
 
@@ -161,36 +132,33 @@ static NSString const * NSRNoEquivalentMarker = @"";
 			BOOL typeIsArray = [type isEqualToString:@"NSArray"] || [type isEqualToString:@"NSMutableArray"];
 			
 			// Looks like we're ready to officially add this property
+			NSRProperty *property = [[NSRProperty alloc] init];
+			property.propertyName = objcProp;
 			
 			//Check for =
 			if (equivalent)
 			{
-				[propertyEquivalents setObject:equivalent forKey:objcProp];
-			}
-			else
-			{
-				//if no property explicitly set, make it NSRNoEquivalentMarker
-				//later on we'll see if automaticallyCamelize is on for the config and get the equivalence accordingly
-				[propertyEquivalents setObject:NSRNoEquivalentMarker forKey:objcProp];
+				//just "property_name=" is indicator for exact match
+				if (equivalent.length == 0)
+					property.remoteEquivalent = objcProp;
+				else
+					property.remoteEquivalent = equivalent;
 			}
 			
 			if ([options rangeOfString:@"r"].location != NSNotFound || missingBothRS)
 			{
-				[retrievableProperties addObject:objcProp];
+				property.retrievable = YES;
 			}
 			
 			if ([options rangeOfString:@"s"].location != NSNotFound || missingBothRS)
 			{
-				[self addPropertyAsSendable:objcProp equivalent:equivalent class:class];
+				[self addPropertyAsSendable:property];
 			}
-			
-			BOOL has_many = NO;
 			
 			//mark as h_m if -m is declared (or if property is found to be array)
 			if ((options && [options rangeOfString:@"m"].location != NSNotFound) || typeIsArray)
 			{
-				has_many = YES;
-				[nestedModelProperties setObject:[NSNumber numberWithBool:YES] forKey:NSRHasManyKeyForProperty(objcProp)];
+				property.hasMany = YES;
 			}
 			
 			//Check for all other flags (-)
@@ -198,59 +166,54 @@ static NSString const * NSRNoEquivalentMarker = @"";
 			{
 				if ([options rangeOfString:@"e"].location != NSNotFound)
 				{
-					[encodeProperties addObject:objcProp];
+					property.encodable = YES;
 				}
 				
 				if ([options rangeOfString:@"d"].location != NSNotFound)
 				{
-					[decodeProperties addObject:objcProp];
+					property.decodable = YES;
 				}
 				
 				//add a special marker for b_t in nestedModelProperties dict
 				if ([options rangeOfString:@"b"].location != NSNotFound)
 				{
-					[nestedModelProperties setObject:[NSNumber numberWithBool:YES] forKey:NSRBelongsToKeyForProperty(objcProp)];
+					property.belongsTo = YES;
 				}
 			}
 			
-			BOOL dicts = (nestedModel && nestedModel.length == 0); // dicts if indicated (length=0; `nestedArray:`)
-
-			//Check for :
-			if ((nestedModel || has_many) && !dicts)
+			if (typeIsArray)
+			{
+				property.hasMany = YES;
+			}
+			
+			if (([nestedModel isEqualToString:@"NSDate"] || [type isEqualToString:@"NSDate"]) && !property.hasMany)
+			{
+				property.date = YES;
+			}
+			else if (property.hasMany || nestedModel)
 			{
 				Class class = NSClassFromString(nestedModel);
 				
-				if (!class)
+				if (!nestedModel && typeIsArray)
+				{
+					NSRRaiseSyncError(@"Property '%@' in class %@ was found to be an array, but no nesting model was set. If you don't want to nest instances of other objects, you can have it populate with NSDictionaries with the retrieved remote attributes by adding a colon to the end of this property in NSRailsSync: `%@:`",objcProp,NSStringFromClass(class),objcProp);
+
+				}
+				else if (!class)
 				{
 					NSRRaiseSyncError(@"Failed to find class '%@', declared as class for nested property '%@' of class '%@'. Nesting relation not set.",nestedModel,objcProp,NSStringFromClass(class));
 				}
-				else if (![class isSubclassOfClass:[NSRailsModel class]] && ![nestedModel isEqualToString:@"NSDate"])
+				else if (![class isSubclassOfClass:[NSRailsModel class]])
 				{
 					NSRRaiseSyncError(@"'%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel.",nestedModel,objcProp, NSStringFromClass(class),nestedModel);
 				}
-				else if (nestedModel)
+				else
 				{
-					[nestedModelProperties setObject:nestedModel forKey:objcProp];
+					property.nestedClass = nestedModel;
 				}
 			}
-			if (!nestedModel)
-			{
-				//even if no : was declared for this property, check to see if we should link it anyway
-				
-				if (typeIsArray)
-				{
-					NSRRaiseSyncError(@"Property '%@' in class %@ was found to be an array, but no nesting model was set. If you don't want to nest instances of other objects, you can have it populate with NSDictionaries with the retrieved remote attributes by adding a colon to the end of this property in NSRailsSync: `%@:`",objcProp,NSStringFromClass(class),objcProp);
-				}
-				else if ([type isEqualToString:@"NSDate"])
-				{
-					[nestedModelProperties setObject:@"NSDate" forKey:objcProp];
-				}
-				else if ([NSClassFromString(type) isSubclassOfClass:[NSRailsModel class]])
-				{
-					//automatically link that ivar type (ie, Pet) for that property (ie, pets)
-					[nestedModelProperties setObject:type forKey:objcProp];
-				}
-			}
+			
+			[properties setObject:property forKey:objcProp];
 		}
 	}
 	
@@ -262,38 +225,33 @@ static NSString const * NSRNoEquivalentMarker = @"";
 
 - (BOOL) propertyIsMarkedBelongsTo:(NSString *)prop
 {
-	return !![nestedModelProperties objectForKey:NSRBelongsToKeyForProperty(prop)];
+	return [[properties objectForKey:prop] isBelongsTo];
 }
 
 - (BOOL) propertyIsMarkedHasMany:(NSString *)prop
 {
-	return !![nestedModelProperties objectForKey:NSRHasManyKeyForProperty(prop)];
-}
-
-- (BOOL) propertyIsNestedClass:(NSString *)prop
-{
-	return [nestedModelProperties objectForKey:prop] && ![self propertyIsDate:prop];
+	return [[properties objectForKey:prop] isHasMany];
 }
 
 - (NSString *) nestedClassNameForProperty:(NSString *)prop
 {
-	return [nestedModelProperties objectForKey:prop];
+	return [[properties objectForKey:prop] nestedClass];
 }
 
 - (BOOL) propertyIsArray:(NSString *)prop
 {
-	return !![nestedModelProperties objectForKey:NSRHasManyKeyForProperty(prop)];
+	return [[properties objectForKey:prop] isHasMany];
 }
 
 - (BOOL) propertyIsDate:(NSString *)prop
 {
-	return ![self propertyIsArray:prop] && [[nestedModelProperties objectForKey:prop] isEqualToString:@"NSDate"];
+	return [[properties objectForKey:prop] isDate];
 }
 
 
 - (SEL) encodeSelectorForProperty:(NSString *)prop
 {
-	if (![encodeProperties containsObject:prop])
+	if (![[properties objectForKey:prop] isEncodable])
 	{
 		if ([self propertyIsDate:prop])
 			return @selector(nsrails_encodeDate:);
@@ -307,7 +265,7 @@ static NSString const * NSRNoEquivalentMarker = @"";
 
 - (SEL) decodeSelectorForProperty:(NSString *)prop
 {
-	if (![decodeProperties containsObject:prop])
+	if (![[properties objectForKey:prop] isDecodable])
 	{
 		if ([self propertyIsDate:prop])
 			return @selector(nsrails_decodeDate:);
@@ -322,8 +280,8 @@ static NSString const * NSRNoEquivalentMarker = @"";
 
 - (NSString *) remoteEquivalentForObjcProperty:(NSString *)objcProperty autoinflect:(BOOL)autoinflect
 {
-	NSString *railsEquivalent = [propertyEquivalents objectForKey:objcProperty];
-	if (railsEquivalent == NSRNoEquivalentMarker)
+	NSString *railsEquivalent = [[properties objectForKey:objcProperty] remoteEquivalent];
+	if (!railsEquivalent)
 	{
 		if (autoinflect)
 		{
@@ -339,24 +297,17 @@ static NSString const * NSRNoEquivalentMarker = @"";
 
 - (NSArray *) objcPropertiesForRemoteEquivalent:(NSString *)railsProperty autoinflect:(BOOL)autoinflect
 {
-	NSArray *properties = [propertyEquivalents allKeysForObject:railsProperty];
-		
-	if (properties.count == 0)
+	NSMutableArray *props = [NSMutableArray array];
+	for (NSString *property in properties)
 	{
-		//no keys (rails equivs) match the railsProperty
-		//could mean that there's no PROPERTY or that there's no EQUIVALENCE
-		
-		//if the autoequivalence exists, send it back cause it's correct
-		NSString *autoObjcEquivalence = autoinflect ? [railsProperty camelize] : railsProperty;
-		
-		if ([propertyEquivalents objectForKey:autoObjcEquivalence])
-			return [NSArray arrayWithObject:autoObjcEquivalence];
-		
-		//prop does not exist, sorry. we tried.
-		return nil;
+		NSString *definedRemote = [[properties objectForKey:property] remoteEquivalent];
+		NSString *remote = definedRemote ? definedRemote : [property camelize];
+		if ([remote isEqualToString:railsProperty])
+		{
+			[props addObject:property];
+		}
 	}
-	
-	return properties;
+	return props;
 }
 
 #pragma mark -
@@ -366,24 +317,14 @@ static NSString const * NSRNoEquivalentMarker = @"";
 {
 	if (self = [super init])
 	{
-		sendableProperties = [aDecoder decodeObjectForKey:@"sendableProperties"];
-		retrievableProperties = [aDecoder decodeObjectForKey:@"retrievableProperties"];
-		encodeProperties = [aDecoder decodeObjectForKey:@"encodeProperties"];
-		decodeProperties = [aDecoder decodeObjectForKey:@"decodeProperties"];
-		nestedModelProperties = [aDecoder decodeObjectForKey:@"nestedModelProperties"];
-		propertyEquivalents = [aDecoder decodeObjectForKey:@"propertyEquivalents"];
+		properties = [aDecoder decodeObjectForKey:@"properties"];
 	}
 	return self;
 }
 
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
-	[aCoder encodeObject:sendableProperties forKey:@"sendableProperties"];
-	[aCoder encodeObject:retrievableProperties forKey:@"retrievableProperties"];
-	[aCoder encodeObject:encodeProperties forKey:@"encodeProperties"];
-	[aCoder encodeObject:decodeProperties forKey:@"decodeProperties"];
-	[aCoder encodeObject:nestedModelProperties forKey:@"nestedModelProperties"];
-	[aCoder encodeObject:propertyEquivalents forKey:@"propertyEquivalents"];
+	[aCoder encodeObject:properties forKey:@"properties"];
 }
 
 @end

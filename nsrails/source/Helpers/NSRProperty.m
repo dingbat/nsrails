@@ -28,32 +28,10 @@
  
  */
 
-//Note:
-//This class doesn't really have use outside of NSRails's internals.
-//There's not much to do here.
+#import "NSRProperty.h"
 
-#import <Foundation/Foundation.h>
-#import "NSRConfig.h"
-
-@interface NSRPropertyCollection : NSObject <NSCoding>
-
-@property (nonatomic, strong) NSMutableDictionary *properties;
-@property (nonatomic, strong) NSRConfig *customConfig;
-
-
-- (NSString *) remoteEquivalentForObjcProperty:(NSString *)objcProperty autoinflect:(BOOL)autoinflect;
-- (NSArray *) objcPropertiesForRemoteEquivalent:(NSString *)railsProperty autoinflect:(BOOL)autoinflect;
-
-- (NSString *) nestedClassNameForProperty:(NSString *)prop;
-- (BOOL) propertyIsMarkedBelongsTo:(NSString *)prop;
-- (BOOL) propertyIsArray:(NSString *)prop;
-- (BOOL) propertyIsDate:(NSString *)prop;
-- (BOOL) propertyIsNestedClass:(NSString *)prop;
-
-- (SEL) encodeSelectorForProperty:(NSString *)prop;
-- (SEL) decodeSelectorForProperty:(NSString *)prop;
-
-
-- (id) initWithClass:(Class)c syncString:(NSString *)str customConfig:(NSRConfig *)config;
+@implementation NSRProperty
+@synthesize sendable, retrievable, encodable, decodable, remoteEquivalent, nestedClass, date, propertyName;
+@synthesize belongsTo, hasMany;
 
 @end

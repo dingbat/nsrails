@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		59453048156137A400F9A3CE /* NSRProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 59453046156137A400F9A3CE /* NSRProperty.h */; };
+		59453049156137A400F9A3CE /* NSRProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 59453047156137A400F9A3CE /* NSRProperty.m */; };
+		5945304A156137A400F9A3CE /* NSRProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 59453047156137A400F9A3CE /* NSRProperty.m */; };
 		599D30FD155CA9F200C17A52 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 599D30F9155CA9F200C17A52 /* GHUnitIOS.framework */; };
 		599D30FF155CA9F200C17A52 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 599D30FC155CA9F200C17A52 /* main.m */; };
 		599D3105155CA9F800C17A52 /* GHUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 599D3101155CA9F800C17A52 /* GHUnit.framework */; };
@@ -148,6 +151,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		59453046156137A400F9A3CE /* NSRProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSRProperty.h; path = source/Helpers/NSRProperty.h; sourceTree = SOURCE_ROOT; };
+		59453047156137A400F9A3CE /* NSRProperty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSRProperty.m; path = source/Helpers/NSRProperty.m; sourceTree = SOURCE_ROOT; };
 		599D30F9155CA9F200C17A52 /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GHUnitIOS.framework; sourceTree = "<group>"; };
 		599D30FA155CA9F200C17A52 /* iOS Tests-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iOS Tests-Info.plist"; sourceTree = "<group>"; };
 		599D30FB155CA9F200C17A52 /* iOS Tests-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "iOS Tests-Prefix.pch"; sourceTree = "<group>"; };
@@ -351,6 +356,8 @@
 			isa = PBXGroup;
 			children = (
 				59C466D3155C6ACD00920FD5 /* Categories */,
+				59453046156137A400F9A3CE /* NSRProperty.h */,
+				59453047156137A400F9A3CE /* NSRProperty.m */,
 				59C466DA155C6ACD00920FD5 /* NSRPropertyCollection.h */,
 				59C466DB155C6ACD00920FD5 /* NSRPropertyCollection.m */,
 				59C466DC155C6ACD00920FD5 /* SBJson */,
@@ -518,6 +525,7 @@
 				59C4672F155C6ACD00920FD5 /* SBJsonWriter.h in Headers */,
 				59C46733155C6ACD00920FD5 /* NSRails.h in Headers */,
 				59C46736155C6ACD00920FD5 /* NSRConfig.h in Headers */,
+				59453048156137A400F9A3CE /* NSRProperty.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -716,6 +724,7 @@
 				599D3116155CAA4200C17A52 /* NSRailsModel.m in Sources */,
 				599D3118155CAA4200C17A52 /* NSRConfig.m in Sources */,
 				599D311A155CAA4200C17A52 /* NSRPropertyCollection.m in Sources */,
+				59453049156137A400F9A3CE /* NSRProperty.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -742,6 +751,7 @@
 				59C46731155C6ACD00920FD5 /* SBJsonWriter.m in Sources */,
 				59C46735155C6ACD00920FD5 /* NSRails.m in Sources */,
 				59C46738155C6ACD00920FD5 /* NSRConfig.m in Sources */,
+				5945304A156137A400F9A3CE /* NSRProperty.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -37,6 +37,8 @@
 #import "NSObject+Properties.h"
 #import "NSRails+SBJson.h"
 
+#import "NSRProperty.h"
+
 /* 
     If this file is too intimidating, 
  remember that you can navigate it
@@ -456,22 +458,50 @@ NSRailsSync(*);
 	
 	BOOL changes = NO;
 	
-	for (NSString *objcProperty in [self propertyCollection].retrievableProperties) //marked as retrievable
+	for (NSString *railsProperty in dict) //marked as retrievable
 	{
-		NSString *railsEquivalent = [[self propertyCollection] remoteEquivalentForObjcProperty:objcProperty 
-																				   autoinflect:[self getRelevantConfig].autoinflectsPropertyNames];
+		NSArray *equivalents = [[self propertyCollection] objcPropertiesForRemoteEquivalent:railsProperty 
+																				autoinflect:[self getRelevantConfig].autoinflectsPropertyNames];
+		for (NSRProperty *property in equivalents)
+		{
+			id railsObject = [dict objectForKey:railsProperty];
+			if (railsObject == [NSNull null])
+				railsObject = nil;
+			
+			id decodedObj = [self objectForProperty:property.propertyName representation:railsObject];
+			
+			SEL setter = [[self class] setterForProperty:property.propertyName];
+			SEL getter = [[self class] getterForProperty:property.propertyName];
+			
+			id previousVal = [self performSelector:getter];
+			
+			if (!property.decodable)
+			{
+				if (decodedObj)
+				{
+					if (property.isHasMany)
+					{
+						//check array etc
+					}
+					else if (property.nestedClass)
+					{
+						
+					}
+					else
+					{
+						
+					}
+				}
+				else
+				{
+					//if previous object existed but now it's nil, mark a change
+					if (previousVal)
+						changes = YES;
+				}
+			}
 
-		SEL setter = [[self class] setterForProperty:objcProperty];
-		id val = [dict objectForKey:railsEquivalent];
-		//skip if the key doesn't exist (we probably guessed wrong above (or if the explicit equivalence was wrong))
-		if (!val)
-			continue;
-		
-		//get the intended value
-		val = [self objectForProperty:objcProperty representation:([val isKindOfClass:[NSNull class]] ? nil : val)];
-
-		SEL getter = [[self class] getterForProperty:objcProperty];
-		id previousVal = [self performSelector:getter];
+			[self performSelector:setter withObject:encodedObj];
+		}
 		
 		if (val)
 		{
@@ -589,11 +619,7 @@ NSRailsSync(*);
 		}
 		else
 		{
-			//if previous object existed but now it's nil, mark a change
-			if (previousVal)
-				changes = YES;
 			
-			[self performSelector:setter withObject:nil];
 		}
 	}
 	
