@@ -43,6 +43,12 @@
 @property (nonatomic, getter = isHasMany) BOOL hasMany;
 @property (nonatomic, getter = isBelongsTo) BOOL belongsTo;
 @property (nonatomic, getter = isDate) BOOL date;
-@property (nonatomic, strong) NSString *nestedClass, *remoteEquivalent, *propertyName;
+@property (nonatomic, strong) NSString *nestedClass, *remoteEquivalent;
+@property (nonatomic, strong) NSString *name;
+
+- (NSString *) remoteEquivalentAutoinflection:(BOOL)inflection;
+
+- (SEL) customEncodeSelector;
+- (SEL) customDecodeSelector;
 
 @end

@@ -135,11 +135,14 @@
 	[[NSRConfig defaultConfig] setDateFormat:@"yyyy"];
 	
 	//string -> date
-	GHAssertThrowsSpecificNamed([[NSRConfig defaultConfig] dateFromString:mockDatetime], NSException, NSRailsDateConversionException, @"Should throw exception - receiving config format != server format");
+	GHAssertThrowsSpecificNamed([[NSRConfig defaultConfig] dateFromString:mockDatetime], NSException, NSRailsInternalError, @"Should throw exception - receiving config format != server format");
 
 	//date -> string
 	NSString *string2 = [[NSRConfig defaultConfig] stringFromDate:date];
 	GHAssertNotEqualStrings(string2, mockDatetime, @"Datetime string sent and datetime string server accepts should not be equal. (format mismatch)");
+	
+	NSString *string3 = [[NSRConfig defaultConfig] stringFromDate:[NSDate dateWithTimeIntervalSince1970:0]];
+	GHAssertEqualStrings(string3, @"1969", @"Datetime string should be formatted to 'yyyy'");
 }
 
 - (void) test_error_detection

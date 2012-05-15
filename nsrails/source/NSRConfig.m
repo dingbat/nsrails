@@ -65,7 +65,7 @@ NSString * const NSRValidationErrorsKey					= @"NSRValidationErrorsKey";
 NSString * const NSRRemoteErrorDomain					= @"NSRRemoteErrorDomain";
 NSString * const NSRailsSyncException					= @"NSRailsSyncException";
 NSString * const NSRailsInvalidJSONEncodingException	= @"NSRailsInvalidJSONEncodingException";
-NSString * const NSRailsDateConversionException			= @"NSRailsDateConversionException";
+NSString * const NSRailsInternalError					= @"NSRailsInternalError";
 NSString * const NSRailsMissingURLException				= @"NSRailsMissingURLException";
 NSString * const NSRailsNullRemoteIDException			= @"NSRailsNullRemoteIDException";
 
@@ -196,7 +196,7 @@ static int networkActivityRequests = 0;
 	
 	if (!date && string)
 	{
-		[NSException raise:NSRailsDateConversionException format:@"Attempted to convert remote date string (\"%@\") into an NSDate object, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation).",string,dateFormatter.dateFormat];
+		[NSException raise:NSRailsInternalError format:@"Attempted to convert remote date string (\"%@\") into an NSDate object, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation).",string,dateFormatter.dateFormat];
 		return nil;
 	}
 	

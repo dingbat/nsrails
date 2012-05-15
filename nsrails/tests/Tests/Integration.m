@@ -307,6 +307,8 @@ NSRailsSync(*)
 		
 	NSError *e = nil;
 	
+	[[NSRConfig defaultConfig] setIgnoresClassPrefixes:NO];
+
 	NSArray *resps = [NSRResponse remoteAll:&e];
 	GHAssertNotNil(e, @"Without 'prefix ignore' set it should fail trying to access nsr_response...");
 	
@@ -425,7 +427,7 @@ NSRailsSync(*)
 	
 	e = nil;
 	
-	Post *dictionariesPost = [[Post alloc] initWithCustomSyncProperties:@"*, responses:"];
+	Post *dictionariesPost = [[Post alloc] initWithCustomSyncProperties:@"*, responses -m"];
 	dictionariesPost.author = @"author";
 	dictionariesPost.content = @"content";
 	dictionariesPost.responses = [NSMutableArray array];
@@ -525,15 +527,6 @@ NSRailsSync(*)
 	response.post = post;
 	[response remoteCreate:&e];
 	
-	//this should actually fail since it'll think it's nsr_response
-	GHAssertNotNil(e, @"There should be an error from not reaching 'nsr_response'...");
-	
-	e = nil;
-	
-	//simultaneously test -[NSRConfig setIgnoresClassPrefixes:]
-	[[NSRConfig defaultConfig] setIgnoresClassPrefixes:YES];
-	[response remoteCreate:&e];
-	
 	GHAssertNil(e, @"There should be no error on a normal remoteCreate for Response obj");
 	GHAssertNotNil(response.remoteID, @"There should be a remoteID present for newly created object");
 	
@@ -608,7 +601,7 @@ NSRailsSync(*)
 	
 	//invalid date format
 	[[NSRConfig defaultConfig] setDateFormat:@"!@#@$"];
-	GHAssertThrowsSpecificNamed([post remoteFetch:&e], NSException, NSRailsDateConversionException, @"There should be an exception in setting to a bad format");
+	GHAssertThrowsSpecificNamed([post remoteFetch:&e], NSException, NSRailsInternalError, @"There should be an exception in setting to a bad format");
 	
 	NSDictionary *dict = [post dictionaryOfRemoteProperties];
 	GHAssertNotNil(dict, @"There should be no problem making a dict, even if format is bad");

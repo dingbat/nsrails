@@ -34,25 +34,16 @@
 
 #import <Foundation/Foundation.h>
 #import "NSRConfig.h"
+#import "NSRProperty.h"
 
 @interface NSRPropertyCollection : NSObject <NSCoding>
 
 @property (nonatomic, strong) NSMutableDictionary *properties;
 @property (nonatomic, strong) NSRConfig *customConfig;
 
+- (NSArray *) objcPropertiesForRemoteEquivalent:(NSString *)remoteProperty autoinflect:(BOOL)autoinflect;
 
-- (NSString *) remoteEquivalentForObjcProperty:(NSString *)objcProperty autoinflect:(BOOL)autoinflect;
-- (NSArray *) objcPropertiesForRemoteEquivalent:(NSString *)railsProperty autoinflect:(BOOL)autoinflect;
-
-- (NSString *) nestedClassNameForProperty:(NSString *)prop;
-- (BOOL) propertyIsMarkedBelongsTo:(NSString *)prop;
-- (BOOL) propertyIsArray:(NSString *)prop;
-- (BOOL) propertyIsDate:(NSString *)prop;
-- (BOOL) propertyIsNestedClass:(NSString *)prop;
-
-- (SEL) encodeSelectorForProperty:(NSString *)prop;
-- (SEL) decodeSelectorForProperty:(NSString *)prop;
-
+- (NSArray *) sendableProperties;
 
 - (id) initWithClass:(Class)c syncString:(NSString *)str customConfig:(NSRConfig *)config;
 

@@ -39,7 +39,7 @@ NSRailsSync(local -x, retrieveOnly -r, shared, sharedExplicit -rs, sendOnly -s)
 
 @implementation PickyCoder
 @synthesize locallyURL, locallyLowercase, remotelyUppercase, componentWithFlippingName, codeToNil, encodeNonJSON, dateOverrideSend, dateOverrideRet;
-NSRailsSync(locallyURL -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnly -se, codeToNil -ed, componentWithFlippingName=component -de, dateOverrideSend -e, dateOverrideRet -d);
+NSRailsSync(locallyURL=locally_url -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnly -se, codeToNil -ed, componentWithFlippingName=component -de, dateOverrideSend -e, dateOverrideRet -d);
 
 - (id) encodeRemoteOnly
 {
@@ -144,7 +144,7 @@ NSRailsSync(childProperty1, childProperty2)
 
 @implementation DictionaryNester
 @synthesize dictionaries;
-NSRailsSync(dictionaries:);
+NSRailsSync(dictionaries -m);
 @end
 
 @interface LadiesMan : NSRailsModel

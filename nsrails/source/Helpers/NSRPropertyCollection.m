@@ -93,8 +93,6 @@
 			
 			NSArray *modSplit = [[opSplit objectAtIndex:0] componentsSeparatedByString:@":"];
 			NSString *nestedModel = (modSplit.count == 1 ? nil : [[modSplit lastObject] stringByTrimmingCharactersInSet:wn]);
-			if (nestedModel.length == 0)
-				nestedModel = nil;
 			
 			NSArray *eqSplit = [[modSplit objectAtIndex:0] componentsSeparatedByString:@"="];
 			NSString *equivalent = (eqSplit.count == 1 ? nil : [[eqSplit lastObject] stringByTrimmingCharactersInSet:wn]);
@@ -133,7 +131,7 @@
 			
 			// Looks like we're ready to officially add this property
 			NSRProperty *property = [[NSRProperty alloc] init];
-			property.propertyName = objcProp;
+			property.name = objcProp;
 			
 			//Check for =
 			if (equivalent)
@@ -155,11 +153,7 @@
 				[self addPropertyAsSendable:property];
 			}
 			
-			//mark as h_m if -m is declared (or if property is found to be array)
-			if ((options && [options rangeOfString:@"m"].location != NSNotFound) || typeIsArray)
-			{
-				property.hasMany = YES;
-			}
+			BOOL explicitHasMany = NO;
 			
 			//Check for all other flags (-)
 			if (options)
@@ -168,16 +162,18 @@
 				{
 					property.encodable = YES;
 				}
-				
 				if ([options rangeOfString:@"d"].location != NSNotFound)
 				{
 					property.decodable = YES;
 				}
-				
-				//add a special marker for b_t in nestedModelProperties dict
 				if ([options rangeOfString:@"b"].location != NSNotFound)
 				{
 					property.belongsTo = YES;
+				}
+				if ([options rangeOfString:@"m"].location != NSNotFound) 
+				{
+					explicitHasMany = YES;
+					property.hasMany = YES;
 				}
 			}
 			
@@ -186,31 +182,41 @@
 				property.hasMany = YES;
 			}
 			
-			if (([nestedModel isEqualToString:@"NSDate"] || [type isEqualToString:@"NSDate"]) && !property.hasMany)
+			BOOL explicitDate = [nestedModel isEqualToString:@"NSDate"];
+			
+			if ((explicitDate || [type isEqualToString:@"NSDate"]) && !property.hasMany)
 			{
 				property.date = YES;
 			}
-			else if (property.hasMany || nestedModel)
+			else if (property.isHasMany || nestedModel)
 			{
-				Class class = NSClassFromString(nestedModel);
-				
-				if (!nestedModel && typeIsArray)
+				if (nestedModel)
 				{
-					NSRRaiseSyncError(@"Property '%@' in class %@ was found to be an array, but no nesting model was set. If you don't want to nest instances of other objects, you can have it populate with NSDictionaries with the retrieved remote attributes by adding a colon to the end of this property in NSRailsSync: `%@:`",objcProp,NSStringFromClass(class),objcProp);
-
+					Class nestedClass = NSClassFromString(nestedModel);
+					
+					if (!nestedClass)
+					{
+						NSRRaiseSyncError(@"Failed to find class '%@', declared as class for nested property '%@' of class '%@'.",nestedModel,objcProp,class);
+					}
+					else if (![nestedClass isSubclassOfClass:[NSRailsModel class]] && !explicitDate)
+					{
+						NSRRaiseSyncError(@"'%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel.",nestedModel,objcProp, NSStringFromClass(class),nestedModel);
+					}
+					else
+					{
+						property.nestedClass = nestedModel;
+					}
 				}
-				else if (!class)
+				else if (!explicitHasMany)
 				{
-					NSRRaiseSyncError(@"Failed to find class '%@', declared as class for nested property '%@' of class '%@'. Nesting relation not set.",nestedModel,objcProp,NSStringFromClass(class));
+					//if it's an array but there's no -m or nestedModel declared (just "array"), warn about NSDictionaries
+					NSLog(@"NSR Warning: Property '%@' in class '%@' was found to be an array, but no nesting class was set. By default, this array will be filled with NSDictionaries. To set it to generate instances of a class, use '%@:MyNestedClass'. If you want NSDictionaries, suppress this warning by declaring the property has-many (using the -m flag: '%@ -m')",objcProp, class, objcProp, objcProp);
 				}
-				else if (![class isSubclassOfClass:[NSRailsModel class]])
-				{
-					NSRRaiseSyncError(@"'%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel.",nestedModel,objcProp, NSStringFromClass(class),nestedModel);
-				}
-				else
-				{
-					property.nestedClass = nestedModel;
-				}
+			}
+			//if not array or has an explicit nested model set, see if we should automatically nest it (if it's an NSRailsModel)
+			else if ([NSClassFromString(type) isSubclassOfClass:[NSRailsModel class]])
+			{
+				property.nestedClass = type;
 			}
 			
 			[properties setObject:property forKey:objcProp];
@@ -220,92 +226,31 @@
 	return self;
 }
 
-#pragma mark -
-#pragma mark Special definitions
-
-- (BOOL) propertyIsMarkedBelongsTo:(NSString *)prop
+- (NSArray *) sendableProperties
 {
-	return [[properties objectForKey:prop] isBelongsTo];
-}
-
-- (BOOL) propertyIsMarkedHasMany:(NSString *)prop
-{
-	return [[properties objectForKey:prop] isHasMany];
-}
-
-- (NSString *) nestedClassNameForProperty:(NSString *)prop
-{
-	return [[properties objectForKey:prop] nestedClass];
-}
-
-- (BOOL) propertyIsArray:(NSString *)prop
-{
-	return [[properties objectForKey:prop] isHasMany];
-}
-
-- (BOOL) propertyIsDate:(NSString *)prop
-{
-	return [[properties objectForKey:prop] isDate];
-}
-
-
-- (SEL) encodeSelectorForProperty:(NSString *)prop
-{
-	if (![[properties objectForKey:prop] isEncodable])
+	NSMutableArray *sendable = [NSMutableArray array];
+	for (NSString *prop in properties)
 	{
-		if ([self propertyIsDate:prop])
-			return @selector(nsrails_encodeDate:);
-
-		return NULL;
+		NSRProperty *property = [properties objectForKey:prop];
+		if (property.sendable)
+			[sendable addObject:property];
 	}
+	return sendable;
+}
+
+- (NSArray *) objcPropertiesForRemoteEquivalent:(NSString *)remoteProp autoinflect:(BOOL)autoinflect
+{
+	if (autoinflect)
+		remoteProp = [remoteProp camelize];
 	
-	NSString *sel = [NSString stringWithFormat:@"encode%@", [prop firstLetterCapital]];
-	return NSSelectorFromString(sel);	
-}
-
-- (SEL) decodeSelectorForProperty:(NSString *)prop
-{
-	if (![[properties objectForKey:prop] isDecodable])
-	{
-		if ([self propertyIsDate:prop])
-			return @selector(nsrails_decodeDate:);
-		
-		return NULL;
-	}
-	
-	NSString *sel = [NSString stringWithFormat:@"decode%@:",[prop firstLetterCapital]];
-	return NSSelectorFromString(sel);
-}
-
-
-- (NSString *) remoteEquivalentForObjcProperty:(NSString *)objcProperty autoinflect:(BOOL)autoinflect
-{
-	NSString *railsEquivalent = [[properties objectForKey:objcProperty] remoteEquivalent];
-	if (!railsEquivalent)
-	{
-		if (autoinflect)
-		{
-			return [[objcProperty underscore] lowercaseString];
-		}
-		else
-		{
-			return objcProperty;
-		}
-	}
-	return railsEquivalent;
-}
-
-- (NSArray *) objcPropertiesForRemoteEquivalent:(NSString *)railsProperty autoinflect:(BOOL)autoinflect
-{
 	NSMutableArray *props = [NSMutableArray array];
 	for (NSString *property in properties)
 	{
-		NSString *definedRemote = [[properties objectForKey:property] remoteEquivalent];
-		NSString *remote = definedRemote ? definedRemote : [property camelize];
-		if ([remote isEqualToString:railsProperty])
-		{
-			[props addObject:property];
-		}
+		NSRProperty *propObject = [properties objectForKey:property];
+		NSString *remote = propObject.remoteEquivalent ? propObject.remoteEquivalent : propObject.name;
+		
+		if ([remote isEqualToString:remoteProp])
+			[props addObject:propObject];
 	}
 	return props;
 }

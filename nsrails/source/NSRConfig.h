@@ -69,7 +69,7 @@ extern NSString * const NSRValidationErrorsKey;
 extern NSString * const NSRRemoteErrorDomain;
 extern NSString * const NSRailsSyncException;
 extern NSString * const NSRailsInvalidJSONEncodingException;
-extern NSString * const NSRailsDateConversionException;
+extern NSString * const NSRailsInternalError;
 extern NSString * const NSRailsMissingURLException;
 extern NSString * const NSRailsNullRemoteIDException;
 

@@ -29,9 +29,41 @@
  */
 
 #import "NSRProperty.h"
+#import "NSString+Inflection.h"
 
 @implementation NSRProperty
-@synthesize sendable, retrievable, encodable, decodable, remoteEquivalent, nestedClass, date, propertyName;
+@synthesize sendable, retrievable, encodable, decodable, remoteEquivalent, nestedClass, date, name;
 @synthesize belongsTo, hasMany;
+
+- (NSString *) remoteEquivalentAutoinflection:(BOOL)autoinflect
+{
+	if (!remoteEquivalent)
+	{
+		if (autoinflect)
+			return [[name underscore] lowercaseString];
+		else
+			return name;
+	}
+	return remoteEquivalent;
+}
+
+- (SEL) customEncodeSelector
+{
+	if (!encodable)
+		return NULL;
+	
+	NSString *sel = [NSString stringWithFormat:@"encode%@", [name firstLetterCapital]];
+	return NSSelectorFromString(sel);	
+}
+
+- (SEL) customDecodeSelector
+{
+	if (!decodable)
+		return NULL;
+	
+	NSString *sel = [NSString stringWithFormat:@"decode%@:",[name firstLetterCapital]];
+	return NSSelectorFromString(sel);
+}
+
 
 @end

@@ -85,9 +85,9 @@ NSRailsUseConfig(@"parent")
 #define NSRAssertClassAndInstanceConfig(class, teststring) NSRAssertInstanceConfig(class, teststring); NSRAssertClassConfig(class, teststring)
 
 
-#define NSRAssertClassProperties(class, ...) NSRAssertEqualArraysNoOrderNoBlanks([[class propertyCollection] sendableProperties], NSRArray(__VA_ARGS__))
+#define NSRAssertClassProperties(class, ...) NSRAssertEqualArraysNoOrderNoBlanks([[class propertyCollection] properties].allKeys, NSRArray(__VA_ARGS__))
 
-#define NSRAssertInstanceProperties(class, ...) NSRAssertEqualArraysNoOrderNoBlanks([[[[class alloc] init] propertyCollection] sendableProperties], NSRArray(__VA_ARGS__))
+#define NSRAssertInstanceProperties(class, ...) NSRAssertEqualArraysNoOrderNoBlanks([[[[class alloc] init] propertyCollection] properties].allKeys, NSRArray(__VA_ARGS__))
 
 #define NSRAssertClassAndInstanceProperties(class, ...) NSRAssertClassProperties(class, __VA_ARGS__); NSRAssertInstanceProperties(class, __VA_ARGS__)
 
