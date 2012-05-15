@@ -79,94 +79,137 @@
 	GHAssertThrowsSpecificNamed(NSRInitTestClass(@"array:BadResponse"), NSException, NSRailsSyncException, @"Should crash because class exists but doesn't inherit from NSRM");
 }
 
-- (void) test_property_flags
+- (void) test_property_detection
 {
 	NSRPropertyCollection *pc = [[NSRPropertyCollection alloc] initWithClass:[FlagTestClass class]
-																  syncString:@"sendretrieve -rs, nothing, retrieve=rails -r, send -s, local -x, decode -d, encode -e, parent -b, encodedecode -ed, nestedNothing, objc=rails, nestedExplicit:TestClass, nestedArrayNothing=nestedArrayNothing, nestedArrayExplicit:TestClass -m, date, fakeDate:NSDate, dateArray:NSDate -m" 
+																  syncString:@"nothing, local -x, nonexistent" 
 																customConfig:nil];
 	
-	NSRAssertEqualArraysNoOrder(pc.properties.allKeys, NSRArray(@"sendretrieve", @"date", @"fakeDate", @"dateArray", @"nothing", @"retrieve", @"send", @"decode", @"encode", @"parent", @"nestedNothing", @"nestedExplicit", @"nestedArrayNothing", @"nestedArrayExplicit", @"encodedecode", @"objc"));
+	NSRAssertEqualArraysNoOrder(pc.properties.allKeys, NSRArray(@"nothing", @"nonexistent"));
 	
-	GHAssertTrue([pc objcPropertiesForRemoteEquivalent:@"nonexistent" autoinflect:NO].count == 0, @"Shouldn't pick up any remotes called nonexistent");
+	GHAssertTrue([pc objcPropertiesForRemoteEquivalent:@"notdeclared" autoinflect:NO].count == 0, @"Shouldn't pick up any remotes called notdeclared");
+}
 
-	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"rails" autoinflect:NO] containsObject:[pc.properties objectForKey:@"retrieve"]], @"Should pick up that remote rails is defined as retrieve");
-	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"rails" autoinflect:NO] containsObject:[pc.properties objectForKey:@"objc"]], @"Should pick up that remote rails is also defined as objc");
-
-	GHAssertTrue([pc objcPropertiesForRemoteEquivalent:@"nested_explicit" autoinflect:NO].count == 0, @"Should fail trying to find nested_explicit property in objc (nothing explicit and not autoinflecting)");
-	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"nested_explicit" autoinflect:YES] containsObject:[pc.properties objectForKey:@"nestedExplicit"]], @"Should find default autoinflected nestedExplicit from nested_explicit");
-	
-	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"nestedArrayNothing" autoinflect:NO] containsObject:[pc.properties objectForKey:@"nestedArrayNothing"]], @"Should return the explicit equivalency (even if no autoinflect)");
-	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"nestedArrayNothing" autoinflect:YES] containsObject:[pc.properties objectForKey:@"nestedArrayNothing"]], @"Should return the explicit equivalency (even if autoinflect)");
-
-	NSRProperty *objc = [pc.properties objectForKey:@"objc"];
-	GHAssertEqualStrings([objc remoteEquivalentAutoinflection:NO], @"rails", @"Should return explicit equiv");
-	GHAssertEqualStrings([objc remoteEquivalentAutoinflection:YES], @"rails", @"Should return explicit equiv (even if autoinflect)");
-	
-	NSRProperty *nestedExplicit = [pc.properties objectForKey:@"nestedExplicit"];
-	GHAssertEqualStrings([nestedExplicit remoteEquivalentAutoinflection:NO], @"nestedExplicit", @"Should return non-autoinflected default string (identical)");
-	GHAssertEqualStrings([nestedExplicit remoteEquivalentAutoinflection:YES], @"nested_explicit", @"Should return autoinflected default string (default)");
-
-	NSRProperty *nestedArrayNothing = [pc.properties objectForKey:@"nestedArrayNothing"];
-	GHAssertEqualStrings([nestedArrayNothing remoteEquivalentAutoinflection:NO], @"nestedArrayNothing", @"Should return the explicit equivalency (even if no-autoinflect)");
-	GHAssertEqualStrings([nestedArrayNothing remoteEquivalentAutoinflection:YES], @"nestedArrayNothing", @"Should return the explicit equivalency (even if autoinflect)");
-	
-	NSMutableArray *sendableStrings = [NSMutableArray array];
-	for (NSRProperty *p in pc.sendableProperties)
-		[sendableStrings addObject:p.name];
-	
-	NSRAssertEqualArraysNoOrder(sendableStrings, NSRArray(@"sendretrieve", @"nothing", @"send", @"decode", @"encode", @"parent", @"nestedNothing", @"nestedExplicit", @"nestedArrayNothing", @"nestedArrayExplicit", @"encodedecode", @"objc", @"date", @"fakeDate", @"dateArray"));
+- (void) test_encode_decode
+{
+	NSRPropertyCollection *pc = [[NSRPropertyCollection alloc] initWithClass:[FlagTestClass class]
+																  syncString:@"decode -d, encode -e, encodedecode -ed" 
+																customConfig:nil];
 	
 	NSRProperty *decode = [pc.properties objectForKey:@"decode"];
 	GHAssertTrue(decode.decodable, @"decode should be marked decodable");
 	
 	NSRProperty *encode = [pc.properties objectForKey:@"encode"];
 	GHAssertTrue(encode.encodable, @"encode should be marked encodable");
-
+	
 	NSRProperty *encodedecode = [pc.properties objectForKey:@"encodedecode"];
 	GHAssertTrue(encodedecode.encodable, @"encodedecode should be marked encodable");
 	GHAssertTrue(encodedecode.decodable, @"encodedecode should be marked encodable");
+}
 
-	NSRProperty *parent = [pc.properties objectForKey:@"parent"];
-	GHAssertTrue(parent.isBelongsTo, @"parent should be marked belongs-to (-b included)");
-	GHAssertFalse(parent.isHasMany, @"parent shouldn't be marked has-many");
-	GHAssertEqualStrings(parent.nestedClass, @"TestClass", @"parent's nested class should be TestClass");
+- (void) test_send_receive
+{
+	NSRPropertyCollection *pc = [[NSRPropertyCollection alloc] initWithClass:[FlagTestClass class]
+																  syncString:@"sendretrieve -rs, nothing, retrieve -r, send -s" 
+																customConfig:nil];
+
+	NSRProperty *sendretrieve = [pc.properties objectForKey:@"sendretrieve"];
+	GHAssertTrue(sendretrieve.retrievable, @"sendretrieve should be marked retrievable");
+	GHAssertTrue(sendretrieve.sendable, @"sendretrieve should be marked sendable");
+
+	NSRProperty *nothing = [pc.properties objectForKey:@"nothing"];
+	GHAssertTrue(nothing.retrievable, @"nothing should be marked retrievable");
+	GHAssertTrue(nothing.sendable, @"nothing should be marked sendable");
+
+	NSRProperty *retrieve = [pc.properties objectForKey:@"retrieve"];
+	GHAssertTrue(retrieve.retrievable, @"retrieve should be marked retrievable");
+
+	NSRProperty *send = [pc.properties objectForKey:@"send"];
+	GHAssertTrue(send.sendable, @"send should be marked sendable");
+
+	NSMutableArray *sendableAsStrings = [NSMutableArray array];
+	for (NSRProperty *p in pc.sendableProperties)
+		[sendableAsStrings addObject:p.name];
+	
+	NSRAssertEqualArraysNoOrder(sendableAsStrings, NSRArray(@"sendretrieve", @"nothing", @"send"));
+}
+
+- (void) test_equivalents
+{
+	NSRPropertyCollection *pc = [[NSRPropertyCollection alloc] initWithClass:[FlagTestClass class]
+																  syncString:@"objc=rails_prop -r, objcTWO=rails_prop, pleaseInflect" 
+																customConfig:nil];
+	
+	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"rails_prop" autoinflect:NO] containsObject:[pc.properties objectForKey:@"objc"]], @"Should pick up that remote rails_prop is defined as objc");
+	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"rails_prop" autoinflect:NO] containsObject:[pc.properties objectForKey:@"objcTWO"]], @"Should pick up that remote rails_prop is also defined as objcTWO");
+
+	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"rails_prop" autoinflect:YES] containsObject:[pc.properties objectForKey:@"objc"]], @"Should pick up that remote rails_prop is defined as objc, even if ai");
+	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"rails_prop" autoinflect:YES] containsObject:[pc.properties objectForKey:@"objcTWO"]], @"Should pick up that remote rails_prop is also defined as objcTWO, even if ai");
+
+	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"pleaseInflect" autoinflect:NO] containsObject:[pc.properties objectForKey:@"pleaseInflect"]], @"Should pick up pleaseInflect if no ai");
+	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"pleaseInflect" autoinflect:YES] containsObject:[pc.properties objectForKey:@"pleaseInflect"]], @"Should pick up pleaseInflect even if ai");
+	
+	GHAssertFalse([[pc objcPropertiesForRemoteEquivalent:@"please_inflect" autoinflect:NO] containsObject:[pc.properties objectForKey:@"pleaseInflect"]], @"Should not pick up please_inflect if no ai");
+	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"please_inflect" autoinflect:YES] containsObject:[pc.properties objectForKey:@"pleaseInflect"]], @"Should pick up please_inflect as pleaseInflect if ai");
+}
+
+- (void) test_dates
+{
+	NSRPropertyCollection *pc = [[NSRPropertyCollection alloc] initWithClass:[FlagTestClass class]
+																  syncString:@"date, fakeDate:NSDate, dateArray:NSDate, dateArrayExplicit:NSDate -m" 
+																customConfig:nil];
+	NSRProperty *date = [pc.properties objectForKey:@"date"];
+	GHAssertFalse(date.isHasMany, @"date shouldn't be seen as array");
+	GHAssertFalse(date.isBelongsTo, @"date shouldn't be seen as belongs-to");
+	GHAssertTrue(date.isDate, @"date should be seen as date");
+	GHAssertNil(date.nestedClass, @"date should not be marked as nested class");
+	
+	NSRProperty *fakeDate = [pc.properties objectForKey:@"fakeDate"];
+	GHAssertFalse(date.isHasMany, @"fakeDate shouldn't be seen as array");
+	GHAssertFalse(date.isBelongsTo, @"fakeDate shouldn't be seen as belongs-to");
+	GHAssertTrue(date.isDate, @"fakedate should be seen as date, even if string");
+	GHAssertNil(date.nestedClass, @"fakeDate should not be marked as nested class");
+	
+	NSRProperty *dateArray = [pc.properties objectForKey:@"dateArray"];
+	GHAssertTrue(dateArray.isHasMany, @"dateArray should be seen as array");
+	GHAssertFalse(dateArray.isBelongsTo, @"dateArray shouldn't be seen as belongs-to");
+	GHAssertFalse(dateArray.isDate, @"dateArray shouldn't be seen as date");
+	GHAssertEqualStrings(dateArray.nestedClass, @"NSDate", @"dateArray should have NSDate as nested class");
+
+	NSRProperty *dateArrayExplicit = [pc.properties objectForKey:@"dateArrayExplicit"];
+	GHAssertTrue(dateArrayExplicit.isHasMany, @"dateArrayExplicit should be seen as array");
+	GHAssertFalse(dateArrayExplicit.isBelongsTo, @"dateArrayExplicit shouldn't be seen as belongs-to");
+	GHAssertFalse(dateArrayExplicit.isDate, @"dateArrayExplicit shouldn't be seen as date");
+	GHAssertEqualStrings(dateArrayExplicit.nestedClass, @"NSDate", @"dateArrayExplicit should have NSDate as nested class");
+}
+
+- (void) test_property_flags
+{
+	NSRPropertyCollection *pc = [[NSRPropertyCollection alloc] initWithClass:[FlagTestClass class]
+																  syncString:@"nestedNothing, nestedExplicit:TestClass, nestedArrayNothing, nestedArrayExplicit:TestClass -m"
+																customConfig:nil];
+	
+	
 
 	NSRProperty *nestedNothing = [pc.properties objectForKey:@"nestedNothing"];
 	GHAssertFalse(nestedNothing.isBelongsTo, @"nestedNothing shouldn't be marked belongs-to (no -b)");
 	GHAssertFalse(nestedNothing.isHasMany, @"nestedNothing shouldn't be marked has-many");
 	GHAssertEqualStrings(nestedNothing.nestedClass, @"TestClass", @"nestedNothing's nested class should be TestClass");
 
+	NSRProperty *nestedExplicit = [pc.properties objectForKey:@"nestedExplicit"];
 	GHAssertFalse(nestedExplicit.isBelongsTo, @"nestedExplicit shouldn't be marked belongs-to (no -b)");
 	GHAssertFalse(nestedExplicit.isHasMany, @"nestedExplicit shouldn't be marked as has-many");
 	GHAssertEqualStrings(nestedExplicit.nestedClass, @"TestClass", @"nestedNothing's nested class should be TestClass");
+
+	NSRProperty *nestedArrayNothing = [pc.properties objectForKey:@"nestedArrayNothing"];
+	GHAssertFalse(nestedArrayNothing.isBelongsTo, @"nestedArrayNothing shouldn't be marked belongs-to");
+	GHAssertTrue(nestedArrayNothing.isHasMany, @"nestedArrayNothing should be seen as array");
+	GHAssertNil(nestedArrayNothing.nestedClass, @"nestedArrayNothing's nested class should be nil (dicts)");
 
 	NSRProperty *nestedArrayExplicit = [pc.properties objectForKey:@"nestedArrayExplicit"];
 	GHAssertFalse(nestedExplicit.isBelongsTo, @"nestedArrayExplicit shouldn't be marked belongs-to");
 	GHAssertTrue(nestedArrayExplicit.isHasMany, @"nestedArrayExplicit should be seen as array");
 	GHAssertEqualStrings(nestedArrayExplicit.nestedClass, @"TestClass", @"nestedArrayExplicit's nested class should be TestClass");
-	
-	GHAssertFalse(nestedArrayNothing.isBelongsTo, @"nestedArrayNothing shouldn't be marked belongs-to");
-	GHAssertTrue(nestedArrayNothing.isHasMany, @"nestedArrayNothing should be seen as array");
-	GHAssertNil(nestedArrayNothing.nestedClass, @"nestedArrayNothing's nested class should be nil (dicts)");
-
-	
-	NSRProperty *date = [pc.properties objectForKey:@"date"];
-	GHAssertFalse(date.isHasMany, @"date shouldn't be seen as array");
-	GHAssertFalse(date.isBelongsTo, @"date shouldn't be seen as belongs-to");
-	GHAssertTrue(date.isDate, @"date should be seen as date");
-	GHAssertNil(date.nestedClass, @"date should not be marked as nested class");
-
-	NSRProperty *fakeDate = [pc.properties objectForKey:@"fakeDate"];
-	GHAssertFalse(date.isHasMany, @"fakeDate shouldn't be seen as array");
-	GHAssertFalse(date.isBelongsTo, @"fakeDate shouldn't be seen as belongs-to");
-	GHAssertTrue(date.isDate, @"fakedate should be seen as date, even if string");
-	GHAssertNil(date.nestedClass, @"fakeDate should not be marked as nested class");
-
-	NSRProperty *dateArray = [pc.properties objectForKey:@"dateArray"];
-	GHAssertTrue(dateArray.isHasMany, @"dateArray should be seen as array");
-	GHAssertFalse(dateArray.isBelongsTo, @"dateArray shouldn't be seen as belongs-to");
-	GHAssertFalse(dateArray.isDate, @"dateArray shouldn't be seen as date");
-	GHAssertEqualStrings(dateArray.nestedClass, @"NSDate", @"dateArray should have NSDate as nested class");
 }
 
 - (void)setUpClass

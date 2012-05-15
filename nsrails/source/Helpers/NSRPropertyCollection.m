@@ -240,8 +240,7 @@
 
 - (NSArray *) objcPropertiesForRemoteEquivalent:(NSString *)remoteProp autoinflect:(BOOL)autoinflect
 {
-	if (autoinflect)
-		remoteProp = [remoteProp camelize];
+	NSString *inflectedRemoteProp = (autoinflect ? [remoteProp camelize] : remoteProp);
 	
 	NSMutableArray *props = [NSMutableArray array];
 	for (NSString *property in properties)
@@ -249,7 +248,8 @@
 		NSRProperty *propObject = [properties objectForKey:property];
 		NSString *remote = propObject.remoteEquivalent ? propObject.remoteEquivalent : propObject.name;
 		
-		if ([remote isEqualToString:remoteProp])
+		//if explicit equiv found, compare it to the non-inflected version
+		if ([remote isEqualToString:(propObject.remoteEquivalent ? remoteProp : inflectedRemoteProp)])
 			[props addObject:propObject];
 	}
 	return props;
