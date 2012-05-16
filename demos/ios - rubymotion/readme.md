@@ -26,14 +26,14 @@ Getting started
 Quirks
 ---------
 
-Due to differences with Objective-C, there are some quick additional requirements in this environment:
+Due to differences with Objective-C, there are some quick additional requirements in the Ruby environment:
 
 * Macros like `NSRailsSync` should be defined as class methods returning a string
-* Right now there's a bug in RubyMotion (v1.4) where getter methods cannot be defined via `attr_accessor` - they'll have to be manually defined (`attr_writer` still works)
 * `NSRailsSync` is required. And because Ruby is not statically typed, some extra things are required...
- 1. `*` isn't available - every property you wish to share needs to be explicitly declared
+ 1. `*` is unavailable - every property you wish to share needs to be explicitly declared
  2. The rarely used `-m` flag is necessary to define any has-many associations (ie, for arrays)
  3. Dates have to be declared as dates by specifying `NSDate` as a "nested" type
+* Right now there's a bug in RubyMotion (v1.4) where getter methods cannot be defined via `attr_accessor` - they'll have to be manually defined (`attr_writer` still works)
 
 See the example class below if any of the above are unclear.
 
