@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.danhassin.NSRails</string>
+	<key>CFBundleName</key>
+	<string>NSRails Documentation</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+	
+	
+	
+	
+	<key>DocSetFeedName</key>
+	<string>NSRails Documentation</string>
+	
+	<key>DocSetMinimumXcodeVersion</key>
+	<string>3.0</string>
+	
+	<key>DocSetPublisherIdentifier</key>
+	<string>com.danhassin.documentation</string>
+	<key>DocSetPublisherName</key>
+	<string>Dan Hassin</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2012 Dan Hassin. All rights reserved.</string>
+</dict>
+</plist>
