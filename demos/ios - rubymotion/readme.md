@@ -9,19 +9,19 @@ Getting started
 ### RubyMotion
 
 * Add a `vendor` directory on the main level of your RubyMotion app if you don't have one already.
-* Copy the `nsrails` directory ([the main Xcode project](https://github.com/dingbat/nsrails/tree/master/nsrails)) into `vendor`. (You don't need anything but `source/` and the Xcode project - you can delete `tests/` and `demo/`).
+* Copy the `nsrails` directory ([the main Xcode project](https://github.com/dingbat/nsrails/tree/master/nsrails)) into `vendor`. (You can delete `Tests/`).
 * Modify your Rakefile to vendor NSRails:
 
   ```ruby
   Motion::Project::App.setup do |app|
       # Add this line:
-      app.vendor_project('vendor/nsrails', :xcode, :target => "NSRails", :headers_dir => 'source')
+      app.vendor_project('vendor/nsrails', :xcode, :target => 'NSRails', :headers_dir => 'Source')
       ...
   ```
 
 ### MacRuby
 
-* MacRuby is even easier to configure since vendoring is not necessary. Simply drag the `source` folder into Xcode in your MacRuby project, and it should be built with your project as normal.
+* MacRuby is even easier to configure since vendoring is not necessary. Simply drag the `Source` folder into Xcode in your MacRuby project, and it should be built with your project as normal.
 
 Quirks
 ---------
