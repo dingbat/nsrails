@@ -1,6 +1,5 @@
 class InputViewController < UIViewController
   attr_accessor :completion_block, :header, :message_placeholder
-  attr_reader :author_field, :content_field, :header_label
   
   # # # # # # # # #
   #
