@@ -6,6 +6,8 @@ To run this demo you'll need [RubyMotion](http://www.rubymotion.com/) installed 
 Getting started
 -------
 
+### RubyMotion
+
 * Add a `vendor` directory on the main level of your RubyMotion app if you don't have one already.
 * Copy the `nsrails` directory ([the main Xcode project](https://github.com/dingbat/nsrails/tree/master/nsrails)) into `vendor`. (You don't need anything but `source/` and the Xcode project - you can delete `tests/` and `demo/`).
 * Modify your Rakefile to vendor NSRails:
@@ -17,14 +19,23 @@ Getting started
       ...
   ```
 
-* You're ready! Be aware of a few quirks in this environment:
- 1. Macros should be defined with a class method named exactly like the macro and should return a string
- 2. Right now there's a bug in RubyMotion (v1.4) where getter methods cannot be defined via `attr_accessor` - they'll have to be manually defined
- 3. `NSRailsSync` is required. And because Ruby is not statically typed, some things are a bit different... (see example below if these are unclear)
-  * `*` isn't available - every property needs to be explicitly declared
-  * The rarely used `-m` flag is necessary to define any has-many associations (ie, for arrays)
-  * Dates have to be declared as dates by specifying `NSDate` as a "nested" type
+### MacRuby
 
+* MacRuby is even easier to configure since vendoring is not necessary. Simply drag the `source` folder into Xcode in your MacRuby project, and it should be built with your project as normal.
+
+Quirks
+---------
+
+Due to differences with Objective-C, there are some quick additional requirements in this environment:
+
+* Macros like `NSRailsSync` should be defined as class methods returning a string
+* Right now there's a bug in RubyMotion (v1.4) where getter methods cannot be defined via `attr_accessor` - they'll have to be manually defined (`attr_writer` still works)
+* `NSRailsSync` is required. And because Ruby is not statically typed, some extra things are required...
+ 1. `*` isn't available - every property you wish to share needs to be explicitly declared
+ 2. The rarely used `-m` flag is necessary to define any has-many associations (ie, for arrays)
+ 3. Dates have to be declared as dates by specifying `NSDate` as a "nested" type
+
+See the example class below if any of the above are unclear.
 
 Example
 --------
@@ -51,7 +62,7 @@ You're riding Ruby on Rails riding Objective-C riding Ruby! (Have we come full c
 # setup
 NSRConfig.defaultConfig.appURL = "http://nsrails.com"
 
-# don't inflect underscored_properties into camelCase
+# don't look for camelCase when receiving remote underscored_properties
 NSRConfig.defaultConfig.autoinflectsPropertyNames = false
 
 # get all posts (synchronously)
@@ -64,10 +75,3 @@ Post.remoteAllAsync(lambda do |posts, error|
                       ...
                     end)
 ```
-
-MacRuby
---------
-
-MacRuby is even easier to configure since vendoring is not necessary. Simply drag the `source` folder into Xcode in your MacRuby project, and it should be built with your project as normal.
-Now simply follow the example above!
-* The quirks are still relevant besides manually writing gets and sets - MacRuby allows `attr_accessor`.
