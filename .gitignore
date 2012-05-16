@@ -24,4 +24,4 @@ build
 
 # Ignore the server app's git repo - for my own use when pushing to Heroku.
 
-extras/nsrails.com/.git/
+demos/nsrails.com/.git/

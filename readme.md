@@ -36,7 +36,7 @@ Features:
 Getting started
 ---------
 
-It's fairly painless. Drop the source folder into your Xcode project, and see [this page](https://github.com/dingbat/nsrails/wiki/Getting-Started).
+It's fairly painless. Drop the `Source` folder into your Xcode project and see [this page](https://github.com/dingbat/nsrails/wiki/Getting-Started).
 
 Some more resources:
 
