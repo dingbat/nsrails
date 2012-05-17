@@ -30,7 +30,12 @@ Features
 * [Asynchronous requests](http://dingbat.github.com/nsrails/html/Classes/NSRailsModel.html)
 * [Supported in RubyMotion and MacRuby](https://github.com/dingbat/nsrails/tree/master/demos/ios%20-%20rubymotion)
 * Easily translate Rails models into Objective-C classes using the bundled [autogen tool](https://github.com/dingbat/nsrails/tree/master/autogen)
-* No dependencies besides a JSON framework (already bundled)
+
+Dependencies
+--------
+
+* iOS 5.0+
+* JSON framework (pre-bundled)
 
 Getting started
 ---------
@@ -54,7 +59,7 @@ Getting started
   ```objc
   #import "NSRails.h"
 
-  - (BOOL) application:(UIApplication *)app didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+  - (BOOL)application:(UIApplication *)app didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
   {
         [[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
         ...
@@ -64,18 +69,20 @@ Getting started
 
 ### Bonus
 
-Use the **NSRailsSync()** macro if you want to define special behaviors for certain properties:
-```objc
-@implementation Post
-@synthesize author, content, createdAt, responses;
-NSRailsSync(*, createdAt -r, responses:Response);
+* Use the **NSRailsSync()** macro if you want to define special behaviors for certain properties:
+  ```objc
+  @implementation Post
+  @synthesize author, content, createdAt, responses;
+  NSRailsSync(*, createdAt -r, responses:Response);
 
-@end
-```
+  @end
+  ```
 
-In this example, the `-r` flag on `createdAt` makes it retrievable-only (so that `created_at` isn't sent to Rails each time it's updated). Defining `:Response` specifies to fill the `responses` array with instances of the Response class (also an NSRailsModel subclass).
+  * The `*` includes all of this class's properties as remote-relevant (default if NSRailsSync isn't defined). 
+  * `createdAt -r` makes `createdAt` retrievable-only (so that it's never *sent* to Rails - only retrieved).
+  * `responses:Response` tells NSRails to fill the `responses` array with instances of the Response class (also an NSRailsModel subclass, whose NSRailsSync will also be considered when nesting).
 
-Check out the [wiki page for NSRailsSync](https://github.com/dingbat/nsrails/wiki/NSRailsSync) for even more options!
+* Check out the [wiki page for NSRailsSync](https://github.com/dingbat/nsrails/wiki/NSRailsSync) for even more options!
 
 Credits
 ----------
