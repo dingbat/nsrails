@@ -28,8 +28,8 @@ Quirks
 
 Due to differences with Objective-C, there are some quick additional requirements in the Ruby environment:
 
-* Macros like `NSRailsSync` should be defined as class methods returning a string
-* `NSRailsSync` is required. And because Ruby is not statically typed, some extra things are required...
+* Macros like [NSRailsSync](https://github.com/dingbat/nsrails/wiki/NSRailsSync) should be defined as class methods returning a string
+* NSRailsSync is required. And because Ruby is not statically typed, some extra things are required...
  1. `*` is unavailable - every property you wish to share needs to be explicitly declared
  2. The rarely used `-m` flag is necessary to define any has-many associations (ie, for arrays)
  3. Dates have to be declared as dates by specifying `NSDate` as a "nested" type
