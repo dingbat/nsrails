@@ -139,6 +139,10 @@
 	NSRPropertyCollection *pc = [[NSRPropertyCollection alloc] initWithClass:[FlagTestClass class]
 																  syncString:@"objc=rails_prop -r, objcTWO=rails_prop, pleaseInflect" 
 																customConfig:nil];
+
+	GHAssertEqualStrings([[pc.properties objectForKey:@"objc"] remoteEquivalent], @"rails_prop", @"Prop should pick up =");
+	GHAssertEqualStrings([[pc.properties objectForKey:@"objcTWO"] remoteEquivalent], @"rails_prop", @"Prop should pick up =");
+	GHAssertNil([[pc.properties objectForKey:@"pleaseInflect"] remoteEquivalent], @"Prop should pick up no =");
 	
 	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"rails_prop" autoinflect:NO] containsObject:[pc.properties objectForKey:@"objc"]], @"Should pick up that remote rails_prop is defined as objc");
 	GHAssertTrue([[pc objcPropertiesForRemoteEquivalent:@"rails_prop" autoinflect:NO] containsObject:[pc.properties objectForKey:@"objcTWO"]], @"Should pick up that remote rails_prop is also defined as objcTWO");
