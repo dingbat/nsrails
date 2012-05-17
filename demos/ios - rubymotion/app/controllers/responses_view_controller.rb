@@ -10,7 +10,7 @@ class ResponsesViewController < UITableViewController
       new_resp.post = @post    # check out response.rb for more detail on how this line is possible
       
       p = Pointer.new(:object)
-      if (!new_resp.remoteCreate(p))
+      if !new_resp.remoteCreate(p)
         AppDelegate.alertForError p[0]
         return false
       end
@@ -40,11 +40,15 @@ class ResponsesViewController < UITableViewController
     resp = @post.responses[indexPath.row]
 
     ptr = Pointer.new(:object)
-    if (resp.remoteDestroy(ptr))
+    if resp.remoteDestroy(ptr)
       # Remember to delete the object from our local array too
       @post.responses.delete(resp)
 
-      self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationAutomatic);
+      self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationAutomatic)
+      
+  		if @post.responses.empty?
+  			self.tableView.reloadSections([NSIndexSet indexSetWithIndex:0], withRowAnimation:UITableViewRowAnimationAutomatic)
+
     else
       AppDelegate.alertForError(ptr[0])
     end

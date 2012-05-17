@@ -73,6 +73,9 @@
 		[post.responses removeObject:resp];
 		
 		[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+		
+		if (post.responses.count == 0)
+			[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
 	}
 	else
 	{
