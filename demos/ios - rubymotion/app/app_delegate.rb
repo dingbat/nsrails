@@ -1,6 +1,6 @@
 class AppDelegate
   def application(application, didFinishLaunchingWithOptions:launchOptions)
-    @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
+    @window = UIWindow.alloc.initWithFrame UIScreen.mainScreen.bounds
 
     NSRConfig.defaultConfig.appURL = "http://nsrails.com"
     # For testing on local server:
@@ -12,8 +12,8 @@ class AppDelegate
     # We don't want this since we're in Ruby and our properties are underscored anyway!
     NSRConfig.defaultConfig.autoinflectsPropertyNames = false
 
-    posts = PostsViewController.alloc.initWithStyle(UITableViewStyleGrouped)
-    nav = UINavigationController.alloc.initWithRootViewController(posts)
+    posts = PostsViewController.alloc.initWithStyle UITableViewStyleGrouped
+    nav = UINavigationController.alloc.initWithRootViewController posts
 
     @window.rootViewController = nav
     @window.makeKeyAndVisible
@@ -27,7 +27,7 @@ class AppDelegate
     # Get the dictionary of validation errors, if present
     validationErrors = e.userInfo[NSRValidationErrorsKey]
 
-    if (validationErrors)
+    if validationErrors
       # Iterate through each failed property (keys)
       validationErrors.each do |failed_property, reasons|
         # Iterate through each reason the property failed
@@ -36,7 +36,7 @@ class AppDelegate
         end
       end
     else
-      if (e.domain == NSRRemoteErrorDomain)
+      if e.domain == NSRRemoteErrorDomain
         errorString = "Something went wrong! Please try again later or contact us if this error continues."
       else
         errorString = "There was an error connecting to the server."

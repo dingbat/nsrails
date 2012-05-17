@@ -10,7 +10,7 @@ class PostsViewController < UITableViewController
       new_post.content = content
 
       ptr = Pointer.new(:object)
-      if (!new_post.remoteCreate(ptr))
+      if !new_post.remoteCreate(ptr)
         AppDelegate.alertForError ptr[0]
         # Don't dismiss the input VC
         return false
@@ -33,7 +33,7 @@ class PostsViewController < UITableViewController
   def refresh
     ptr = Pointer.new(:object)
     @posts = Post.remoteAll(ptr)
-    if (!@posts)
+    if !@posts
       AppDelegate.alertForError ptr[0]
     end
     self.tableView.reloadData
@@ -43,12 +43,12 @@ class PostsViewController < UITableViewController
     post = @posts[indexPath.row]
 
     p = Pointer.new(:object)
-    if (post.remoteDestroy(p))
+    if post.remoteDestroy(p)
       # Remember to delete the object from our local array too
       @posts.delete(post)
-      self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationAutomatic);
+      self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationAutomatic)
     else
-      AppDelegate.alertForError(p[0])
+      AppDelegate.alertForError p[0]
     end
   end
   
@@ -85,7 +85,7 @@ class PostsViewController < UITableViewController
   end
   
   def tableView(tableView, cellForRowAtIndexPath:indexPath)
-    cell = tableView.dequeueReusableCellWithIdentifier("Cell")
+    cell = tableView.dequeueReusableCellWithIdentifier "Cell"
     if !cell
       cell = UITableViewCell.alloc.initWithStyle(UITableViewCellStyleSubtitle, reuseIdentifier:"Cell")
       cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator
@@ -99,14 +99,14 @@ class PostsViewController < UITableViewController
   end
   
   def tableView(tableView, commitEditingStyle:editingStyle, forRowAtIndexPath:indexPath)
-    deletePostAtIndexPath(indexPath)
+    deletePostAtIndexPath indexPath
   end
 
   def tableView(tableView, didSelectRowAtIndexPath:indexPath)
     post = @posts[indexPath.row]
 
-    rvc = ResponsesViewController.alloc.initWithStyle(UITableViewStyleGrouped)
+    rvc = ResponsesViewController.alloc.initWithStyle UITableViewStyleGrouped
     rvc.post = post
-    self.navigationController.pushViewController rvc, animated:true;
+    self.navigationController.pushViewController rvc, animated:true
   end
 end

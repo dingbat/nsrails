@@ -42,15 +42,15 @@ class ResponsesViewController < UITableViewController
     ptr = Pointer.new(:object)
     if resp.remoteDestroy(ptr)
       # Remember to delete the object from our local array too
-      @post.responses.delete(resp)
+      @post.responses.delete resp
 
       self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationAutomatic)
       
   		if @post.responses.empty?
-  			self.tableView.reloadSections([NSIndexSet indexSetWithIndex:0], withRowAnimation:UITableViewRowAnimationAutomatic)
-
+  			self.tableView.reloadSections(NSIndexSet.indexSetWithIndex(0), withRowAnimation:UITableViewRowAnimationAutomatic)
+      end
     else
-      AppDelegate.alertForError(ptr[0])
+      AppDelegate.alertForError ptr[0]
     end
   	
     # If we wanted to batch-delete or something, we could also do:
@@ -97,7 +97,7 @@ class ResponsesViewController < UITableViewController
   end
   
   def tableView(tableView, cellForRowAtIndexPath:indexPath)
-    cell = tableView.dequeueReusableCellWithIdentifier("Cell")
+    cell = tableView.dequeueReusableCellWithIdentifier "Cell"
     if !cell
       cell = UITableViewCell.alloc.initWithStyle(UITableViewCellStyleSubtitle, reuseIdentifier:"Cell")
       cell.selectionStyle = UITableViewCellSelectionStyleNone
