@@ -321,6 +321,21 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	GHAssertEqualStrings([[send objectForKey:@"lots_of_dates_attributes"] lastObject], @"2012-05-07T04:41:52Z", @"Converted date should be equal to original val");
 }
 
+- (void) test_set_properties
+{
+	NoSyncStringTester *t = [[NoSyncStringTester alloc] init];
+	
+	NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:@"test", @"property1", nil];
+	[t setPropertiesUsingRemoteDictionary:dict];
+	GHAssertEqualStrings(t.property1, @"test", @"");
+	
+	t.property1 = nil;
+	
+	NSDictionary *dictEnveloped = [[NSDictionary alloc] initWithObjectsAndKeys:[[NSDictionary alloc] initWithObjectsAndKeys:@"test",@"property1", nil], @"no_sync_string_tester", nil];
+	[t setPropertiesUsingRemoteDictionary:dictEnveloped];
+	GHAssertEqualStrings(t.property1, @"test", @"");
+}
+
 - (void)setUpClass
 {
 	// Run at start of all tests in the class

@@ -448,6 +448,11 @@ NSRailsSync(*);
 
 - (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict
 {
+	//support JSON that comes in like {"post"=>{"something":"something"}}
+	NSDictionary *innerDict = [dict objectForKey:[[self class] masterModelName]];
+	if (dict.count == 1 && innerDict)
+		dict = innerDict;
+	
 	remoteAttributes = dict;
 	
 	BOOL changes = NO;
