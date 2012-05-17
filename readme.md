@@ -65,7 +65,7 @@ Getting started
         ...
   ```
 
-  You're ready! By subclassing `NSRailsModel`, your class gets tons of instance and class methods that'll act on your remote objects. See the [documentation](http://dingbat.github.com/nsrails/) and [wiki](https://github.com/dingbat/nsrails/wiki) for more information.
+You're ready! By subclassing NSRailsModel, your class gets tons of instance and class methods that'll act on your remote objects. See the [documentation](http://dingbat.github.com/nsrails/) and [wiki](https://github.com/dingbat/nsrails/wiki) for more details.
 
 ### Bonus
 
@@ -75,12 +75,12 @@ Getting started
   @synthesize author, content, createdAt, responses;
   NSRailsSync(*, createdAt -r, responses:Response);
 
-  @end
+  ...
   ```
 
-  * The `*` includes all of this class's properties as remote-relevant (default if NSRailsSync isn't defined). 
-  * `createdAt -r` makes `createdAt` retrievable-only (so that it's never *sent* to Rails - only retrieved).
-  * `responses:Response` tells NSRails to fill the `responses` array with instances of the Response class (also an NSRailsModel subclass, whose NSRailsSync will also be considered when nesting).
+  - The `*` includes all of this class's properties as remote-relevant (default if NSRailsSync isn't defined). 
+  - `createdAt -r` makes `createdAt` retrievable-only (so that it's never *sent* to Rails - only retrieved).
+  - `responses:Response` tells NSRails to fill the `responses` array with instances of the Response class (also an NSRailsModel subclass, whose NSRailsSync will also be considered when nested).
 
 * Check out the [wiki page for NSRailsSync](https://github.com/dingbat/nsrails/wiki/NSRailsSync) for even more options!
 
