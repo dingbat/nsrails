@@ -50,6 +50,7 @@
 {
 	NSRAssertEqualsUnderscored(@"post", @"post");
 	NSRAssertEqualsUnderscored(@"Post", @"post");
+	NSRAssertEqualsUnderscored(@"POST", @"post");
 	NSRAssertEqualsUnderscored(@"DHPost", @"dh_post");
 	NSRAssertEqualsUnderscored(@"postObject", @"post_object");
 	NSRAssertEqualsUnderscored(@"postObjectA", @"post_object_a");

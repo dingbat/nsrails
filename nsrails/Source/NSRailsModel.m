@@ -151,8 +151,7 @@ NSRailsSync(*);
 	
 	if ([self getRelevantConfig].autoinflectsClassNames)
 	{
-		NSString *railsified = [class underscoreIgnorePrefix:[self getRelevantConfig].ignoresClassPrefixes];
-		return [railsified lowercaseString];
+		return [class underscoreIgnorePrefix:[self getRelevantConfig].ignoresClassPrefixes];
 	}
 	else
 	{
@@ -611,7 +610,7 @@ NSRailsSync(*);
 		if (!railsEquivalent)
 		{
 			if ([NSRConfig defaultConfig].autoinflectsPropertyNames)
-				railsEquivalent = [[objcProperty.name underscore] lowercaseString];
+				railsEquivalent = [objcProperty.name underscore];
 			else
 				railsEquivalent = objcProperty.name;
 		}
