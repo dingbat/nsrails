@@ -145,6 +145,37 @@
 	GHAssertEqualStrings(string3, @"1969", @"Datetime string should be formatted to 'yyyy'");
 }
 
+- (void) test_completion_block_threads
+{
+	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
+	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
+	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
+
+	[[NSRConfig defaultConfig] setPerformsCompletionBlocksOnMainThread:YES];
+	
+	[[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts.json" sync:nil orAsync:
+	 ^(NSString *result, NSError *error)
+	 {
+		 GHAssertTrue([NSThread isMainThread], @"With PCBOMT enabled, should run block in main thread");	
+		 
+		 //do the second test inside the block so they don't overwrite each other
+		 
+		 //ghunit needs a better way to contain async testcases... TODO maybe separate class for each?
+		 
+		 [[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
+		 [[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
+		 [[NSRConfig defaultConfig] setAppPassword:@"iphone"];
+
+		 [[NSRConfig defaultConfig] setPerformsCompletionBlocksOnMainThread:NO];
+		 
+		 [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts.json" sync:nil orAsync:
+		  ^(NSString *result, NSError *error)
+		  {
+			  GHAssertFalse([NSThread isMainThread], @"With PCBOMT disabled, should run block in same thread");		 
+		  }];
+	 }];
+}
+
 - (void) test_error_detection
 {	
 	// 404 Not Found

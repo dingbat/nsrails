@@ -192,13 +192,24 @@ extern NSString * const NSRailsNullRemoteIDException;
 @property (nonatomic) BOOL autoinflectsPropertyNames;
 
 /**
+ When true, the completion blocks passed into asynchronous `remote` methods will be called on the main thread.
+ 
+ This can be useful if you wish to update view elements from this block (where iOS would otherwise lock up).
+ 
+ Not sure when this couldn't be useful, but leaving disabling it as an option. Maybe performance?
+ 
+ **Default:** `YES`.
+ */
+@property (nonatomic) BOOL performsCompletionBlocksOnMainThread;
+
+/**
  The network activity indicator (gray spinning wheel on the status bar) will automatically turn on and off with requests.
  
  This is only supported for asynchronous requests, as otherwise the main thread is blocked.
  
  Also only supported in iOS development.
  
- **Default:** `YES`.
+ **Default:** `NO`.
  */
 @property (nonatomic) BOOL managesNetworkActivityIndicator;
 

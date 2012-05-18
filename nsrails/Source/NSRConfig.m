@@ -73,7 +73,7 @@ NSString * const NSRailsNullRemoteIDException			= @"NSRailsNullRemoteIDException
 
 @implementation NSRConfig
 @synthesize appURL, appUsername, appPassword;
-@synthesize autoinflectsClassNames, autoinflectsPropertyNames, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages;
+@synthesize autoinflectsClassNames, autoinflectsPropertyNames, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages, performsCompletionBlocksOnMainThread;
 @dynamic dateFormat;
 
 #pragma mark -
@@ -157,6 +157,7 @@ static int networkActivityRequests = 0;
 		
 		self.succinctErrorMessages = YES;
 		self.timeoutInterval = 60;
+		self.performsCompletionBlocksOnMainThread = YES;
 		
 		asyncOperationQueue = [[NSOperationQueue alloc] init];
 	}
@@ -268,12 +269,15 @@ static int networkActivityRequests = 0;
 		[NSURLConnection sendAsynchronousRequest:request queue:asyncOperationQueue completionHandler:
 		 ^(NSURLResponse *response, NSData *data, NSError *appleError) 
 		 {
+			 dispatch_queue_t queue = (self.performsCompletionBlocksOnMainThread ? 
+									   dispatch_get_main_queue() : dispatch_get_current_queue());
+			 
 			 //if there's an error from the request there must have been an issue connecting to the server.
 			 if (appleError)
 			 {
 				 NSRLogError(appleError);
 				 
-				 completionBlock(nil,appleError);
+				 dispatch_sync(queue, ^{ completionBlock(nil, appleError); } );
 			 }
 			 else
 			 {
@@ -287,10 +291,7 @@ static int networkActivityRequests = 0;
 				 //see if there's an error from this response using this helper method
 				 NSError *railsError = [self errorForResponse:rawResult statusCode:code];
 				 
-				 if (railsError)
-					 completionBlock(nil, railsError);
-				 else
-					 completionBlock(rawResult, nil);
+				 dispatch_sync(queue, ^{ completionBlock((railsError ? nil : rawResult), railsError); } );
 			 }
 		 }];
 	}

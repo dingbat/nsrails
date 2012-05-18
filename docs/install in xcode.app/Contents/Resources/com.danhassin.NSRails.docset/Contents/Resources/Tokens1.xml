@@ -56,6 +56,28 @@
 		</Token>
 		
 		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setPerformsCompletionBlocksOnMainThread:</TokenIdentifier>
+			<Abstract type="html">When true, the completion blocks passed into asynchronous remote methods will be called on the main thread.</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic) BOOL performsCompletionBlocksOnMainThread</Declaration>
+			
+			
+			<Anchor>//api/name/performsCompletionBlocksOnMainThread</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/performsCompletionBlocksOnMainThread</TokenIdentifier>
+			<Abstract type="html">When true, the completion blocks passed into asynchronous remote methods will be called on the main thread.</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic) BOOL performsCompletionBlocksOnMainThread</Declaration>
+			
+			
+			<Anchor>//api/name/performsCompletionBlocksOnMainThread</Anchor>
+		</Token>
+		
+		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setManagesNetworkActivityIndicator:</TokenIdentifier>
 			<Abstract type="html">The network activity indicator (gray spinning wheel on the status bar) will automatically turn on and off with requests.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
