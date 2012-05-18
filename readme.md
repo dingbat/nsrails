@@ -26,19 +26,16 @@ Features
 --------
 
 * [High-level API](http://dingbat.github.com/nsrails/html/Classes/NSRailsModel.html), yet flexible enough even to work with any RESTful server
-* [Highly customizable “syncing”](https://github.com/dingbat/nsrails/wiki/NSRailsSync) with remote attributes. Includes [nesting](https://github.com/dingbat/nsrails/wiki/Nesting) related models (has-many, etc)
+* [Highly customizable “syncing”](https://github.com/dingbat/nsrails/wiki/NSRailsSync) with your Rails attributes
+* [Nesting](https://github.com/dingbat/nsrails/wiki/Nesting) supported for relations like has-many, belongs-to, etc
 * [Asynchronous requests](http://dingbat.github.com/nsrails/html/Classes/NSRailsModel.html)
+* [Autogenerate](https://github.com/dingbat/nsrails/tree/master/autogen) NSRails-ready Objective-C classes from a Rails project
 * [Supported in RubyMotion and MacRuby](https://github.com/dingbat/nsrails/tree/master/demos/ios%20-%20rubymotion)
-* Easily translate Rails models into Objective-C classes using the bundled [autogen tool](https://github.com/dingbat/nsrails/tree/master/autogen)
-
-Dependencies
---------
-
-* iOS 5.0+
-* JSON framework (pre-bundled)
 
 Getting started
 ---------
+
+### Objective-C
 
 1. Drop the `Source` folder into your Xcode project.
 2. Make an Objective-C class for your Rails model. Make sure it subclasses **NSRailsModel** (you'll need to `#import NSRails.h`)
@@ -64,25 +61,68 @@ Getting started
         [[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
         ...
   ```
+  
+You're ready!
+  
+### RubyMotion & MacRuby
 
-You're ready! By subclassing NSRailsModel, your class gets tons of instance and class methods that'll act on your remote objects. See the [documentation](http://dingbat.github.com/nsrails/) and [wiki](https://github.com/dingbat/nsrails/wiki) for more details.
+  * See [this](https://github.com/dingbat/nsrails/tree/master/demos/ios%20-%20rubymotion) readme for instructions on getting started in Ruby
 
-### Bonus
+Getting warmed up
+----------
 
-* Use the **NSRailsSync()** macro if you want to define special behaviors for certain properties:
-  ```objc
-  @implementation Post
-  @synthesize author, content, createdAt, responses;
-  NSRailsSync(*, createdAt -r, responses:Response);
+By subclassing NSRailsModel, your class gets tons of instance and class methods that'll act on your remote objects. Here are a few of the things you can do with your new class:
 
-  ...
-  ```
+```objc
+//retrieve post with ID 1
+Post *post = [Post remoteObjectWithID:1 error:&error];
+post.content = @"Changed!";
 
-  - The `*` includes all of this class's properties as remote-relevant (default if NSRailsSync isn't defined). 
-  - `createdAt -r` makes `createdAt` retrievable-only (so that it's never *sent* to Rails - only retrieved).
-  - `responses:Response` tells NSRails to fill the `responses` array with instances of the Response class (also an NSRailsModel subclass, whose NSRailsSync will also be considered when nested).
+//update this post remotely
+[post remoteUpdate:&error];
 
-* Check out the [wiki page for NSRailsSync](https://github.com/dingbat/nsrails/wiki/NSRailsSync) for even more options!
+//fetch any latest data for this post (the boolean reference will tell you if anything changed)
+BOOL ch;
+[post remoteFetch:&error changes:&ch];
+
+//call custom method - would GET http://myapp.com/posts/1/something
+[post remoteGET:@"something" error:&error];
+
+//all of these are also available async:
+[post remoteDestroyAsync: ^(NSError *error) 
+                          {
+                            if (!error)
+                              ...
+                          }];
+
+```
+
+See the [documentation](http://dingbat.github.com/nsrails/) for more details.
+
+### NSRailsSync
+
+Use the **NSRailsSync()** macro if you want to define special behaviors for certain properties:
+
+```objc
+@implementation Post
+@synthesize author, content, createdAt, responses;
+NSRailsSync(*, createdAt -r, responses:Response);
+
+...
+```
+
+- The `*` includes all of this class's properties as remote-relevant (default if NSRailsSync isn't defined). 
+- `createdAt -r` makes `createdAt` retrievable-only (so that it's never *sent* to Rails - only retrieved).
+- `responses:Response` tells NSRails to fill the `responses` array with instances of the Response class (also an NSRailsModel subclass, whose NSRailsSync will also be considered when nested).
+
+
+See the [NSRailsSync wiki page](https://github.com/dingbat/nsrails/wiki/NSRailsSync) for even more options!
+
+Dependencies
+--------
+
+* iOS 5.0+
+* JSON framework (pre-bundled)
 
 Credits
 ----------
