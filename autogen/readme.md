@@ -3,7 +3,7 @@ Usage:
 
 ```
 $ cd path/to/nsrails_repo
-$ autogen/generate path/to/rails_project [options]
+$ autogen/generate [options] path/to/rails_project
 ```
 
 Files will be created in the `autogen/` directory with the extension `.gen`, whose contained files can then be added to your Xcode project.
@@ -11,7 +11,7 @@ Files will be created in the `autogen/` directory with the extension `.gen`, who
 Options
 -------
 
-Run the script without any arguments or use the `-h` (`--help`) flag for a list of these options. They are absolutely combinable!
+Use the `-h` (`--help`) flag for a list of these options.
 
 <table>
   <tr>
@@ -19,28 +19,28 @@ Run the script without any arguments or use the `-h` (`--help`) flag for a list 
     <th>Description</th>
   </tr>
   <tr>
+    <td><pre>--ruby</pre></td>
+    <td>Generate classes for RubyMotion or MacRuby (.rb). (Objective-C by default)</td>
+  </tr>
+  <tr>
     <td><pre>--created-at<br/>--updated-at</pre></td>
     <td>Include <code>created_at</code> and/or <code>updated_at</code> properties. (Excluded by default)</td>
   </tr>
   <tr>
-    <td><pre>--nesting-no-b-flag</pre></td>
-    <td>Exclude <code>-b</code> flag to any belongs-to properties. (Flags included by default - read more about this <a href="https://github.com/dingbat/nsrails/wiki/Property-flags">here</a>)</td>
-  </tr>
-  <tr>
-    <td><pre>--nesting-mutable-arrays</pre></td>
-    <td>Make X-to-many properties use <code>NSMutableArray</code> instead of <code>NSArray</code></td>
+    <td><pre>--mutable-arrays</pre></td>
+    <td>Use <code>NSMutableArray</code> for properties that are has-many (<code>NSArray</code> by default)</td>
   </tr>
   <tr>
     <td><pre>--nesting-retrievable-only</pre></td>
-    <td>Make all nested properties <a href="https://github.com/dingbat/nsrails/wiki/Property-flags">retrievable-only</a>. (Use this if you don't want to <a href="https://github.com/dingbat/nsrails/wiki/Nesting">support accepting nested attributes)</a></td>
+    <td>Make all nested properties <a href="https://github.com/dingbat/nsrails/wiki/NSRailsSync">retrievable-only</a>. (Use this if you don't want to <a href="https://github.com/dingbat/nsrails/wiki/Nesting">support accepting nested attributes</a>)</td>
   </tr>
   <tr>
-    <td><pre>--author, -a<br/>--company, -c<br/>--project -p</pre></td>
-    <td>Metadata (for headers of files). Each expects a string following it.</td>
+    <td><pre>--author, -a<br/>--company, -c<br/>--project, -p</pre></td>
+    <td>Metadata (for headers of files). Each expects a string following it</td>
   </tr>
   <tr>
     <td><pre>--prefix, -x</pre></td>
-    <td>Class prefix</td>
+    <td>Class and filename prefix. Expects a string following it</td>
   </tr>
 </table>
 
@@ -48,7 +48,7 @@ Example
 ------------
 
 ```
-$ autogen/generate APP_PATH -a "Nikola Tesla" -c "Tesla ELM" -p "The Coil" -x "NSR" --created-at --mutable-arrays 
+$ autogen/generate -a "Nikola Tesla" -c "Tesla ELM" -p "The Coil" -x "NSR" --created-at --mutable-arrays APP_PATH
 ```
 
 Could generate files like these:
@@ -61,6 +61,8 @@ Could generate files like these:
 //  Created by Nikola Tesla on 1/29/12.
 //  Copyright (c) 2012 Tesla ELM. All rights reserved.
 //
+
+#import "NSRails.h"
 
 @class NSRResponse;
 
@@ -83,9 +85,12 @@ Could generate files like these:
 //  Copyright (c) 2012 Tesla ELM. All rights reserved.
 //
 
+#import "NSRPost.h"
+#import "NSRResponse.h"
+
 @implementation NSRPost
 @synthesize content, author, createdAt, responses;
-NSRailsSync(*, author -b, createdAt -r, responses:NSRResponse)
+NSRailsSync(*, author -b, createdAt -r, responses:NSRResponse);
 
 @end
 ```

@@ -3,315 +3,448 @@
 require 'rubygems'
 require 'active_support/inflector'
 
-def import_classes(array)
-  array.map {|x| "#import \"#{x}.h\"" }.join("\n")
-end
-
-def h(m)
-  str = "#import \"NSRails.h\"\n"
-  if (m[:belongs_tos].count > 0)
-    str += "\n"
-    classes = ""
-    m[:belongs_tos].each do |type, properties|
-      if (classes.length > 0)
-        classes += ", "
-      end
-      classes += type
+class Model
+  attr_accessor :name, :property_collection
+  
+  def initialize
+    super
+    @property_collection = PropertyCollection.new
+  end
+  
+  def look_for_relationships(file, camelize)    
+    begin
+      model_file = File.open(@@options["path"]+"app/models/#{file}.rb")
+    rescue => e
+      return
     end
-    str += "@class #{classes};"
-    str += "\n"
-  end
-  str += "\n@interface #{m[:name]} : NSRailsModel\n"
-  m[:properties].each do |type, properties|
-    str += "\n@property (nonatomic, strong) #{type} #{properties.map { |x| '*'+x}.join(', ')};"
-  end
-  str
-end
+    
+    while line = model_file.gets()
+      next if (line.length > 0 && line[0] == "#")
 
-def m(m)
-  str = "#import \"#{m[:name]}.h\"\n"
-  if (m[:X_to_ones].count > 0)
-    str += import_classes(m[:X_to_ones].keys)+"\n"
-  end
-  str += "\n@implementation #{m[:name]}"
-  list = []
-  m[:properties].values.each do |v|
-    list += v
-  end
-  if (list.count > 0)
-    str += "\n@synthesize #{list.join(', ')};"
-  end
-  str += "\nNSRailsSync(*"
-  if (!@options[:nesting_no_b_flag])
-    m[:belongs_tos].each do |type, props|
-      props.each do |prop|
-        str += ", #{prop} -b"
-        if (@options[:nesting_retrievable_only])
-          str += "r"
+      #either "has_many :property" or "has_many :property, :through => :abc"
+      #too tired to figure this out in regex right now so trying both...
+      begin
+        match = line.match(/ :(.*),/).captures[0]
+      rescue
+        begin
+          match = line.match(/ :(.*)/).captures[0]
+        rescue
+          next
         end
       end
+
+      p = Property.new
+      p.name = camelize ? match.camelize(:lower) : match
+      p.has_many = line =~ /has_many/
+      p.belongs_to = line =~ /belongs_to/
+      
+      if p.has_many || p.belongs_to || line =~ /has_one/
+        if line =~ /:class_name/
+          match = line.match(/:class_name => (.*)/)
+          if match
+            c_name = match.captures[0]
+            c_name.gsub!("'","")
+            c_name.gsub!("\"","")
+
+            p.nested_class = c_name
+          end
+        else
+          p.nested_class = p.name.classify
+        end
+        
+        p.nested_class = @@options["prefix"]+p.nested_class if @@options["prefix"]
+        
+        if p.has_many
+          p.type = @@options["mutable-arrays"] ? "NSMutableArray" : "NSArray"
+        else
+          p.type = p.nested_class
+        end
+        
+     #   puts "detected prop: #{p.name}"
+        
+        @property_collection.properties << p
+      end
+    end    
+  end
+  
+  def interface_properties
+    final = []
+    property_collection.props_grouped_by_type.each do |type, props|
+      final << "@property (nonatomic, strong) #{type} #{props.map { |x| "*#{x.name}" }.join(', ')};"
+    end
+    return nil if final.empty?
+    final.join("\n")
+  end
+  
+  def synthesize
+    "@synthesize "+@property_collection.property_names.join(", ")+";"
+  end
+  
+
+  def sync_string(explicit=false)
+    if explicit
+      @property_collection.properties.map { |p| p.print(true) }.join(", ")
+    else
+      str = "*, "
+      @property_collection.properties.each do |p|
+        if p.prints_special?
+          str += p.print + ", "
+        end
+      end
+      str[0..str.length-3] #strip off trailing ", "
     end
   end
-  m[:has_manys].each do |type, props|
-    props.each do |prop|
-      str += ", #{prop}:#{type}"
-      if (@options[:nesting_retrievable_only])
+  
+  def print_objc_h
+    str = Generator.objc_header("#{@name}.h")+"\n\n"
+    
+    str += "#import \"NSRails.h\""+"\n\n"
+    
+    class_imports = property_collection.format_unique_nested_classes("@class %@;")
+    str += class_imports + "\n\n" if class_imports
+    
+    str += "@interface #{@name} : NSRailsModel"
+    
+    props = interface_properties
+    str += "\n\n"+props if props
+    
+    str += "\n\n@end"
+  end
+  
+  def print_objc_m
+    str = Generator.objc_header("#{@name}.m")+"\n\n"
+  
+    str += "#import \"#{@name}.h\""+"\n\n"
+    
+    file_imports = @property_collection.format_unique_nested_classes('#import "%@.h"')
+    str += file_imports + "\n\n" if file_imports
+    
+    str += "@implementation #{@name}"
+    
+    synth = synthesize
+    if synth
+      str += "\n"+synth
+      if @property_collection.has_special_sync?
+        str += "\nNSRailsSync(#{sync_string});"
+      end
+    end
+    
+    str += "\n\n@end"
+  end
+  
+  def print_ruby
+    str = "class #{@name} < NSRailsModel\n"
+    
+    names = @property_collection.property_names
+    if names
+      if false
+        #for when attr_accessor bug is fixed
+        str += "  attr_accessor :#{names.join(', :')}\n"
+      else
+        str += "  attr_writer :#{names.join(', :')}\n\n"
+        names.each do |x|
+          str += "  def #{x}; @#{x}; end\n"
+        end
+      end
+      str += "\n  def self.NSRailsSync\n    '#{sync_string(true)}'\n  end"
+    end
+    
+    str += "\nend"
+  end
+end
+
+class PropertyCollection
+  attr_accessor :properties
+  
+  def initialize
+    @properties = []
+  end
+  
+  def property_names
+    @properties.map { |p| p.name }
+  end
+  
+  def format_unique_nested_classes(format)
+    done = []
+    @properties.each do |p|
+      next if !p.nested_class
+      str = format.gsub("%@", p.nested_class)
+      if !done.include?(str)
+        done << str
+      end
+    end
+    return nil if done.empty?
+    done.join("\n")
+  end
+  
+  def props_grouped_by_type
+    types = {}
+    @properties.each do |prop|
+      types[prop.type] ||= []
+      types[prop.type] << prop
+    end
+    types
+  end
+  
+  def has_special_sync?
+    @properties.each do |prop|
+      if prop.prints_special?
+        return true
+      end
+    end
+    false
+  end
+end
+
+class Property
+  attr_accessor :nested_class, :name, :type, :belongs_to, :has_many
+    
+  def date?
+    @type == "NSDate"
+  end
+  
+  def prints_special?
+    (belongs_to || date? || nested_class) && !(has_many && belongs_to)
+  end
+  
+  def print(explicit = false)
+    str = self.name
+    if self.nested_class
+      str += ":#{self.nested_class}" if explicit || self.has_many
+      added_flag = false
+      if self.belongs_to
+        added_flag = true
+        str += " -b"
+      elsif explicit
+        added_flag = true
+        str += " -m"
+      end
+      if @@options["nesting-retrievable-only"]
+        str += "#{!added_flag ? ' -' : ''}r"
+      end
+    elsif self.date?
+      if explicit
+        str += ":NSDate"
+      end
+      if (self.name.camelize(:lower) == "createdAt" || self.name.camelize(:lower) == "updatedAt")
         str += " -r"
       end
     end
+    str
   end
-  if (@options[:created_at])
-    str += ", createdAt -r"
-  end
-  if (@options[:updated_at])
-    str += ", updatedAt -r"
-  end
-  str += ")"
 end
 
-def header(filename)
-str = "//
-//  #{filename}
-//  #{@options[:project]}
-//
-"
-if (!@options[:author])
-  str += "//  File generated by NSRails AutoGen tool on #{@time}.\n"
-else
-  str += "//  Created by #{@options[:author]} on #{@time}.\n"
-end
-if (!@options[:company])
-  if (@options[:author])
-    company = @options[:author]
-  else
-    company = "__MyCompanyName__"
-  end
-elsif
-  company = @options[:company]
-end
-str += "//  Copyright (c) #{Time.now.year.to_s} #{company}. All rights reserved.
-//"
-end
-
-def display_help
-  this_file = File.expand_path(File.dirname(__FILE__))+"/generate"
-  pwd = Dir.pwd
+class Generator  
+  attr_accessor :prefix, :ruby, :created_at, :updated_at
   
-  puts "Usage:"
-  puts "   #{this_file[pwd.length+1..this_file.length]} APP_PATH [options]"
-  puts ""
-  puts "Options for property translation:"
-  puts "   --created-at                  // Will include the created_at date property (as NSDate)"
-  puts "   --updated-at                  // Will include the updated_at date property (as NSDate)"
-  puts "   --nesting-no-b-flag           // On properties defined in Rails as belongs_to, will exclude '-b' flag"
-  puts "   --nesting-retrievable-only    // On properties relating another model, will include '-r' flag"
-  puts "   --nesting-mutable-arrays      // Will use NSMutableArray instead of NSArray for has_many properties"
-  puts ""
-  puts "Options for file styling:"
-  puts "   -a [--author]    -a \"Dan H\"             /* This is metadata for the headers at the"
-  puts "   -p [--project]   -p \"My Project\"             top of your files. Use quotations if your"
-  puts "   -c [--company]   -c \"My Company, LLC\"        argument has spaces.                   */"
-  puts "   -x [--prefix]    -x NSR                 // Prefix for classes and filenames"
-  puts ""
+  OBJC_CONVERSIONS = {"integer" => "NSNumber", "float" => "NSNumber", "double" => "NSNumber", "string" => "NSString", "text" => "NSString", "datetime" => "NSDate"}
+  
+  def self.objc_header(file)
+%Q{//
+//  #{file}
+//  #{@@options["project"]}
+//
+//  Created by #{@@options["author"]} on #{Time.now.strftime("%m/%d/%Y")}.
+//  Copyright (c) #{Time.now.year.to_s} #{@@options["company"]}. All rights reserved.
+//}
+  end
+  
+  def generate_with_schema(schema)
+   @models = []
+
+    current_model = nil
+    while line = schema.gets()
+      if (line.length > 0 && line[0] == "#"[0])
+        next
+      end
+      
+      new_model = false
+      if line =~ /create_table/
+        new_model = true
+        model_name = line.match(/create_table "(.*)",/).captures[0]
+
+        current_model = Model.new
+        current_model.name =  (@prefix ? @prefix : "")+model_name.classify
+        
+        current_model.look_for_relationships(model_name.singularize, !ruby)
+      end
+      next unless current_model
+      if line =~ /end/
+        @models << current_model
+        current_model = nil
+      elsif !new_model
+        prop = line.match(/\"(.*?)\"/).captures[0]
+        type = line.match(/t.(.*?)\"/).captures[0].strip
+        unless (prop =~ /_id/ || (prop == "updated_at" && !updated_at) || (prop == "created_at" && !created_at))
+          p = Property.new
+          p.type = OBJC_CONVERSIONS[type] || type    
+          p.name = ruby ? prop : prop.camelize(:lower)
+          
+          current_model.property_collection.properties << p
+        end
+      end
+    end
+  end
+  
+  def objc_files(&block)
+    @models.each do |m|
+      yield(m.name+".h", m.print_objc_h)
+      yield(m.name+".m", m.print_objc_m)
+    end
+    if @models.count > 1
+      # add a .h file to import them all
+      filename = (@@options["prefix"] ? @@options["prefix"] : "") + @@options["project"].gsub(" ","") + ".h"
+      str = Generator.objc_header(filename)+"\n\n"
+      @models.each do |m|
+        str += "#import \"#{m.name}.h\"\n"
+      end
+      yield(filename, str)
+    end
+  end
+  
+  def ruby_files(&block)
+    @models.each do |m|
+      yield(m.name.underscore+".rb", m.print_ruby)
+    end
+  end
 end
 
-EXPANDED_OPTIONS = {"-a" => "--author", "-p" => "--project", "-c" => "--company", "-x" => "--prefix"}
+class Runner
+  STRING_OPTIONS = [["author", "a"], ["company", "c"], ["project", "p"], ["prefix", "x"]]
+  
+  def self.print_help
+    this_file = File.expand_path(File.dirname(__FILE__))+"/generate"
+    pwd = Dir.pwd
 
-def options_hash_for_args(args)
-  if args.empty?
+    puts "Usage:"
+    puts "   #{this_file[pwd.length+1..this_file.length]} APP_PATH [options]"
+    puts ""
+    puts "Options for property translation"
+    puts "   --ruby                         Generate Ruby classes for MacRuby and RubyMotion"
+    puts "   --created-at                   Include the created_at date property (as NSDate)"
+    puts "   --updated-at                   Include the updated_at date property (as NSDate)"
+    puts "   --nesting-retrievable-only     On properties relating another model, include '-r' flag"
+    puts "   --mutable-arrays               Use NSMutableArray instead of NSArray for has_many properties"
+    puts ""
+    puts "Options for file styling - all expect a string following"
+    puts "   -a, --author                 "
+    puts "   -p, --project                "
+    puts "   -c, --company                "
+    puts "   -x, --prefix                   Prefix for classes and filenames"
+    puts ""
+  end
+  
+  def self.shortcut(option)
+    STRING_OPTIONS.each do |opt|
+      return opt[0] if opt.include?(option)
+    end
+    
     return nil
   end
-  options = Hash.new
-  current_option = nil
-  args.each do |arg|
-    if arg == "-h" || arg == "--help"
+  
+  def self.parse_options(options)
+    dict = {}
+    
+    current_key = nil
+    
+    options.each_with_index do |arg, idx|
+      if (arg == "--help" || arg == "-h")
+        print_help
+        return nil
+      end
+     
+      if current_key
+        dict[current_key] = arg
+        current_key = nil
+      else
+        if idx == options.size-1
+          path = File.expand_path(arg)
+          path += "/" if (path[path.length] != "/")
+          dict["path"] = path
+        else  
+          option = arg.gsub(/^-*/,"") #strip leading dashes
+          sh = shortcut(option)
+          if !sh
+            dict[option] = true
+          else
+            #will expect a string coming after
+            current_key = sh
+          end
+        end
+      end
+    end
+    
+    raise 'The path to a Rails app must be specified as the last argument to this command.' if !dict["path"]
+    
+    dict
+  end
+  
+  def self.write_file(filename, content)
+    file_dir = @@output_path + "/" + filename
+    
+    overwrite = File.exist?(file_dir)
+    identical = false
+    
+    if (overwrite && content.chomp == File.open(file_dir).read.chomp)
+      identical = true
+      overwrite = false
+    end
+    
+    sym = overwrite ? "o" : identical ? "i" : "+"
+    puts "  #{sym} #{filename}"
+    
+    File.open(file_dir, "w") do |file|
+      file.puts content
+    end
+  end
+  
+  def self.run
+    schema = nil
+    path = @@options["path"]
+    begin
+      schema = File.open(path+"db/schema.rb")
+    rescue => e
+      puts "Error! Either '#{path}' isn't the root path to a Rails project or your db/schema.rb is misplaced. (#{e})"
       return nil
     end
     
-    if !options[:path] #if path hasn't been set yet
-      if (arg[arg.length] != "/"[0])
-        arg += "/"
+    g = Generator.new
+    g.prefix = @@options["prefix"]
+    g.ruby = @@options["ruby"]
+    g.created_at = @@options["created-at"]
+    g.updated_at = @@options["updated-at"]
+
+    g.generate_with_schema(schema)
+    
+    if @@options["ruby"]
+      g.ruby_files do |filename, content|
+        write_file(filename,content)
       end
-      options[:path] = arg
     else
-      if (current_option)
-        options[current_option.to_sym] = arg
-        current_option = nil
-      else
-        begin
-          arg = EXPANDED_OPTIONS[arg] || arg
-          current_option = arg[2..arg.length].gsub("-","_")
-
-          if !EXPANDED_OPTIONS.values.include? arg
-            options[current_option.to_sym] = true
-            current_option = nil          
-          end
-        rescue
-        end
+      g.objc_files do |filename, content|
+        write_file(filename, content)
       end
     end
   end
-  options
 end
 
-def run_script_with_args(args)
-  @options = options_hash_for_args(args)
-  if (!@options)
-    display_help
-    return
-  end
+begin
+  @@options = Runner.parse_options(ARGV)
+  @@options["project"] ||= @@options["path"].split("/").last
+  @@options["company"] ||= @@options["author"] || "__MyCompanyName__"
+  @@options["author"] ||= "NSRails autogen"
   
-  project_name = @options[:project] || File.expand_path(@options[:path]).split("/").last    
-
+  @@output_path = File.expand_path(File.dirname(__FILE__))+"/"+@@options["project"]+".gen"
+  
   begin
-    schema = File.open(@options[:path]+"db/schema.rb")
+    Dir.mkdir(@@output_path)
+    puts "Making directory #{@@options["project"]}.gen/"
   rescue
-    puts "Error: Either '#{@options[:path]}' isn't the root path to a Rails project or your db/schema.rb is misplaced."
-    return
-  end
-
-  file_dir = File.expand_path(File.dirname(__FILE__))
-  output_path = "#{file_dir}/#{project_name}.gen/"
-  begin
-    Dir.mkdir(output_path)
-    puts "Making directory #{project_name}.gen/"
-  rescue    
   end
   
-  @options[:project] ||= project_name.camelize
-  @options[:prefix] ||= ""
-
-  puts "Writing files to #{output_path}"
-
-  @time = Time.now.strftime("%m/%d/%Y")
-
-  models = []
+  puts "Writing files to #{@@output_path}"
   
-  objc_conversions = {"integer" => "NSNumber", "float" => "NSNumber", "double" => "NSNumber", "string" => "NSString", "text" => "NSString", "datetime" => "NSDate"}
-  while line = schema.gets()
-    new_model = false
-    if line =~ /create_table/
-      new_model = true
-      model_name = line.match(/create_table "(.*)",/).captures[0]
-      @model = {:name => @options[:prefix]+model_name.classify, :model_name => model_name.singularize}
-      @model[:properties] = Hash.new
-      @model[:belongs_tos] = Hash.new
-      @model[:has_manys] = Hash.new
-      @model[:X_to_ones] = Hash.new
-    end
-    next unless @model
-    if line =~ /end/
-      begin
-        model_file = File.open(@options[:path]+"app/models/#{@model[:model_name]}.rb")
-        while line = model_file.gets()
-          if (line.length > 0 && line[0] == "#"[0])
-            next
-          end
-          match = nil
-
-          #either "has_many :property" or "has_many :property, :through => :abc"
-          #can't figure this out in regex right now so trying both...
-          begin
-            match = line.match(/ :(.*),/).captures
-          rescue
-            begin
-              match = line.match(/ :(.*)/).captures
-            rescue
-              next
-            end
-          end
-
-          prop = match[0].camelize(:lower)
-          prop_type = prop.classify
-          
-          if line =~ /:class_name/
-            match = line.match(/:class_name => (.*)/)
-            if match
-              prop_type = match.captures[0]
-              prop_type.gsub!("'","")
-              prop_type.gsub!("\"","")
-            end
-          end
-          
-          class_name = @options[:prefix]+prop_type
-          objc_type = class_name
-
-          if line =~ /belongs_to/
-            @model[:belongs_tos][objc_type] ||= []
-            @model[:belongs_tos][objc_type] << prop
-            @model[:X_to_ones][objc_type] ||= []
-            @model[:X_to_ones][objc_type] << prop
-          elsif line =~ /has_one/
-            @model[:X_to_ones][objc_type] ||= []
-            @model[:X_to_ones][objc_type] << prop
-          elsif line =~ /has_many/
-            objc_type = @options[:nesting_mutable_arrays] ? "NSMutableArray" : "NSArray"
-            @model[:has_manys][class_name] ||= []
-            @model[:has_manys][class_name] << prop
-          else
-            next
-          end
-
-          @model[:properties][objc_type] ||= []
-          @model[:properties][objc_type] << prop
-        end
-      rescue
-      end
-
-      ["h", "m"].each do |format|
-        filename = @model[:name]+"."+format
-        overwrite = File.exist?(output_path+filename)
-        identical = false
-        
-        contents = header(filename)
-        contents += "\n\n"
-        contents += eval("#{format}(@model)")
-        contents += "\n\n@end"
-        
-        if (overwrite && contents.chomp == File.open(output_path+filename).read.chomp)
-          identical = true
-          overwrite = false
-        end
-        
-        puts "  + #{filename}#{overwrite ? '  (overwrite)' : identical ? '  (identical)' : ''}"
-        File.open(output_path+filename, "w") do |file|
-          file.puts contents
-        end
-      end
-      models << @model
-      @model = nil
-    elsif !new_model
-      prop = line.match(/\"(.*?)\"/).captures[0]
-      unless (prop =~ /_id/)
-        if ((prop == "created_at" && !@options[:created_at]) ||
-            (prop == "updated_at" && !@options[:updated_at]))
-          next
-        end
-        
-        schema_type = line.match(/t.(.*?)\"/).captures[0].strip
-        prop = prop.camelize(:lower)
-        type = objc_conversions[schema_type]
-
-        @model[:properties][type] ||= []
-        @model[:properties][type] << prop
-      end
-    end
-  end
-  if (models.count > 1)
-    filename = @options[:prefix]+@options[:project]
-    models.each do |mod|
-      if mod.keys.include?(filename)
-        filename += "Headers"
-        break
-      end
-    end
-    filename += ".h"
-    puts "  + #{filename}"    
-    File.open(output_path+filename, "w") do |file|
-      file.puts(header(filename)+"\n\n")
-      file.puts(import_classes(models.collect { |m| m[:name] }))
-    end
-  end
+  Runner.run if @@options
+rescue => e
+  puts "Error! #{e}\nUse --help or -h for help."
 end
-
-run_script_with_args(ARGV)
