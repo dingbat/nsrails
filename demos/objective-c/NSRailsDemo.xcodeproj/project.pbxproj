@@ -10,7 +10,6 @@
 		5975A4A3156364200088E453 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5975A4A2156364200088E453 /* UIKit.framework */; };
 		5975A4A5156364200088E453 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5975A4A4156364200088E453 /* Foundation.framework */; };
 		5975A4A7156364200088E453 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5975A4A6156364200088E453 /* CoreGraphics.framework */; };
-		5975A5261563684C0088E453 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A5231563684C0088E453 /* main.m */; };
 		5975A5651563686F0088E453 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A5571563686F0088E453 /* AppDelegate.m */; };
 		5975A5661563686F0088E453 /* InputViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A55A1563686F0088E453 /* InputViewController.m */; };
 		5975A5671563686F0088E453 /* InputViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5975A55B1563686F0088E453 /* InputViewController.xib */; };
@@ -37,6 +36,7 @@
 		5975A6CF156374430088E453 /* NSRailsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A6BA156374420088E453 /* NSRailsModel.m */; };
 		5975A6D0156374430088E453 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A6BC156374420088E453 /* NSRConfig.m */; };
 		5975A6D1156374430088E453 /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A6BE156374420088E453 /* NSRPropertyCollection.m */; };
+		59B4B5CE15681CD70005A505 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 59B4B5CB15681CD70005A505 /* main.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,9 +44,6 @@
 		5975A4A2156364200088E453 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5975A4A4156364200088E453 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5975A4A6156364200088E453 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		5975A5231563684C0088E453 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		5975A5241563684C0088E453 /* NSRailsDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "NSRailsDemo-Info.plist"; sourceTree = "<group>"; };
-		5975A5251563684C0088E453 /* NSRailsDemo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSRailsDemo-Prefix.pch"; sourceTree = "<group>"; };
 		5975A5561563686F0088E453 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Classes/AppDelegate.h; sourceTree = SOURCE_ROOT; };
 		5975A5571563686F0088E453 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Classes/AppDelegate.m; sourceTree = SOURCE_ROOT; };
 		5975A5591563686F0088E453 /* InputViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputViewController.h; sourceTree = "<group>"; };
@@ -100,6 +97,9 @@
 		5975A6BC156374420088E453 /* NSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConfig.m; sourceTree = "<group>"; };
 		5975A6BD156374420088E453 /* NSRPropertyCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRPropertyCollection.h; sourceTree = "<group>"; };
 		5975A6BE156374420088E453 /* NSRPropertyCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRPropertyCollection.m; sourceTree = "<group>"; };
+		59B4B5CB15681CD70005A505 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		59B4B5CC15681CD70005A505 /* NSRailsDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "NSRailsDemo-Info.plist"; sourceTree = "<group>"; };
+		59B4B5CD15681CD70005A505 /* NSRailsDemo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSRailsDemo-Prefix.pch"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,7 +121,7 @@
 			children = (
 				5975A4A8156364200088E453 /* NSRailsDemo */,
 				5975A693156374420088E453 /* NSRails */,
-				5975A5221563684C0088E453 /* Auxiliary */,
+				59B4B5CA15681CD70005A505 /* Supporting Files */,
 				5975A4A1156364200088E453 /* Frameworks */,
 				5975A49F156364200088E453 /* Products */,
 			);
@@ -154,16 +154,6 @@
 				5975A5601563686F0088E453 /* Models */,
 			);
 			path = NSRailsDemo;
-			sourceTree = "<group>";
-		};
-		5975A5221563684C0088E453 /* Auxiliary */ = {
-			isa = PBXGroup;
-			children = (
-				5975A5231563684C0088E453 /* main.m */,
-				5975A5241563684C0088E453 /* NSRailsDemo-Info.plist */,
-				5975A5251563684C0088E453 /* NSRailsDemo-Prefix.pch */,
-			);
-			path = Auxiliary;
 			sourceTree = "<group>";
 		};
 		5975A5581563686F0088E453 /* Controllers */ = {
@@ -265,6 +255,16 @@
 			path = SBJson;
 			sourceTree = "<group>";
 		};
+		59B4B5CA15681CD70005A505 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				59B4B5CB15681CD70005A505 /* main.m */,
+				59B4B5CC15681CD70005A505 /* NSRailsDemo-Info.plist */,
+				59B4B5CD15681CD70005A505 /* NSRailsDemo-Prefix.pch */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -326,7 +326,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5975A5261563684C0088E453 /* main.m in Sources */,
 				5975A5651563686F0088E453 /* AppDelegate.m in Sources */,
 				5975A5661563686F0088E453 /* InputViewController.m in Sources */,
 				5975A5681563686F0088E453 /* PostsViewController.m in Sources */,
@@ -352,6 +351,7 @@
 				5975A6CF156374430088E453 /* NSRailsModel.m in Sources */,
 				5975A6D0156374430088E453 /* NSRConfig.m in Sources */,
 				5975A6D1156374430088E453 /* NSRPropertyCollection.m in Sources */,
+				59B4B5CE15681CD70005A505 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -407,8 +407,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Auxiliary/NSRailsDemo-Prefix.pch";
-				INFOPLIST_FILE = "Auxiliary/NSRailsDemo-Info.plist";
+				GCC_PREFIX_HEADER = "Supporting Files/NSRailsDemo-Prefix.pch";
+				INFOPLIST_FILE = "Supporting Files/NSRailsDemo-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -418,8 +418,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Auxiliary/NSRailsDemo-Prefix.pch";
-				INFOPLIST_FILE = "Auxiliary/NSRailsDemo-Info.plist";
+				GCC_PREFIX_HEADER = "Supporting Files/NSRailsDemo-Prefix.pch";
+				INFOPLIST_FILE = "Supporting Files/NSRailsDemo-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

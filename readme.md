@@ -30,7 +30,7 @@ Features
 * [Nesting](https://github.com/dingbat/nsrails/wiki/Nesting) supported for relations like has-many, belongs-to, etc
 * [Asynchronous requests](http://dingbat.github.com/nsrails/html/Classes/NSRailsModel.html)
 * [Autogenerate](https://github.com/dingbat/nsrails/tree/master/autogen) NSRails-ready Objective-C classes from a Rails project
-* [Supported in RubyMotion and MacRuby](https://github.com/dingbat/nsrails/tree/master/demos/ios%20-%20rubymotion)
+* [Supported in RubyMotion and MacRuby](https://github.com/dingbat/nsrails/tree/master/demos/rubymotion)
 
 Getting started
 ---------
@@ -66,7 +66,7 @@ You're ready!
   
 ### RubyMotion & MacRuby
 
-  * See [this](https://github.com/dingbat/nsrails/tree/master/demos/ios%20-%20rubymotion) readme for instructions on getting started in Ruby
+  * See [this](https://github.com/dingbat/nsrails/tree/master/demos/rubymotion) readme for instructions on getting started in Ruby
 
 Getting warmed up
 ----------
