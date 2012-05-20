@@ -24,7 +24,7 @@
 @end
 
 
-#define NSRAssertRelevantConfigURL(teststring,desc) NSRAssertEqualConfigs([NSRailsModel getRelevantConfig], teststring, desc, nil)
+#define NSRAssertRelevantConfigURL(string,desc) NSRAssertEqualConfigs([NSRailsModel getRelevantConfig], string, desc, nil)
 
 
 @implementation TNSRConfig

@@ -202,7 +202,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	NSRAssertEqualSyncStrings([SyncStringTester masterNSRailsSyncWithOverrideString:@"*"], @"property3, property2, property1, remoteID=id", @"* failed");
 	NSRAssertEqualSyncStrings([SyncStringTester masterNSRailsSyncWithOverrideString:@"*, property1 -x"], @"property1 -x, property3, property2, property1, remoteID=id", @"* with extraneous failed");
 	NSRAssertEqualSyncStrings([SyncStringTester masterNSRailsSyncWithOverrideString:@"*, property1 -x, remoteID -x"], @"property1 -x, remoteID -x, property3, property2, property1, remoteID=id", @"* with extraneous failed");
-
+	
 	// Inheritance
 	
 	NSRAssertEqualSyncStrings([SyncStringTester masterNSRailsSyncWithOverrideString:@"NSRNoCarryFromSuper"], @"remoteID=id", @"should be blank if nothing declared and nothing inherited");
@@ -278,7 +278,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	GHAssertEqualStrings(p.shared, @"shared", @"Should've set shared... blank");
 	GHAssertEqualStrings(p.sharedExplicit, @"shared explicit", @"Should've set sharedExplicit... -rs");
 	GHAssertEqualStrings(p.undefined, @"local", @"Shouldn't have set undefined... not in NSRS");
-
+	
 	NSDictionary *sendDict = [p dictionaryOfRemoteProperties];
 	GHAssertNil([sendDict objectForKey:@"retrieve_only"], @"Shouldn't send retrieve-only... -r");
 	GHAssertNil([sendDict objectForKey:@"local"], @"Shouldn't send local-only... -x");
@@ -299,7 +299,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	nester.dictionaries = [NSArray arrayWithObjects:[NSDictionary dictionaryWithObject:@"obj" forKey:@"key"], [NSDictionary dictionaryWithObject:@"obj2" forKey:@"key2"], nil];
 	
 	NSDictionary *send = [nester dictionaryOfRemoteProperties];
-
+	
 	GHAssertNotNil(send, @"Dictionaries shouldn't be nil after trying to make it");
 	GHAssertTrue([[send objectForKey:@"dictionaries_attributes"] count] == 2, @"Dictionaries should have 2 elements");
 	GHAssertTrue([[[send objectForKey:@"dictionaries_attributes"] objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Dictionaries obj should be of type NSDictionary");
@@ -312,7 +312,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	GHAssertNotNil(guy.lotsOfDates, @"Dates shouldn't be nil after JSON set");
 	GHAssertTrue(guy.lotsOfDates.count == 3, @"Should have 3 dates");
 	GHAssertTrue([[guy.lotsOfDates objectAtIndex:0] isKindOfClass:[NSDate class]], @"Date obj should be of type NSDate");
-
+	
 	NSDictionary *send = [guy dictionaryOfRemoteProperties];
 	
 	GHAssertNotNil([send objectForKey:@"lots_of_dates_attributes"], @"Dates shouldn't be nil after remote dict");
@@ -326,14 +326,36 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	NoSyncStringTester *t = [[NoSyncStringTester alloc] init];
 	
 	NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:@"test", @"property1", nil];
-	[t setPropertiesUsingRemoteDictionary:dict];
+	
+	BOOL ch = [t setPropertiesUsingRemoteDictionary:dict];
 	GHAssertEqualStrings(t.property1, @"test", @"");
+	GHAssertTrue(ch, @"Should've been changes first time around");
+	
+	BOOL ch2 = [t setPropertiesUsingRemoteDictionary:dict];
+	GHAssertFalse(ch2, @"Should've been no changes when setting to no dict");
 	
 	t.property1 = nil;
 	
 	NSDictionary *dictEnveloped = [[NSDictionary alloc] initWithObjectsAndKeys:[[NSDictionary alloc] initWithObjectsAndKeys:@"test",@"property1", nil], @"no_sync_string_tester", nil];
-	[t setPropertiesUsingRemoteDictionary:dictEnveloped];
+	BOOL ch3 = [t setPropertiesUsingRemoteDictionary:dictEnveloped];
 	GHAssertEqualStrings(t.property1, @"test", @"");
+	GHAssertFalse(ch2, @"Should've been no changes when setting to inner dict");
+}
+
+
+- (void) test_serialization
+{
+	NSString *file = [NSHomeDirectory() stringByAppendingPathComponent:@"test.dat"];
+	
+	Empty *e = [[Empty alloc] init];
+	e.remoteID = [NSNumber numberWithInt:5];
+	BOOL s = [NSKeyedArchiver archiveRootObject:e toFile:file];
+	
+	GHAssertTrue(s, @"Archiving should've worked (serialize)");
+	
+	Empty *ee = [NSKeyedUnarchiver unarchiveObjectWithFile:file];
+	GHAssertEquals(e.remoteID, ee.remoteID, @"Should've carried over remoteID");
+	GHAssertEquals(e.remoteID, ee.remoteID, @"Should've carried over remoteID");
 }
 
 - (void)setUpClass

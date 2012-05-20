@@ -70,6 +70,6 @@ if ([a count] != length) GHFail(@"%@ should be equal (order/blanks don't matter)
 }
 
 
-#define NSRAssertEqualConfigs(config,teststring,desc, ...) GHAssertEqualStrings(teststring, config.appURL, desc, __VA_ARGS__)
+#define NSRAssertEqualConfigs(config,string,desc, ...) GHAssertEqualStrings(config.appURL, string, desc, __VA_ARGS__)
 
 
