@@ -236,19 +236,6 @@ NSRailsSync(*);
 }
 
 
-// Encode/decode date objects by default (will be added as custom en/de coders if they aren't declared)
-
-- (NSString *) nsrails_encodeDate:(NSDate *)date
-{
-	return [[self getRelevantConfig] stringFromDate:date];
-}
-
-- (NSDate *) nsrails_decodeDate:(NSString *)dateRep
-{
-	return [[self getRelevantConfig] dateFromString:dateRep];
-}
-
-
 - (id) initWithCustomSyncProperties:(NSString *)str customConfig:(NSRConfig *)config
 {
 	if ((self = [super init]))
@@ -273,13 +260,16 @@ NSRailsSync(*);
 
 #pragma mark - Internal NSR stuff
 
-//overload NSObject's description method to be a bit more, hm... descriptive
-//will return the latest Rails dictionary (hash) retrieved
-- (NSString *) description
+// Encode/decode date objects by default (will be added as custom en/de coders if they aren't declared)
+
+- (NSString *) nsrails_encodeDate:(NSDate *)date
 {
-	if (remoteAttributes)
-		return [[super description] stringByAppendingFormat:@"=> Remote attr: %@", remoteAttributes];
-	return [super description];
+	return [[self getRelevantConfig] stringFromDate:date];
+}
+
+- (NSDate *) nsrails_decodeDate:(NSString *)dateRep
+{
+	return [[self getRelevantConfig] dateFromString:dateRep];
 }
 
 - (NSString *) remoteJSONRepresentation:(NSError **)e
@@ -467,7 +457,7 @@ NSRailsSync(*);
 		{
 			if (!property.retrievable)
 				continue;
-									
+			
 			id railsObject = [dict objectForKey:railsProperty];
 			if (railsObject == [NSNull null])
 				railsObject = nil;
@@ -476,7 +466,6 @@ NSRailsSync(*);
 			SEL setter = [[self class] setterForProperty:property.name];
 			
 			id previousVal = [self performSelector:getter];
-			id decodedObj = railsObject;
 			
 			SEL customDecode = NULL;
 			if (property.decodable)
@@ -487,20 +476,21 @@ NSRailsSync(*);
 			{
 				customDecode = @selector(nsrails_decodeDate:);
 			}
-
+			
+			id decodedObj = nil;
 			if (customDecode)
 			{
 				decodedObj = [self performSelector:customDecode withObject:railsObject];
 			}
 			else	
 			{
-				if (decodedObj)
+				if (railsObject)
 				{
 					if (property.isHasMany && property.nestedClass)
 					{
 						if (![railsObject isKindOfClass:[NSArray class]])
 							[NSException raise:NSRailsInternalError format:@"Attempt to set property '%@' in class '%@' (declared as has-many) to a non-array non-null value ('%@').", property, self.class, railsObject];
-							
+						
 						//array of NSRailsModels is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
 						
 						NSMutableArray *newArray = [[NSMutableArray alloc] init];
@@ -520,17 +510,17 @@ NSRailsSync(*);
 							{
 								//see if there's a nester that matches this ID - we'd just have to update it w/this dict
 								NSUInteger idx = [previousVal indexOfObjectPassingTest:
-													^BOOL(NSRailsModel *obj, NSUInteger idx, BOOL *stop) 
-													{
-														if ([obj.remoteID isEqualToNumber:[railsElement objectForKey:@"id"]])
-														{
-															if (stop)
-																*stop = YES;
-															return YES;
-														}
-														return NO;
-													}];
-																
+												  ^BOOL(NSRailsModel *obj, NSUInteger idx, BOOL *stop) 
+												  {
+													  if ([obj.remoteID isEqualToNumber:[railsElement objectForKey:@"id"]])
+													  {
+														  if (stop)
+															  *stop = YES;
+														  return YES;
+													  }
+													  return NO;
+												  }];
+								
 								if (!previousVal || idx == NSNotFound)
 								{
 									//didn't previously exist - make a new one
@@ -573,8 +563,13 @@ NSRailsSync(*);
 								changes = YES;
 						}
 					}
+					//otherwise, if not nested or anything, just use what we got (number, string, dictionary)
+					else
+					{
+						decodedObj = railsObject;
+					}
 				}
-				//new value is nil
+				//if new value is nil
 				else
 				{
 					//if previous object existed, mark a change
@@ -1062,7 +1057,7 @@ NSRailsSync(*);
 		 }
 		 else
 		 {
-			 //make an array from the result returned async, and we can reuse the same error dereference (since we know it's nil)
+			 //make an array from the result returned async, and we can reuse the same error ptr (since we know it's nil)
 			 NSArray *array = [self arrayOfModelsFromJSON:result error:&error];
 			 completionBlock(array,error);
 		 }
