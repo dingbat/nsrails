@@ -138,8 +138,9 @@ GHAssertThrowsSpecificNamed(exp, NSException, NSRailsSyncException, desc)
 	GHAssertTrue(send.sendable, @"send should be marked sendable");
 
 	NSMutableArray *sendableAsStrings = [NSMutableArray array];
-	for (NSRProperty *p in pc.sendableProperties)
-		[sendableAsStrings addObject:p.name];
+	for (NSRProperty *p in pc.properties.allValues)
+		if (p.sendable)
+			[sendableAsStrings addObject:p.name];
 	
 	NSRAssertEqualArraysNoOrder(sendableAsStrings, NSRArray(@"sendretrieve", @"nothing", @"send"));
 }

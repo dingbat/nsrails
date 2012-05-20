@@ -263,18 +263,6 @@
 	return self;
 }
 
-- (NSArray *) sendableProperties
-{
-	NSMutableArray *sendable = [NSMutableArray array];
-	for (NSString *prop in properties)
-	{
-		NSRProperty *property = [properties objectForKey:prop];
-		if (property.sendable)
-			[sendable addObject:property];
-	}
-	return sendable;
-}
-
 - (NSArray *) objcPropertiesForRemoteEquivalent:(NSString *)remoteProp autoinflect:(BOOL)autoinflect
 {
 	NSString *inflectedRemoteProp = (autoinflect ? [remoteProp camelize] : remoteProp);

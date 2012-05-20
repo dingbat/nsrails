@@ -57,8 +57,6 @@
 
 - (NSArray *) objcPropertiesForRemoteEquivalent:(NSString *)remoteProperty autoinflect:(BOOL)autoinflect;
 
-- (NSArray *) sendableProperties;
-
 - (id) initWithClass:(Class)c syncString:(NSString *)str customConfig:(NSRConfig *)config;
 
 @end

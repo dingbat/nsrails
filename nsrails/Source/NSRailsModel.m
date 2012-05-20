@@ -600,10 +600,10 @@ NSRailsSync(*);
 {
 	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 	
-	for (NSRProperty *objcProperty in [self propertyCollection].sendableProperties)
+	for (NSRProperty *objcProperty in [self propertyCollection].properties.allValues)
 	{
-		//skip this property if it's nested and we're only looking shallow (to prevent infinite recursion)
-		if (shallow && objcProperty.nestedClass)
+		//skip this property if it's nested and we're only looking shallow (to prevent infinite recursion), or if it's not sendable
+		if ((shallow && objcProperty.nestedClass) || !objcProperty.sendable)
 			continue;
 		
 		NSString *railsEquivalent = objcProperty.remoteEquivalent;
