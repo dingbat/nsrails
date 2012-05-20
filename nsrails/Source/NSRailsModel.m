@@ -95,7 +95,7 @@ NSRailsSync(*);
 		syncStr = [syncStr stringByReplacingOccurrencesOfString:@"*" withString:@""];
 
 		//expand the star to everything in the class
-		NSString *expanded = [self.allProperties.allKeys componentsJoinedByString:@", "];
+		NSString *expanded = [self.allProperties componentsJoinedByString:@", "];
 		if (expanded)
 		{
 			//properties need to be appended to existing sync string since they can be overridden like with -x (and stripped of *)

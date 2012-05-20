@@ -33,7 +33,7 @@
 @interface NSObject (NSRPropertySupport)
 
 //returns an array of all properties declared in class
-+ (NSDictionary *) allProperties;
++ (NSArray *) allProperties;
 
 //returns type of the given property for that instance variable (ie, NSString)
 + (NSString *) typeForProperty:(NSString *)property;

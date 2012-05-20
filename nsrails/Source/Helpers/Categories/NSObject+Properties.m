@@ -34,21 +34,21 @@
 
 @implementation NSObject (NSRPropertySupport)
 
-+ (NSDictionary *) allProperties
++ (NSArray *) allProperties
 {
 	unsigned int propertyCount;
 	//copy all properties for self (will be a Class)
 	objc_property_t *properties = class_copyPropertyList(self, &propertyCount);
 	if (properties)
 	{
-		NSMutableDictionary *results = [NSMutableDictionary dictionaryWithCapacity:propertyCount];
+		NSMutableArray *results = [NSMutableArray arrayWithCapacity:propertyCount];
 		
 		while (propertyCount--)
 		{
 			//get each ivar name and add it to the results
 			const char *propName = property_getName(properties[propertyCount]);
 			NSString *prop = [NSString stringWithCString:propName encoding:NSASCIIStringEncoding];
-			[results setObject:[self typeForProperty:prop] forKey:prop];
+			[results addObject:prop];
 		}
 		
 		free(properties);	
