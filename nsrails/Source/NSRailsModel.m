@@ -318,25 +318,25 @@ NSRailsSync(*);
 	return [self remoteJSONRepresentation:error];
 }
 
+// Helper method for when mapping nested properties to JSON
 - (NSRailsModel *) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
 {
 	//make a new class to be entered for this property/array (we can assume it subclasses NSRailsModel)
 	NSRailsModel *model = [[NSClassFromString(classN) alloc] initWithRemoteDictionary:dict];
 	
-	//see if we can assign an association from its parent (the receiver -- "me" ("self"))
+	//see if we can assign an association to its parent (self)
 	NSString *parentModelName = [[self class] masterModelName];
 	NSArray *properties = [[model propertyCollection] objcPropertiesForRemoteEquivalent:parentModelName 
-																		  autoinflect:[self getRelevantConfig].autoinflectsPropertyNames];
+																			autoinflect:[self getRelevantConfig].autoinflectsPropertyNames];
 	
 	for (NSRProperty *property in properties)
 	{
 		//only assign me to the child if it has me defined as a property and it's marked as nested to me
-		if (property &&
+		if (property.retrievable &&
 			[property.nestedClass isEqualToString:[self.class description]])
 		{
 			SEL setter = [[model class] setterForProperty:property.name];
-			if (setter)
-				[model performSelector:setter withObject:self];
+			[model performSelector:setter withObject:self];
 		}
 	}
 	
