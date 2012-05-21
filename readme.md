@@ -29,7 +29,7 @@ Features
 * [Highly customizable “syncing”](https://github.com/dingbat/nsrails/wiki/NSRailsSync) with your Rails attributes
 * [Nesting](https://github.com/dingbat/nsrails/wiki/Nesting) supported for relations like has-many, belongs-to, etc
 * [Asynchronous requests](http://dingbat.github.com/nsrails/html/Classes/NSRailsModel.html)
-* [Autogenerate](https://github.com/dingbat/nsrails/tree/master/autogen) NSRails-ready Objective-C classes from a Rails project
+* [Autogenerate](https://github.com/dingbat/nsrails/tree/master/autogen) NSRails-ready classes from a Rails project
 * [Supported in RubyMotion and MacRuby](https://github.com/dingbat/nsrails/tree/master/demos/rubymotion)
 
 Getting started
@@ -121,11 +121,13 @@ See the [NSRailsSync wiki page](https://github.com/dingbat/nsrails/wiki/NSRailsS
 Dependencies
 --------
 
-* iOS 5.0+
+* iOS 5.0+ (ARC)
 * JSON framework (pre-bundled)
 
 Credits
 ----------
+
+Version 1.0.
 
 I'd like to acknowledge [SBJson](https://github.com/stig/json-framework) for great JSON reading and writing, and thank the [ObjectiveResource](https://github.com/yfactorial/objectiveresource) project for being largely the inspiration for NSRails.
 
