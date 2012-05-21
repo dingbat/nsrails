@@ -17,7 +17,13 @@
 NSRailsSync(local -x, retrieveOnly -r, shared, sharedExplicit -rs, sendOnly -s)
 @end
 
-//////
+@interface PropertyTester : NSRailsModel
+@property (nonatomic, strong) id property1;
+@end 
+
+@implementation PropertyTester
+@synthesize property1;
+@end
 
 @interface BadCoder : NSRailsModel
 @end
@@ -279,7 +285,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	
 	p.encodeNonJSON = YES;
 	
-	GHAssertThrowsSpecificNamed([p dictionaryOfRemoteProperties], NSException, NSRailsInvalidJSONEncodingException, @"Encoding into non-JSON for sendable dict - where's the error?");
+	GHAssertThrowsSpecificNamed([p dictionaryOfRemoteProperties], NSException, NSRailsJSONParsingException, @"Encoding into non-JSON for sendable dict - where's the error?");
 }
 
 - (void) test_send_retrieve
@@ -341,7 +347,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 
 - (void) test_set_properties
 {
-	NoSyncStringTester *t = [[NoSyncStringTester alloc] init];
+	PropertyTester *t = [[PropertyTester alloc] init];
 	
 	NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:@"test", @"property1", nil];
 	
@@ -354,10 +360,30 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	
 	t.property1 = nil;
 	
-	NSDictionary *dictEnveloped = [[NSDictionary alloc] initWithObjectsAndKeys:[[NSDictionary alloc] initWithObjectsAndKeys:@"test",@"property1", nil], @"no_sync_string_tester", nil];
+	NSDictionary *dictEnveloped = [[NSDictionary alloc] initWithObjectsAndKeys:[[NSDictionary alloc] initWithObjectsAndKeys:@"test",@"property1", nil], @"property_tester", nil];
 	BOOL ch3 = [t setPropertiesUsingRemoteDictionary:dictEnveloped];
 	GHAssertEqualStrings(t.property1, @"test", @"");
 	GHAssertFalse(ch2, @"Should've been no changes when setting to inner dict");
+	
+	BOOL b;
+	GHAssertNoThrow(b = [t setPropertiesUsingRemoteJSON:nil], @"Shouldn't blow up on setting to nil JSON");
+	GHAssertFalse(b, @"Shouldn't be a change if nil JSON");
+
+	BOOL b2;
+	GHAssertNoThrow(b2 = [t setPropertiesUsingRemoteDictionary:nil], @"Shouldn't blow up on setting to nil dict");
+	GHAssertFalse(b2, @"Shouldn't be a change if nil dict");
+
+	GHAssertThrowsSpecificNamed([t setPropertiesUsingRemoteJSON:@"null"], NSException, NSRailsJSONParsingException, @"Should blow up on bad JSON");
+	GHAssertNoThrow([t setPropertiesUsingRemoteJSON:@"{\"property_tester\":null}"], @"Shouldn't blow up, just issue a warning");
+	GHAssertNoThrow([t setPropertiesUsingRemoteJSON:@"{\"property_tester\":{\"property1\":null}}"], @"Shouldn't blow up on setting to a null JSON value");
+	
+	GHAssertNil(t.property1, @"property1 should be nil after setting from JSON");
+
+	GHAssertThrowsSpecificNamed([t setPropertiesUsingRemoteJSON:@"fiauj"], NSException, NSRailsJSONParsingException, @"Should blow up on bad JSON");
+	t.property1 = [[NSScanner alloc] init];
+	GHAssertNoThrow([t dictionaryOfRemoteProperties], @"Shouldn't blow up on making a DICT");
+	GHAssertThrowsSpecificNamed([t remoteJSONRepresentation], NSException, NSRailsJSONParsingException, @"Should blow up on making bad JSON");
+	GHAssertThrowsSpecificNamed([t remoteCreate:nil], NSException, NSRailsJSONParsingException, @"Should blow up on making bad JSON");
 }
 
 
@@ -372,7 +398,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	GHAssertTrue(s, @"Archiving should've worked (serialize)");
 	
 	Empty *eRetrieve = [NSKeyedUnarchiver unarchiveObjectWithFile:file];
-	GHAssertEquals(e.remoteID, eRetrieve.remoteID, @"Should've carried over remoteID");
+	GHAssertEqualObjects(e.remoteID, eRetrieve.remoteID, @"Should've carried over remoteID");
 	
 
 	Empty *eCustomSync = [[Empty alloc] initWithCustomSyncProperties:@"custom"];
@@ -380,10 +406,11 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	
 	GHAssertTrue(s, @"Archiving should've worked (serialize)");
 	
+// decoding ivars on custompropertycollection requires retaining, so ignore on mac os (ghunit doesn't support ARC)
+#if TARGET_OS_IPHONE
 	Empty *eCustomSyncRetrieve = [NSKeyedUnarchiver unarchiveObjectWithFile:file];
 	NSRAssertEqualArraysNoOrder(eCustomSyncRetrieve.propertyCollection.properties.allKeys, NSRArray(@"custom", @"remoteID"));
 
-	
 	Empty *eCustomSyncConfig = [[Empty alloc] initWithCustomSyncProperties:@"custom" customConfig:[[NSRConfig alloc] initWithAppURL:@"URL"]];
 	s = [NSKeyedArchiver archiveRootObject:eCustomSyncConfig toFile:file];
 	
@@ -403,6 +430,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	GHAssertEqualStrings(guyRetrieve.propertyCollection.customConfig.appURL, @"url", @"Config should carry over");
 	GHAssertEqualStrings(guyRetrieve.propertyCollection.customConfig.appUsername, @"user", @"Config should carry over");
 	GHAssertEqualStrings(guyRetrieve.propertyCollection.customConfig.appPassword, @"pass", @"Config should carry over");
+#endif
 }
 
 - (void)setUpClass

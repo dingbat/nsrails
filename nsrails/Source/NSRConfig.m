@@ -30,7 +30,7 @@
 
 #import "NSRConfig.h"
 
-#import "NSRails+SBJson.h"
+#import "SBJson.h"
 #import "NSData+Additions.h"
 
 //NSRConfigStackElement implementation
@@ -64,7 +64,7 @@ NSString * const NSRValidationErrorsKey					= @"NSRValidationErrorsKey";
 
 NSString * const NSRRemoteErrorDomain					= @"NSRRemoteErrorDomain";
 NSString * const NSRailsSyncException					= @"NSRailsSyncException";
-NSString * const NSRailsInvalidJSONEncodingException	= @"NSRailsInvalidJSONEncodingException";
+NSString * const NSRailsJSONParsingException			= @"NSRailsJSONParsingException";
 NSString * const NSRailsInternalError					= @"NSRailsInternalError";
 NSString * const NSRailsMissingURLException				= @"NSRailsMissingURLException";
 NSString * const NSRailsNullRemoteIDException			= @"NSRailsNullRemoteIDException";

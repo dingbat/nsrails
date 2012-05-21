@@ -43,23 +43,27 @@
 {
 	if (self = [super init])
 	{
-		sendable = [aDecoder decodeBoolForKey:@"sendable"];
-		retrievable = [aDecoder decodeBoolForKey:@"retrievable"];
-		decodable = [aDecoder decodeBoolForKey:@"decodable"];
-		encodable = [aDecoder decodeBoolForKey:@"encodable"];
-		hasMany = [aDecoder decodeBoolForKey:@"hasMany"];
-		belongsTo = [aDecoder decodeBoolForKey:@"belongsTo"];
-		date = [aDecoder decodeBoolForKey:@"date"];
+		self.sendable = [aDecoder decodeBoolForKey:@"sendable"];
+		self.retrievable = [aDecoder decodeBoolForKey:@"retrievable"];
+		self.decodable = [aDecoder decodeBoolForKey:@"decodable"];
+		self.encodable = [aDecoder decodeBoolForKey:@"encodable"];
+		self.hasMany = [aDecoder decodeBoolForKey:@"hasMany"];
+		self.belongsTo = [aDecoder decodeBoolForKey:@"belongsTo"];
+		self.date = [aDecoder decodeBoolForKey:@"date"];
 		
-		remoteEquivalent = [aDecoder decodeObjectForKey:@"remoteEquivalent"];
-		name = [aDecoder decodeObjectForKey:@"name"];
-		nestedClass = [aDecoder decodeObjectForKey:@"nestedClass"];
+		self.remoteEquivalent = [aDecoder decodeObjectForKey:@"remoteEquivalent"];
+		self.name = [aDecoder decodeObjectForKey:@"name"];
+		self.nestedClass = [aDecoder decodeObjectForKey:@"nestedClass"];
 	}
 	return self;
 }
 
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
+	[aCoder encodeObject:remoteEquivalent forKey:@"remoteEquivalent"];
+	[aCoder encodeObject:name forKey:@"name"];
+	[aCoder encodeObject:nestedClass forKey:@"nestedClass"];
+
 	[aCoder encodeBool:sendable forKey:@"sendable"];
 	[aCoder encodeBool:retrievable forKey:@"retrievable"];
 	[aCoder encodeBool:decodable forKey:@"decodable"];
@@ -286,8 +290,8 @@
 {
 	if (self = [super init])
 	{
-		properties = [aDecoder decodeObjectForKey:@"properties"];
-		customConfig = [aDecoder decodeObjectForKey:@"customConfig"];
+		self.properties = [aDecoder decodeObjectForKey:@"properties"];
+		self.customConfig = [aDecoder decodeObjectForKey:@"customConfig"];
 	}
 	return self;
 }
