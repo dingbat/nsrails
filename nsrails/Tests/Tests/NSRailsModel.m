@@ -19,6 +19,13 @@ NSRailsSync(local -x, retrieveOnly -r, shared, sharedExplicit -rs, sendOnly -s)
 
 //////
 
+@interface BadCoder : NSRailsModel
+@end
+
+@implementation BadCoder
+NSRailsSync(thing -e)
+@end
+
 @interface PickyCoderComponent : NSRailsModel
 @property (nonatomic, strong) NSString *componentName;
 @end
@@ -241,6 +248,9 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 
 - (void) test_encode_decode
 {
+	BadCoder *b = [[BadCoder alloc] init];
+	GHAssertThrows([b dictionaryOfRemoteProperties], @"Should throw unrecognized selector for encode:");
+	
 	PickyCoder *p = [[PickyCoder alloc] initWithRemoteJSON:[MockServer newPickyCoder]];
 	p.encodeNonJSON = NO;
 	
