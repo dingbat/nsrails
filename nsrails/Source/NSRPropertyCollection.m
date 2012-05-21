@@ -287,6 +287,7 @@
 	if (self = [super init])
 	{
 		properties = [aDecoder decodeObjectForKey:@"properties"];
+		customConfig = [aDecoder decodeObjectForKey:@"customConfig"];
 	}
 	return self;
 }
@@ -294,6 +295,7 @@
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
 	[aCoder encodeObject:properties forKey:@"properties"];
+	[aCoder encodeObject:customConfig forKey:@"customConfig"];
 }
 
 @end

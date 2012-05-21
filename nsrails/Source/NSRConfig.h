@@ -153,7 +153,7 @@ extern NSString * const NSRailsNullRemoteIDException;
  
  */
 
-@interface NSRConfig : NSObject
+@interface NSRConfig : NSObject <NSCoding>
 {
 	NSDateFormatter *dateFormatter;
 	NSOperationQueue *asyncOperationQueue; //used for async requests

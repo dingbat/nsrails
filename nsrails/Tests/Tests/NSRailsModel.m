@@ -157,6 +157,14 @@ NSRailsSync(lotsOfDates:NSDate);
 
 @end
 
+@interface CustomGuy : NSRailsModel
+@end
+
+@implementation CustomGuy
+NSRailsUseConfig(@"url", @"user", @"pass");
+NSRailsSync(something);
+@end
+
 @implementation MockServer (pickys)
 
 + (NSString *) newPickyCoder
@@ -353,9 +361,38 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	
 	GHAssertTrue(s, @"Archiving should've worked (serialize)");
 	
-	Empty *ee = [NSKeyedUnarchiver unarchiveObjectWithFile:file];
-	GHAssertEquals(e.remoteID, ee.remoteID, @"Should've carried over remoteID");
-	GHAssertEquals(e.remoteID, ee.remoteID, @"Should've carried over remoteID");
+	Empty *eRetrieve = [NSKeyedUnarchiver unarchiveObjectWithFile:file];
+	GHAssertEquals(e.remoteID, eRetrieve.remoteID, @"Should've carried over remoteID");
+	
+
+	Empty *eCustomSync = [[Empty alloc] initWithCustomSyncProperties:@"custom"];
+	s = [NSKeyedArchiver archiveRootObject:eCustomSync toFile:file];
+	
+	GHAssertTrue(s, @"Archiving should've worked (serialize)");
+	
+	Empty *eCustomSyncRetrieve = [NSKeyedUnarchiver unarchiveObjectWithFile:file];
+	NSRAssertEqualArraysNoOrder(eCustomSyncRetrieve.propertyCollection.properties.allKeys, NSRArray(@"custom", @"remoteID"));
+
+	
+	Empty *eCustomSyncConfig = [[Empty alloc] initWithCustomSyncProperties:@"custom" customConfig:[[NSRConfig alloc] initWithAppURL:@"URL"]];
+	s = [NSKeyedArchiver archiveRootObject:eCustomSyncConfig toFile:file];
+	
+	GHAssertTrue(s, @"Archiving should've worked (serialize)");
+	
+	Empty *eCustomSyncConfigRetrieve = [NSKeyedUnarchiver unarchiveObjectWithFile:file];
+	GHAssertEqualStrings(eCustomSyncConfigRetrieve.propertyCollection.customConfig.appURL, @"URL", @"Config should carry over");
+
+	
+	CustomGuy *guy = [[CustomGuy alloc] init];
+	s = [NSKeyedArchiver archiveRootObject:guy toFile:file];
+	
+	GHAssertTrue(s, @"Archiving should've worked (serialize)");
+	
+	CustomGuy *guyRetrieve = [NSKeyedUnarchiver unarchiveObjectWithFile:file];
+	NSRAssertEqualArraysNoOrder(guyRetrieve.propertyCollection.properties.allKeys, NSRArray(@"something", @"remoteID"));
+	GHAssertEqualStrings(guyRetrieve.propertyCollection.customConfig.appURL, @"url", @"Config should carry over");
+	GHAssertEqualStrings(guyRetrieve.propertyCollection.customConfig.appUsername, @"user", @"Config should carry over");
+	GHAssertEqualStrings(guyRetrieve.propertyCollection.customConfig.appPassword, @"pass", @"Config should carry over");
 }
 
 - (void)setUpClass

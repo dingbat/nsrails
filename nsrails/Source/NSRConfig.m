@@ -156,7 +156,7 @@ static int networkActivityRequests = 0;
 		self.ignoresClassPrefixes = YES;
 		
 		self.succinctErrorMessages = YES;
-		self.timeoutInterval = 60;
+		self.timeoutInterval = 60.0f;
 		self.performsCompletionBlocksOnMainThread = YES;
 		
 		asyncOperationQueue = [[NSOperationQueue alloc] init];
@@ -488,5 +488,53 @@ static int networkActivityRequests = 0;
 	block();
 	[self end];
 }
+
+#pragma mark - NSCoding
+
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+	if (self = [super init])
+	{
+		dateFormatter = [[NSDateFormatter alloc] init];
+		asyncOperationQueue = [[NSOperationQueue alloc] init];
+		
+		self.dateFormat = [aDecoder decodeObjectForKey:@"dateFormat"];
+		
+		self.autoinflectsClassNames = [aDecoder decodeBoolForKey:@"autoinflectsClassNames"];
+		self.autoinflectsPropertyNames = [aDecoder decodeBoolForKey:@"autoinflectsPropertyNames"];
+		self.ignoresClassPrefixes = [aDecoder decodeBoolForKey:@"ignoresClassPrefixes"];
+
+		self.succinctErrorMessages = [aDecoder decodeBoolForKey:@"succinctErrorMessages"];
+		self.performsCompletionBlocksOnMainThread = [aDecoder decodeBoolForKey:@"performsCompletionBlocksOnMainThread"];
+		self.timeoutInterval = [aDecoder decodeDoubleForKey:@"timeoutInterval"];
+
+		self.managesNetworkActivityIndicator = [aDecoder decodeBoolForKey:@"managesNetworkActivityIndicator"];
+
+		self.appURL = [aDecoder decodeObjectForKey:@"appURL"];
+		self.appUsername = [aDecoder decodeObjectForKey:@"appUsername"];
+		self.appPassword = [aDecoder decodeObjectForKey:@"appPassword"];
+	}
+	return self;
+}
+
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+	[aCoder encodeObject:self.dateFormat forKey:@"dateFormat"];
+
+	[aCoder encodeBool:autoinflectsClassNames forKey:@"autoinflectsClassNames"];
+	[aCoder encodeBool:autoinflectsPropertyNames forKey:@"autoinflectsPropertyNames"];
+	[aCoder encodeBool:ignoresClassPrefixes forKey:@"ignoresClassPrefixes"];
+	
+	[aCoder encodeBool:succinctErrorMessages forKey:@"succinctErrorMessages"];
+	[aCoder encodeBool:performsCompletionBlocksOnMainThread forKey:@"performsCompletionBlocksOnMainThread"];
+	[aCoder encodeDouble:timeoutInterval forKey:@"timeoutInterval"];
+	
+	[aCoder encodeBool:managesNetworkActivityIndicator forKey:@"managesNetworkActivityIndicator"];
+	
+	[aCoder encodeObject:self.appURL forKey:@"appURL"];
+	[aCoder encodeObject:self.appUsername forKey:@"appUsername"];
+	[aCoder encodeObject:self.appPassword forKey:@"appPassword"];
+}
+
 
 @end
