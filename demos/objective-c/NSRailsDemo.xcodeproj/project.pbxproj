@@ -21,7 +21,6 @@
 		5975A6C0156374430088E453 /* NSObject+Properties.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A699156374420088E453 /* NSObject+Properties.m */; };
 		5975A6C1156374430088E453 /* NSString+Inflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A69B156374420088E453 /* NSString+Inflection.m */; };
 		5975A6C2156374430088E453 /* NSObject+SBJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A69E156374420088E453 /* NSObject+SBJson.m */; };
-		5975A6C3156374430088E453 /* NSRails+SBJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A6A0156374420088E453 /* NSRails+SBJson.m */; };
 		5975A6C4156374430088E453 /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A6A3156374420088E453 /* SBJsonParser.m */; };
 		5975A6C5156374430088E453 /* SBJsonStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A6A5156374420088E453 /* SBJsonStreamParser.m */; };
 		5975A6C6156374430088E453 /* SBJsonStreamParserAccumulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A6A7156374420088E453 /* SBJsonStreamParserAccumulator.m */; };
@@ -65,8 +64,6 @@
 		5975A69B156374420088E453 /* NSString+Inflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Inflection.m"; sourceTree = "<group>"; };
 		5975A69D156374420088E453 /* NSObject+SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJson.h"; sourceTree = "<group>"; };
 		5975A69E156374420088E453 /* NSObject+SBJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SBJson.m"; sourceTree = "<group>"; };
-		5975A69F156374420088E453 /* NSRails+SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSRails+SBJson.h"; sourceTree = "<group>"; };
-		5975A6A0156374420088E453 /* NSRails+SBJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSRails+SBJson.m"; sourceTree = "<group>"; };
 		5975A6A1156374420088E453 /* SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJson.h; sourceTree = "<group>"; };
 		5975A6A2156374420088E453 /* SBJsonParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonParser.h; sourceTree = "<group>"; };
 		5975A6A3156374420088E453 /* SBJsonParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonParser.m; sourceTree = "<group>"; };
@@ -226,8 +223,6 @@
 			children = (
 				5975A69D156374420088E453 /* NSObject+SBJson.h */,
 				5975A69E156374420088E453 /* NSObject+SBJson.m */,
-				5975A69F156374420088E453 /* NSRails+SBJson.h */,
-				5975A6A0156374420088E453 /* NSRails+SBJson.m */,
 				5975A6A1156374420088E453 /* SBJson.h */,
 				5975A6A2156374420088E453 /* SBJsonParser.h */,
 				5975A6A3156374420088E453 /* SBJsonParser.m */,
@@ -336,7 +331,6 @@
 				5975A6C0156374430088E453 /* NSObject+Properties.m in Sources */,
 				5975A6C1156374430088E453 /* NSString+Inflection.m in Sources */,
 				5975A6C2156374430088E453 /* NSObject+SBJson.m in Sources */,
-				5975A6C3156374430088E453 /* NSRails+SBJson.m in Sources */,
 				5975A6C4156374430088E453 /* SBJsonParser.m in Sources */,
 				5975A6C5156374430088E453 /* SBJsonStreamParser.m in Sources */,
 				5975A6C6156374430088E453 /* SBJsonStreamParserAccumulator.m in Sources */,
