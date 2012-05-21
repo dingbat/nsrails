@@ -83,8 +83,6 @@ static NSMutableDictionary *configEnvironments = nil;
 static NSMutableArray *overrideConfigStack = nil;
 static NSString *currentEnvironment = nil;
 
-static int networkActivityRequests = 0;
-
 //purely for test purposes
 + (void) resetConfigs
 {
@@ -215,6 +213,8 @@ static int networkActivityRequests = 0;
 - (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock
 {
 #if TARGET_OS_IPHONE
+	static int networkActivityRequests = 0;
+
 	//manage network activity, currently only supported on async
 	if (self.managesNetworkActivityIndicator && completionBlock)
 	{
