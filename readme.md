@@ -121,7 +121,7 @@ See the [NSRailsSync wiki page](https://github.com/dingbat/nsrails/wiki/NSRailsS
 Dependencies
 --------
 
-* iOS 5.0+ (ARC)
+* iOS 5.0+ (and ARC)
 * JSON framework (pre-bundled)
 
 Credits
