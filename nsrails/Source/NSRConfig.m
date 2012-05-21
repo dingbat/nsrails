@@ -30,7 +30,6 @@
 
 #import "NSRConfig.h"
 
-#import "SBJson.h"
 #import "NSData+Additions.h"
 
 //NSRConfigStackElement implementation
@@ -210,7 +209,7 @@ static NSString *currentEnvironment = nil;
 
 
 //Do not override this method - it includes a check to see if there's no AppURL specified
-- (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock
+- (id) makeRequest:(NSString *)httpVerb requestBody:(id)body route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock
 {
 #if TARGET_OS_IPHONE
 	static int networkActivityRequests = 0;
@@ -236,9 +235,9 @@ static NSString *currentEnvironment = nil;
 #if TARGET_OS_IPHONE
 	if (self.managesNetworkActivityIndicator && completionBlock)
 	{
-		blockPlusNetworkActivity = ^(NSString *data, NSError *error)
+		blockPlusNetworkActivity = ^(NSDictionary *dict, NSError *error)
 		{
-			completionBlock(data, error);
+			completionBlock(dict, error);
 			
 			networkActivityRequests--;
 			if (networkActivityRequests == 0)
@@ -251,18 +250,108 @@ static NSString *currentEnvironment = nil;
 	
 	NSString *url = [NSString stringWithFormat:@"%@/%@",appURL,route ? route : @""];
 	
-	[self logRequestWithBody:body httpVerb:httpVerb url:[url description]];
-
+#if NSRLog > 0
+	NSLog(@" ");
+	NSLog(@"%@ to %@",httpVerb,url);
+#if NSRLog > 1
+	NSLog(@"OUT===> %@",body);
+#endif
+#endif
+	
 	//If you want to override handling the connection, override the following method	
-	NSString *result = [self responseForRequestType:httpVerb requestBody:body url:url sync:error orAsync:blockPlusNetworkActivity];	
+	NSDictionary *result = [self responseForRequestType:httpVerb requestBody:body url:url sync:error orAsync:blockPlusNetworkActivity];	
 	return result;
 }
 
-//Overide THIS method if necessary (for SSL etc)
-- (NSString *) responseForRequestType:(NSString *)type requestBody:(NSString *)requestStr url:(NSString *)url sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock
+- (NSError *) errorForResponse:(id)response statusCode:(NSInteger)statusCode
 {
-	NSURLRequest *request = [self HTTPRequestForRequestType:type requestBody:requestStr url:url];
+	BOOL err = (statusCode < 0 || statusCode >= 400);
+	
+	if (err)
+	{
+		NSMutableDictionary *inf = [NSMutableDictionary dictionary];
+
+		//422 means there was a validation error
+		if (statusCode == 422)
+		{
+			if ([response isKindOfClass:[NSDictionary class]])
+				[inf setObject:response forKey:NSRValidationErrorsKey];
+			[inf setObject:@"Unprocessable Entity" forKey:NSLocalizedDescriptionKey];
+		}
+		else 
+		{
+			if (self.succinctErrorMessages)
+			{
+				//if error message is in HTML,
+				if ([response rangeOfString:@"</html>"].location != NSNotFound)
+				{
+					NSArray *pres = [response componentsSeparatedByString:@"<pre>"];
+					if (pres.count > 1)
+					{
+						//get the value between <pre> and </pre>
+						response = [[[pres objectAtIndex:1] componentsSeparatedByString:@"</pre"] objectAtIndex:0];
+					}
+					else
+					{
+						NSArray *h1s = [response componentsSeparatedByString:@"<h1>"];
+						if (h1s.count > 1)
+						{
+							//get the value between <h1> and </h1>
+							response = [[[h1s objectAtIndex:1] componentsSeparatedByString:@"</h1"] objectAtIndex:0];
+						}
+					}
+					response = [response stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
+				}
+			}
+			[inf setObject:response forKey:NSLocalizedDescriptionKey];
+		}
 		
+		NSError *error = [NSError errorWithDomain:NSRRemoteErrorDomain
+											 code:statusCode
+										 userInfo:inf];
+		
+		NSRLogError(error);
+		
+		return error;
+	}
+	
+	return nil;
+}
+
+
+- (id) receiveResponse:(NSHTTPURLResponse *)response data:(NSData *)data error:(NSError **)error
+{
+	NSInteger code = [(NSHTTPURLResponse *)response statusCode];
+	
+	NSLog(@"IN<=== Code %d;",code);
+	
+	id jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
+	if (!jsonResponse)
+		jsonResponse = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+	
+	//see if there's an error from this response using this helper method
+	NSError *railsError = [self errorForResponse:jsonResponse statusCode:code];
+	if (railsError)
+	{
+		if (error)
+			*error = railsError;
+		
+		return nil;
+	}
+
+	
+#if NSRLog > 1
+	NSLog(@"  <=== %@",jsonResponse);
+#endif
+	
+	return jsonResponse;
+}
+
+//Overide THIS method if necessary (for SSL etc)
+- (id) responseForRequestType:(NSString *)type requestBody:(id)body url:(NSString *)url sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock
+{
+	NSURLRequest *request = [self HTTPRequestForRequestType:type requestBody:body url:url];
+	
 	//ASYNC
 	if (completionBlock)
 	{
@@ -281,17 +370,10 @@ static NSString *currentEnvironment = nil;
 			 }
 			 else
 			 {
-				 NSInteger code = [(NSHTTPURLResponse *)response statusCode];
-				 
-				 NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-				 
-				 //int casting done to suppress Mac OS precision loss warnings
-				 [self logResponse:rawResult statusCode:(int)code];
-				 
-				 //see if there's an error from this response using this helper method
-				 NSError *railsError = [self errorForResponse:rawResult statusCode:code];
-				 
-				 dispatch_sync(queue, ^{ completionBlock((railsError ? nil : rawResult), railsError); } );
+				 NSError *e = nil;
+				 id jsonResp = [self receiveResponse:(NSHTTPURLResponse *)response data:data error:&e];
+				 				 
+				 dispatch_sync(queue, ^{ completionBlock((e ? nil : jsonResp), e); } );
 			 }
 		 }];
 	}
@@ -299,7 +381,7 @@ static NSString *currentEnvironment = nil;
 	else
 	{
 		NSError *appleError = nil;
-		NSURLResponse *response = nil;
+		NSHTTPURLResponse *response = nil;
 		
 		NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&appleError];
 		
@@ -314,28 +396,12 @@ static NSString *currentEnvironment = nil;
 			return nil;
 		}
 		
-		NSInteger code = [(NSHTTPURLResponse *)response statusCode];
-		
-		NSString *rawResult = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-		
-		//int casting done to suppress Mac OS precision loss warnings
-		[self logResponse:rawResult statusCode:(int)code];
-		
-		//see if there's an error from this response using this helper method
-		NSError *railsError = [self errorForResponse:rawResult statusCode:[(NSHTTPURLResponse *)response statusCode]];
-		if (railsError)
-		{
-			if (error)
-				*error = railsError;
-			
-			return nil;
-		}
-		return rawResult;
+		return [self receiveResponse:response data:data error:error];
 	}
 	return nil;
 }
 			
-- (NSURLRequest *) HTTPRequestForRequestType:(NSString *)type requestBody:(NSString *)requestStr url:(NSString *)url
+- (NSURLRequest *) HTTPRequestForRequestType:(NSString *)type requestBody:(id)body url:(NSString *)url
 {	
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]
 														   cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
@@ -355,93 +421,23 @@ static NSString *currentEnvironment = nil;
 		[request setValue:authHeader forHTTPHeaderField:@"Authorization"]; 
 	}
 	
-	if (requestStr)
+	if (body)
 	{
-		NSData *requestData = [NSData dataWithBytes:[requestStr UTF8String] length:[requestStr length]];
+		//let it raise an exception if invalid json object
+		NSError *e = nil;
+		NSData *data = [NSJSONSerialization dataWithJSONObject:body options:0 error:&e];
 		
-		[request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-		[request setHTTPBody: requestData];
+		if (data)
+		{
+			[request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+			[request setHTTPBody:data];
 		
-		[request setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];
+			[request setValue:[NSString stringWithFormat:@"%d", [data length]] forHTTPHeaderField:@"Content-Length"];
+		}
  	}
 	
 	return request;
 }
-
-- (NSError *) errorForResponse:(NSString *)response statusCode:(NSInteger)statusCode
-{
-	BOOL err = (statusCode < 0 || statusCode >= 400);
-	
-	if (err)
-	{
-		if (self.succinctErrorMessages)
-		{
-			//if error message is in HTML,
-			if ([response rangeOfString:@"</html>"].location != NSNotFound)
-			{
-				NSArray *pres = [response componentsSeparatedByString:@"<pre>"];
-				if (pres.count > 1)
-				{
-					//get the value between <pre> and </pre>
-					response = [[[pres objectAtIndex:1] componentsSeparatedByString:@"</pre"] objectAtIndex:0];
-				}
-				else
-				{
-					NSArray *h1s = [response componentsSeparatedByString:@"<h1>"];
-					if (h1s.count > 1)
-					{
-						//get the value between <h1> and </h1>
-						response = [[[h1s objectAtIndex:1] componentsSeparatedByString:@"</h1"] objectAtIndex:0];
-					}
-				}
-				response = [response stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
-			}
-		}
-		
-		NSMutableDictionary *inf = [NSMutableDictionary dictionaryWithObject:response
-																	  forKey:NSLocalizedDescriptionKey];
-		
-		//422 means there was a validation error
-		if (statusCode == 422)
-		{
-			NSDictionary *validationErrors = [response JSONValue];
-			if (validationErrors)
-				[inf setObject:validationErrors forKey:NSRValidationErrorsKey];
-		}
-		
-		NSError *statusError = [NSError errorWithDomain:NSRRemoteErrorDomain
-												   code:statusCode
-											   userInfo:inf];
-		
-		NSRLogError(statusError);
-		
-		return statusError;
-	}
-	
-	return nil;
-}
-
-- (void) logRequestWithBody:(NSString *)body httpVerb:(NSString *)httpVerb url:(NSString *)url
-{
-#if NSRLog > 0
-	NSLog(@" ");
-	NSLog(@"%@ to %@",httpVerb,url);
-#if NSRLog > 1
-	NSLog(@"OUT===> %@",body);
-#endif
-#endif
-}
-
-- (void) logResponse:(NSString *)response statusCode:(int)code
-{
-#if NSRLog == 1
-	NSLog(@"<== Code %d",code);
-#elif NSRLog > 1
-	NSLog(@"IN<=== Code %d; %@\n\n",code,((code < 0 || code >= 400) ? @"[see ERROR]" : response));
-#endif
-}
-
-
 
 #pragma mark -
 #pragma mark Contextual stuff

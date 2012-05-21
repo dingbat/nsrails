@@ -122,14 +122,13 @@ Dependencies
 --------
 
 * iOS 5.0+ (and ARC)
-* JSON framework (pre-bundled)
 
 Credits
 ----------
 
 Version 1.0.
 
-I'd like to acknowledge [SBJson](https://github.com/stig/json-framework) for great JSON reading and writing, and thank the [ObjectiveResource](https://github.com/yfactorial/objectiveresource) project for being largely the inspiration for NSRails.
+I'd like to acknowledge the [ObjectiveResource](https://github.com/yfactorial/objectiveresource) project for being largely the inspiration for NSRails.
 
 License (MIT)
 ---------

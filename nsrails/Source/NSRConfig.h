@@ -48,7 +48,7 @@
 
 
 //Common Blocks
-typedef void(^NSRHTTPCompletionBlock)(NSString *result, NSError *error);
+typedef void(^NSRHTTPCompletionBlock)(id jsonRep, NSError *error);
 
 typedef void(^NSRBasicCompletionBlock)(NSError *error);
 typedef void(^NSRGetLatestCompletionBlock)(BOOL changed, NSError *error);
@@ -404,9 +404,9 @@ extern NSString * const NSRailsNullRemoteIDException;
  @param route The route to which the request will be made. This is appended to the `appURL`, so not the full URL. For instance, `articles/1`.
  @param sync Pointer to an `NSError` object. Only used if *completionBlock* is `NULL`. May be `NULL`.
  @param completionBlock If this parameter is not `NULL`, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is `NULL`, request will be made synchronously and the *sync* paramter may be used.
- @return The response string, only if request is made synchronously. Otherwise, will return `nil`.
+ @return The response representation (parsed from JSON), only if request is made synchronously. Otherwise, will return `nil`.
  */
-- (NSString *) makeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock;
+- (id) makeRequest:(NSString *)httpVerb requestBody:(id)body route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock;
 
 
 /// =============================================================================================
@@ -423,9 +423,9 @@ extern NSString * const NSRailsNullRemoteIDException;
  @param url The url to which the request will be made (full URL.)
  @param sync Pointer to an `NSError` object. Only used if *completionBlock* is `NULL`. May be `NULL`.
  @param completionBlock If this parameter is not `NULL`, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is `NULL`, request will be made synchronously and the *sync* paramter may be used.
- @return The response string, only if request is made synchronously. Otherwise, will return `nil`. 
+ @return The response representation (parsed from JSON), only if request is made synchronously. Otherwise, will return `nil`. 
  */
-- (NSString *) responseForRequestType:(NSString *)httpVerb requestBody:(NSString *)body url:(NSString *)url sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock;
+- (id) responseForRequestType:(NSString *)httpVerb requestBody:(id)body url:(NSString *)url sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock;
 
 /**
  (Typically only used when subclassing NSRConfig.) It is recommended to use this method after implementing your own request method, as it will generate some Rails-specific errors (like validation errors).
@@ -434,11 +434,11 @@ extern NSString * const NSRailsNullRemoteIDException;
  
  You can also override this on its own if you have errors you want handled that NSRails doesn't take of already.
  
- @param response Response string given by a server.
+ @param response Response representation given by a server.
  @param statusCode Status code that was returned with the response.
  @return Error if one could be extracted - otherwise nil.
  */
-- (NSError *) errorForResponse:(NSString *)response statusCode:(NSInteger)statusCode;
+- (NSError *) errorForResponse:(id)jsonResponse statusCode:(NSInteger)statusCode;
 
 @end
 

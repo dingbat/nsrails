@@ -18,11 +18,11 @@ NSRailsSync(local -x, retrieveOnly -r, shared, sharedExplicit -rs, sendOnly -s)
 @end
 
 @interface PropertyTester : NSRailsModel
-@property (nonatomic, strong) id property1;
+@property (nonatomic, strong) id propertyTester;
 @end 
 
 @implementation PropertyTester
-@synthesize property1;
+@synthesize propertyTester;
 @end
 
 @interface BadCoder : NSRailsModel
@@ -101,10 +101,10 @@ NSRailsSync(locallyURL=locally_url -ed, locallyLowercase -d, remotelyUppercase -
 	return new;
 }
 
-- (NSString *) encodeComponentWithFlippingName
+- (id) encodeComponentWithFlippingName
 {
 	componentWithFlippingName.componentName = [componentWithFlippingName.componentName uppercaseString];
-	return [componentWithFlippingName remoteJSONRepresentation];
+	return [componentWithFlippingName remoteDictionaryRepresentationWrapped:YES];
 }
 
 - (NSString *) encodeLocallyURL
@@ -113,7 +113,7 @@ NSRailsSync(locallyURL=locally_url -ed, locallyLowercase -d, remotelyUppercase -
 	return ret;
 }
 
-- (NSString *) encodeRemotelyUppercase
+- (id) encodeRemotelyUppercase
 {
 	return [remotelyUppercase uppercaseString];
 }
@@ -180,26 +180,24 @@ NSRailsSync(something);
 
 @implementation MockServer (pickys)
 
-+ (NSString *) newPickyCoder
++ (NSDictionary *) newPickyCoder
 {
-	//replacing ' with ", using \" every other char makes it unreadable
-	return [@"{'locally_lowercase':'LoweRCasE?','remotely_uppercase':'upper','locally_url':'http://nsrails.com','remote_only':'invisible','code_to_nil':'something','date_override_send':'2012-05-07T04:41:52Z','date_override_ret':'afsofauh','component':{'component_name':'COMP LOWERCASE?'}}" stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
+	return NSRDictionary(@"LoweRCasE?",@"locally_lowercase",@"upper",@"remotely_uppercase",@"http://nsrails.com",@"locally_url",@"invisible",@"remote_only",@"something",@"code_to_nil",@"2012-05-07T04:41:52Z",@"date_override_send",@"afsofauh",@"date_override_ret",NSRDictionary(@"COMP LOWERCASE?", @"component_name"),@"component");
 }
 
-+ (NSString *) newPickySender
++ (NSDictionary *) newPickySender
 {
-	//replacing ' with ", using \" every other char makes it unreadable
-	return [@"{'retrieve_only':'retrieve','send_only':'send','shared':'shared','shared_explicit':'shared explicit','undefined':'x'}" stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
+	return NSRDictionary(@"retrieve", @"retrieve_only",@"send",@"send_only",@"shared",@"shared", @"shared explicit",@"shared_explicit", @"x",@"undefined");
 }
 
-+ (NSString *) newDictionaryNester
++ (NSDictionary *) newDictionaryNester
 {
-	return [@"{'dictionaries':[{'im':'so','hip':'!'}, {}]}" stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
+	return NSRDictionary(NSRArray(NSRDictionary(@"im",@"so"),NSRDictionary(@"hip",@"!")), @"dictionaries");
 }
 
-+ (NSString *) newLadiesMan
++ (NSDictionary *) newLadiesMan
 {
-	return [@"{'lots_of_dates':['2012-05-07T04:41:52Z','2012-05-07T04:41:52Z','2012-05-07T04:41:52Z']}" stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
+	return NSRDictionary(NSRArray(@"2012-05-07T04:41:52Z",@"2012-05-07T04:41:52Z",@"2012-05-07T04:41:52Z"), @"lots_of_dates");
 }
 
 @end
@@ -254,9 +252,9 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 - (void) test_encode_decode
 {
 	BadCoder *b = [[BadCoder alloc] init];
-	STAssertThrows([b dictionaryOfRemoteProperties], @"Should throw unrecognized selector for encode:");
+	STAssertThrows([b remoteDictionaryRepresentationWrapped:NO], @"Should throw unrecognized selector for encode:");
 	
-	PickyCoder *p = [[PickyCoder alloc] initWithRemoteJSON:[MockServer newPickyCoder]];
+	PickyCoder *p = [[PickyCoder alloc] initWithRemoteDictionary:[MockServer newPickyCoder]];
 	p.encodeNonJSON = NO;
 	
 	STAssertTrue([p.locallyURL isKindOfClass:[NSURL class]], @"Should've decoded into a URL");
@@ -270,7 +268,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	
 	p.codeToNil = @"Something";
 	
-	NSDictionary *sendDict = [p dictionaryOfRemoteProperties];
+	NSDictionary *sendDict = [p remoteDictionaryRepresentationWrapped:NO];
 	STAssertTrue([[sendDict objectForKey:@"locally_url"] isKindOfClass:[NSString class]],@"Should've encoded NSURL -> string");
 	STAssertTrue([[sendDict objectForKey:@"code_to_nil"] isKindOfClass:[NSNull class]], @"Should've encoded codeToNil into NSNull");
 	STAssertEqualObjects([sendDict objectForKey:@"locally_url"], @"http://nsrails.com", @"Should've encoded into string & retain content");
@@ -284,7 +282,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	
 	p.encodeNonJSON = YES;
 	
-	STAssertThrowsSpecificNamed([p dictionaryOfRemoteProperties], NSException, NSRailsJSONParsingException, @"Encoding into non-JSON for sendable dict - where's the error?");
+	STAssertThrowsSpecificNamed([p remoteDictionaryRepresentationWrapped:NO], NSException, NSRailsJSONParsingException, @"Encoding into non-JSON for sendable dict - where's the error?");
 }
 
 - (void) test_send_retrieve
@@ -293,7 +291,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	p.local = @"local";
 	p.sendOnly = @"send--local";
 	p.undefined = @"local";
-	[p setPropertiesUsingRemoteJSON:[MockServer newPickySender]];
+	[p setPropertiesUsingRemoteDictionary:[MockServer newPickySender]];
 	
 	STAssertEqualObjects(p.local, @"local", @"Should've kept local... -x");
 	STAssertEqualObjects(p.sendOnly, @"send--local", @"Should've kept send... -s");
@@ -302,7 +300,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertEqualObjects(p.sharedExplicit, @"shared explicit", @"Should've set sharedExplicit... -rs");
 	STAssertEqualObjects(p.undefined, @"local", @"Shouldn't have set undefined... not in NSRS");
 	
-	NSDictionary *sendDict = [p dictionaryOfRemoteProperties];
+	NSDictionary *sendDict = [p remoteDictionaryRepresentationWrapped:NO];
 	STAssertNil([sendDict objectForKey:@"retrieve_only"], @"Shouldn't send retrieve-only... -r");
 	STAssertNil([sendDict objectForKey:@"local"], @"Shouldn't send local-only... -x");
 	STAssertNil([sendDict objectForKey:@"undefined"], @"Shouldn't send undefined... not in NSRS");
@@ -313,15 +311,15 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 
 - (void) test_nesting_dictionaries
 {
-	DictionaryNester *nester = [[DictionaryNester alloc] initWithRemoteJSON:[MockServer newDictionaryNester]];
+	DictionaryNester *nester = [[DictionaryNester alloc] initWithRemoteDictionary:[MockServer newDictionaryNester]];
 	STAssertNotNil(nester.dictionaries, @"Dictionaries shouldn't be nil after JSON set");
 	STAssertTrue(nester.dictionaries.count == 2, @"Dictionaries should have 2 elements");
 	STAssertTrue([[nester.dictionaries objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Dictionaries obj should be of type NSDictionary");
-	STAssertEqualObjects([[nester.dictionaries objectAtIndex:0] objectForKey:@"im"], @"so", @"Dict elements should've been set");
+	STAssertEqualObjects([[nester.dictionaries objectAtIndex:0] objectForKey:@"so"], @"im", @"Dict elements should've been set");
 	
 	nester.dictionaries = [NSArray arrayWithObjects:[NSDictionary dictionaryWithObject:@"obj" forKey:@"key"], [NSDictionary dictionaryWithObject:@"obj2" forKey:@"key2"], nil];
 	
-	NSDictionary *send = [nester dictionaryOfRemoteProperties];
+	NSDictionary *send = [nester remoteDictionaryRepresentationWrapped:NO];
 	
 	STAssertNotNil(send, @"Dictionaries shouldn't be nil after trying to make it");
 	STAssertTrue([[send objectForKey:@"dictionaries_attributes"] count] == 2, @"Dictionaries should have 2 elements");
@@ -331,12 +329,12 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 
 - (void) test_array_of_dates
 {
-	LadiesMan *guy = [[LadiesMan alloc] initWithRemoteJSON:[MockServer newLadiesMan]];
+	LadiesMan *guy = [[LadiesMan alloc] initWithRemoteDictionary:[MockServer newLadiesMan]];
 	STAssertNotNil(guy.lotsOfDates, @"Dates shouldn't be nil after JSON set");
 	STAssertTrue(guy.lotsOfDates.count == 3, @"Should have 3 dates");
 	STAssertTrue([[guy.lotsOfDates objectAtIndex:0] isKindOfClass:[NSDate class]], @"Date obj should be of type NSDate");
 	
-	NSDictionary *send = [guy dictionaryOfRemoteProperties];
+	NSDictionary *send = [guy remoteDictionaryRepresentationWrapped:NO];
 	
 	STAssertNotNil([send objectForKey:@"lots_of_dates_attributes"], @"Dates shouldn't be nil after remote dict");
 	STAssertTrue([[send objectForKey:@"lots_of_dates_attributes"] count] == 3, @"Send should have 3 dates");
@@ -346,43 +344,38 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 
 - (void) test_set_properties
 {
+	//This also makes sure it doesn't confuse the property_tester model key and property_tester attribute
+	
 	PropertyTester *t = [[PropertyTester alloc] init];
 	
-	NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:@"test", @"property1", nil];
+	NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:@"test", @"property_tester", nil];
 	
 	BOOL ch = [t setPropertiesUsingRemoteDictionary:dict];
-	STAssertEqualObjects(t.property1, @"test", @"");
+	STAssertEqualObjects(t.propertyTester, @"test", @"");
 	STAssertTrue(ch, @"Should've been changes first time around");
 	
 	BOOL ch2 = [t setPropertiesUsingRemoteDictionary:dict];
 	STAssertFalse(ch2, @"Should've been no changes when setting to no dict");
 	
-	t.property1 = nil;
+	t.propertyTester = nil;
 	
-	NSDictionary *dictEnveloped = [[NSDictionary alloc] initWithObjectsAndKeys:[[NSDictionary alloc] initWithObjectsAndKeys:@"test",@"property1", nil], @"property_tester", nil];
+	NSDictionary *dictEnveloped = [[NSDictionary alloc] initWithObjectsAndKeys:[[NSDictionary alloc] initWithObjectsAndKeys:@"test",@"property_tester", nil], @"property_tester", nil];
 	BOOL ch3 = [t setPropertiesUsingRemoteDictionary:dictEnveloped];
-	STAssertEqualObjects(t.property1, @"test", @"");
+	STAssertEqualObjects(t.propertyTester, @"test", @"");
 	STAssertFalse(ch2, @"Should've been no changes when setting to inner dict");
 	
 	BOOL b;
-	STAssertNoThrow(b = [t setPropertiesUsingRemoteJSON:nil], @"Shouldn't blow up on setting to nil JSON");
+	STAssertNoThrow(b = [t setPropertiesUsingRemoteDictionary:nil], @"Shouldn't blow up on setting to nil dictionary");
 	STAssertFalse(b, @"Shouldn't be a change if nil JSON");
 
-	BOOL b2;
-	STAssertNoThrow(b2 = [t setPropertiesUsingRemoteDictionary:nil], @"Shouldn't blow up on setting to nil dict");
-	STAssertFalse(b2, @"Shouldn't be a change if nil dict");
-
-	STAssertThrowsSpecificNamed([t setPropertiesUsingRemoteJSON:@"null"], NSException, NSRailsJSONParsingException, @"Should blow up on bad JSON");
-	STAssertNoThrow([t setPropertiesUsingRemoteJSON:@"{\"property_tester\":null}"], @"Shouldn't blow up, just issue a warning");
-	STAssertNoThrow([t setPropertiesUsingRemoteJSON:@"{\"property_tester\":{\"property1\":null}}"], @"Shouldn't blow up on setting to a null JSON value");
+	STAssertNoThrow([t setPropertiesUsingRemoteDictionary:NSRDictionary([NSNull null], @"property_tester")], @"Shouldn't blow up, just issue a warning");
+	STAssertNoThrow([t setPropertiesUsingRemoteDictionary:NSRDictionary(NSRDictionary([NSNull null], @"property1"), @"property_tester")], @"Shouldn't blow up on setting to a null JSON value");
 	
-	STAssertNil(t.property1, @"property1 should be nil after setting from JSON");
+	STAssertNil(t.propertyTester, @"propertyTester should be nil after setting from JSON");
 
-	STAssertThrowsSpecificNamed([t setPropertiesUsingRemoteJSON:@"fiauj"], NSException, NSRailsJSONParsingException, @"Should blow up on bad JSON");
-	t.property1 = [[NSScanner alloc] init];
-	STAssertNoThrow([t dictionaryOfRemoteProperties], @"Shouldn't blow up on making a DICT");
-	STAssertThrowsSpecificNamed([t remoteJSONRepresentation], NSException, NSRailsJSONParsingException, @"Should blow up on making bad JSON");
-	STAssertThrowsSpecificNamed([t remoteCreate:nil], NSException, NSRailsJSONParsingException, @"Should blow up on making bad JSON");
+	t.propertyTester = [[NSScanner alloc] init];
+	STAssertNoThrow([t remoteDictionaryRepresentationWrapped:NO], @"Shouldn't blow up on making a DICT");
+	STAssertThrows([t remoteCreate:nil], @"Should blow up on making bad JSON");
 }
 
 

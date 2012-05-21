@@ -55,6 +55,11 @@ NSRailsSync(*)
 
 @end
 
+@interface Faker : NSRailsModel
+@end
+@implementation Faker
+@end
+
 @interface TIntegration : SenTestCase
 {
 	BOOL noServer;
@@ -303,6 +308,56 @@ NSRailsSync(*)
 	//should get back an error cause there shouldn't be a post with its ID anymore
 	[newPost remoteDestroy:&e];
 	STAssertNotNil(e, @"Deleting new post for a second time shouldn't have worked, where's the error?");
+}
+
+- (void) test_get_all
+{
+	STAssertFalse(noServer, @"Test app not running. Run 'rails s'.");
+
+	NSError *e = nil;
+
+	NSArray *a = [Faker remoteAll:&e];
+	STAssertNotNil(e, @"Should be an error since route doesn't exist");
+	STAssertEqualObjects([e domain], NSRRemoteErrorDomain, @"Domain should be NSRRemoteErrorDomain");
+	STAssertNil(a, @"Array should be nil since there was an error");
+		
+	e = nil;
+	
+	NSArray *array = [Post remoteAll:&e];
+	
+	STAssertNil(e, @"Should be no error in retrieving all remote posts");	
+	STAssertTrue([array isKindOfClass:[NSArray class]], @"Should be an array");
+	
+	for (Post *p in array)
+	{
+		e = nil;
+		
+		[p remoteDestroy:&e];
+		STAssertNil(e, @"Should be no error in deleting post");	
+	}
+	
+	Post *p = [[Post alloc] init];
+	p.content = @"hello";
+	p.author = @"dan";
+	[p remoteCreate:&e];
+	STAssertNil(e, @"Should be no error in creating a remote post");	
+	
+	e = nil;
+	
+	array = [Post remoteAll:&e];
+	
+	STAssertNil(e, @"Should be no error in retrieving all remote posts again");	
+	STAssertTrue([array isKindOfClass:[NSArray class]], @"Should be an array");
+
+	
+	STAssertTrue(array.count > 0, @"Should be have at least one post (just made one)");
+	STAssertTrue([[array objectAtIndex:0] isKindOfClass:[Post class]], @"Object should be Post instance");
+	STAssertEqualObjects(p.remoteID, [[array objectAtIndex:0] remoteID], @"Object should have same ID");
+
+	e = nil;
+
+	[p remoteDestroy:&e];
+	STAssertNil(e, @"Should be no error in deleting post");	
 }
 
 - (void) test_nesting
@@ -607,7 +662,7 @@ NSRailsSync(*)
 	[[NSRConfig defaultConfig] setDateFormat:@"!@#@$"];
 	STAssertThrowsSpecificNamed([post remoteFetch:&e], NSException, NSRailsInternalError, @"There should be an exception in setting to a bad format");
 	
-	NSDictionary *dict = [post dictionaryOfRemoteProperties];
+	NSDictionary *dict = [post remoteDictionaryRepresentationWrapped:NO];
 	STAssertNotNil(dict, @"There should be no problem making a dict, even if format is bad");
 	STAssertEqualObjects([dict objectForKey:@"created_at"], @"!@#@$", @"New format should've been applied");	
 	

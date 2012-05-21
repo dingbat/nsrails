@@ -36,7 +36,6 @@
 #import "NSString+Inflection.h"
 #import "NSData+Additions.h"
 #import "NSObject+Properties.h"
-#import "SBJson.h"
 
 /* 
     If this file is too intimidating, 
@@ -172,7 +171,7 @@ NSRailsSync(*);
 
 + (NSRPropertyCollection *) propertyCollection
 {
-	__strong static NSMutableDictionary *propertyCollections = nil;
+	static NSMutableDictionary *propertyCollections = nil;
 	static dispatch_once_t onceToken;
 	
 	//singleton initializer
@@ -261,8 +260,7 @@ NSRailsSync(*);
 
 #pragma mark - Internal NSR stuff
 
-// Encode/decode date objects by default (will be added as custom en/de coders if they aren't declared)
-
+// Encode/decode date objects by default (will be used as en/de coders if they aren't declared)
 - (NSString *) nsrails_encodeDate:(NSDate *)date
 {
 	return [[self getRelevantConfig] stringFromDate:date];
@@ -273,30 +271,7 @@ NSRailsSync(*);
 	return [[self getRelevantConfig] dateFromString:dateRep];
 }
 
-//will turn it into a JSON string
-//includes any nested models (which the json framework can't do)
-- (NSString *) remoteJSONRepresentation
-{
-	// enveloped meaning with the model name out front, {"user"=>{"name"=>"x", "password"=>"y"}}
-	
-	NSDictionary *enveloped = [NSDictionary dictionaryWithObject:[self dictionaryOfRemoteProperties]
-														  forKey:[[self class] masterModelName]];
-	
-	NSString *json = [enveloped JSONRepresentation];
-	if (!json)
-	{
-		[NSException raise:NSRailsJSONParsingException format:@"Failed trying to encode instance of %@ to JSON (trying to parse dictionary %@)", self.class, enveloped];
-	}
-	return json;
-}
-
-// override SBJson's category to use the remoteJSON
-- (NSString *) JSONRepresentation
-{
-	return [self remoteJSONRepresentation];
-}
-
-// Helper method for when mapping nested properties to JSON
+// Helper method used when mapping nested properties to JSON
 - (NSRailsModel *) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
 {
 	//make a new class to be entered for this property/array (we can assume it subclasses NSRailsModel)
@@ -354,10 +329,9 @@ NSRailsSync(*);
 							 [representation isKindOfClass:[NSNumber class]] ||
 							 [representation isKindOfClass:[NSNull class]]);
 		
-		//make sure that the result is a JSON parsable
 		if (!JSONParsable)
 		{
-			[NSException raise:NSRailsJSONParsingException format:@"Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return NSDictionary, NSArray, NSString, NSNumber, or NSNull here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop, NSStringFromClass([self class]),NSStringFromSelector(encoder)];
+			[NSException raise:NSRailsJSONParsingException format:@"Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return NSDictionary, NSArray, NSString, NSNumber, or NSNull here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop.name, NSStringFromClass([self class]),NSStringFromSelector(encoder)];
 			return nil;
 		}
 		
@@ -397,8 +371,7 @@ NSRailsSync(*);
 				return new;
 			}
 			
-			//otherwise, make that nested object a dictionary through NSRailsModel
-			//first make sure it's an NSRailsModel subclass
+			//otherwise, if it's not array but nested, make the nested object a dictionary
 			if (![val isKindOfClass:[NSRailsModel class]])
 				return nil;
 			
@@ -409,7 +382,6 @@ NSRailsSync(*);
 		//otherwise, just return the value from the get method
 		return val;
 	}
-	return nil;
 }
 
 - (id) initWithRemoteDictionary:(NSDictionary *)railsDict
@@ -421,27 +393,13 @@ NSRailsSync(*);
 	return self;
 }
 
-- (id) initWithRemoteJSON:(NSString *)json
-{
-	if ((self = [super init]))
-	{
-		[self setPropertiesUsingRemoteJSON:json];
-	}
-	return self;
-}
-
 - (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict
 {
 	//support JSON that comes in like {"post"=>{"something":"something"}}
 	NSDictionary *innerDict = [dict objectForKey:[[self class] masterModelName]];
-	if (dict.count == 1 && innerDict)
+	if (dict.count == 1 && [innerDict isKindOfClass:[NSDictionary class]])
 	{
 		dict = innerDict;
-		if ([dict isKindOfClass:[NSNull class]])
-		{
-			NSLog(@"NSR Warning: Tried to set root-level instance of %@ to null. Ignoring.", dict);
-			return NO;
-		}
 	}
 	
 	remoteAttributes = dict;
@@ -592,9 +550,12 @@ NSRailsSync(*);
 	return changes;
 }
 
-- (NSDictionary *) dictionaryOfRemoteProperties
+- (NSDictionary *) remoteDictionaryRepresentationWrapped:(BOOL)wrapped
 {
-	return [self dictionaryOfRemotePropertiesShallow:NO];
+	NSDictionary *dict = [self dictionaryOfRemotePropertiesShallow:NO];
+	if (wrapped)
+		return [NSDictionary dictionaryWithObject:dict forKey:[[self class] masterModelName]];
+	return dict;
 }
 
 - (NSDictionary *) dictionaryOfRemotePropertiesShallow:(BOOL)shallow
@@ -657,7 +618,7 @@ NSRailsSync(*);
 			{
 				railsEquivalent = [railsEquivalent stringByAppendingString:@"_id"];
 				
-				//instead of the entire array, set the value to be only the ID
+				//instead of the entire dict, set the value to be only the ID
 				remoteRep = [remoteRep objectForKey:@"id"];
 			}
 			
@@ -678,27 +639,6 @@ NSRailsSync(*);
 	}
 	
 	return dict;
-}
-
-- (BOOL) setPropertiesUsingRemoteJSON:(NSString *)json
-{
-	if (!json)
-	{
-		NSLog(@"NSR Warning: Can't set attributes to nil JSON.");
-		return NO;
-
-		//decided to not make this raise an exception
-		//[NSException raise:@"NSRailsNilJSONException" format:@"Can't set attributes to nil JSON."];
-	}
-	
-	NSDictionary *dict = [json JSONValue];
-	
-	if (!dict)
-	{
-		[NSException raise:NSRailsJSONParsingException format:@"Failed trying to parse the following JSON into a dictionary: `%@`", json];
-	}
-	
-	return [self setPropertiesUsingRemoteDictionary:dict];
 }
 
 //pop the warning suppressor defined above (for calling performSelector's in ARC)
@@ -746,13 +686,13 @@ NSRailsSync(*);
 	}
 }
 
-- (NSString *) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body error:(NSError **)error
+- (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body error:(NSError **)error
 {
 	NSString *route = [self routeForInstanceMethod:customRESTMethod];
 	return [[self getRelevantConfig] makeRequest:httpVerb requestBody:body route:route sync:error orAsync:nil];
 }
 
-- (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock
+- (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body async:(NSRHTTPCompletionBlock)completionBlock
 {
 	NSString *route = [self routeForInstanceMethod:customRESTMethod];
 	[[self getRelevantConfig] makeRequest:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
@@ -760,24 +700,24 @@ NSRailsSync(*);
 
 //these are really just convenience methods that'll call the above method sending the object data as request body
 
-- (NSString *) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod error:(NSError **)error
+- (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod error:(NSError **)error
 {
 	//done again so it can be tested before converting to JSON
 	[self testIfCanSendInstanceRequest];
 	
-	return [self remoteRequest:httpVerb method:customRESTMethod body:[self remoteJSONRepresentation] error:error];
+	return [self remoteRequest:httpVerb method:customRESTMethod body:[self remoteDictionaryRepresentationWrapped:YES] error:error];
 }
 
 - (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock
 {
 	[self testIfCanSendInstanceRequest];
 	
-	[self remoteRequest:httpVerb method:customRESTMethod body:[self remoteJSONRepresentation] async:completionBlock];
+	[self remoteRequest:httpVerb method:customRESTMethod body:[self remoteDictionaryRepresentationWrapped:YES] async:completionBlock];
 }
 
 //these are really just convenience methods that'll call the above method with pre-built "GET" and no body
 
-- (NSString *) remoteGET:(NSString *)customRESTMethod error:(NSError **)error
+- (id) remoteGET:(NSString *)customRESTMethod error:(NSError **)error
 {
 	return [self remoteRequest:@"GET" method:customRESTMethod body:nil error:error];
 }
@@ -791,13 +731,13 @@ NSRailsSync(*);
 #pragma mark Performing actions on classes
 
 
-+ (NSString *)	remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body error:(NSError **)error
++ (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body error:(NSError **)error
 {
 	NSString *route = [self routeForControllerMethod:customRESTMethod];
 	return [[self getRelevantConfig] makeRequest:httpVerb requestBody:body route:route sync:error orAsync:nil];
 }
 
-+ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock
++ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body async:(NSRHTTPCompletionBlock)completionBlock
 {
 	NSString *route = [self routeForControllerMethod:customRESTMethod];
 	[[self getRelevantConfig] makeRequest:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
@@ -805,19 +745,19 @@ NSRailsSync(*);
 
 //these are really just convenience methods that'll call the above method with the JSON representation of the object
 
-+ (NSString *)	remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj error:(NSError **)error
++ (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj error:(NSError **)error
 {
-	return [self remoteRequest:httpVerb method:customRESTMethod body:[obj remoteJSONRepresentation] error:error];
+	return [self remoteRequest:httpVerb method:customRESTMethod body:[obj remoteDictionaryRepresentationWrapped:YES] error:error];
 }
 
 + (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj async:(NSRHTTPCompletionBlock)completionBlock
 {
-	[self remoteRequest:httpVerb method:customRESTMethod body:[obj remoteJSONRepresentation] async:completionBlock];
+	[self remoteRequest:httpVerb method:customRESTMethod body:[obj remoteDictionaryRepresentationWrapped:YES] async:completionBlock];
 }
 
 //these are really just convenience methods that'll call the above method with pre-built "GET" and no body
 
-+ (NSString *) remoteGET:(NSString *)customRESTMethod error:(NSError **)error
++ (id) remoteGET:(NSString *)customRESTMethod error:(NSError **)error
 {
 	return [self remoteRequest:@"GET" method:customRESTMethod body:nil error:error];
 }
@@ -835,11 +775,11 @@ NSRailsSync(*);
 
 - (BOOL) remoteCreate:(NSError **)error
 {
-	NSString *jsonResponse = [[self class] remoteRequest:@"POST" method:nil bodyAsObject:self error:error];
+	NSDictionary *jsonResponse = [[self class] remoteRequest:@"POST" method:nil bodyAsObject:self error:error];
 	if (!jsonResponse)
 		return NO;
 	
-	[self setPropertiesUsingRemoteJSON:jsonResponse];
+	[self setPropertiesUsingRemoteDictionary:jsonResponse];
 	
 	return YES;
 }
@@ -848,9 +788,9 @@ NSRailsSync(*);
 {
 	[[self class] remoteRequest:@"POST" method:nil bodyAsObject:self async:
 	 
-	 ^(NSString *result, NSError *error) {
+	 ^(id result, NSError *error) {
 		 if (result)
-			 [self setPropertiesUsingRemoteJSON:result];
+			 [self setPropertiesUsingRemoteDictionary:result];
 		 completionBlock(error);
 	 }];
 }
@@ -866,7 +806,7 @@ NSRailsSync(*);
 {
 	[self remoteRequest:@"PUT" method:nil async:
 	 
-	 ^(NSString *result, NSError *error) {
+	 ^(id result, NSError *error) {
 		 completionBlock(error);
 	 }];
 }
@@ -881,7 +821,7 @@ NSRailsSync(*);
 - (void) remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock
 {
 	[self remoteRequest:@"DELETE" method:nil body:nil async:
-	 ^(NSString *result, NSError *error) 
+	 ^(id result, NSError *error) 
 	{
 		completionBlock(error);
 	}];
@@ -891,12 +831,16 @@ NSRailsSync(*);
 
 - (BOOL) remoteFetch:(NSError **)error changes:(BOOL *)changesPtr
 {
-	NSString *jsonResponse = [self remoteGET:nil error:error];
+	NSDictionary *jsonResponse = [self remoteGET:nil error:error];
 	
 	if (!jsonResponse)
+	{
+		if (changesPtr)
+			*changesPtr = NO;
 		return NO;
+	}
 	
-	BOOL changes = [self setPropertiesUsingRemoteJSON:jsonResponse];
+	BOOL changes = [self setPropertiesUsingRemoteDictionary:jsonResponse];
 	if (changesPtr)
 		*changesPtr = changes;
 	
@@ -911,11 +855,11 @@ NSRailsSync(*);
 - (void) remoteFetchAsync:(NSRGetLatestCompletionBlock)completionBlock
 {
 	[self remoteGET:nil async:
-	 ^(NSString *result, NSError *error) 
+	 ^(id result, NSError *error) 
 	 {
 		 BOOL change = NO;
 		 if (result)
-			change = [self setPropertiesUsingRemoteJSON:result];
+			change = [self setPropertiesUsingRemoteDictionary:result];
 		 completionBlock(change, error);
 	 }];
 }
@@ -953,23 +897,12 @@ NSRailsSync(*);
 #pragma mark Get all objects (class-level)
 
 //helper method for both sync+async for remoteAll
-+ (NSArray *) arrayOfModelsFromJSON:(NSString *)json error:(NSError **)error
++ (NSArray *) objectsWithRemoteArray:(NSArray *)jsonArray
 {
-	//transform result into array (via json)
-	id arr = [json JSONValue];
-	
-	if (![arr isKindOfClass:[NSArray class]])
-	{
-		[NSException raise:NSRailsInternalError format:@"getAll method (index) for %@ controller (from %@ class) retuned this JSON: `%@`, which is not an array - check your server output.", [self masterPluralName], self.class, json];
-		return nil;
-	}
-	
-	//here comes actually making the array to return
-	
 	NSMutableArray *objects = [NSMutableArray array];
 	
 	//iterate through every object returned by Rails (as dicts)
-	for (NSDictionary *dict in arr)
+	for (NSDictionary *dict in jsonArray)
 	{
 		NSRailsModel *obj = [[[self class] alloc] initWithRemoteDictionary:dict];	
 		
@@ -979,21 +912,30 @@ NSRailsSync(*);
 	return objects;
 }
 
++ (void) assertIsArray:(id)json
+{
+	if (![json isKindOfClass:[NSArray class]])
+	{
+		[NSException raise:NSRailsInternalError format:@"getAll method (index) for %@ controller (from %@ class) retuned this JSON: `%@`, which is not an array - check your server output.", [self masterPluralName], self.class, json];	
+	}
+}
+
 + (NSArray *) remoteAll:(NSError **)error
 {
 	//make a class GET call (so just the controller - myapp.com/users)
-	NSString *json = [self remoteGET:nil error:error];
+	id json = [self remoteGET:nil error:error];
 	if (!json)
-	{
 		return nil;
-	}
-	return [self arrayOfModelsFromJSON:json error:error];
+
+	[self assertIsArray:json];
+	
+	return [self objectsWithRemoteArray:json];
 }
 
 + (void) remoteAllAsync:(NSRGetAllCompletionBlock)completionBlock
 {
 	[self remoteGET:nil async:
-	 ^(NSString *result, NSError *error) 
+	 ^(id result, NSError *error) 
 	 {
 		 if (!result)
 		 {
@@ -1001,8 +943,10 @@ NSRailsSync(*);
 		 }
 		 else
 		 {
-			 //make an array from the result returned async, and we can reuse the same error ptr (since we know it's nil)
-			 NSArray *array = [self arrayOfModelsFromJSON:result error:&error];
+			 [self assertIsArray:result];
+			 
+			 NSArray *array = [self objectsWithRemoteArray:result];
+			 
 			 completionBlock(array,error);
 		 }
 	 }];

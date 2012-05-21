@@ -51,6 +51,7 @@
 #define NSRAssertClassPluralName(mname, class)	STAssertEqualObjects([class masterPluralName], mname, @"%@ model name failed.", NSStringFromClass(class))
 
 #define NSRArray(...) [NSArray arrayWithObjects:__VA_ARGS__, nil]
+#define NSRDictionary(...) [NSDictionary dictionaryWithObjectsAndKeys:__VA_ARGS__, nil]
 
 #define NSRAssertEqualArraysNoOrder(arr, arr2) \
 if ([arr2 count] != arr.count) STFail(@"%@ should be equal (order doesn't matter) to %@",arr,arr2); \

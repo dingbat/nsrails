@@ -16,7 +16,7 @@
 
 @interface NSRConfig (private)
 
-- (NSURLRequest *) HTTPRequestForRequestType:(NSString *)httpVerb requestBody:(NSString *)body url:(NSString *)route;
+- (NSURLRequest *) HTTPRequestForRequestType:(NSString *)httpVerb requestBody:(id)body url:(NSString *)route;
 
 @end
 
@@ -154,13 +154,11 @@
 	[[NSRConfig defaultConfig] setPerformsCompletionBlocksOnMainThread:YES];
 	
 	[[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts.json" sync:nil orAsync:
-	 ^(NSString *result, NSError *error)
+	 ^(id result, NSError *error)
 	 {
 		 STAssertTrue([NSThread isMainThread], @"With PCBOMT enabled, should run block in main thread");	
 		 
 		 //do the second test inside the block so they don't overwrite each other
-		 
-		 //ghunit needs a better way to contain async testcases... TODO maybe separate class for each?
 		 
 		 [[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
 		 [[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
@@ -169,7 +167,7 @@
 		 [[NSRConfig defaultConfig] setPerformsCompletionBlocksOnMainThread:NO];
 		 
 		 [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts.json" sync:nil orAsync:
-		  ^(NSString *result, NSError *error)
+		  ^(id result, NSError *error)
 		  {
 			  STAssertFalse([NSThread isMainThread], @"With PCBOMT disabled, should run block in same thread");		 
 		  }];
@@ -184,27 +182,30 @@
 	{
 		NSString *fullError = [[MockServer fullErrors] objectAtIndex:i];
 		NSString *shortError = [[MockServer shortErrors] objectAtIndex:i];
+		NSInteger code = [[[MockServer statusCodes] objectAtIndex:i] integerValue];
 		
 		//Test with succinct (default)
 		[[NSRConfig defaultConfig] setSuccinctErrorMessages:YES];
 			
-		NSError *error = [[NSRConfig defaultConfig] errorForResponse:fullError statusCode:400];
+		NSError *error = [[NSRConfig defaultConfig] errorForResponse:fullError statusCode:code];
 		STAssertEqualObjects([error domain], NSRRemoteErrorDomain, @"Succinct error messages failed");
-		STAssertTrue([[[error userInfo] objectForKey:NSLocalizedDescriptionKey] isEqualToString:shortError], @"Succinct message extraction failed for short message: `%@`",shortError);
+		STAssertTrue([[[error userInfo] objectForKey:NSLocalizedDescriptionKey] isEqualToString:shortError], @"Succinct message extraction failed for short message: `%@` (is %@)",shortError, [error.userInfo objectForKey:NSLocalizedDescriptionKey]);
 		STAssertNil([[error userInfo] objectForKey:NSRValidationErrorsKey], @"Validation errors dict should not have been created for 404");
 
 		//Test without succinct
 		[[NSRConfig defaultConfig] setSuccinctErrorMessages:NO];
 
-		NSError *error2 = [[NSRConfig defaultConfig] errorForResponse:fullError statusCode:400];
+		NSError *error2 = [[NSRConfig defaultConfig] errorForResponse:fullError statusCode:code];
 		STAssertEqualObjects([error2 domain], NSRRemoteErrorDomain, @"Succinct error messages failed");
 		STAssertTrue([[[error2 userInfo] objectForKey:NSLocalizedDescriptionKey] isEqualToString:fullError], @"NO succinct error messages failed (bad!)");
 		STAssertNil([[error2 userInfo] objectForKey:NSRValidationErrorsKey], @"Validation errors dict should not have been created for 404");
 	}
 	
 	// 422 Validation
-		
-	NSError *valError = [[NSRConfig defaultConfig] errorForResponse:[MockServer validation422Error] statusCode:422];
+	
+	NSDictionary *response = [NSJSONSerialization JSONObjectWithData:[[MockServer validation422Error] dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil];
+	
+	NSError *valError = [[NSRConfig defaultConfig] errorForResponse:response statusCode:422];
 	STAssertTrue([valError code] == 422, @"422 was returned, not picked up by config");
 	STAssertEqualObjects([valError domain], NSRRemoteErrorDomain, @"Succinct error messages failed");
 
@@ -234,13 +235,15 @@
 	NSString *url = @"http://localhost:3000/";
 	[[NSRConfig defaultConfig] setAppURL:url];
 	
+	NSDictionary *body = NSRDictionary(@"body", @"test");
+	
 	NSURLRequest *request = [[NSRConfig defaultConfig] HTTPRequestForRequestType:@"POST"
-																	 requestBody:@"body"
+																	 requestBody:body
 																			 url:url];
 	
 	STAssertNil([request valueForHTTPHeaderField:@"Authorization"], @"Shouldn't send w/authorization if no user/pass");
 	STAssertEqualObjects([request HTTPMethod], @"POST", @"HTTP Methods mismatch");
-	STAssertEqualObjects([[NSString alloc] initWithData:[request HTTPBody] encoding:NSUTF8StringEncoding], @"body", @"HTTP bodies mismatch");
+	STAssertEqualObjects([[NSString alloc] initWithData:[request HTTPBody] encoding:NSUTF8StringEncoding], @"{\"test\":\"body\"}", @"HTTP bodies mismatch");
 	STAssertEqualObjects([[request URL] description], url, @"Keeps the URL");
 		
 	
@@ -248,7 +251,7 @@
 
 	[[NSRConfig defaultConfig] setAppPassword:@"password"];
 	NSURLRequest *request2 = [[NSRConfig defaultConfig] HTTPRequestForRequestType:@"POST"
-																	  requestBody:@"body"
+																	  requestBody:nil
 																			  url:nil];
 	STAssertNil([request2 valueForHTTPHeaderField:@"Authorization"], @"Shouldn't send w/authorization if no password");
 
@@ -256,14 +259,14 @@
 	[[NSRConfig defaultConfig] setAppPassword:nil];
 	[[NSRConfig defaultConfig] setAppUsername:@"username"];
 	NSURLRequest *request3 = [[NSRConfig defaultConfig] HTTPRequestForRequestType:@"POST"
-																	  requestBody:@"body"
+																	  requestBody:nil
 																			  url:nil];
 	STAssertNil([request3 valueForHTTPHeaderField:@"Authorization"], @"Shouldn't send w/authorization if no username");
 	
 	
 	[[NSRConfig defaultConfig] setAppPassword:@"password"];
 	NSURLRequest *request4 = [[NSRConfig defaultConfig] HTTPRequestForRequestType:@"POST"
-																	  requestBody:@"body"
+																	  requestBody:nil
 																			  url:nil];
 	STAssertNotNil([request4 valueForHTTPHeaderField:@"Authorization"], @"Should send w/authorization if username+password");
 
@@ -282,7 +285,7 @@
 	[[NSRConfig defaultConfig] setAppUsername:nil];
 	[[NSRConfig defaultConfig] setAppPassword:nil];
 	
-	NSString *index = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts.json" sync:&e orAsync:nil];
+	NSArray *index = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts.json" sync:&e orAsync:nil];
 	
 	STAssertNotNil(e, @"Should fail on not authenticated, where's the error?");
 	STAssertNil(index, @"Response should be nil because there was an authentication error");

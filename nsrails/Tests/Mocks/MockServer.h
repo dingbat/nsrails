@@ -22,6 +22,6 @@
 
 + (NSArray *) fullErrors;
 + (NSArray *) shortErrors;
-
++ (NSArray *) statusCodes;
 
 @end

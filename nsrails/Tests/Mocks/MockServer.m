@@ -71,15 +71,19 @@
 	return @"{\"content\":[\"can't be blank\"],\"author\":[\"can't be blank\"]}";
 }
 
++ (NSArray *) statusCodes
+{
+	return [NSArray arrayWithObjects:[NSNumber numberWithInt:404], [NSNumber numberWithInt:404], [NSNumber numberWithInt:500], [NSNumber numberWithInt:422], nil];
+}
 
 + (NSArray *) fullErrors
 {
-	return [NSArray arrayWithObjects:[self full404Error], [self full404Error2], [self full500Error], [self validation422Error], nil];
+	return [NSArray arrayWithObjects:[self full404Error], [self full404Error2], [self full500Error], @"Unprocessable Entity", nil];
 }
 
 + (NSArray *) shortErrors
 {	
-	return [NSArray arrayWithObjects:[self short404Error], [self short404Error2], [self short500Error], [self validation422Error], nil];
+	return [NSArray arrayWithObjects:[self short404Error], [self short404Error2], [self short500Error], @"Unprocessable Entity", nil];
 }
 
 
