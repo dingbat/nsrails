@@ -38,10 +38,10 @@
 @dynamic array; //dynamic just for kicks
 @end
 
-#define NSRAssertEqualsUnderscored(string, underscored) GHAssertEqualStrings([string underscore], underscored, nil)
-#define NSRAssertEqualsCamelized(string, camelized) GHAssertEqualStrings([string camelize], camelized, nil)
+#define NSRAssertEqualsUnderscored(string, underscored) STAssertEqualObjects([string underscore], underscored, nil)
+#define NSRAssertEqualsCamelized(string, camelized) STAssertEqualObjects([string camelize], camelized, nil)
 
-@interface THelpers : GHTestCase
+@interface THelpers : SenTestCase
 @end
 
 @implementation THelpers
@@ -59,12 +59,12 @@
 	NSRAssertEqualsUnderscored(@"post_object", @"post_object");
 	NSRAssertEqualsUnderscored(@"post_Object", @"post_object");
 	
-	GHAssertEqualStrings([@"post" underscoreIgnorePrefix:YES], @"post", nil);
-	GHAssertEqualStrings([@"Post" underscoreIgnorePrefix:YES], @"post", nil);
-	GHAssertEqualStrings([@"DPost" underscoreIgnorePrefix:YES], @"post", nil);
-	GHAssertEqualStrings([@"DHPost" underscoreIgnorePrefix:YES], @"post", nil);
-	GHAssertEqualStrings([@"PostDH" underscoreIgnorePrefix:YES], @"post_dh", nil);
-	GHAssertEqualStrings([@"DHPostDH" underscoreIgnorePrefix:YES], @"post_dh", nil);
+	STAssertEqualObjects([@"post" underscoreIgnorePrefix:YES], @"post", nil);
+	STAssertEqualObjects([@"Post" underscoreIgnorePrefix:YES], @"post", nil);
+	STAssertEqualObjects([@"DPost" underscoreIgnorePrefix:YES], @"post", nil);
+	STAssertEqualObjects([@"DHPost" underscoreIgnorePrefix:YES], @"post", nil);
+	STAssertEqualObjects([@"PostDH" underscoreIgnorePrefix:YES], @"post_dh", nil);
+	STAssertEqualObjects([@"DHPostDH" underscoreIgnorePrefix:YES], @"post_dh", nil);
 	
 	NSRAssertEqualsCamelized(@"post", @"post");
 	NSRAssertEqualsCamelized(@"Post", @"Post");
@@ -81,44 +81,44 @@
 {
 	NSRAssertEqualArraysNoOrder([TheManInsideMe allProperties], NSRArray(@"string", @"date", @"array", @"anything", @"primitiveInt", @"primitiveBOOL", @"primitiveFloat", @"encoding", @"rect"));
 
-	GHAssertNil([TheManInsideMe typeForProperty:@"unknown"], @"Introspection should not pick up non-existent properties");
-	GHAssertNil([TheManInsideMe typeForProperty:@"private"], @"Introspection should not pick up non-property ivars");
-	GHAssertEqualStrings([TheManInsideMe typeForProperty:@"parent"], @"NSString", @"Introspection should pick up superclasses' props");
-	GHAssertEqualStrings([TheManInsideMe typeForProperty:@"string"], @"NSString", @"");
-	GHAssertEqualStrings([TheManInsideMe typeForProperty:@"date"], @"NSDate", @"");
-	GHAssertEqualStrings([TheManInsideMe typeForProperty:@"array"], @"NSArray", @"");
-	GHAssertEqualStrings([TheManInsideMe typeForProperty:@"anything"], @"id", @"");
+	STAssertNil([TheManInsideMe typeForProperty:@"unknown"], @"Introspection should not pick up non-existent properties");
+	STAssertNil([TheManInsideMe typeForProperty:@"private"], @"Introspection should not pick up non-property ivars");
+	STAssertEqualObjects([TheManInsideMe typeForProperty:@"parent"], @"NSString", @"Introspection should pick up superclasses' props");
+	STAssertEqualObjects([TheManInsideMe typeForProperty:@"string"], @"NSString", @"");
+	STAssertEqualObjects([TheManInsideMe typeForProperty:@"date"], @"NSDate", @"");
+	STAssertEqualObjects([TheManInsideMe typeForProperty:@"array"], @"NSArray", @"");
+	STAssertEqualObjects([TheManInsideMe typeForProperty:@"anything"], @"id", @"");
 	
 	//non-object returns are undefined, but something will be returned
-	GHAssertNotNil([TheManInsideMe typeForProperty:@"primitiveInt"],@"");
-	GHAssertNotNil([TheManInsideMe typeForProperty:@"primitiveBOOL"],@"");
-	GHAssertNotNil([TheManInsideMe typeForProperty:@"primitiveFloat"],@"");
-	GHAssertNotNil([TheManInsideMe typeForProperty:@"encoding"],@"");
-	GHAssertNotNil([TheManInsideMe typeForProperty:@"rect"],@"");
+	STAssertNotNil([TheManInsideMe typeForProperty:@"primitiveInt"],@"");
+	STAssertNotNil([TheManInsideMe typeForProperty:@"primitiveBOOL"],@"");
+	STAssertNotNil([TheManInsideMe typeForProperty:@"primitiveFloat"],@"");
+	STAssertNotNil([TheManInsideMe typeForProperty:@"encoding"],@"");
+	STAssertNotNil([TheManInsideMe typeForProperty:@"rect"],@"");
 
 	BOOL primitive = YES;
 	[TheManInsideMe typeForProperty:@"string" isPrimitive:&primitive];
-	GHAssertFalse(primitive, @"NSString is not primitive");
+	STAssertFalse(primitive, @"NSString is not primitive");
 
 	[TheManInsideMe typeForProperty:@"anything" isPrimitive:&primitive];
-	GHAssertFalse(primitive, @"id is not primitive");
+	STAssertFalse(primitive, @"id is not primitive");
 
 	[TheManInsideMe typeForProperty:@"primitiveInt" isPrimitive:&primitive];
-	GHAssertTrue(primitive, @"int is primitive");
+	STAssertTrue(primitive, @"int is primitive");
 
 	[TheManInsideMe typeForProperty:@"encoding" isPrimitive:&primitive];
-	GHAssertTrue(primitive, @"encoding is primitive");
+	STAssertTrue(primitive, @"encoding is primitive");
 
 	[TheManInsideMe typeForProperty:@"rect" isPrimitive:&primitive];
-	GHAssertTrue(primitive, @"rect is primitive");
+	STAssertTrue(primitive, @"rect is primitive");
 
-	GHAssertEqualStrings(NSStringFromSelector([TheManInsideMe setterForProperty:@"string"]), @"setTheString:", @"");	
-	GHAssertEqualStrings(NSStringFromSelector([TheManInsideMe setterForProperty:@"date"]), @"setDate:", @"");	
-	GHAssertEqualStrings(NSStringFromSelector([TheManInsideMe setterForProperty:@"array"]), @"setArray:", @"");	
+	STAssertEqualObjects(NSStringFromSelector([TheManInsideMe setterForProperty:@"string"]), @"setTheString:", @"");	
+	STAssertEqualObjects(NSStringFromSelector([TheManInsideMe setterForProperty:@"date"]), @"setDate:", @"");	
+	STAssertEqualObjects(NSStringFromSelector([TheManInsideMe setterForProperty:@"array"]), @"setArray:", @"");	
 
-	GHAssertEqualStrings(NSStringFromSelector([TheManInsideMe getterForProperty:@"string"]), @"string", @"");	
-	GHAssertEqualStrings(NSStringFromSelector([TheManInsideMe getterForProperty:@"date"]), @"getDate", @"");	
-	GHAssertEqualStrings(NSStringFromSelector([TheManInsideMe getterForProperty:@"array"]), @"array", @"");	
+	STAssertEqualObjects(NSStringFromSelector([TheManInsideMe getterForProperty:@"string"]), @"string", @"");	
+	STAssertEqualObjects(NSStringFromSelector([TheManInsideMe getterForProperty:@"date"]), @"getDate", @"");	
+	STAssertEqualObjects(NSStringFromSelector([TheManInsideMe getterForProperty:@"array"]), @"array", @"");	
 }
 
 - (void)setUpClass

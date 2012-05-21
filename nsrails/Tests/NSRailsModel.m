@@ -204,7 +204,7 @@ NSRailsSync(something);
 
 @end
 
-@interface TNSRailsModel : GHTestCase
+@interface TNSRailsModel : SenTestCase
 @end
 
 #define NSRAssertEqualSyncStrings(a,b,reason) \
@@ -234,58 +234,57 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 {
 	// Root
 	
-	GHAssertEqualStrings([NSRailsModel routeForControllerMethod:nil], @"", @"Root route failed");	
-	GHAssertEqualStrings([NSRailsModel routeForControllerMethod:@"action"], @"action", @"Root route failed");	
+	STAssertEqualObjects([NSRailsModel routeForControllerMethod:nil], @"", @"Root route failed");	
+	STAssertEqualObjects([NSRailsModel routeForControllerMethod:@"action"], @"action", @"Root route failed");	
 	
 	// Controller (class)
-	
-	GHAssertEqualStrings([Empty routeForControllerMethod:nil], @"empties", @"Nil controller route failed");	
-	GHAssertEqualStrings([Empty routeForControllerMethod:@"action"], @"empties/action", @"Controller route failed");
+	STAssertEqualObjects([Empty routeForControllerMethod:nil], @"empties", @"Nil controller route failed");	
+	STAssertEqualObjects([Empty routeForControllerMethod:@"action"], @"empties/action", @"Controller route failed");
 	
 	// Instance
 	
 	Empty *smth = [[Empty alloc] init];
-	GHAssertThrowsSpecificNamed([smth routeForInstanceMethod:nil], NSException, NSRailsNullRemoteIDException, @"Should have been an exception getting instance route if nil remoteID");
+	STAssertThrowsSpecificNamed([smth routeForInstanceMethod:nil], NSException, NSRailsNullRemoteIDException, @"Should have been an exception getting instance route if nil remoteID");
 	
 	smth.remoteID = [NSNumber numberWithInt:1];
-	GHAssertEqualStrings([smth routeForInstanceMethod:nil], @"empties/1", @"Nil instance route failed");
-	GHAssertEqualStrings([smth routeForInstanceMethod:@"action"], @"empties/1/action", @"Instance route failed");
+	STAssertEqualObjects([smth routeForInstanceMethod:nil], @"empties/1", @"Nil instance route failed");
+	STAssertEqualObjects([smth routeForInstanceMethod:@"action"], @"empties/1/action", @"Instance route failed");
 }
 
 - (void) test_encode_decode
 {
 	BadCoder *b = [[BadCoder alloc] init];
-	GHAssertThrows([b dictionaryOfRemoteProperties], @"Should throw unrecognized selector for encode:");
+	STAssertThrows([b dictionaryOfRemoteProperties], @"Should throw unrecognized selector for encode:");
 	
 	PickyCoder *p = [[PickyCoder alloc] initWithRemoteJSON:[MockServer newPickyCoder]];
 	p.encodeNonJSON = NO;
 	
-	GHAssertTrue([p.locallyURL isKindOfClass:[NSURL class]], @"Should've decoded into a URL");
-	GHAssertTrue([p.dateOverrideSend isKindOfClass:[NSDate class]], @"Should've decoded into an NSDate");
-	GHAssertTrue([p.dateOverrideRet isEqualToDate:[NSDate dateWithTimeIntervalSince1970:0]], @"Should've used custom decode");
-	GHAssertNil(p.codeToNil, @"Should've decoded codeToNil into nil");
-	GHAssertEqualStrings([p.locallyURL description], @"http://nsrails.com", @"Should've decoded into URL & retain content");
-	GHAssertEqualStrings(p.locallyLowercase, @"lowercase?", @"Should've decoded into lowercase");
-	GHAssertEqualStrings(p.remotelyUppercase, @"upper", @"Should've kept the same");
-	GHAssertEqualStrings(p.componentWithFlippingName.componentName, @"comp lowercase?", @"Should've decoded comp name into lowercase");
+	STAssertTrue([p.locallyURL isKindOfClass:[NSURL class]], @"Should've decoded into a URL");
+	STAssertTrue([p.dateOverrideSend isKindOfClass:[NSDate class]], @"Should've decoded into an NSDate");
+	STAssertTrue([p.dateOverrideRet isEqualToDate:[NSDate dateWithTimeIntervalSince1970:0]], @"Should've used custom decode");
+	STAssertNil(p.codeToNil, @"Should've decoded codeToNil into nil");
+	STAssertEqualObjects([p.locallyURL description], @"http://nsrails.com", @"Should've decoded into URL & retain content");
+	STAssertEqualObjects(p.locallyLowercase, @"lowercase?", @"Should've decoded into lowercase");
+	STAssertEqualObjects(p.remotelyUppercase, @"upper", @"Should've kept the same");
+	STAssertEqualObjects(p.componentWithFlippingName.componentName, @"comp lowercase?", @"Should've decoded comp name into lowercase");
 	
 	p.codeToNil = @"Something";
 	
 	NSDictionary *sendDict = [p dictionaryOfRemoteProperties];
-	GHAssertTrue([[sendDict objectForKey:@"locally_url"] isKindOfClass:[NSString class]],@"Should've encoded NSURL -> string");
-	GHAssertTrue([[sendDict objectForKey:@"code_to_nil"] isKindOfClass:[NSNull class]], @"Should've encoded codeToNil into NSNull");
-	GHAssertEqualStrings([sendDict objectForKey:@"locally_url"], @"http://nsrails.com", @"Should've encoded into string & retain content");
-	GHAssertEqualStrings([sendDict objectForKey:@"locally_lowercase"], @"lowercase?", @"Should've kept as lowercase");
-	GHAssertEqualStrings([sendDict objectForKey:@"remotely_uppercase"], @"UPPER", @"Should've encoded to uppercase");
-	GHAssertEqualStrings([sendDict objectForKey:@"date_override_send"], @"override!", @"Should've overriden NSDate encode");
-	GHAssertEqualStrings([sendDict objectForKey:@"date_override_ret"], @"1969-12-31T19:00:00Z", @"Should've overriden NSDate decode");
-	GHAssertEqualStrings(p.componentWithFlippingName.componentName, @"COMP LOWERCASE?", @"Should've encoded comp name into uppercase");
+	STAssertTrue([[sendDict objectForKey:@"locally_url"] isKindOfClass:[NSString class]],@"Should've encoded NSURL -> string");
+	STAssertTrue([[sendDict objectForKey:@"code_to_nil"] isKindOfClass:[NSNull class]], @"Should've encoded codeToNil into NSNull");
+	STAssertEqualObjects([sendDict objectForKey:@"locally_url"], @"http://nsrails.com", @"Should've encoded into string & retain content");
+	STAssertEqualObjects([sendDict objectForKey:@"locally_lowercase"], @"lowercase?", @"Should've kept as lowercase");
+	STAssertEqualObjects([sendDict objectForKey:@"remotely_uppercase"], @"UPPER", @"Should've encoded to uppercase");
+	STAssertEqualObjects([sendDict objectForKey:@"date_override_send"], @"override!", @"Should've overriden NSDate encode");
+	STAssertEqualObjects([sendDict objectForKey:@"date_override_ret"], @"1969-12-31T19:00:00Z", @"Should've overriden NSDate decode");
+	STAssertEqualObjects(p.componentWithFlippingName.componentName, @"COMP LOWERCASE?", @"Should've encoded comp name into uppercase");
 	
-	GHAssertEqualStrings([sendDict objectForKey:@"remote_only"], @"remote", @"Should've captured remoteOnly!");
+	STAssertEqualObjects([sendDict objectForKey:@"remote_only"], @"remote", @"Should've captured remoteOnly!");
 	
 	p.encodeNonJSON = YES;
 	
-	GHAssertThrowsSpecificNamed([p dictionaryOfRemoteProperties], NSException, NSRailsJSONParsingException, @"Encoding into non-JSON for sendable dict - where's the error?");
+	STAssertThrowsSpecificNamed([p dictionaryOfRemoteProperties], NSException, NSRailsJSONParsingException, @"Encoding into non-JSON for sendable dict - where's the error?");
 }
 
 - (void) test_send_retrieve
@@ -296,53 +295,53 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	p.undefined = @"local";
 	[p setPropertiesUsingRemoteJSON:[MockServer newPickySender]];
 	
-	GHAssertEqualStrings(p.local, @"local", @"Should've kept local... -x");
-	GHAssertEqualStrings(p.sendOnly, @"send--local", @"Should've kept send... -s");
-	GHAssertEqualStrings(p.retrieveOnly, @"retrieve", @"Should've set retrieve... -r");
-	GHAssertEqualStrings(p.shared, @"shared", @"Should've set shared... blank");
-	GHAssertEqualStrings(p.sharedExplicit, @"shared explicit", @"Should've set sharedExplicit... -rs");
-	GHAssertEqualStrings(p.undefined, @"local", @"Shouldn't have set undefined... not in NSRS");
+	STAssertEqualObjects(p.local, @"local", @"Should've kept local... -x");
+	STAssertEqualObjects(p.sendOnly, @"send--local", @"Should've kept send... -s");
+	STAssertEqualObjects(p.retrieveOnly, @"retrieve", @"Should've set retrieve... -r");
+	STAssertEqualObjects(p.shared, @"shared", @"Should've set shared... blank");
+	STAssertEqualObjects(p.sharedExplicit, @"shared explicit", @"Should've set sharedExplicit... -rs");
+	STAssertEqualObjects(p.undefined, @"local", @"Shouldn't have set undefined... not in NSRS");
 	
 	NSDictionary *sendDict = [p dictionaryOfRemoteProperties];
-	GHAssertNil([sendDict objectForKey:@"retrieve_only"], @"Shouldn't send retrieve-only... -r");
-	GHAssertNil([sendDict objectForKey:@"local"], @"Shouldn't send local-only... -x");
-	GHAssertNil([sendDict objectForKey:@"undefined"], @"Shouldn't send undefined... not in NSRS");
-	GHAssertEqualStrings([sendDict objectForKey:@"send_only"], @"send--local", @"Should've sent send... -s");
-	GHAssertEqualStrings([sendDict objectForKey:@"shared"], @"shared", @"Should've sent shared... blank");
-	GHAssertEqualStrings([sendDict objectForKey:@"shared_explicit"], @"shared explicit", @"Should've sent sharedExplicit... -rs");
+	STAssertNil([sendDict objectForKey:@"retrieve_only"], @"Shouldn't send retrieve-only... -r");
+	STAssertNil([sendDict objectForKey:@"local"], @"Shouldn't send local-only... -x");
+	STAssertNil([sendDict objectForKey:@"undefined"], @"Shouldn't send undefined... not in NSRS");
+	STAssertEqualObjects([sendDict objectForKey:@"send_only"], @"send--local", @"Should've sent send... -s");
+	STAssertEqualObjects([sendDict objectForKey:@"shared"], @"shared", @"Should've sent shared... blank");
+	STAssertEqualObjects([sendDict objectForKey:@"shared_explicit"], @"shared explicit", @"Should've sent sharedExplicit... -rs");
 }
 
 - (void) test_nesting_dictionaries
 {
 	DictionaryNester *nester = [[DictionaryNester alloc] initWithRemoteJSON:[MockServer newDictionaryNester]];
-	GHAssertNotNil(nester.dictionaries, @"Dictionaries shouldn't be nil after JSON set");
-	GHAssertTrue(nester.dictionaries.count == 2, @"Dictionaries should have 2 elements");
-	GHAssertTrue([[nester.dictionaries objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Dictionaries obj should be of type NSDictionary");
-	GHAssertEqualStrings([[nester.dictionaries objectAtIndex:0] objectForKey:@"im"], @"so", @"Dict elements should've been set");
+	STAssertNotNil(nester.dictionaries, @"Dictionaries shouldn't be nil after JSON set");
+	STAssertTrue(nester.dictionaries.count == 2, @"Dictionaries should have 2 elements");
+	STAssertTrue([[nester.dictionaries objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Dictionaries obj should be of type NSDictionary");
+	STAssertEqualObjects([[nester.dictionaries objectAtIndex:0] objectForKey:@"im"], @"so", @"Dict elements should've been set");
 	
 	nester.dictionaries = [NSArray arrayWithObjects:[NSDictionary dictionaryWithObject:@"obj" forKey:@"key"], [NSDictionary dictionaryWithObject:@"obj2" forKey:@"key2"], nil];
 	
 	NSDictionary *send = [nester dictionaryOfRemoteProperties];
 	
-	GHAssertNotNil(send, @"Dictionaries shouldn't be nil after trying to make it");
-	GHAssertTrue([[send objectForKey:@"dictionaries_attributes"] count] == 2, @"Dictionaries should have 2 elements");
-	GHAssertTrue([[[send objectForKey:@"dictionaries_attributes"] objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Dictionaries obj should be of type NSDictionary");
-	GHAssertEqualStrings([[[send objectForKey:@"dictionaries_attributes"] objectAtIndex:0] objectForKey:@"key"], @"obj", @"Dict elements should've been set");
+	STAssertNotNil(send, @"Dictionaries shouldn't be nil after trying to make it");
+	STAssertTrue([[send objectForKey:@"dictionaries_attributes"] count] == 2, @"Dictionaries should have 2 elements");
+	STAssertTrue([[[send objectForKey:@"dictionaries_attributes"] objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Dictionaries obj should be of type NSDictionary");
+	STAssertEqualObjects([[[send objectForKey:@"dictionaries_attributes"] objectAtIndex:0] objectForKey:@"key"], @"obj", @"Dict elements should've been set");
 }
 
 - (void) test_array_of_dates
 {
 	LadiesMan *guy = [[LadiesMan alloc] initWithRemoteJSON:[MockServer newLadiesMan]];
-	GHAssertNotNil(guy.lotsOfDates, @"Dates shouldn't be nil after JSON set");
-	GHAssertTrue(guy.lotsOfDates.count == 3, @"Should have 3 dates");
-	GHAssertTrue([[guy.lotsOfDates objectAtIndex:0] isKindOfClass:[NSDate class]], @"Date obj should be of type NSDate");
+	STAssertNotNil(guy.lotsOfDates, @"Dates shouldn't be nil after JSON set");
+	STAssertTrue(guy.lotsOfDates.count == 3, @"Should have 3 dates");
+	STAssertTrue([[guy.lotsOfDates objectAtIndex:0] isKindOfClass:[NSDate class]], @"Date obj should be of type NSDate");
 	
 	NSDictionary *send = [guy dictionaryOfRemoteProperties];
 	
-	GHAssertNotNil([send objectForKey:@"lots_of_dates_attributes"], @"Dates shouldn't be nil after remote dict");
-	GHAssertTrue([[send objectForKey:@"lots_of_dates_attributes"] count] == 3, @"Send should have 3 dates");
-	GHAssertTrue([[[send objectForKey:@"lots_of_dates_attributes"] lastObject] isKindOfClass:[NSString class]], @"Date obj should be of type NSString on send");
-	GHAssertEqualStrings([[send objectForKey:@"lots_of_dates_attributes"] lastObject], @"2012-05-07T04:41:52Z", @"Converted date should be equal to original val");
+	STAssertNotNil([send objectForKey:@"lots_of_dates_attributes"], @"Dates shouldn't be nil after remote dict");
+	STAssertTrue([[send objectForKey:@"lots_of_dates_attributes"] count] == 3, @"Send should have 3 dates");
+	STAssertTrue([[[send objectForKey:@"lots_of_dates_attributes"] lastObject] isKindOfClass:[NSString class]], @"Date obj should be of type NSString on send");
+	STAssertEqualObjects([[send objectForKey:@"lots_of_dates_attributes"] lastObject], @"2012-05-07T04:41:52Z", @"Converted date should be equal to original val");
 }
 
 - (void) test_set_properties
@@ -352,38 +351,38 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:@"test", @"property1", nil];
 	
 	BOOL ch = [t setPropertiesUsingRemoteDictionary:dict];
-	GHAssertEqualStrings(t.property1, @"test", @"");
-	GHAssertTrue(ch, @"Should've been changes first time around");
+	STAssertEqualObjects(t.property1, @"test", @"");
+	STAssertTrue(ch, @"Should've been changes first time around");
 	
 	BOOL ch2 = [t setPropertiesUsingRemoteDictionary:dict];
-	GHAssertFalse(ch2, @"Should've been no changes when setting to no dict");
+	STAssertFalse(ch2, @"Should've been no changes when setting to no dict");
 	
 	t.property1 = nil;
 	
 	NSDictionary *dictEnveloped = [[NSDictionary alloc] initWithObjectsAndKeys:[[NSDictionary alloc] initWithObjectsAndKeys:@"test",@"property1", nil], @"property_tester", nil];
 	BOOL ch3 = [t setPropertiesUsingRemoteDictionary:dictEnveloped];
-	GHAssertEqualStrings(t.property1, @"test", @"");
-	GHAssertFalse(ch2, @"Should've been no changes when setting to inner dict");
+	STAssertEqualObjects(t.property1, @"test", @"");
+	STAssertFalse(ch2, @"Should've been no changes when setting to inner dict");
 	
 	BOOL b;
-	GHAssertNoThrow(b = [t setPropertiesUsingRemoteJSON:nil], @"Shouldn't blow up on setting to nil JSON");
-	GHAssertFalse(b, @"Shouldn't be a change if nil JSON");
+	STAssertNoThrow(b = [t setPropertiesUsingRemoteJSON:nil], @"Shouldn't blow up on setting to nil JSON");
+	STAssertFalse(b, @"Shouldn't be a change if nil JSON");
 
 	BOOL b2;
-	GHAssertNoThrow(b2 = [t setPropertiesUsingRemoteDictionary:nil], @"Shouldn't blow up on setting to nil dict");
-	GHAssertFalse(b2, @"Shouldn't be a change if nil dict");
+	STAssertNoThrow(b2 = [t setPropertiesUsingRemoteDictionary:nil], @"Shouldn't blow up on setting to nil dict");
+	STAssertFalse(b2, @"Shouldn't be a change if nil dict");
 
-	GHAssertThrowsSpecificNamed([t setPropertiesUsingRemoteJSON:@"null"], NSException, NSRailsJSONParsingException, @"Should blow up on bad JSON");
-	GHAssertNoThrow([t setPropertiesUsingRemoteJSON:@"{\"property_tester\":null}"], @"Shouldn't blow up, just issue a warning");
-	GHAssertNoThrow([t setPropertiesUsingRemoteJSON:@"{\"property_tester\":{\"property1\":null}}"], @"Shouldn't blow up on setting to a null JSON value");
+	STAssertThrowsSpecificNamed([t setPropertiesUsingRemoteJSON:@"null"], NSException, NSRailsJSONParsingException, @"Should blow up on bad JSON");
+	STAssertNoThrow([t setPropertiesUsingRemoteJSON:@"{\"property_tester\":null}"], @"Shouldn't blow up, just issue a warning");
+	STAssertNoThrow([t setPropertiesUsingRemoteJSON:@"{\"property_tester\":{\"property1\":null}}"], @"Shouldn't blow up on setting to a null JSON value");
 	
-	GHAssertNil(t.property1, @"property1 should be nil after setting from JSON");
+	STAssertNil(t.property1, @"property1 should be nil after setting from JSON");
 
-	GHAssertThrowsSpecificNamed([t setPropertiesUsingRemoteJSON:@"fiauj"], NSException, NSRailsJSONParsingException, @"Should blow up on bad JSON");
+	STAssertThrowsSpecificNamed([t setPropertiesUsingRemoteJSON:@"fiauj"], NSException, NSRailsJSONParsingException, @"Should blow up on bad JSON");
 	t.property1 = [[NSScanner alloc] init];
-	GHAssertNoThrow([t dictionaryOfRemoteProperties], @"Shouldn't blow up on making a DICT");
-	GHAssertThrowsSpecificNamed([t remoteJSONRepresentation], NSException, NSRailsJSONParsingException, @"Should blow up on making bad JSON");
-	GHAssertThrowsSpecificNamed([t remoteCreate:nil], NSException, NSRailsJSONParsingException, @"Should blow up on making bad JSON");
+	STAssertNoThrow([t dictionaryOfRemoteProperties], @"Shouldn't blow up on making a DICT");
+	STAssertThrowsSpecificNamed([t remoteJSONRepresentation], NSException, NSRailsJSONParsingException, @"Should blow up on making bad JSON");
+	STAssertThrowsSpecificNamed([t remoteCreate:nil], NSException, NSRailsJSONParsingException, @"Should blow up on making bad JSON");
 }
 
 
@@ -395,42 +394,39 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	e.remoteID = [NSNumber numberWithInt:5];
 	BOOL s = [NSKeyedArchiver archiveRootObject:e toFile:file];
 	
-	GHAssertTrue(s, @"Archiving should've worked (serialize)");
+	STAssertTrue(s, @"Archiving should've worked (serialize)");
 	
 	Empty *eRetrieve = [NSKeyedUnarchiver unarchiveObjectWithFile:file];
-	GHAssertEqualObjects(e.remoteID, eRetrieve.remoteID, @"Should've carried over remoteID");
+	STAssertEqualObjects(e.remoteID, eRetrieve.remoteID, @"Should've carried over remoteID");
 	
 
 	Empty *eCustomSync = [[Empty alloc] initWithCustomSyncProperties:@"custom"];
 	s = [NSKeyedArchiver archiveRootObject:eCustomSync toFile:file];
 	
-	GHAssertTrue(s, @"Archiving should've worked (serialize)");
+	STAssertTrue(s, @"Archiving should've worked (serialize)");
 	
-// decoding ivars on custompropertycollection requires retaining, so ignore on mac os (ghunit doesn't support ARC)
-#if TARGET_OS_IPHONE
 	Empty *eCustomSyncRetrieve = [NSKeyedUnarchiver unarchiveObjectWithFile:file];
 	NSRAssertEqualArraysNoOrder(eCustomSyncRetrieve.propertyCollection.properties.allKeys, NSRArray(@"custom", @"remoteID"));
 
 	Empty *eCustomSyncConfig = [[Empty alloc] initWithCustomSyncProperties:@"custom" customConfig:[[NSRConfig alloc] initWithAppURL:@"URL"]];
 	s = [NSKeyedArchiver archiveRootObject:eCustomSyncConfig toFile:file];
 	
-	GHAssertTrue(s, @"Archiving should've worked (serialize)");
+	STAssertTrue(s, @"Archiving should've worked (serialize)");
 	
 	Empty *eCustomSyncConfigRetrieve = [NSKeyedUnarchiver unarchiveObjectWithFile:file];
-	GHAssertEqualStrings(eCustomSyncConfigRetrieve.propertyCollection.customConfig.appURL, @"URL", @"Config should carry over");
+	STAssertEqualObjects(eCustomSyncConfigRetrieve.propertyCollection.customConfig.appURL, @"URL", @"Config should carry over");
 
 	
 	CustomGuy *guy = [[CustomGuy alloc] init];
 	s = [NSKeyedArchiver archiveRootObject:guy toFile:file];
 	
-	GHAssertTrue(s, @"Archiving should've worked (serialize)");
+	STAssertTrue(s, @"Archiving should've worked (serialize)");
 	
 	CustomGuy *guyRetrieve = [NSKeyedUnarchiver unarchiveObjectWithFile:file];
 	NSRAssertEqualArraysNoOrder(guyRetrieve.propertyCollection.properties.allKeys, NSRArray(@"something", @"remoteID"));
-	GHAssertEqualStrings(guyRetrieve.propertyCollection.customConfig.appURL, @"url", @"Config should carry over");
-	GHAssertEqualStrings(guyRetrieve.propertyCollection.customConfig.appUsername, @"user", @"Config should carry over");
-	GHAssertEqualStrings(guyRetrieve.propertyCollection.customConfig.appPassword, @"pass", @"Config should carry over");
-#endif
+	STAssertEqualObjects(guyRetrieve.propertyCollection.customConfig.appURL, @"url", @"Config should carry over");
+	STAssertEqualObjects(guyRetrieve.propertyCollection.customConfig.appUsername, @"user", @"Config should carry over");
+	STAssertEqualObjects(guyRetrieve.propertyCollection.customConfig.appPassword, @"pass", @"Config should carry over");
 }
 
 - (void)setUpClass

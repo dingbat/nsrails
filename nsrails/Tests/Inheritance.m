@@ -91,7 +91,7 @@ NSRailsUseConfig(@"parent")
 
 #define NSRAssertClassAndInstanceProperties(class, ...) NSRAssertClassProperties(class, __VA_ARGS__); NSRAssertInstanceProperties(class, __VA_ARGS__)
 
-@interface TInheritance : GHTestCase
+@interface TInheritance : SenTestCase
 @end
 
 @implementation TInheritance

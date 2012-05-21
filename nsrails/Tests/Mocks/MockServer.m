@@ -27,7 +27,7 @@
 
 + (NSString *) fullErrorWithFile:(NSString *)file
 {
-	NSString *text = [[NSString alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:file ofType:@"txt"]
+	NSString *text = [[NSString alloc] initWithContentsOfFile:[@"Tests/Mocks/" stringByAppendingFormat:@"%@.txt",file]
 												 usedEncoding:NULL
 														error:nil];
 	if (!text)
