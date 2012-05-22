@@ -78,7 +78,7 @@ NSRailsSync(locallyURL=locally_url -ed, locallyLowercase -d, remotelyUppercase -
 	return nil;
 }
 
-- (NSString *) encodeCodeToNil
+- (NSString *) encodeCodeToNil:(NSString *)input
 {
 	return nil;
 }

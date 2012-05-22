@@ -301,7 +301,14 @@ NSRailsSync(*);
 	SEL encoder = NULL;
 	if (prop.encodable)
 	{
-		encoder = NSSelectorFromString([NSString stringWithFormat:@"encode%@", [prop.name firstLetterCapital]]);
+		NSString *encodeMethod = [NSString stringWithFormat:@"encode%@", [prop.name firstLetterCapital]];
+		
+		//support encode methods being written with a parameter of obj being encoded
+		NSString *withObject = [encodeMethod stringByAppendingString:@":"];
+		if ([self respondsToSelector:NSSelectorFromString(withObject)])
+			encoder = NSSelectorFromString(withObject);
+		else
+			encoder = NSSelectorFromString(encodeMethod);
 	}
 	else if (prop.isDate)
 	{
