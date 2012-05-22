@@ -400,7 +400,7 @@ extern NSString * const NSRailsNullRemoteIDException;
  @warning Do not override this method if you wish to override NSRConfig, since this method contains important workflows such as checking if the appURL is nil, managing the network activity indicator, and logging. Rather, override responseForRequestType:requestBody:url:sync:orAsync:.
  
  @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
- @param body The request body.
+ @param body Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).
  @param route The route to which the request will be made. This is appended to the `appURL`, so not the full URL. For instance, `articles/1`.
  @param sync Pointer to an `NSError` object. Only used if *completionBlock* is `NULL`. May be `NULL`.
  @param completionBlock If this parameter is not `NULL`, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is `NULL`, request will be made synchronously and the *sync* paramter may be used.
@@ -419,7 +419,7 @@ extern NSString * const NSRailsNullRemoteIDException;
  You should continue to make calls to makeRequest:requestBody:route:sync:orAsync: - it will call this method internally. It is important to do so because it contains workflows that your override will hide.
  
  @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
- @param body The request body.
+ @param body Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).
  @param url The url to which the request will be made (full URL.)
  @param sync Pointer to an `NSError` object. Only used if *completionBlock* is `NULL`. May be `NULL`.
  @param completionBlock If this parameter is not `NULL`, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is `NULL`, request will be made synchronously and the *sync* paramter may be used.

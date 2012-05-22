@@ -460,7 +460,7 @@
 			<Abstract type="html">Makes a custom request. Returns the response string if synchronous; otherwise executes given block.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
-			<Declaration>- (NSString *)makeRequest:(NSString *)httpVerb requestBody:(NSString *)body route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock</Declaration>
+			<Declaration>- (id)makeRequest:(NSString *)httpVerb requestBody:(id)body route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>httpVerb</Name>
@@ -479,7 +479,7 @@
 					<Abstract type="html">Pointer to an NSError object. Only used if completionBlock is NULL. May be NULL.</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract type="html">The response string, only if request is made synchronously. Otherwise, will return nil.</Abstract></ReturnValue>
+			<ReturnValue><Abstract type="html">The response representation (parsed from JSON), only if request is made synchronously. Otherwise, will return nil.</Abstract></ReturnValue>
 			<Anchor>//api/name/makeRequest:requestBody:route:sync:orAsync:</Anchor>
 		</Token>
 		
@@ -488,7 +488,7 @@
 			<Abstract type="html">If you wish to define your own method of making a connection that&apos;s not HTTP (eg HTTPS), or include a custom header, etc, this is the method to override.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
-			<Declaration>- (NSString *)responseForRequestType:(NSString *)httpVerb requestBody:(NSString *)body url:(NSString *)url sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock</Declaration>
+			<Declaration>- (id)responseForRequestType:(NSString *)httpVerb requestBody:(id)body url:(NSString *)url sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>httpVerb</Name>
@@ -507,7 +507,7 @@
 					<Abstract type="html">Pointer to an NSError object. Only used if completionBlock is NULL. May be NULL.</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract type="html">The response string, only if request is made synchronously. Otherwise, will return nil.</Abstract></ReturnValue>
+			<ReturnValue><Abstract type="html">The response representation (parsed from JSON), only if request is made synchronously. Otherwise, will return nil.</Abstract></ReturnValue>
 			<Anchor>//api/name/responseForRequestType:requestBody:url:sync:orAsync:</Anchor>
 		</Token>
 		
@@ -516,14 +516,14 @@
 			<Abstract type="html">(Typically only used when subclassing NSRConfig.) It is recommended to use this method after implementing your own request method, as it will generate some Rails-specific errors (like validation errors).</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
-			<Declaration>- (NSError *)errorForResponse:(NSString *)response statusCode:(NSInteger)statusCode</Declaration>
+			<Declaration>- (NSError *)errorForResponse:(id)jsonResponse statusCode:(NSInteger)statusCode</Declaration>
 			<Parameters>
 				<Parameter>
-					<Name>response</Name>
-					<Abstract type="html">Response string given by a server.</Abstract>
-				</Parameter><Parameter>
 					<Name>statusCode</Name>
 					<Abstract type="html">Status code that was returned with the response.</Abstract>
+				</Parameter><Parameter>
+					<Name>response</Name>
+					<Abstract type="html">Response representation given by a server.</Abstract>
 				</Parameter>
 			</Parameters>
 			<ReturnValue><Abstract type="html">Error if one could be extracted - otherwise nil.</Abstract></ReturnValue>

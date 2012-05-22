@@ -77,7 +77,7 @@
 		 {
 			 for (NSString *reasonForFailure in [validationErrors objectForKey:property])
 			 {
-				 NSLog(@"%@ %@",property,reasonForFailure);
+				 NSLog(@"%@ %@",property,reasonForFailure);  //=> "Name can't be blank"
 			 }
 		 }
 	 }
@@ -130,7 +130,7 @@
  
  This can be useful if you have a lot of nested models you need to destroy - you can do it in one request instead of several repeated destroys on each object.
  
- @warning Relevant for a nested object only. And, for this to work, make sure `:allow_destroy => true` [is set in your Rails model](https://github.com/dingbat/nsrails/wiki/Nesting ).
+ @warning Relevant for a nested object only. And, for this to work, make sure `:allow_destroy => true` [is set in your Rails model](https://github.com/dingbat/nsrails/wiki/Nesting).
  */
 @property (nonatomic) BOOL remoteDestroyOnNesting;
 
@@ -261,7 +261,7 @@
  
  @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
  @param customRESTMethod The REST method to call (appended to the route). If `nil`, will call index. See above for examples.
- @param body Request body.
+ @param body Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return JSON response object (could be an `NSArray` or `NSDictionary`).
  */
@@ -282,7 +282,7 @@
  
  @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
  @param customRESTMethod The REST method to call (appended to the route). If `nil`, will call index. See above for examples.
- @param body Request body.
+ @param body Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).
  @param completionBlock Block to be executed when the request is complete.
  */
 + (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body async:(NSRHTTPCompletionBlock)completionBlock;
@@ -477,7 +477,7 @@
  
  @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
  @param customRESTMethod The REST method to call (appended to the route). If `nil`, will call index. See above for examples.
- @param body Request body.
+ @param body Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return JSON response object (could be an `NSArray` or `NSDictionary`).
  */
@@ -495,7 +495,7 @@
  
  @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
  @param customRESTMethod The REST method to call (appended to the route). If `nil`, will call index. See above for examples.
- @param body Request body.
+ @param body Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).
  @param completionBlock Block to be executed when the request is complete.
  */
 - (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body async:(NSRHTTPCompletionBlock)completionBlock;
@@ -503,7 +503,7 @@
 
 
 /// =============================================================================================
-/// @name Manual JSON encoding/decoding
+/// @name Setting and retrieving JSON representations
 /// =============================================================================================
 
 

@@ -152,7 +152,7 @@
 			<Abstract type="html">Returns the JSON response for a GET request to a custom method.</Abstract>
 			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
 			
-			<Declaration>+ (NSString *)remoteGET:(NSString *)customRESTMethod error:(NSError **)error</Declaration>
+			<Declaration>+ (id)remoteGET:(NSString *)customRESTMethod error:(NSError **)error</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>customRESTMethod</Name>
@@ -162,7 +162,7 @@
 					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract type="html">NSString response (in JSON).</Abstract></ReturnValue>
+			<ReturnValue><Abstract type="html">JSON response object (could be an NSArray or NSDictionary).</Abstract></ReturnValue>
 			<Anchor>//api/name/remoteGET:error:</Anchor>
 		</Token>
 		
@@ -190,7 +190,7 @@
 			<Abstract type="html">Returns the JSON response for a request with a custom method, sending an NSRailsModel subclass instance as the body.</Abstract>
 			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
 			
-			<Declaration>+ (NSString *)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj error:(NSError **)error</Declaration>
+			<Declaration>+ (id)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj error:(NSError **)error</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>httpVerb</Name>
@@ -206,7 +206,7 @@
 					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract type="html">NSString response (in JSON).</Abstract></ReturnValue>
+			<ReturnValue><Abstract type="html">JSON response object (could be an NSArray or NSDictionary).</Abstract></ReturnValue>
 			<Anchor>//api/name/remoteRequest:method:bodyAsObject:error:</Anchor>
 		</Token>
 		
@@ -240,7 +240,7 @@
 			<Abstract type="html">Returns the JSON response for a request with a custom method.</Abstract>
 			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
 			
-			<Declaration>+ (NSString *)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body error:(NSError **)error</Declaration>
+			<Declaration>+ (id)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body error:(NSError **)error</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>httpVerb</Name>
@@ -250,13 +250,13 @@
 					<Abstract type="html">The REST method to call (appended to the route). If nil, will call index. See above for examples.</Abstract>
 				</Parameter><Parameter>
 					<Name>body</Name>
-					<Abstract type="html">Request body.</Abstract>
+					<Abstract type="html">Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).</Abstract>
 				</Parameter><Parameter>
 					<Name>error</Name>
 					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract type="html">Response string (in JSON).</Abstract></ReturnValue>
+			<ReturnValue><Abstract type="html">JSON response object (could be an NSArray or NSDictionary).</Abstract></ReturnValue>
 			<Anchor>//api/name/remoteRequest:method:body:error:</Anchor>
 		</Token>
 		
@@ -265,7 +265,7 @@
 			<Abstract type="html">Makes a request with a custom method.</Abstract>
 			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
 			
-			<Declaration>+ (void)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock</Declaration>
+			<Declaration>+ (void)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body async:(NSRHTTPCompletionBlock)completionBlock</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>httpVerb</Name>
@@ -275,7 +275,7 @@
 					<Abstract type="html">The REST method to call (appended to the route). If nil, will call index. See above for examples.</Abstract>
 				</Parameter><Parameter>
 					<Name>body</Name>
-					<Abstract type="html">Request body.</Abstract>
+					<Abstract type="html">Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).</Abstract>
 				</Parameter><Parameter>
 					<Name>completionBlock</Name>
 					<Abstract type="html">Block to be executed when the request is complete.</Abstract>
@@ -449,17 +449,17 @@ Note that because this only tracks differences in local changes, properties that
 			<Abstract type="html">Returns the JSON response for a GET request to a custom method.</Abstract>
 			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
 			
-			<Declaration>- (NSString *)remoteGET:(NSString *)customRESTMethod error:(NSError **)error</Declaration>
+			<Declaration>- (id)remoteGET:(NSString *)customRESTMethod error:(NSError **)error</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>customRESTMethod</Name>
-					<Abstract type="html">Custom REST method to be called on the remote object corresponding to the receiver. If nil, will route to only the receiver (objects/1.json).</Abstract>
+					<Abstract type="html">Custom REST method to be called on the remote object corresponding to the receiver. If nil, will route to only the receiver (objects/1).</Abstract>
 				</Parameter><Parameter>
 					<Name>error</Name>
 					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract type="html">NSString response (in JSON).</Abstract></ReturnValue>
+			<ReturnValue><Abstract type="html">JSON response object (could be an NSArray or NSDictionary).</Abstract></ReturnValue>
 			<Anchor>//api/name/remoteGET:error:</Anchor>
 		</Token>
 		
@@ -472,7 +472,7 @@ Note that because this only tracks differences in local changes, properties that
 			<Parameters>
 				<Parameter>
 					<Name>customRESTMethod</Name>
-					<Abstract type="html">Custom REST method to be called on the remote object corresponding to the receiver. If nil, will route to only the receiver (objects/1.json).</Abstract>
+					<Abstract type="html">Custom REST method to be called on the remote object corresponding to the receiver. If nil, will route to only the receiver (objects/1).</Abstract>
 				</Parameter><Parameter>
 					<Name>completionBlock</Name>
 					<Abstract type="html">Block to be executed when the request is complete.</Abstract>
@@ -487,20 +487,20 @@ Note that because this only tracks differences in local changes, properties that
 			<Abstract type="html">Returns the JSON response for a request with a custom method, sending the JSON representation of the receiver as the request body.</Abstract>
 			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
 			
-			<Declaration>- (NSString *)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod error:(NSError **)error</Declaration>
+			<Declaration>- (id)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod error:(NSError **)error</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>httpVerb</Name>
 					<Abstract type="html">The HTTP method to use (GET, POST, PUT, DELETE, etc.)</Abstract>
 				</Parameter><Parameter>
 					<Name>customRESTMethod</Name>
-					<Abstract type="html">Custom REST method to be called on the remote object corresponding to the receiver. If nil, will route to only the receiver (objects/1.json).</Abstract>
+					<Abstract type="html">Custom REST method to be called on the remote object corresponding to the receiver. If nil, will route to only the receiver (objects/1).</Abstract>
 				</Parameter><Parameter>
 					<Name>error</Name>
 					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract type="html">NSString response (in JSON).</Abstract></ReturnValue>
+			<ReturnValue><Abstract type="html">JSON response object (could be an NSArray or NSDictionary).</Abstract></ReturnValue>
 			<Anchor>//api/name/remoteRequest:method:error:</Anchor>
 		</Token>
 		
@@ -516,7 +516,7 @@ Note that because this only tracks differences in local changes, properties that
 					<Abstract type="html">The HTTP method to use (GET, POST, PUT, DELETE, etc.)</Abstract>
 				</Parameter><Parameter>
 					<Name>customRESTMethod</Name>
-					<Abstract type="html">Custom REST method to be called on the remote object corresponding to the receiver. If nil, will route to only the receiver (objects/1.json).</Abstract>
+					<Abstract type="html">Custom REST method to be called on the remote object corresponding to the receiver. If nil, will route to only the receiver (objects/1).</Abstract>
 				</Parameter><Parameter>
 					<Name>completionBlock</Name>
 					<Abstract type="html">Block to be executed when the request is complete.</Abstract>
@@ -531,7 +531,7 @@ Note that because this only tracks differences in local changes, properties that
 			<Abstract type="html">Returns the JSON response for a request with a custom method on the receiver&apos;s corresponding remote object.</Abstract>
 			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
 			
-			<Declaration>- (NSString *)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body error:(NSError **)error</Declaration>
+			<Declaration>- (id)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body error:(NSError **)error</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>httpVerb</Name>
@@ -541,13 +541,13 @@ Note that because this only tracks differences in local changes, properties that
 					<Abstract type="html">The REST method to call (appended to the route). If nil, will call index. See above for examples.</Abstract>
 				</Parameter><Parameter>
 					<Name>body</Name>
-					<Abstract type="html">Request body.</Abstract>
+					<Abstract type="html">Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).</Abstract>
 				</Parameter><Parameter>
 					<Name>error</Name>
 					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract type="html">Response string (in JSON).</Abstract></ReturnValue>
+			<ReturnValue><Abstract type="html">JSON response object (could be an NSArray or NSDictionary).</Abstract></ReturnValue>
 			<Anchor>//api/name/remoteRequest:method:body:error:</Anchor>
 		</Token>
 		
@@ -556,7 +556,7 @@ Note that because this only tracks differences in local changes, properties that
 			<Abstract type="html">Makes a request with a custom method on the receiver&apos;s corresponding remote object.</Abstract>
 			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
 			
-			<Declaration>- (void)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(NSString *)body async:(NSRHTTPCompletionBlock)completionBlock</Declaration>
+			<Declaration>- (void)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body async:(NSRHTTPCompletionBlock)completionBlock</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>httpVerb</Name>
@@ -566,7 +566,7 @@ Note that because this only tracks differences in local changes, properties that
 					<Abstract type="html">The REST method to call (appended to the route). If nil, will call index. See above for examples.</Abstract>
 				</Parameter><Parameter>
 					<Name>body</Name>
-					<Abstract type="html">Request body.</Abstract>
+					<Abstract type="html">Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).</Abstract>
 				</Parameter><Parameter>
 					<Name>completionBlock</Name>
 					<Abstract type="html">Block to be executed when the request is complete.</Abstract>
@@ -577,41 +577,22 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteJSONRepresentation</TokenIdentifier>
-			<Abstract type="html">Serializes the receiver&apos;s properties into a JSON string.</Abstract>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteDictionaryRepresentationWrapped:</TokenIdentifier>
+			<Abstract type="html">Serializes the receiver&apos;s properties into a dictionary.
+  </Abstract>
 			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
 			
-			<Declaration>- (NSString *)remoteJSONRepresentation</Declaration>
-			
-			<ReturnValue><Abstract type="html">The receiver&apos;s properties as a JSON string (takes into account rules in NSRailsSync).</Abstract></ReturnValue>
-			<Anchor>//api/name/remoteJSONRepresentation</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/dictionaryOfRemoteProperties</TokenIdentifier>
-			<Abstract type="html">Serializes the receiver&apos;s properties into a dictionary.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
-			
-			<Declaration>- (NSDictionary *)dictionaryOfRemoteProperties</Declaration>
-			
-			<ReturnValue><Abstract type="html">The receiver&apos;s properties as a dictionary (takes into account rules in NSRailsSync).</Abstract></ReturnValue>
-			<Anchor>//api/name/dictionaryOfRemoteProperties</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/setPropertiesUsingRemoteJSON:</TokenIdentifier>
-			<Abstract type="html">Sets the receiver&apos;s properties given a JSON string.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
-			
-			<Declaration>- (BOOL)setPropertiesUsingRemoteJSON:(NSString *)json</Declaration>
+			<Declaration>- (NSDictionary *)remoteDictionaryRepresentationWrapped:(BOOL)wrapped</Declaration>
 			<Parameters>
 				<Parameter>
-					<Name>json</Name>
-					<Abstract type="html">JSON string to be evaluated, typically from the Rails output from a previous request.</Abstract>
+					<Name>wrapped</Name>
+					<Abstract type="html">If YES, wraps the dictionary with a key of the model name:
+
+	{&quot;user&quot;=&gt;{&quot;name&quot;=&gt;&quot;x&quot;, &quot;email&quot;=&gt;&quot;y&quot;}}</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract type="html">YES if any changes were made to the local object, NO if object was identical before/after.</Abstract></ReturnValue>
-			<Anchor>//api/name/setPropertiesUsingRemoteJSON:</Anchor>
+			<ReturnValue><Abstract type="html">The receiver&apos;s properties as a dictionary (takes into account rules in NSRailsSync).</Abstract></ReturnValue>
+			<Anchor>//api/name/remoteDictionaryRepresentationWrapped:</Anchor>
 		</Token>
 		
 		<Token>
@@ -628,22 +609,6 @@ Note that because this only tracks differences in local changes, properties that
 			</Parameters>
 			<ReturnValue><Abstract type="html">YES if any changes were made to the local object, NO if object was identical before/after.</Abstract></ReturnValue>
 			<Anchor>//api/name/setPropertiesUsingRemoteDictionary:</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/initWithRemoteJSON:</TokenIdentifier>
-			<Abstract type="html">Initializes a new instance of the receiver&apos;s class with a given JSON input.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
-			
-			<Declaration>- (id)initWithRemoteJSON:(NSString *)json</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>json</Name>
-					<Abstract type="html">JSON string to be evaluated, typically from the Rails output from a previous request.</Abstract>
-				</Parameter>
-			</Parameters>
-			<ReturnValue><Abstract type="html">YES if any changes were made to the local object, NO if object was identical before/after.</Abstract></ReturnValue>
-			<Anchor>//api/name/initWithRemoteJSON:</Anchor>
 		</Token>
 		
 		<Token>
