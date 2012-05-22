@@ -287,6 +287,8 @@
 	
 	NSArray *index = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts.json" sync:&e orAsync:nil];
 	
+	NSRAssertNoServer(e.domain != NSRRemoteErrorDomain);
+	
 	STAssertNotNil(e, @"Should fail on not authenticated, where's the error?");
 	STAssertNil(index, @"Response should be nil because there was an authentication error");
 	

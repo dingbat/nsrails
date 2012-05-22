@@ -45,6 +45,8 @@
 
 @end
 
+#define NSRAssertNoServer(x)	if (x) { STFail(@"Test Rails server not running -- run rails s on the demo app."); return; }
+
 
 #define NSRAssertClassModelName(mname, class)	STAssertEqualObjects([class masterModelName], mname, @"%@ model name failed.", NSStringFromClass(class))
 

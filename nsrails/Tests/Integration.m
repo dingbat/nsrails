@@ -61,16 +61,16 @@ NSRailsSync(*)
 @end
 
 @interface TIntegration : SenTestCase
-{
-	BOOL noServer;
-}
 @end
 
 @implementation TIntegration
 
+static BOOL noServer = NO;
+
+
 - (void) test_crud_async
 {
-	STAssertFalse(noServer, @"Test app not running. Run 'rails s'.");
+	NSRAssertNoServer(noServer);
 	
 	/////////////////
 	//TEST READ ALL
@@ -181,7 +181,7 @@ NSRailsSync(*)
 
 - (void) test_crud
 {
-	STAssertFalse(noServer, @"Test app not running. Run 'rails s'.");
+	NSRAssertNoServer(noServer);
 	
 	/////////////////
 	//TEST READ ALL
@@ -313,7 +313,7 @@ NSRailsSync(*)
 
 - (void) test_get_all
 {
-	STAssertFalse(noServer, @"Test app not running. Run 'rails s'.");
+	NSRAssertNoServer(noServer);
 
 	NSError *e = nil;
 
@@ -363,7 +363,7 @@ NSRailsSync(*)
 
 - (void) test_nesting
 {
-	STAssertFalse(noServer, @"Test app not running. Run 'rails s'.");
+	NSRAssertNoServer(noServer);
 		
 	NSError *e = nil;
 	
@@ -539,7 +539,7 @@ NSRailsSync(*)
 
 - (void) test_diff_detection
 {
-	STAssertFalse(noServer, @"Test app not running. Run 'rails s'.");
+	NSRAssertNoServer(noServer);
 	
 	NSError *e = nil;
 	
@@ -625,7 +625,7 @@ NSRailsSync(*)
 
 - (void) test_date_conversion
 {	
-	STAssertFalse(noServer, @"Test app not running. Run 'rails s'.");
+	NSRAssertNoServer(noServer);
 	
 	Post *post = [[Post alloc] init];
 	post.author = @"Author";
@@ -674,11 +674,9 @@ NSRailsSync(*)
 	STAssertNil(e,@"There should be no problem remotely destroying post - just cleaning up.");
 }
 
-- (void)setUpClass
++ (void)setUp
 {
 	// Run at start of all tests in the class
-	
-	noServer = NO;
 	
 	NSError *e = nil;
 	
@@ -690,17 +688,6 @@ NSRailsSync(*)
 	if (e && [[e domain] isEqualToString:NSURLErrorDomain])
 	{
 		noServer = YES;
-		
-		NSString *title = @"Server not running";
-		NSString *text = @"It doesn't look the test Rails app is running locally. Some tests can't run without it.\n\nTo run the app:\n\"$ cd demos/nsrails.com; rails s\".\nIf your DB isn't set up:\n\"$ rake db:migrate\".";
-		
-#if TARGET_OS_IPHONE
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:text delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-		[alert show];
-#else
-		NSAlert *alert = [NSAlert alertWithMessageText:title defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:text];
-		[alert runModal];
-#endif
 	}
 }
 
