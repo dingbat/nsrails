@@ -99,7 +99,7 @@
 /**
  The corresponding local property for `id`.
  
- It is notable that this property will be automatically updated after remoteCreate:, as will anything else that is returned from that create.
+ It should be noted that this property will be automatically updated after remoteCreate:, as will anything else that is returned from that create.
  */
 @property (nonatomic, strong) NSNumber *remoteID;
 
@@ -107,7 +107,19 @@
  The most recent dictionary of all properties returned by Rails, exactly as it returned it. (read-only)
  
  This will include properties that you may not have defined in your Objective-C class, allowing you to dynamically add fields to your app if the server-side model changes.
+ 
  Moreover, this will not take into account anything in NSRailsSync - it is exactly the hash as was sent by Rails.
+ 
+ You're safe to use this property after any method that sets your object's properties from remote. For example:
+	
+	NSError *error;
+	if ([myObj remoteFetch:&error])
+	{
+		NSDictionary *hashSentByRails = myObj.remoteAttributes;
+		...
+ 
+ Methods that will update `remoteAttributes` include initWithRemoteDictionary:, remoteFetch: and remoteCreate:. Objects returned with remoteObjectWithID:, and remoteAll: will also have an accurate `remoteAttributes`.
+ 
  */
 @property (nonatomic, strong, readonly) NSDictionary *remoteAttributes;
 

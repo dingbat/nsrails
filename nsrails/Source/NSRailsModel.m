@@ -395,9 +395,16 @@ NSRailsSync(*);
 {
 	if ((self = [super init]))
 	{
-		[self setPropertiesUsingRemoteDictionary:railsDict];
+		[self setPropertiesUsingRemoteDictionaryAndSetToRemoteAttributes:railsDict];
 	}
 	return self;
+}
+
+- (BOOL) setPropertiesUsingRemoteDictionaryAndSetToRemoteAttributes:(NSDictionary *)dictionary
+{
+	remoteAttributes = dictionary;
+
+	return [self setPropertiesUsingRemoteDictionary:dictionary];
 }
 
 - (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict
@@ -408,9 +415,7 @@ NSRailsSync(*);
 	{
 		dict = innerDict;
 	}
-	
-	remoteAttributes = dict;
-	
+		
 	BOOL changes = NO;
 	
 	for (NSString *railsProperty in dict)
@@ -498,7 +503,7 @@ NSRailsSync(*);
 								{
 									//existed - simply update that one (recursively)
 									decodedElement = [previousVal objectAtIndex:idx];
-									BOOL neededChange = [decodedElement setPropertiesUsingRemoteDictionary:railsElement];
+									BOOL neededChange = [decodedElement setPropertiesUsingRemoteDictionaryAndSetToRemoteAttributes:railsElement];
 									
 									if (neededChange)
 										changes = YES;
@@ -524,7 +529,7 @@ NSRailsSync(*);
 						{
 							decodedObj = previousVal;
 							
-							BOOL objChange = [decodedObj setPropertiesUsingRemoteDictionary:railsObject];
+							BOOL objChange = [decodedObj setPropertiesUsingRemoteDictionaryAndSetToRemoteAttributes:railsObject];
 							if (objChange)
 								changes = YES;
 						}
@@ -786,7 +791,7 @@ NSRailsSync(*);
 	if (!jsonResponse)
 		return NO;
 	
-	[self setPropertiesUsingRemoteDictionary:jsonResponse];
+	[self setPropertiesUsingRemoteDictionaryAndSetToRemoteAttributes:jsonResponse];
 	
 	return YES;
 }
@@ -797,7 +802,7 @@ NSRailsSync(*);
 	 
 	 ^(id result, NSError *error) {
 		 if (result)
-			 [self setPropertiesUsingRemoteDictionary:result];
+			 [self setPropertiesUsingRemoteDictionaryAndSetToRemoteAttributes:result];
 		 completionBlock(error);
 	 }];
 }
@@ -847,7 +852,7 @@ NSRailsSync(*);
 		return NO;
 	}
 	
-	BOOL changes = [self setPropertiesUsingRemoteDictionary:jsonResponse];
+	BOOL changes = [self setPropertiesUsingRemoteDictionaryAndSetToRemoteAttributes:jsonResponse];
 	if (changesPtr)
 		*changesPtr = changes;
 	
@@ -866,7 +871,7 @@ NSRailsSync(*);
 	 {
 		 BOOL change = NO;
 		 if (result)
-			change = [self setPropertiesUsingRemoteDictionary:result];
+			change = [self setPropertiesUsingRemoteDictionaryAndSetToRemoteAttributes:result];
 		 completionBlock(change, error);
 	 }];
 }

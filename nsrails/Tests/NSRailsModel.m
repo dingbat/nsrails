@@ -347,12 +347,14 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	//This also makes sure it doesn't confuse the property_tester model key and property_tester attribute
 	
 	PropertyTester *t = [[PropertyTester alloc] init];
+	STAssertNil(t.remoteAttributes, @"Shouldn't have any remoteAttributes on first init");
 	
 	NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:@"test", @"property_tester", nil];
 	
 	BOOL ch = [t setPropertiesUsingRemoteDictionary:dict];
 	STAssertEqualObjects(t.propertyTester, @"test", @"");
 	STAssertTrue(ch, @"Should've been changes first time around");
+	STAssertNil(t.remoteAttributes, @"Shouldn't have any remoteAttributes after setting props");
 	
 	BOOL ch2 = [t setPropertiesUsingRemoteDictionary:dict];
 	STAssertFalse(ch2, @"Should've been no changes when setting to no dict");
@@ -376,6 +378,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	t.propertyTester = [[NSScanner alloc] init];
 	STAssertNoThrow([t remoteDictionaryRepresentationWrapped:NO], @"Shouldn't blow up on making a DICT");
 	STAssertThrows([t remoteCreate:nil], @"Should blow up on making bad JSON");
+	STAssertNil(t.remoteAttributes, @"Shouldn't have any remoteAttributes, even after failed remoteCreate");
 }
 
 
