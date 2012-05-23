@@ -238,6 +238,22 @@ NSRailsSync(something);
 @synthesize color, mother;
 @end
 
+@interface Book : NSRailsModel
+@property (nonatomic, strong) NSMutableArray *owners;
+@end
+
+@implementation Book
+@synthesize owners;
+@end
+
+@interface Person : NSRailsModel
+@property (nonatomic, strong) NSMutableArray *books;
+@end
+
+@implementation Person
+@synthesize books;
+@end
+
 @interface TNSRailsModel : SenTestCase
 @end
 
@@ -465,6 +481,52 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 
 - (void) test_recursive_nesting
 {
+	/*
+	 Many-to-many
+	 */
+	
+	NSString *BooksKey = @"books_attributes";
+	NSString *OwnersKey = @"owners_attributes";
+	
+	Person *guy = [[Person alloc] initWithCustomSyncProperties:@"books:Book"];
+	guy.books = [[NSMutableArray alloc] init];
+	
+	Book *book = [[Book alloc] initWithCustomSyncProperties:@"owners:Person"];
+	book.owners = [[NSMutableArray alloc] init];
+	
+	[book.owners addObject:guy];
+	[guy.books addObject:book];
+	
+	NSDictionary *pDict = [guy remoteDictionaryRepresentationWrapped:NO];
+	STAssertTrue([[pDict objectForKey:BooksKey] isKindOfClass:[NSArray class]], @"Books should be an array");
+	STAssertTrue([[[pDict objectForKey:BooksKey] lastObject] isKindOfClass:[NSDictionary class]], @"Book should be a dict");
+	STAssertNil([[[pDict objectForKey:BooksKey] lastObject] objectForKey:OwnersKey], @"Shouldn't include books's owners since it's not included in nesting");
+
+
+	NSDictionary *bDict = [book remoteDictionaryRepresentationWrapped:NO];
+	STAssertTrue([[bDict objectForKey:OwnersKey] isKindOfClass:[NSArray class]], @"Owners should be an array");
+	STAssertTrue([[[bDict objectForKey:OwnersKey] lastObject] isKindOfClass:[NSDictionary class]], @"Owner (person) should be a dict");
+	STAssertNil([[[bDict objectForKey:OwnersKey] lastObject] objectForKey:BooksKey], @"Shouldn't include owner's books since it's not included in nesting");
+
+
+	Book *book2 = [[Book alloc] initWithCustomSyncProperties:@"owners:Person -n"];
+	book2.owners = [[NSMutableArray alloc] init];
+	[book2.owners addObject:guy];
+
+	[guy.books removeAllObjects];
+	[guy.books addObject:book2];
+	
+	pDict = [guy remoteDictionaryRepresentationWrapped:NO];
+	STAssertTrue([[pDict objectForKey:BooksKey] isKindOfClass:[NSArray class]], @"Books should be an array");
+	STAssertTrue([[[pDict objectForKey:BooksKey] lastObject] isKindOfClass:[NSDictionary class]], @"Book should be a dict");
+	STAssertTrue([[[[pDict objectForKey:BooksKey] lastObject] objectForKey:OwnersKey] isKindOfClass:[NSArray class]], @"Book should include owners and it should be an array");
+	STAssertTrue([[[[[pDict objectForKey:BooksKey] lastObject] objectForKey:OwnersKey] lastObject] isKindOfClass:[NSDictionary class]], @"Owner in owner's book's owners should be a dictionary");
+	
+	
+	/*
+	 One-to-many
+	 */
+	
 	NSString *EggsKey = @"eggs_attributes";
 	NSString *MotherKey = @"mother_attributes";
 	
@@ -477,7 +539,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	NSDictionary *birdDict = [b remoteDictionaryRepresentationWrapped:NO];
 	STAssertTrue([[birdDict objectForKey:EggsKey] isKindOfClass:[NSArray class]], @"Eggs should be an array");
 	STAssertTrue([[[birdDict objectForKey:EggsKey] lastObject] isKindOfClass:[NSDictionary class]], @"Egg should be a dict");
-	STAssertNil([[[birdDict objectForKey:EggsKey] lastObject] objectForKey:@"mother"], @"Shouldn't include egg's mother since it's not included in nesting");
+	STAssertNil([[[birdDict objectForKey:EggsKey] lastObject] objectForKey:MotherKey], @"Shouldn't include egg's mother since it's not included in nesting");
 		
 	e.mother = b;
 
