@@ -269,7 +269,8 @@
 
 - (NSArray *) objcPropertiesForRemoteEquivalent:(NSString *)remoteProp autoinflect:(BOOL)autoinflect
 {
-	NSString *inflectedRemoteProp = (autoinflect ? [remoteProp camelize] : remoteProp);
+#pragma warning - Altered here!
+	NSString *inflectedRemoteProp = (autoinflect ? remoteProp : remoteProp);
 	
 	NSMutableArray *props = [NSMutableArray array];
 	for (NSString *property in properties)
