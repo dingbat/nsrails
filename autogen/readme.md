@@ -1,4 +1,4 @@
-Usage:
+Usage
 ----------
 
 ```
@@ -20,7 +20,7 @@ Use the `-h` (`--help`) flag for a list of these options.
   </tr>
   <tr>
     <td><pre>--ruby</pre></td>
-    <td>Generate classes for RubyMotion or MacRuby (.rb). (Objective-C by default)</td>
+    <td>Generate <code>.rb</code> classes for RubyMotion or MacRuby. (Objective-C by default)</td>
   </tr>
   <tr>
     <td><pre>--created-at<br/>--updated-at</pre></td>
@@ -28,19 +28,19 @@ Use the `-h` (`--help`) flag for a list of these options.
   </tr>
   <tr>
     <td><pre>--mutable-arrays</pre></td>
-    <td>Use <code>NSMutableArray</code> for properties that are has-many (<code>NSArray</code> by default)</td>
+    <td>Use <code>NSMutableArray</code> for properties that are has-many. (<code>NSArray</code> by default)</td>
   </tr>
   <tr>
     <td><pre>--nesting-retrievable-only</pre></td>
     <td>Make all nested properties <a href="https://github.com/dingbat/nsrails/wiki/NSRailsSync">retrievable-only</a>. (Use this if you don't want to <a href="https://github.com/dingbat/nsrails/wiki/Nesting">support accepting nested attributes</a>)</td>
   </tr>
   <tr>
-    <td><pre>--author, -a<br/>--company, -c<br/>--project, -p</pre></td>
-    <td>Metadata (for headers of files). Each expects a string following it</td>
+    <td><pre>--author, -a<br/>--company, -c<br/>--project, -p</pre><p>(Each expects a string following it)</p></td>
+    <td>Metadata for headers. (Only relevant for Objective-C generation)</td>
   </tr>
   <tr>
-    <td><pre>--prefix, -x</pre></td>
-    <td>Class and filename prefix. Expects a string following it</td>
+    <td><pre>--prefix, -x</pre><p>(Expects a string following it)</p></td>
+    <td>Class and filename prefix.</td>
   </tr>
 </table>
 
