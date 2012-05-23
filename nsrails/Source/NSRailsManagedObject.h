@@ -594,6 +594,8 @@
 
 + (id)findExistingModelWithPrimaryKeyAttributeValue:(id)value;
 + (NSString *)primaryKeyAttributeName;
++ (void)setManagedObjectContext:(NSManagedObjectContext *)context;
++ (void)saveContext;
 
 
 @end

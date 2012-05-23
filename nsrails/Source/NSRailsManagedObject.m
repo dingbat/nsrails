@@ -38,7 +38,6 @@
 #import "NSData+Additions.h"
 #import "NSObject+Properties.h"
 #import "SBJson.h"
-#import "UIApplication+MOC.h"
 
 /* 
     If this file is too intimidating, 
@@ -63,6 +62,8 @@
 + (NSRConfig *) overrideConfig;
 
 @end
+
+static NSManagedObjectContext *_context;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -241,7 +242,8 @@ NSRailsSync(*);
 
 - (id) initWithCustomSyncProperties:(NSString *)str customConfig:(NSRConfig *)config
 {
-  NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
+//  NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
+  NSManagedObjectContext *ctx = _context;
   NSEntityDescription *desc = [NSEntityDescription entityForName:[[self class] description] inManagedObjectContext:ctx];
   
   self = [[NSRailsManagedObject alloc] initWithEntity:desc insertIntoManagedObjectContext:ctx];
@@ -431,7 +433,8 @@ NSRailsSync(*);
 
 - (id) initWithRemoteJSON:(NSString *)json
 {
-  NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
+//  NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
+  NSManagedObjectContext *ctx = _context;
   NSEntityDescription *desc = [NSEntityDescription entityForName:[[self class] description] inManagedObjectContext:ctx];
   
   self = [[NSRailsManagedObject alloc] initWithEntity:desc insertIntoManagedObjectContext:ctx];
@@ -602,7 +605,7 @@ NSRailsSync(*);
 			[self performSelector:setter withObject:decodedObj];
 		}
 	}
-  [[NSManagedObjectContext MR_defaultContext] MR_save];
+  [self saveContext];
 	return changes;
 }
 
@@ -914,7 +917,7 @@ NSRailsSync(*);
 	if (changesPtr)
 		*changesPtr = changes;
 	
-  [[NSManagedObjectContext MR_context] MR_save];
+  [self saveContext];
 	return YES;
 }
 
@@ -932,7 +935,7 @@ NSRailsSync(*);
 		 if (result)
 			change = [self setPropertiesUsingRemoteJSON:result];
      
-    [[NSManagedObjectContext MR_context] MR_save];
+     [self saveContext];
      
 		 completionBlock(change, error);
 	 }];
@@ -1061,14 +1064,16 @@ NSRailsSync(*);
 #pragma mark - CoreData helpers
 
 + (id)findExistingModelWithPrimaryKeyAttributeValue:(id)value {
-  NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
+//  NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
+  NSManagedObjectContext *ctx = _context;
   NSString *attribute_name = [self primaryKeyAttributeName];
   
-  NSRailsManagedObject *obj = [[self class] MR_findFirstByAttribute:attribute_name withValue:value];
-//  NSRailsManagedObject *obj = [[self class] findFirstObjectByAttribute:attribute_name withValue:value inContext:ctx];
+//  NSRailsManagedObject *obj = [[self class] MR_findFirstByAttribute:attribute_name withValue:value];
+  NSRailsManagedObject *obj = [[self class] findFirstObjectByAttribute:attribute_name withValue:value inContext:ctx];
   if (obj == nil) {
-    obj = [[self class] MR_createEntity];
-    [ctx MR_save];
+//    obj = [[self class] MR_createEntity];
+    obj = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([self class]) inManagedObjectContext:ctx];
+    [self saveContext];
   }
   obj.remoteID = value;
   return obj;
@@ -1080,10 +1085,12 @@ NSRailsSync(*);
 }
 
 + (id)new {
-  NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
-  NSEntityDescription *desc = [NSEntityDescription entityForName:[[self class] description] inManagedObjectContext:ctx];
+//  NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
+  NSManagedObjectContext *ctx = _context;
+//  NSEntityDescription *desc = [NSEntityDescription entityForName:[[self class] description] inManagedObjectContext:ctx];
   
-  NSRailsManagedObject *obj = [[NSRailsManagedObject alloc] initWithEntity:desc insertIntoManagedObjectContext:ctx];
+//  NSRailsManagedObject *obj = [[NSRailsManagedObject alloc] initWithEntity:desc insertIntoManagedObjectContext:ctx];
+  NSRailsManagedObject *obj = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([self class]) inManagedObjectContext:ctx];
   return obj;
 }
 
@@ -1099,6 +1106,30 @@ NSRailsSync(*);
     return [results objectAtIndex:0];
   }
   return nil;
+}
+
++ (void)setManagedObjectContext:(NSManagedObjectContext *)context {
+  _context = context;
+}
+
++ (void)saveContext {
+//  [[NSManagedObjectContext MR_defaultContext] MR_save];
+//  NSError *error = nil;
+//  [_context save:&error];
+//  if (error) {
+//    NSLog(@"Failed to save core data: %@", [error localizedDescription]);
+//  }
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"should_save_core_data" object:nil];
+}
+
+- (void)saveContext {
+//  [[NSManagedObjectContext MR_defaultContext] MR_save];
+//  NSError *error = nil;
+//  [self.managedObjectContext save:&error];
+//  if (error) {
+//    NSLog(@"Failed to save core data: %@", [error localizedDescription]);
+//  }  
+  [[NSNotificationCenter defaultCenter] postNotificationName:@"should_save_core_data" object:nil];
 }
 
 @end
