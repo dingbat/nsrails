@@ -388,11 +388,26 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	nester.dictionaries = [NSArray arrayWithObjects:[NSDictionary dictionaryWithObject:@"obj" forKey:@"key"], [NSDictionary dictionaryWithObject:@"obj2" forKey:@"key2"], nil];
 	
 	NSDictionary *send = [nester remoteDictionaryRepresentationWrapped:NO];
-	
 	STAssertNotNil(send, @"Dictionaries shouldn't be nil after trying to make it");
 	STAssertTrue([[send objectForKey:@"dictionaries_attributes"] count] == 2, @"Dictionaries should have 2 elements");
 	STAssertTrue([[[send objectForKey:@"dictionaries_attributes"] objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Dictionaries obj should be of type NSDictionary");
 	STAssertEqualObjects([[[send objectForKey:@"dictionaries_attributes"] objectAtIndex:0] objectForKey:@"key"], @"obj", @"Dict elements should've been set");
+
+	//no -m, no nothing -- this time should send without _attributes, since it's not marked as has_many
+	DictionaryNester *plainNester = [[DictionaryNester alloc] initWithCustomSyncProperties:@"dictionaries"];
+	[plainNester setPropertiesUsingRemoteDictionary:[MockServer newDictionaryNester]];
+	STAssertNotNil(plainNester.dictionaries, @"Dictionaries shouldn't be nil after JSON set");
+	STAssertTrue(plainNester.dictionaries.count == 2, @"Dictionaries should have 2 elements");
+	STAssertTrue([[plainNester.dictionaries objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Dictionaries obj should be of type NSDictionary");
+	STAssertEqualObjects([[plainNester.dictionaries objectAtIndex:0] objectForKey:@"so"], @"im", @"Dict elements should've been set");
+
+	plainNester.dictionaries = [NSArray arrayWithObjects:[NSDictionary dictionaryWithObject:@"obj" forKey:@"key"], [NSDictionary dictionaryWithObject:@"obj2" forKey:@"key2"], nil];
+
+	send = [plainNester remoteDictionaryRepresentationWrapped:NO];
+	STAssertNotNil(send, @"Dictionaries shouldn't be nil after trying to make it");
+	STAssertTrue([[send objectForKey:@"dictionaries"] count] == 2, @"Dictionaries should have 2 elements");
+	STAssertTrue([[[send objectForKey:@"dictionaries"] objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Dictionaries obj should be of type NSDictionary");
+	STAssertEqualObjects([[[send objectForKey:@"dictionaries"] objectAtIndex:0] objectForKey:@"key"], @"obj", @"Dict elements should've been set");
 }
 
 - (void) test_array_of_dates
@@ -422,7 +437,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	BOOL ch = [t setPropertiesUsingRemoteDictionary:dict];
 	STAssertEqualObjects(t.propertyTester, @"test", @"");
 	STAssertTrue(ch, @"Should've been changes first time around");
-	STAssertNil(t.remoteAttributes, @"Shouldn't have any remoteAttributes after setting props");
+	STAssertNotNil(t.remoteAttributes, @"remoteAttributes should exist after setting props");
 	
 	BOOL ch2 = [t setPropertiesUsingRemoteDictionary:dict];
 	STAssertFalse(ch2, @"Should've been no changes when setting to no dict");
@@ -446,7 +461,6 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	t.propertyTester = [[NSScanner alloc] init];
 	STAssertNoThrow([t remoteDictionaryRepresentationWrapped:NO], @"Shouldn't blow up on making a DICT");
 	STAssertThrows([t remoteCreate:nil], @"Should blow up on making bad JSON");
-	STAssertNil(t.remoteAttributes, @"Shouldn't have any remoteAttributes, even after failed remoteCreate");
 }
 
 - (void) test_custom_sync
@@ -649,15 +663,6 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertEqualObjects(guyRetrieve.propertyCollection.customConfig.appURL, @"url", @"Config should carry over");
 	STAssertEqualObjects(guyRetrieve.propertyCollection.customConfig.appUsername, @"user", @"Config should carry over");
 	STAssertEqualObjects(guyRetrieve.propertyCollection.customConfig.appPassword, @"pass", @"Config should carry over");
-}
-
-- (void)setUpClass
-{
-	// Run at start of all tests in the class
-}
-
-- (void)tearDownClass {
-	// Run at end of all tests in the class
 }
 
 - (void)setUp

@@ -36,13 +36,13 @@
 @interface FlagTestClass : NSRailsModel
 @property (nonatomic, strong) NSDate *date;
 @property (nonatomic, strong) NSString *sendretrieve, *nothing, *retrieve, *send, *local, *decode, *encode, *sendOnly, *encodedecode, *objc, *fakeDate;
-@property (nonatomic, strong) NSArray *nestedArrayExplicit, *nestedArrayNothing, *dateArray;
+@property (nonatomic, strong) NSArray *nestedArrayExplicit, *nestedArrayExplicitM, *nestedArrayM, *nestedArrayNothing, *dateArray;
 @property (nonatomic, strong) TestClass *nestedExplicit, *nestedNothing, *parent;
 @end
 
 @implementation FlagTestClass
 @synthesize sendretrieve, nothing, retrieve, send, local, decode, encode, sendOnly, parent, encodedecode, objc, date, fakeDate;
-@synthesize nestedNothing, nestedExplicit, nestedArrayNothing, nestedArrayExplicit, dateArray;
+@synthesize nestedNothing, nestedExplicit, nestedArrayNothing, nestedArrayExplicit, dateArray, nestedArrayExplicitM, nestedArrayM;
 @end
 
 @interface TNSRPropertyCollection : SenTestCase
@@ -198,10 +198,10 @@ STAssertThrowsSpecificNamed(exp, NSException, NSRailsSyncException, desc)
 	STAssertEqualObjects(dateArrayExplicit.nestedClass, @"NSDate", @"dateArrayExplicit should have NSDate as nested class");
 }
 
-- (void) test_property_flags
+- (void) test_nesting_flags
 {
 	NSRPropertyCollection *pc = [[NSRPropertyCollection alloc] initWithClass:[FlagTestClass class]
-																  syncString:@"nestedNothing, nestedExplicit:TestClass, nestedArrayNothing, nestedArrayExplicit:TestClass -m"
+																  syncString:@"nestedNothing, nestedExplicit:TestClass, nestedArrayNothing, nestedArrayM -m, nestedArrayExplicit:TestClass, nestedArrayExplicitM:TestClass -m"
 																customConfig:nil];
 	
 	
@@ -216,15 +216,25 @@ STAssertThrowsSpecificNamed(exp, NSException, NSRailsSyncException, desc)
 	STAssertFalse(nestedExplicit.isHasMany, @"nestedExplicit shouldn't be marked as has-many");
 	STAssertEqualObjects(nestedExplicit.nestedClass, @"TestClass", @"nestedNothing's nested class should be TestClass");
 
+	NSRProperty *nestedArrayM = [pc.properties objectForKey:@"nestedArrayM"];
+	STAssertFalse(nestedArrayM.isBelongsTo, @"nestedArrayM shouldn't be marked belongs-to");
+	STAssertTrue(nestedArrayM.isHasMany, @"nestedArrayM was explicitly marked -m, should be h-m");
+	STAssertNil(nestedArrayM.nestedClass, @"nestedArrayM's nested class should be nil (dicts)");
+
 	NSRProperty *nestedArrayNothing = [pc.properties objectForKey:@"nestedArrayNothing"];
 	STAssertFalse(nestedArrayNothing.isBelongsTo, @"nestedArrayNothing shouldn't be marked belongs-to");
-	STAssertTrue(nestedArrayNothing.isHasMany, @"nestedArrayNothing should be seen as array");
-	STAssertNil(nestedArrayNothing.nestedClass, @"nestedArrayNothing's nested class should be nil (dicts)");
+	STAssertFalse(nestedArrayNothing.isHasMany, @"nestedArrayNothing is an array but shouldn't be seen as has-many");
+	STAssertNil(nestedArrayNothing.nestedClass, @"nestedArrayNothing's nested class should be nil (it's just an array left alone)");
 
 	NSRProperty *nestedArrayExplicit = [pc.properties objectForKey:@"nestedArrayExplicit"];
-	STAssertFalse(nestedExplicit.isBelongsTo, @"nestedArrayExplicit shouldn't be marked belongs-to");
-	STAssertTrue(nestedArrayExplicit.isHasMany, @"nestedArrayExplicit should be seen as array");
+	STAssertFalse(nestedArrayExplicit.isBelongsTo, @"nestedArrayExplicit shouldn't be marked belongs-to");
+	STAssertTrue(nestedArrayExplicit.isHasMany, @"nestedArrayExplicit should be seen as implicit has-many");
 	STAssertEqualObjects(nestedArrayExplicit.nestedClass, @"TestClass", @"nestedArrayExplicit's nested class should be TestClass");
+
+	NSRProperty *nestedArrayExplicitM = [pc.properties objectForKey:@"nestedArrayExplicitM"];
+	STAssertFalse(nestedArrayExplicitM.isBelongsTo, @"nestedArrayExplicit shouldn't be marked belongs-to");
+	STAssertTrue(nestedArrayExplicitM.isHasMany, @"nestedArrayExplicit should be seen as explicit has-many");
+	STAssertEqualObjects(nestedArrayExplicitM.nestedClass, @"TestClass", @"nestedArrayExplicit's nested class should be TestClass");
 }
 
 - (void)setUpClass

@@ -196,8 +196,6 @@
 				[self addPropertyAsSendable:property];
 			}
 			
-			BOOL explicitHasMany = NO;
-			
 			//Check for all other flags (-)
 			if (options)
 			{
@@ -214,13 +212,10 @@
 					property.includedOnNesting = YES;
 				
 				if ([options rangeOfString:@"m"].location != NSNotFound) 
-				{
-					explicitHasMany = YES;
 					property.hasMany = YES;
-				}
 			}
 			
-			if (typeIsArray)
+			if (typeIsArray && nestedModel)
 			{
 				property.hasMany = YES;
 			}
@@ -249,11 +244,6 @@
 					{
 						property.nestedClass = nestedModel;
 					}
-				}
-				else if (!explicitHasMany)
-				{
-					//if it's an array but there's no -m or nestedModel declared (just "array"), warn about NSDictionaries
-					NSLog(@"NSR Warning: Property '%@' in class '%@' was found to be an array, but no nesting class was set. By default, this array will be filled with NSDictionaries. To set it to generate instances of a class, use '%@:MyNestedClass'. If you want NSDictionaries, suppress this warning by declaring the property has-many (using the -m flag: '%@ -m')",objcProp, class, objcProp, objcProp);
 				}
 			}
 			//if not array or has an explicit nested model set, see if we should automatically nest it (if it's an NSRailsModel)

@@ -397,27 +397,22 @@ NSRailsSync(*);
 {
 	if ((self = [super init]))
 	{
-		[self setPropertiesUsingRemoteDictionaryAndSetToRemoteAttributes:railsDict];
+		[self setPropertiesUsingRemoteDictionary:railsDict applyToRemoteAttributes:YES];
 	}
 	return self;
 }
 
-- (BOOL) setPropertiesUsingRemoteDictionaryAndSetToRemoteAttributes:(NSDictionary *)dictionary
+- (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict applyToRemoteAttributes:(BOOL)remote
 {
-	remoteAttributes = dictionary;
-
-	return [self setPropertiesUsingRemoteDictionary:dictionary];
-}
-
-- (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict
-{
+	remoteAttributes = dict;
+	
 	//support JSON that comes in like {"post"=>{"something":"something"}}
 	NSDictionary *innerDict = [dict objectForKey:[[self class] masterModelName]];
 	if (dict.count == 1 && [innerDict isKindOfClass:[NSDictionary class]])
 	{
 		dict = innerDict;
 	}
-		
+	
 	BOOL changes = NO;
 	
 	for (NSString *railsProperty in dict)
@@ -505,7 +500,7 @@ NSRailsSync(*);
 								{
 									//existed - simply update that one (recursively)
 									decodedElement = [previousVal objectAtIndex:idx];
-									BOOL neededChange = [decodedElement setPropertiesUsingRemoteDictionaryAndSetToRemoteAttributes:railsElement];
+									BOOL neededChange = [decodedElement setPropertiesUsingRemoteDictionary:railsElement applyToRemoteAttributes:YES];
 									
 									if (neededChange)
 										changes = YES;
@@ -531,7 +526,7 @@ NSRailsSync(*);
 						{
 							decodedObj = previousVal;
 							
-							BOOL objChange = [decodedObj setPropertiesUsingRemoteDictionaryAndSetToRemoteAttributes:railsObject];
+							BOOL objChange = [decodedObj setPropertiesUsingRemoteDictionary:railsObject applyToRemoteAttributes:YES];
 							if (objChange)
 								changes = YES;
 						}
@@ -562,6 +557,13 @@ NSRailsSync(*);
 		}
 	}
 	return changes;
+}
+
+- (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict
+{
+	// Decided to allow public calls to influence remoteAttributes
+	// That way properties can be set manually from a dict and remoteAttributes can be retrieved with confidence
+	return [self setPropertiesUsingRemoteDictionary:dict applyToRemoteAttributes:YES];
 }
 
 - (NSDictionary *) remoteDictionaryRepresentationWrapped:(BOOL)wrapped
@@ -600,12 +602,11 @@ NSRailsSync(*);
 		
 		id remoteRep = [self remoteRepresentationOfObjectForProperty:objcProperty];
 
-		BOOL null = !remoteRep;
-		BOOL isArray = [remoteRep isKindOfClass:[NSArray class]];
-		
-		//if we got back nil, we want to change that to the [NSNull null] object so it'll show up in the JSON
-		//but only do it for non-ID properties - we want to omit ID if it's null (could be for create)
-		if (!remoteRep && ![railsEquivalent isEqualToString:@"id"])
+		//don't include a null id in json 
+		if (!remoteRep && [railsEquivalent isEqualToString:@"id"])
+			continue;
+
+		if (!remoteRep)
 		{
 			if (objcProperty.isHasMany)
 			{
@@ -617,38 +618,20 @@ NSRailsSync(*);
 				remoteRep = [NSNull null];
 			}
 		}
-		if (remoteRep)
+		else
 		{
-			//if it's an array, remove any null values (wouldn't make sense in the array)
-			if (isArray)
+			if (objcProperty.isBelongsTo)
 			{
-				for (int i = 0; i < [remoteRep count]; i++)
-				{
-					if ([remoteRep objectAtIndex:i] == [NSNull class])
-					{
-						[remoteRep removeObjectAtIndex:i];
-						i--;
-					}
-				}
-			}
-			
-			//if it's belongs-to (-b declared) and it's not NSNull ("it" being the parent ID at this point, ie, it exists)...
-			if (objcProperty.isBelongsTo && !null)
-			{
-				//then we should use _id instead of _attributes
+				//in this case, remoteRep will already be just the id and not the dict
 				railsEquivalent = [railsEquivalent stringByAppendingString:@"_id"];
 			}
-			
-			//otherwise, if it's associative, use "_attributes" if not "null"
-			else if ((objcProperty.nestedClass || isArray) && !null)
+			else if (objcProperty.nestedClass || objcProperty.hasMany)
 			{
 				railsEquivalent = [railsEquivalent stringByAppendingString:@"_attributes"];
 			}
-			
-			//check to see if it was already set (ie, ignore it if there are multiple properties pointing to the same rails attr)
-			if (![dict objectForKey:railsEquivalent])
-				[dict setObject:remoteRep forKey:railsEquivalent];
 		}
+		
+		[dict setObject:remoteRep forKey:railsEquivalent];
 	}
 
 	if (remoteDestroyOnNesting)
@@ -797,7 +780,7 @@ NSRailsSync(*);
 	if (!jsonResponse)
 		return NO;
 	
-	[self setPropertiesUsingRemoteDictionaryAndSetToRemoteAttributes:jsonResponse];
+	[self setPropertiesUsingRemoteDictionary:jsonResponse applyToRemoteAttributes:YES];
 	
 	return YES;
 }
@@ -805,10 +788,10 @@ NSRailsSync(*);
 - (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock
 {
 	[[self class] remoteRequest:@"POST" method:nil bodyAsObject:self async:
-	 
-	 ^(id result, NSError *error) {
+	 ^(id result, NSError *error) 
+	 {
 		 if (result)
-			 [self setPropertiesUsingRemoteDictionaryAndSetToRemoteAttributes:result];
+			 [self setPropertiesUsingRemoteDictionary:result applyToRemoteAttributes:YES];
 		 completionBlock(error);
 	 }];
 }
@@ -823,8 +806,8 @@ NSRailsSync(*);
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock
 {
 	[self remoteRequest:@"PUT" method:nil async:
-	 
-	 ^(id result, NSError *error) {
+	 ^(id result, NSError *error) 
+	 {
 		 completionBlock(error);
 	 }];
 }
@@ -858,7 +841,7 @@ NSRailsSync(*);
 		return NO;
 	}
 	
-	BOOL changes = [self setPropertiesUsingRemoteDictionaryAndSetToRemoteAttributes:jsonResponse];
+	BOOL changes = [self setPropertiesUsingRemoteDictionary:jsonResponse applyToRemoteAttributes:YES];
 	if (changesPtr)
 		*changesPtr = changes;
 	
@@ -877,7 +860,7 @@ NSRailsSync(*);
 	 {
 		 BOOL change = NO;
 		 if (result)
-			change = [self setPropertiesUsingRemoteDictionaryAndSetToRemoteAttributes:result];
+			change = [self setPropertiesUsingRemoteDictionary:result applyToRemoteAttributes:YES];
 		 completionBlock(change, error);
 	 }];
 }
@@ -903,13 +886,13 @@ NSRailsSync(*);
 	obj.remoteID = [NSDecimalNumber numberWithInteger:mID];
 		
 	[obj remoteFetchAsync:
-	 
-	 ^(BOOL changed, NSError *error) {
+	 ^(BOOL changed, NSError *error) 
+	 {
 		if (error)
 			completionBlock(nil, error);
 		else
 			completionBlock(obj, error);
-	}];
+	 }];
 }
 
 #pragma mark Get all objects (class-level)
