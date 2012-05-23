@@ -665,6 +665,31 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertEqualObjects(guyRetrieve.propertyCollection.customConfig.appPassword, @"pass", @"Config should carry over");
 }
 
+- (void) test_destroy_on_nesting
+{
+	Bird *bird = [[Bird alloc] initWithCustomSyncProperties:@"eggs:Egg"];
+
+	NSDictionary *dict = [bird remoteDictionaryRepresentationWrapped:NO];
+	STAssertNil([dict objectForKey:@"_destroy"],@"No _destroy key if no remoteDestroyOnNesting");
+
+	bird.remoteDestroyOnNesting = YES;
+	
+	dict = [bird remoteDictionaryRepresentationWrapped:NO];
+	STAssertTrue([[dict objectForKey:@"_destroy"] boolValue],@"remoteDestroyOnNesting should add _destroy key");
+	
+	Egg *e = [[Egg alloc] init];
+	e.remoteDestroyOnNesting = YES;
+	
+	bird.eggs = [[NSMutableArray alloc] initWithObjects:e, nil];
+	
+	bird.remoteDestroyOnNesting = NO;
+	dict = [bird remoteDictionaryRepresentationWrapped:NO];
+
+	STAssertNil([dict objectForKey:@"_destroy"],@"No _destroy key if no remoteDestroyOnNesting");
+	STAssertTrue([[dict objectForKey:@"eggs_attributes"] isKindOfClass:[NSArray class]],@"Eggs should exist & be an array");
+	STAssertTrue([[[[dict objectForKey:@"eggs_attributes"] lastObject] objectForKey:@"_destroy"] boolValue],@"_destroy key should exist on egg if remoteDestroyOnNesting");	
+}
+
 - (void)setUp
 {
 	// Run before each test method
