@@ -25,11 +25,18 @@ NSRailsSync(local -x, retrieveOnly -r, shared, sharedExplicit -rs, sendOnly -s)
 @synthesize propertyTester;
 @end
 
+@interface PropertyTesterSubclass : PropertyTester
+@property (nonatomic, strong) id subclassProp;
+@end
+
+@implementation PropertyTesterSubclass
+@synthesize subclassProp;
+@end
+
 @interface BadCoder : NSRailsModel
 @end
 
 @implementation BadCoder
-NSRailsSync(thing -e)
 @end
 
 @interface PickyCoderComponent : NSRailsModel
@@ -251,9 +258,12 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 
 - (void) test_encode_decode
 {
-	BadCoder *b = [[BadCoder alloc] init];
-	STAssertThrows([b remoteDictionaryRepresentationWrapped:NO], @"Should throw unrecognized selector for encode:");
-	
+	BadCoder *e = [[BadCoder alloc] initWithCustomSyncProperties:@"something -e"];
+	STAssertThrows([e remoteDictionaryRepresentationWrapped:NO], @"Should throw unrecognized selector for encode:");
+
+	BadCoder *d = [[BadCoder alloc] initWithCustomSyncProperties:@"something -d"];
+	STAssertThrows([d remoteDictionaryRepresentationWrapped:NO], @"Should throw unrecognized selector for decode:");
+
 	PickyCoder *p = [[PickyCoder alloc] initWithRemoteDictionary:[MockServer newPickyCoder]];
 	p.encodeNonJSON = NO;
 	
@@ -307,6 +317,15 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertEqualObjects([sendDict objectForKey:@"send_only"], @"send--local", @"Should've sent send... -s");
 	STAssertEqualObjects([sendDict objectForKey:@"shared"], @"shared", @"Should've sent shared... blank");
 	STAssertEqualObjects([sendDict objectForKey:@"shared_explicit"], @"shared explicit", @"Should've sent sharedExplicit... -rs");
+
+	//just test wrapped: for a sec
+	
+	STAssertNil([sendDict objectForKey:@"picky_sender"], @"Shouldn't include itself as a key for no wrap");
+	
+	NSDictionary *sendDictWrapped = [p remoteDictionaryRepresentationWrapped:YES];
+	NSRAssertEqualArraysNoOrder(sendDictWrapped.allKeys, NSRArray(@"picky_sender"));
+	STAssertTrue([[sendDictWrapped objectForKey:@"picky_sender"] isKindOfClass:[NSDictionary class]], @"Should include itself as a key for no wrap, and object should be a dict");
+	STAssertEquals([[sendDictWrapped objectForKey:@"picky_sender"] count], [sendDict count], @"Inner dict should have same amount of keys as nowrap");
 }
 
 - (void) test_nesting_dictionaries
@@ -381,6 +400,35 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertNil(t.remoteAttributes, @"Shouldn't have any remoteAttributes, even after failed remoteCreate");
 }
 
+- (void) test_custom_sync
+{
+	PropertyTester *pt = [[PropertyTester alloc] initWithCustomSyncProperties:@""];
+	NSRAssertEqualArraysNoOrder(pt.propertyCollection.properties.allKeys, NSRArray(@"remoteID"));
+	
+	PropertyTester *pt2 = [[PropertyTester alloc] initWithCustomSyncProperties:@"*"];
+	NSRAssertEqualArraysNoOrder(pt2.propertyCollection.properties.allKeys, NSRArray(@"remoteID", @"propertyTester"));
+	
+	PropertyTester *pt3 = [[PropertyTester alloc] initWithCustomSyncProperties:@"*, something"];
+	NSRAssertEqualArraysNoOrder(pt3.propertyCollection.properties.allKeys, NSRArray(@"remoteID", @"propertyTester", @"something"));
+
+	PropertyTester *pt4 = [[PropertyTester alloc] initWithCustomSyncProperties:@"NSRNoCarryFromSuper"];
+	NSRAssertEqualArraysNoOrder(pt4.propertyCollection.properties.allKeys, NSRArray(@"remoteID"));
+
+	PropertyTesterSubclass *pts = [[PropertyTesterSubclass alloc] initWithCustomSyncProperties:@""];
+	NSRAssertEqualArraysNoOrder(pts.propertyCollection.properties.allKeys, NSRArray(@"remoteID", @"propertyTester"));
+
+	PropertyTesterSubclass *pts2 = [[PropertyTesterSubclass alloc] initWithCustomSyncProperties:@"NSRNoCarryFromSuper"];
+	NSRAssertEqualArraysNoOrder(pts2.propertyCollection.properties.allKeys, NSRArray(@"remoteID"));
+
+	PropertyTesterSubclass *pts3 = [[PropertyTesterSubclass alloc] initWithCustomSyncProperties:@"*, NSRNoCarryFromSuper"];
+	NSRAssertEqualArraysNoOrder(pts3.propertyCollection.properties.allKeys, NSRArray(@"remoteID", @"subclassProp"));
+
+	PropertyTesterSubclass *pts4 = [[PropertyTesterSubclass alloc] initWithCustomSyncProperties:@"something"];
+	NSRAssertEqualArraysNoOrder(pts4.propertyCollection.properties.allKeys, NSRArray(@"remoteID", @"something", @"propertyTester"));
+
+	PropertyTesterSubclass *pts5 = [[PropertyTesterSubclass alloc] initWithCustomSyncProperties:@"*, something"];
+	NSRAssertEqualArraysNoOrder(pts5.propertyCollection.properties.allKeys, NSRArray(@"remoteID", @"something", @"propertyTester", @"subclassProp"));
+}
 
 - (void) test_serialization
 {

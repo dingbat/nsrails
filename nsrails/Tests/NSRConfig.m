@@ -269,44 +269,6 @@
 																	  requestBody:nil
 																			  url:nil];
 	STAssertNotNil([request4 valueForHTTPHeaderField:@"Authorization"], @"Should send w/authorization if username+password");
-
-}
-
-- (void) test_authentication_and_url
-{
-	NSError *e = nil;
-	
-	STAssertThrowsSpecificNamed([[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts.json" sync:&e orAsync:nil], NSException, NSRailsMissingURLException, @"Should fail on no app URL set in config, where's the error?");
-
-	e = nil;
-	
-	//point app to localhost as it should be, but no authentication
-	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
-	[[NSRConfig defaultConfig] setAppUsername:nil];
-	[[NSRConfig defaultConfig] setAppPassword:nil];
-	
-	NSArray *index = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts.json" sync:&e orAsync:nil];
-	
-	NSRAssertNoServer(e.domain != NSRRemoteErrorDomain);
-	
-	STAssertNotNil(e, @"Should fail on not authenticated, where's the error?");
-	STAssertNil(index, @"Response should be nil because there was an authentication error");
-	
-	e = nil;
-	
-	//add authentication
-	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
-	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
-	
-	index = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts.json" sync:&e orAsync:nil];
-	STAssertNil(e, @"Authenticated, should be no error");
-	STAssertNotNil(index, @"Authenticated, reponse should be present");
-	
-	e = nil;
-	
-	//test error domain
-	[[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"///missing" sync:&e orAsync:nil];
-	STAssertTrue(e.domain == NSRRemoteErrorDomain, @"Server error should have NSRRemoteErrorDomain");
 }
 
 - (void)setUpClass

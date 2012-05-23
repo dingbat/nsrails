@@ -179,6 +179,106 @@ static BOOL noServer = NO;
 	}];	
 }
 
+- (void) test_json_in
+{
+	NSRAssertNoServer(noServer);
+
+	NSError *e = nil;
+	
+	id posts = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts" sync:&e orAsync:nil];
+	
+	STAssertNil(e, @"Should be no error getting posts");
+	STAssertTrue([posts isKindOfClass:[NSArray class]], @"Response should be an array");
+	
+	e = nil;
+	
+	Post *p = [[Post alloc] init];
+	p.author = @"author";
+	p.content = @"content";
+	[p remoteCreate:&e];
+
+	STAssertNil(e, @"Should be no error creating a post (e=%@)",e);
+	STAssertNotNil(p.remoteID, @"Newly created post should have remoteID");
+
+	e = nil;
+	
+	id post = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:[NSString stringWithFormat:@"posts/%@", p.remoteID] sync:&e orAsync:nil];
+	
+	STAssertNil(e, @"Should be no error getting a post (e=%@)",e);
+	STAssertTrue([post isKindOfClass:[NSDictionary class]], @"Response should be a dictionary");
+	STAssertNotNil([post objectForKey:@"created_at"], @"Should be have created_at, etc");
+	
+	e = nil;
+	
+	[p remoteDestroy:&e];
+
+	STAssertNil(e, @"Should be no error destroying a post (e=%@)",e);
+	
+	e = nil;
+	
+	id root = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"404" sync:&e orAsync:nil];
+	
+	STAssertNil(e, @"Should be no error getting 404 string HTML (e=%@)",e);
+	STAssertTrue([root isKindOfClass:[NSString class]], @"Response should be a string");
+	STAssertTrue([[root lowercaseString] rangeOfString:@"html"].location != NSNotFound, @"Response should be HTML");
+
+	e = nil;
+	
+	id bad = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"8349834" sync:&e orAsync:nil];
+	
+	STAssertNotNil(e, @"Should be an error getting /8349834");
+	STAssertNil(bad, @"Response should be nil (error)");
+}
+
+- (void) test_authentication_and_url
+{
+	NSRAssertNoServer(noServer);
+
+	[NSRConfig resetConfigs];
+	
+	NSError *e = nil;
+	
+	STAssertThrowsSpecificNamed([[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:nil sync:&e orAsync:nil], NSException, NSRailsMissingURLException, @"Should fail on no app URL set in config, where's the error?");
+	
+	e = nil;
+	
+	//point app to localhost as it should be, but no authentication
+	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
+	[[NSRConfig defaultConfig] setAppUsername:nil];
+	[[NSRConfig defaultConfig] setAppPassword:nil];
+	
+	NSString *root = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"404" sync:&e orAsync:nil];
+	
+	STAssertNil(e, @"Should require no authentication for /404 (e=%@)",e);
+	STAssertNotNil(root, @"Should require no authentication for /404");
+	
+	NSLog(@"404 IS %@",root);
+	
+	e = nil;
+	
+	NSArray *index = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts" sync:&e orAsync:nil];
+	
+	STAssertNotNil(e, @"Should fail on not authenticated, where's the error?");
+	STAssertNil(index, @"Response should be nil because there was an authentication error");
+	
+	e = nil;
+	
+	//add authentication
+	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
+	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
+	
+	index = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts" sync:&e orAsync:nil];
+	STAssertNil(e, @"Authenticated, should be no error");
+	STAssertNotNil(index, @"Authenticated, reponse should be present");
+	
+	e = nil;
+	
+	//test error domain
+	[[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"///missing" sync:&e orAsync:nil];
+	STAssertTrue(e.domain == NSRRemoteErrorDomain, @"Server error should have NSRRemoteErrorDomain");
+}
+
+
 - (void) test_crud
 {
 	NSRAssertNoServer(noServer);
