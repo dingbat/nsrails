@@ -51,6 +51,7 @@ NSRailsSync(local -x, retrieveOnly -r, shared, sharedExplicit -rs, sendOnly -s)
 
 @property (nonatomic) BOOL encodeNonJSON;
 @property (nonatomic, strong) NSURL *locallyURL;
+@property (nonatomic, strong) NSArray *csvArray;
 @property (nonatomic, strong) NSString *locallyLowercase, *remotelyUppercase, *codeToNil;
 @property (nonatomic, strong) PickyCoderComponent *componentWithFlippingName;
 @property (nonatomic, strong) NSDate *dateOverrideSend, *dateOverrideRet;
@@ -58,8 +59,8 @@ NSRailsSync(local -x, retrieveOnly -r, shared, sharedExplicit -rs, sendOnly -s)
 @end
 
 @implementation PickyCoder
-@synthesize locallyURL, locallyLowercase, remotelyUppercase, componentWithFlippingName, codeToNil, encodeNonJSON, dateOverrideSend, dateOverrideRet;
-NSRailsSync(locallyURL=locally_url -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnly -se, codeToNil -ed, componentWithFlippingName=component -de, dateOverrideSend -e, dateOverrideRet -d);
+@synthesize locallyURL, locallyLowercase, remotelyUppercase, componentWithFlippingName, codeToNil, encodeNonJSON, dateOverrideSend, dateOverrideRet, csvArray;
+NSRailsSync(locallyURL=locally_url -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnly -se, codeToNil -ed, componentWithFlippingName=component -de, dateOverrideSend -e, dateOverrideRet -d, csvArray -ed);
 
 - (id) encodeRemoteOnly
 {
@@ -78,6 +79,16 @@ NSRailsSync(locallyURL=locally_url -ed, locallyLowercase -d, remotelyUppercase -
 - (id) decodeDateOverrideRet:(NSString *)json
 {
 	return [NSDate dateWithTimeIntervalSince1970:0];
+}
+
+- (NSString *) encodeCsvArray
+{
+	return [csvArray componentsJoinedByString:@","];
+}
+
+- (NSArray *) decodeCsvArray:(NSString *)railsArrayRep
+{
+	return [railsArrayRep componentsSeparatedByString:@","];
 }
 
 - (NSString *) decodeCodeToNil:(NSString *)str
@@ -189,7 +200,7 @@ NSRailsSync(something);
 
 + (NSDictionary *) newPickyCoder
 {
-	return NSRDictionary(@"LoweRCasE?",@"locally_lowercase",@"upper",@"remotely_uppercase",@"http://nsrails.com",@"locally_url",@"invisible",@"remote_only",@"something",@"code_to_nil",@"2012-05-07T04:41:52Z",@"date_override_send",@"afsofauh",@"date_override_ret",NSRDictionary(@"COMP LOWERCASE?", @"component_name"),@"component");
+	return NSRDictionary(@"LoweRCasE?",@"locally_lowercase",@"upper",@"remotely_uppercase",@"http://nsrails.com",@"locally_url",@"one,two,three",@"csv_array",@"invisible",@"remote_only",@"something",@"code_to_nil",@"2012-05-07T04:41:52Z",@"date_override_send",@"afsofauh",@"date_override_ret",NSRDictionary(@"COMP LOWERCASE?", @"component_name"),@"component");
 }
 
 + (NSDictionary *) newPickySender
@@ -285,11 +296,13 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	PickyCoder *p = [[PickyCoder alloc] initWithRemoteDictionary:[MockServer newPickyCoder]];
 	p.encodeNonJSON = NO;
 	
+	STAssertTrue([p.csvArray isKindOfClass:[NSArray class]], @"Should've decoded into an array");
 	STAssertTrue([p.locallyURL isKindOfClass:[NSURL class]], @"Should've decoded into a URL");
 	STAssertTrue([p.dateOverrideSend isKindOfClass:[NSDate class]], @"Should've decoded into an NSDate");
 	STAssertTrue([p.dateOverrideRet isEqualToDate:[NSDate dateWithTimeIntervalSince1970:0]], @"Should've used custom decode");
 	STAssertNil(p.codeToNil, @"Should've decoded codeToNil into nil");
 	STAssertEqualObjects([p.locallyURL description], @"http://nsrails.com", @"Should've decoded into URL & retain content");
+	STAssertEqualObjects(p.csvArray, NSRArray(@"one", @"two", @"three"), @"Should've decoded into an array & retain content");
 	STAssertEqualObjects(p.locallyLowercase, @"lowercase?", @"Should've decoded into lowercase");
 	STAssertEqualObjects(p.remotelyUppercase, @"upper", @"Should've kept the same");
 	STAssertEqualObjects(p.componentWithFlippingName.componentName, @"comp lowercase?", @"Should've decoded comp name into lowercase");
@@ -297,8 +310,10 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	p.codeToNil = @"Something";
 	
 	NSDictionary *sendDict = [p remoteDictionaryRepresentationWrapped:NO];
+	STAssertTrue([[sendDict objectForKey:@"csv_array"] isKindOfClass:[NSString class]],@"Should've encoded NSArray -> string");
 	STAssertTrue([[sendDict objectForKey:@"locally_url"] isKindOfClass:[NSString class]],@"Should've encoded NSURL -> string");
 	STAssertTrue([[sendDict objectForKey:@"code_to_nil"] isKindOfClass:[NSNull class]], @"Should've encoded codeToNil into NSNull");
+	STAssertEqualObjects([sendDict objectForKey:@"csv_array"], @"one,two,three", @"Should've encoded into string & retain content");
 	STAssertEqualObjects([sendDict objectForKey:@"locally_url"], @"http://nsrails.com", @"Should've encoded into string & retain content");
 	STAssertEqualObjects([sendDict objectForKey:@"locally_lowercase"], @"lowercase?", @"Should've kept as lowercase");
 	STAssertEqualObjects([sendDict objectForKey:@"remotely_uppercase"], @"UPPER", @"Should've encoded to uppercase");

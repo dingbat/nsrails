@@ -601,6 +601,7 @@ NSRailsSync(*);
 		id remoteRep = [self remoteRepresentationOfObjectForProperty:objcProperty];
 
 		BOOL null = !remoteRep;
+		BOOL isArray = [remoteRep isKindOfClass:[NSArray class]];
 		
 		//if we got back nil, we want to change that to the [NSNull null] object so it'll show up in the JSON
 		//but only do it for non-ID properties - we want to omit ID if it's null (could be for create)
@@ -619,7 +620,7 @@ NSRailsSync(*);
 		if (remoteRep)
 		{
 			//if it's an array, remove any null values (wouldn't make sense in the array)
-			if (objcProperty.isHasMany)
+			if (isArray)
 			{
 				for (int i = 0; i < [remoteRep count]; i++)
 				{
@@ -639,13 +640,14 @@ NSRailsSync(*);
 			}
 			
 			//otherwise, if it's associative, use "_attributes" if not "null"
-			else if ((objcProperty.nestedClass || objcProperty.isHasMany) && !null)
+			else if ((objcProperty.nestedClass || isArray) && !null)
 			{
 				railsEquivalent = [railsEquivalent stringByAppendingString:@"_attributes"];
 			}
 			
 			//check to see if it was already set (ie, ignore it if there are multiple properties pointing to the same rails attr)
-			[dict setObject:remoteRep forKey:railsEquivalent];
+			if (![dict objectForKey:railsEquivalent])
+				[dict setObject:remoteRep forKey:railsEquivalent];
 		}
 	}
 
