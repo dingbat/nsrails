@@ -10,7 +10,7 @@ Instances will inherit methods to remotely create, read, update, or destroy a re
 Post *newPost = [[Post alloc] init];
 newPost.author = @"Me";
 newPost.content = @"Some text";
-[newPost remoteCreate:&error];     //This post and its properties created right on a Rails server
+[newPost remoteCreate:&error];     // This post and its properties created right on a Rails server
 ```
 
 Classes will inherit methods to retrieve all objects, or only certain ones:
@@ -61,9 +61,7 @@ Getting started
         [[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
         ...
   ```
-  
-You're ready!
-  
+    
 ### RubyMotion & MacRuby
 
   * See [this](https://github.com/dingbat/nsrails/tree/master/demos/rubymotion) readme for instructions on getting started in Ruby
@@ -74,27 +72,22 @@ Getting warmed up
 By subclassing NSRailsModel, your class gets tons of instance and class methods that'll act on your remote objects. Here are a few of the things you can do with your new class:
 
 ```objc
-//retrieve post with ID 1
+// Retrieve post with ID 1
 Post *post = [Post remoteObjectWithID:1 error:&error];
-post.content = @"Changed!";
 
-//update this post remotely
+// Update this post remotely
+post.content = @"Changed!";
 [post remoteUpdate:&error];
 
-//fetch any latest data for this post (the boolean reference will tell you if anything changed)
-BOOL ch;
-[post remoteFetch:&error changes:&ch];
+// fetch any latest data for this post (and see if anything changed)
+BOOL objectDidChange;
+[post remoteFetch:&error changes:&objectDidChange];
 
-//call custom method - would GET http://myapp.com/posts/1/something
+// Call custom REST method - would GET http://myapp.com/posts/1/something
 [post remoteGET:@"something" error:&error];
 
-//all of these are also available async:
-[post remoteDestroyAsync: ^(NSError *error) 
-                          {
-                            if (!error)
-                              ...
-                          }];
-
+// Async is also available:
+[post remoteDestroyAsync: ^(NSError *error) {  if (!error) ... }];
 ```
 
 See the [documentation](http://dingbat.github.com/nsrails/) for more details.
@@ -121,14 +114,16 @@ See the [NSRailsSync wiki page](https://github.com/dingbat/nsrails/wiki/NSRailsS
 Dependencies
 --------
 
-* iOS 5.0+ (and ARC)
+* **iOS 5.0+**
+* **Automatic Reference Counting (ARC)**
+  * If your project isn't using ARC, you'll need to selectively specify it for NSRails. Go to your active target, select the "Build Phases" tab, and in the "Compile Sources" section, set `-fobjc-arc` as a compiler flag for each NSRails source file.
 
 Credits
 ----------
 
-Version 1.0.
+Version 1.0.1.
 
-I'd like to acknowledge the [ObjectiveResource](https://github.com/yfactorial/objectiveresource) project for being largely the inspiration for NSRails.
+A lot of NSRails was inspired by the [ObjectiveResource](https://github.com/yfactorial/objectiveresource) project. Thanks!
 
 License (MIT)
 ---------
