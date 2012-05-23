@@ -594,11 +594,9 @@
 #define _N_ARGS_1(...) _N_ARGS_2(__VA_ARGS__)
 #define _N_ARGS_2(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, n, ...) n
 
-//macro to convert cstring to NSString
-#define NSRStringFromCString(cstr)	[NSString stringWithCString:cstr encoding:NSUTF8StringEncoding]
 
 //adding a # before va_args will simply make its contents a cstring
-#define _MAKE_STR(...)	NSRStringFromCString(#__VA_ARGS__)
+#define _MAKE_STR(...)	[NSString stringWithCString:(#__VA_ARGS__) encoding:NSUTF8StringEncoding]
 
 
 /// =============================================================================================
