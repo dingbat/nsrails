@@ -395,9 +395,7 @@ static BOOL noServer = NO;
 	
 	STAssertNil(e, @"Should require no authentication for /404 (e=%@)",e);
 	STAssertNotNil(root, @"Should require no authentication for /404");
-	
-	NSLog(@"404 IS %@",root);
-	
+		
 	e = nil;
 	
 	NSArray *index = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts" sync:&e orAsync:nil];

@@ -44,6 +44,7 @@
 @property (nonatomic, getter = isHasMany) BOOL hasMany;
 @property (nonatomic, getter = isBelongsTo) BOOL belongsTo;
 @property (nonatomic, getter = isDate) BOOL date;
+@property (nonatomic) BOOL includedOnNesting;
 @property (nonatomic, strong) NSString *nestedClass, *remoteEquivalent;
 @property (nonatomic, strong) NSString *name;
 

@@ -34,7 +34,7 @@
 #import "NSString+Inflection.h"
 
 @implementation NSRProperty
-@synthesize sendable, retrievable, encodable, decodable, remoteEquivalent, nestedClass, date, name;
+@synthesize sendable, retrievable, encodable, decodable, remoteEquivalent, nestedClass, date, name, includedOnNesting;
 @synthesize belongsTo, hasMany;
 
 #pragma mark - NSCoding
@@ -50,6 +50,7 @@
 		self.hasMany = [aDecoder decodeBoolForKey:@"hasMany"];
 		self.belongsTo = [aDecoder decodeBoolForKey:@"belongsTo"];
 		self.date = [aDecoder decodeBoolForKey:@"date"];
+		self.includedOnNesting = [aDecoder decodeBoolForKey:@"includedOnNesting"];
 		
 		self.remoteEquivalent = [aDecoder decodeObjectForKey:@"remoteEquivalent"];
 		self.name = [aDecoder decodeObjectForKey:@"name"];
@@ -64,6 +65,7 @@
 	[aCoder encodeObject:name forKey:@"name"];
 	[aCoder encodeObject:nestedClass forKey:@"nestedClass"];
 
+	[aCoder encodeBool:includedOnNesting forKey:@"includedOnNesting"];
 	[aCoder encodeBool:sendable forKey:@"sendable"];
 	[aCoder encodeBool:retrievable forKey:@"retrievable"];
 	[aCoder encodeBool:decodable forKey:@"decodable"];
@@ -200,17 +202,17 @@
 			if (options)
 			{
 				if ([options rangeOfString:@"e"].location != NSNotFound)
-				{
 					property.encodable = YES;
-				}
+
 				if ([options rangeOfString:@"d"].location != NSNotFound)
-				{
 					property.decodable = YES;
-				}
+				
 				if ([options rangeOfString:@"b"].location != NSNotFound)
-				{
 					property.belongsTo = YES;
-				}
+				
+				if ([options rangeOfString:@"n"].location != NSNotFound)
+					property.includedOnNesting = YES;
+				
 				if ([options rangeOfString:@"m"].location != NSNotFound) 
 				{
 					explicitHasMany = YES;

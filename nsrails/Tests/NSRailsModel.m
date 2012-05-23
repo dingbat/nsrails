@@ -209,6 +209,24 @@ NSRailsSync(something);
 
 @end
 
+@interface Bird : NSRailsModel
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSMutableArray *eggs;
+@end
+
+@implementation Bird
+@synthesize name, eggs;
+@end
+
+@interface Egg : NSRailsModel
+@property (nonatomic, strong) NSString *color;
+@property (nonatomic, strong) Bird *mother;
+@end
+
+@implementation Egg
+@synthesize color, mother;
+@end
+
 @interface TNSRailsModel : SenTestCase
 @end
 
@@ -428,6 +446,89 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 
 	PropertyTesterSubclass *pts5 = [[PropertyTesterSubclass alloc] initWithCustomSyncProperties:@"*, something"];
 	NSRAssertEqualArraysNoOrder(pts5.propertyCollection.properties.allKeys, NSRArray(@"remoteID", @"something", @"propertyTester", @"subclassProp"));
+}
+
+- (void) test_recursive_nesting
+{
+	NSString *EggsKey = @"eggs_attributes";
+	NSString *MotherKey = @"mother_attributes";
+	
+	Bird *b = [[Bird alloc] initWithCustomSyncProperties:@"eggs:Egg"];
+	b.eggs = [[NSMutableArray alloc] init];
+	
+	Egg *e = [[Egg alloc] initWithCustomSyncProperties:@"mother:Bird"];
+	[b.eggs addObject:e];
+	
+	NSDictionary *birdDict = [b remoteDictionaryRepresentationWrapped:NO];
+	STAssertTrue([[birdDict objectForKey:EggsKey] isKindOfClass:[NSArray class]], @"Eggs should be an array");
+	STAssertTrue([[[birdDict objectForKey:EggsKey] lastObject] isKindOfClass:[NSDictionary class]], @"Egg should be a dict");
+	STAssertNil([[[birdDict objectForKey:EggsKey] lastObject] objectForKey:@"mother"], @"Shouldn't include egg's mother since it's not included in nesting");
+		
+	e.mother = b;
+
+	birdDict = [b remoteDictionaryRepresentationWrapped:NO];
+	STAssertTrue([[birdDict objectForKey:EggsKey] isKindOfClass:[NSArray class]], @"Eggs should be an array");
+	STAssertTrue([[[birdDict objectForKey:EggsKey] lastObject] isKindOfClass:[NSDictionary class]], @"Egg should be a dict");
+	STAssertNil([[[birdDict objectForKey:EggsKey] lastObject] objectForKey:MotherKey], @"Shouldn't include egg's mother since it's not included in nesting");
+	
+	NSDictionary *eggDict = [e remoteDictionaryRepresentationWrapped:NO];
+	STAssertTrue([[eggDict objectForKey:MotherKey] isKindOfClass:[NSDictionary class]],@"Should include mother on top-level nesting");
+	STAssertNil([[eggDict objectForKey:MotherKey] objectForKey:EggsKey],@"Mother should not include eggs (since no -n)");
+	
+	[b.eggs removeAllObjects];
+	
+	Egg *motherExposingEgg = [[Egg alloc] initWithCustomSyncProperties:@"mother:Bird -n"];
+	motherExposingEgg.mother = b;
+	
+	[b.eggs addObject:motherExposingEgg];
+	
+	birdDict = [b remoteDictionaryRepresentationWrapped:NO];
+
+	STAssertTrue([[birdDict objectForKey:EggsKey] isKindOfClass:[NSArray class]], @"Eggs should be an array");
+	STAssertTrue([[[birdDict objectForKey:EggsKey] lastObject] isKindOfClass:[NSDictionary class]], @"Egg should be a dict");
+	STAssertTrue([[[[birdDict objectForKey:EggsKey] lastObject] objectForKey:MotherKey] isKindOfClass:[NSDictionary class]], @"Egg's mother should be a dict, since it was included in -n");
+	STAssertNil([[[[birdDict objectForKey:EggsKey] lastObject] objectForKey:MotherKey] objectForKey:EggsKey], @"Egg's mother's eggs shouldn't be included, since mother doesn't define -n on eggs");
+	
+	eggDict = [motherExposingEgg remoteDictionaryRepresentationWrapped:NO];
+	STAssertTrue([[eggDict objectForKey:MotherKey] isKindOfClass:[NSDictionary class]],@"Should include mother on top-level nesting");
+	STAssertNil([[eggDict objectForKey:MotherKey] objectForKey:EggsKey],@"Mother should not include eggs (since no -n)");
+	
+	
+	Bird *nesterBird = [[Bird alloc] initWithCustomSyncProperties:@"eggs:Egg -n"];
+	nesterBird.eggs = [[NSMutableArray alloc] init];
+	nesterBird.remoteID = [NSNumber numberWithInt:1];
+	
+	Egg *e2 = [[Egg alloc] initWithCustomSyncProperties:@"mother:Bird"];
+	e2.mother = nesterBird;
+	[nesterBird.eggs addObject:e2];
+	
+	birdDict = [nesterBird remoteDictionaryRepresentationWrapped:NO];
+	STAssertTrue([[birdDict objectForKey:EggsKey] isKindOfClass:[NSArray class]], @"Eggs should be an array");
+	STAssertTrue([[[birdDict objectForKey:EggsKey] lastObject] isKindOfClass:[NSDictionary class]], @"Egg should be a dict");
+	STAssertNil([[[birdDict objectForKey:EggsKey] lastObject] objectForKey:MotherKey], @"Shouldn't include egg's mother since it's not included in nesting");
+	
+	eggDict = [e2 remoteDictionaryRepresentationWrapped:NO];
+	STAssertTrue([[eggDict objectForKey:MotherKey] isKindOfClass:[NSDictionary class]],@"Should include mother on top-level nesting");
+	STAssertTrue([[[eggDict objectForKey:MotherKey] objectForKey:EggsKey] isKindOfClass:[NSArray class]],@"Should include eggs in mother because of the -n (and should be array)");
+	STAssertTrue([[[[eggDict objectForKey:MotherKey] objectForKey:EggsKey] lastObject] isKindOfClass:[NSDictionary class]],@"Should include an egg (as a dict) in mother's eggs");
+	STAssertNil([[[[eggDict objectForKey:MotherKey] objectForKey:EggsKey] lastObject] objectForKey:MotherKey], @"Egg's mother's egg should not have a mother (since no -n)");
+	
+	[nesterBird.eggs removeAllObjects];
+	
+	Egg *attachedEgg = [[Egg alloc] initWithCustomSyncProperties:@"mother:Bird -b"];
+	attachedEgg.mother = nesterBird;
+	[nesterBird.eggs addObject:attachedEgg];
+	
+	birdDict = [nesterBird remoteDictionaryRepresentationWrapped:NO];
+	STAssertTrue([[birdDict objectForKey:EggsKey] isKindOfClass:[NSArray class]], @"Eggs should be an array");
+	STAssertTrue([[[birdDict objectForKey:EggsKey] lastObject] isKindOfClass:[NSDictionary class]], @"Egg should be a dict");
+	STAssertNil([[[birdDict objectForKey:EggsKey] lastObject] objectForKey:MotherKey], @"Shouldn't have 'mother' -- 'mother_id' since b-t");
+	STAssertTrue([[[[birdDict objectForKey:EggsKey] lastObject] objectForKey:@"mother_id"] isKindOfClass:[NSNumber class]], @"Egg's mother (self)'s id should be present & be a number");
+	
+	//should be fine here because even though eggs is marked for nesting, mother is belongs-to, so no recursion should occur
+	eggDict = [attachedEgg remoteDictionaryRepresentationWrapped:NO];
+	STAssertNil([eggDict objectForKey:MotherKey], @"'mother' key shouldn't exist - belongs-to, so should be bird_id");
+	STAssertTrue([[eggDict objectForKey:@"mother_id"] isKindOfClass:[NSNumber class]], @"mother ID should be exist and be a number");
 }
 
 - (void) test_serialization

@@ -365,8 +365,7 @@ NSRailsSync(*);
 					//if it's an NSRailsModel, we can use its dictionaryOfRemoteProperties
 					if ([element isKindOfClass:[NSRailsModel class]])
 					{
-						//have to make it shallow so we don't loop infinitely (if that model defines us as an assc)
-						encodedObj = [element dictionaryOfRemotePropertiesShallow:YES];
+						encodedObj = [element dictionaryOfRemotePropertiesFromNesting:YES];
 					}
 					else if ([element isKindOfClass:[NSDate class]])
 					{
@@ -382,8 +381,11 @@ NSRailsSync(*);
 			if (![val isKindOfClass:[NSRailsModel class]])
 				return nil;
 			
-			//have to make it shallow so we don't loop infinitely (if that model defines us as an assc)
-			return [val dictionaryOfRemotePropertiesShallow:YES];
+			//if it's belongs_to, we're only returning ID
+			if (prop.isBelongsTo)
+				return [val remoteID];
+			
+			return [val dictionaryOfRemotePropertiesFromNesting:YES];
 		}
 				
 		//otherwise, just return the value from the get method
@@ -564,20 +566,27 @@ NSRailsSync(*);
 
 - (NSDictionary *) remoteDictionaryRepresentationWrapped:(BOOL)wrapped
 {
-	NSDictionary *dict = [self dictionaryOfRemotePropertiesShallow:NO];
+	NSDictionary *dict = [self dictionaryOfRemotePropertiesFromNesting:NO];
+	
 	if (wrapped)
 		return [NSDictionary dictionaryWithObject:dict forKey:[[self class] masterModelName]];
 	return dict;
 }
 
-- (NSDictionary *) dictionaryOfRemotePropertiesShallow:(BOOL)shallow
+- (NSDictionary *) dictionaryOfRemotePropertiesFromNesting:(BOOL)nesting
 {
 	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 	
 	for (NSRProperty *objcProperty in [self propertyCollection].properties.allValues)
 	{
-		//skip this property if it's nested and we're only looking shallow (to prevent infinite recursion), or if it's not sendable
-		if ((shallow && objcProperty.nestedClass) || !objcProperty.sendable)
+		//this is recursion-protection. we don't want to include every nested class in this class because one of those nested class could nest us, causing infinite loop
+		//  we are safe to include all nestedclasses on top-level (if not from within nesting)
+		//  if we are a class being nested, we have to be careful - only inlude nestedclass attrs that were defined with -n
+		//     except if belongs-to, since then attrs aren't being included - just "_id"
+		
+		BOOL excludeFromNesting = (nesting && objcProperty.nestedClass && !objcProperty.belongsTo && !objcProperty.includedOnNesting);
+		
+		if (!objcProperty.sendable || excludeFromNesting)
 			continue;
 		
 		NSString *railsEquivalent = objcProperty.remoteEquivalent;
@@ -622,16 +631,11 @@ NSRailsSync(*);
 				}
 			}
 			
-			//this is the belongs_to trick
-			//if "-b" declared and it's not NSNull and the relation's remoteID exists, THEN, we should use _id instead of _attributes
-			if (objcProperty.isBelongsTo &&
-				!null &&
-				[remoteRep objectForKey:@"id"])
+			//if it's belongs-to (-b declared) and it's not NSNull ("it" being the parent ID at this point, ie, it exists)...
+			if (objcProperty.isBelongsTo && !null)
 			{
+				//then we should use _id instead of _attributes
 				railsEquivalent = [railsEquivalent stringByAppendingString:@"_id"];
-				
-				//instead of the entire dict, set the value to be only the ID
-				remoteRep = [remoteRep objectForKey:@"id"];
 			}
 			
 			//otherwise, if it's associative, use "_attributes" if not "null"
