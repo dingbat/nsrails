@@ -235,9 +235,9 @@ static NSString *currentEnvironment = nil;
 #if TARGET_OS_IPHONE
 	if (self.managesNetworkActivityIndicator && completionBlock)
 	{
-		blockPlusNetworkActivity = ^(NSDictionary *dict, NSError *error)
+		blockPlusNetworkActivity = ^(id jsonRep, NSError *error)
 		{
-			completionBlock(dict, error);
+			completionBlock(jsonRep, error);
 			
 			networkActivityRequests--;
 			if (networkActivityRequests == 0)
