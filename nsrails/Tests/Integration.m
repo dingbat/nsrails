@@ -179,10 +179,143 @@ static BOOL noServer = NO;
 	}];	
 }
 
-- (void) test_json_in
+- (void) test_crud
 {
 	NSRAssertNoServer(noServer);
+	
+	/////////////////
+	//TEST READ ALL
+	
+	NSError *e = nil;
+	NSArray *allPeople = [Post remoteAll:&e];
+	
+	STAssertNil(e, @"remoteAll on Post should have worked.'");
+	STAssertNotNil(allPeople, @"No errors, allPeople should not be nil.");
+	
+	e = nil;
+	
+	/////////////////
+	//TEST READ BY ID
+	
+	//try to retrieve ID = -1, obviously error
+	Post *post = [Post remoteObjectWithID:-1 error:&e];
+	
+	STAssertNotNil(e, @"Obviously no one with ID -1, where's the error?");
+	STAssertNil(post, @"There was an error on remoteObjectWithID, post should be nil.");
+	
+	e = nil;
+	
+	/////////////////
+	//TEST CREATE
+	
+	//this should fail on validation b/c no author
+	Post *failedPost = [[Post alloc] init];
+	failedPost.author = @"Fail";
+	
+	STAssertFalse([failedPost remoteCreate:&e], @"Should return NO");
+	
+	STAssertNotNil(e, @"Post should have failed validation b/c no content... where is error?");
+	STAssertNotNil(failedPost, @"Post did fail but object should not be nil.");
+	STAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"There was an error by validation, so validation error dictionary should be present.");
+	
+	e = nil;
+	
+	//this should go through
+	Post *newPost = [[Post alloc] init];
+	newPost.author = @"Dan";
+	newPost.content = @"Test";
+	STAssertTrue([newPost remoteCreate:&e], @"Should return YES");
+	
+	STAssertNil(e, @"New post should've been created fine, there should be no error.");
+	STAssertNotNil(newPost.remoteID, @"New post was just created, remoteID shouldn't be nil.");
+	STAssertNotNil(newPost.remoteAttributes, @"New post was just created, remoteAttributes shouldn't be nil.");
+	STAssertNotNil([newPost.remoteAttributes objectForKey:@"updated_at"], @"Remote attributes should have updated_at, even though not declared in NSRS.");
+	
+	e = nil;
+	
+	/////////////////
+	//TEST READ BY ID (again)
+	
+	Post *retrievedPost = [Post remoteObjectWithID:[newPost.remoteID integerValue] error:&e];
+	
+	STAssertNil(e, @"Retrieving post we just made, should be no errors.");
+	STAssertNotNil(retrievedPost, @"No errors retrieving post we just made, he should not be nil.");
+	STAssertEqualObjects(retrievedPost.remoteID, newPost.remoteID, @"Retrieved post should have same remoteID as created post");
+	
+	e = nil;
+	
+	/////////////////
+	//TEST UPDATE
+	
+	//update should go through
+	newPost.author = @"Dan 2";
+	STAssertTrue([newPost remoteUpdate:&e], @"Should return YES");
+	
+	STAssertNil(e, @"Update should've gone through, there should be no error");
+	
+	e = nil;
+	
+	NSNumber *postID = newPost.remoteID;
+	newPost.remoteID = nil;
+	
+	//test to see that it'll fail on trying to update instance with nil ID
+	STAssertThrowsSpecificNamed([newPost remoteUpdate:&e], NSException, NSRailsNullRemoteIDException, @"Tried to update an instance with a nil ID, where's the exception?");
+	newPost.remoteID = postID;
+	
+	e = nil;
+	
+	//update should fail validation b/c no author
+	newPost.author = nil;
+	STAssertFalse([newPost remoteUpdate:&e],@"");
+	
+	STAssertNotNil(e, @"New post should've failed, there should be an error.");
+	STAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"There was an error by validation, so validation error dictionary should be present.");
+	STAssertNil(newPost.author, @"New author failed validation (unchanged) but it should still be nil locally.");
+	
+	e = nil;
+	
+	///////////////////////
+	//TEST READ (RETRIVE)
+	
+	STAssertTrue([newPost remoteFetch:&e],@"");
+	
+	STAssertNil(e, @"Should be no error retrieving a value.");
+	//see if it correctly set the info on the server (still there after failed validation) to overwrite the local author (set to nil)
+	STAssertNotNil(newPost.author, @"New post should have gotten back his old author after validation failed (on the retrieve).");
+	
+	e = nil;
+	
+	//see if there's an error if trying to retrieve with a nil ID
+	newPost.remoteID = nil;
+	
+	STAssertThrowsSpecificNamed([newPost remoteFetch:&e], NSException, NSRailsNullRemoteIDException, @"Tried to retrieve an instance with a nil ID, where's the exception?");
+	
+	e = nil;
+	
+	///////////////////////
+	//TEST DESTROY
+	
+	//test trying to destroy instance with nil ID
+	STAssertThrowsSpecificNamed([newPost remoteDestroy:&e], NSException, NSRailsNullRemoteIDException, @"Tried to delete an instance with a nil ID, where's the exception?");
+	newPost.remoteID = postID;
+	
+	e = nil;
+	
+	//should work
+	STAssertTrue([newPost remoteDestroy:&e],@"");
+	STAssertNil(e, @"Deleting new post should have worked, but got back an error.");
+	
+	e = nil;
+	
+	//should get back an error cause there shouldn't be a post with its ID anymore
+	STAssertFalse([newPost remoteDestroy:&e],@"");
+	STAssertNotNil(e, @"Deleting new post for a second time shouldn't have worked, where's the error?");
+}
 
+- (void) test_json_in_out
+{
+	NSRAssertNoServer(noServer);
+	
 	NSError *e = nil;
 	
 	id posts = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts" sync:&e orAsync:nil];
@@ -195,11 +328,11 @@ static BOOL noServer = NO;
 	Post *p = [[Post alloc] init];
 	p.author = @"author";
 	p.content = @"content";
-	[p remoteCreate:&e];
-
+	STAssertTrue([p remoteCreate:&e],@"");
+	
 	STAssertNil(e, @"Should be no error creating a post (e=%@)",e);
 	STAssertNotNil(p.remoteID, @"Newly created post should have remoteID");
-
+	
 	e = nil;
 	
 	id post = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:[NSString stringWithFormat:@"posts/%@", p.remoteID] sync:&e orAsync:nil];
@@ -210,30 +343,41 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	[p remoteDestroy:&e];
-
-	STAssertNil(e, @"Should be no error destroying a post (e=%@)",e);
-	
-	e = nil;
-	
 	id root = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"404" sync:&e orAsync:nil];
 	
 	STAssertNil(e, @"Should be no error getting 404 string HTML (e=%@)",e);
 	STAssertTrue([root isKindOfClass:[NSString class]], @"Response should be a string");
 	STAssertTrue([[root lowercaseString] rangeOfString:@"html"].location != NSNotFound, @"Response should be HTML");
-
+	
 	e = nil;
 	
 	id bad = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"8349834" sync:&e orAsync:nil];
 	
 	STAssertNotNil(e, @"Should be an error getting /8349834");
 	STAssertNil(bad, @"Response should be nil (error)");
+	
+	e = nil;
+	
+	STAssertThrows([[NSRConfig defaultConfig] makeRequest:@"POST" requestBody:@"STRING" route:@"posts" sync:&e orAsync:nil], @"Should throw exception when sending invalid JSON");
+	
+	id responseFromDestroy = [[NSRConfig defaultConfig] makeRequest:@"DELETE" requestBody:nil route:[NSString stringWithFormat:@"posts/%@", p.remoteID] sync:&e orAsync:nil];
+	
+	STAssertNil(e, @"Shouldn't be an error from DELETE (e=%@)",e);
+	STAssertNotNil(responseFromDestroy, @"Response shouldn't be nil, even if blank");
+	STAssertTrue([responseFromDestroy isKindOfClass:[NSString class]], @"Response should be a string");
+	STAssertTrue([[responseFromDestroy stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0, @"Response should be blank");
+	
+	e = nil;
+	
+	STAssertFalse([p remoteDestroy:&e], @"Should return NO if error");
+	
+	STAssertNotNil(e, @"Should be an error destroying a post that we already destroyed");
 }
 
 - (void) test_authentication_and_url
 {
 	NSRAssertNoServer(noServer);
-
+	
 	[NSRConfig resetConfigs];
 	
 	NSError *e = nil;
@@ -279,138 +423,6 @@ static BOOL noServer = NO;
 }
 
 
-- (void) test_crud
-{
-	NSRAssertNoServer(noServer);
-	
-	/////////////////
-	//TEST READ ALL
-	
-	NSError *e = nil;
-	NSArray *allPeople = [Post remoteAll:&e];
-	
-	STAssertNil(e, @"remoteAll on Post should have worked.'");
-	STAssertNotNil(allPeople, @"No errors, allPeople should not be nil.");
-	
-	e = nil;
-	
-	/////////////////
-	//TEST READ BY ID
-	
-	//try to retrieve ID = -1, obviously error
-	Post *post = [Post remoteObjectWithID:-1 error:&e];
-	
-	STAssertNotNil(e, @"Obviously no one with ID -1, where's the error?");
-	STAssertNil(post, @"There was an error on remoteObjectWithID, post should be nil.");
-	
-	e = nil;
-	
-	/////////////////
-	//TEST CREATE
-	
-	//this should fail on validation b/c no author
-	Post *failedPost = [[Post alloc] init];
-	failedPost.author = @"Fail";
-	[failedPost remoteCreate:&e];
-	
-	STAssertNotNil(e, @"Post should have failed validation b/c no content... where is error?");
-	STAssertNotNil(failedPost, @"Post did fail but object should not be nil.");
-	STAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"There was an error by validation, so validation error dictionary should be present.");
-	
-	e = nil;
-	
-	//this should go through
-	Post *newPost = [[Post alloc] init];
-	newPost.author = @"Dan";
-	newPost.content = @"Test";
-	[newPost remoteCreate:&e];
-	
-	STAssertNil(e, @"New post should've been created fine, there should be no error.");
-	STAssertNotNil(newPost.remoteID, @"New post was just created, remoteID shouldn't be nil.");
-	STAssertNotNil(newPost.remoteAttributes, @"New post was just created, remoteAttributes shouldn't be nil.");
-	STAssertNotNil([newPost.remoteAttributes objectForKey:@"updated_at"], @"Remote attributes should have updated_at, even though not declared in NSRS.");
-	
-	e = nil;
-	
-	/////////////////
-	//TEST READ BY ID (again)
-	
-	Post *retrievedPost = [Post remoteObjectWithID:[newPost.remoteID integerValue] error:&e];
-	
-	STAssertNil(e, @"Retrieving post we just made, should be no errors.");
-	STAssertNotNil(retrievedPost, @"No errors retrieving post we just made, he should not be nil.");
-	STAssertEqualObjects(retrievedPost.remoteID, newPost.remoteID, @"Retrieved post should have same remoteID as created post");
-	
-	e = nil;
-	
-	/////////////////
-	//TEST UPDATE
-	
-	//update should go through
-	newPost.author = @"Dan 2";
-	[newPost remoteUpdate:&e];
-	
-	STAssertNil(e, @"Update should've gone through, there should be no error");
-	
-	e = nil;
-	
-	NSNumber *postID = newPost.remoteID;
-	newPost.remoteID = nil;
-	
-	//test to see that it'll fail on trying to update instance with nil ID
-	STAssertThrowsSpecificNamed([newPost remoteUpdate:&e], NSException, NSRailsNullRemoteIDException, @"Tried to update an instance with a nil ID, where's the exception?");
-	newPost.remoteID = postID;
-	
-	e = nil;
-	
-	//update should fail validation b/c no author
-	newPost.author = nil;
-	[newPost remoteUpdate:&e];
-	
-	STAssertNotNil(e, @"New post should've failed, there should be an error.");
-	STAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"There was an error by validation, so validation error dictionary should be present.");
-	STAssertNil(newPost.author, @"New author failed validation (unchanged) but it should still be nil locally.");
-	
-	e = nil;
-	
-	///////////////////////
-	//TEST READ (RETRIVE)
-	
-	[newPost remoteFetch:&e];
-	
-	STAssertNil(e, @"Should be no error retrieving a value.");
-	//see if it correctly set the info on the server (still there after failed validation) to overwrite the local author (set to nil)
-	STAssertNotNil(newPost.author, @"New post should have gotten back his old author after validation failed (on the retrieve).");
-	
-	e = nil;
-	
-	//see if there's an error if trying to retrieve with a nil ID
-	newPost.remoteID = nil;
-	
-	STAssertThrowsSpecificNamed([newPost remoteFetch:&e], NSException, NSRailsNullRemoteIDException, @"Tried to retrieve an instance with a nil ID, where's the exception?");
-	
-	e = nil;
-	
-	///////////////////////
-	//TEST DESTROY
-	
-	//test trying to destroy instance with nil ID
-	STAssertThrowsSpecificNamed([newPost remoteDestroy:&e], NSException, NSRailsNullRemoteIDException, @"Tried to delete an instance with a nil ID, where's the exception?");
-	newPost.remoteID = postID;
-	
-	e = nil;
-	
-	//should work
-	[newPost remoteDestroy:&e];
-	STAssertNil(e, @"Deleting new post should have worked, but got back an error.");
-	
-	e = nil;
-	
-	//should get back an error cause there shouldn't be a post with its ID anymore
-	[newPost remoteDestroy:&e];
-	STAssertNotNil(e, @"Deleting new post for a second time shouldn't have worked, where's the error?");
-}
-
 - (void) test_get_all
 {
 	NSRAssertNoServer(noServer);
@@ -433,14 +445,14 @@ static BOOL noServer = NO;
 	{
 		e = nil;
 		
-		[p remoteDestroy:&e];
+		STAssertTrue([p remoteDestroy:&e],@"");
 		STAssertNil(e, @"Should be no error in deleting post");	
 	}
 	
 	Post *p = [[Post alloc] init];
 	p.content = @"hello";
 	p.author = @"dan";
-	[p remoteCreate:&e];
+	STAssertTrue([p remoteCreate:&e], @"");
 	STAssertNil(e, @"Should be no error in creating a remote post");	
 	
 	e = nil;
@@ -457,7 +469,7 @@ static BOOL noServer = NO;
 
 	e = nil;
 
-	[p remoteDestroy:&e];
+	STAssertTrue([p remoteDestroy:&e], @"");
 	STAssertNil(e, @"Should be no error in deleting post");	
 }
 
@@ -483,7 +495,7 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	[post remoteCreate:&e];
+	STAssertTrue([post remoteCreate:&e],@"");
 	
 	STAssertNil(e, @"Creating post (with nil responses) shouldn't have resulted in an error.");
 	STAssertNotNil(post.responses, @"Created a post with nil responses array, should have an empty array on return.");
@@ -491,7 +503,7 @@ static BOOL noServer = NO;
 	e = nil;
 	
 	post.responses = [NSMutableArray array];
-	[post remoteUpdate:&e];
+	STAssertTrue([post remoteUpdate:&e],@"");
 	
 	STAssertNil(e, @"Creating post (with empty responses) shouldn't have resulted in an error.");
 	STAssertNotNil(post.responses, @"Made an empty responses array, array should exist on return.");
@@ -502,7 +514,7 @@ static BOOL noServer = NO;
 	NSRResponse *response = [[NSRResponse alloc] init];
 	[post.responses addObject:response];
 	
-	[post remoteUpdate:&e];
+	STAssertFalse([post remoteUpdate:&e],@"");
 	
 	STAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"Should've been a validation error in sending reponse without content/author.");
 	STAssertTrue(post.responses.count == 1, @"Local array should still have response even though wasn't created properly.");
@@ -513,7 +525,7 @@ static BOOL noServer = NO;
 	response.content = @"Response content";
 	response.author = @"Response author";
 	
-	[post remoteUpdate:&e];
+	STAssertTrue([post remoteUpdate:&e],@"");
 	
 	STAssertNil(e, @"There should be no error nesting Response creation");
 	STAssertTrue(post.responses.count == 1, @"Local responses array should still have response (created properly).");
@@ -531,7 +543,7 @@ static BOOL noServer = NO;
 	
 	NSNumber *responseID = response.remoteID;
 	response.remoteDestroyOnNesting = YES;
-	[post remoteUpdate:&e];
+	STAssertTrue([post remoteUpdate:&e],@"");
 	
 	STAssertNil(e, @"There should be no error nesting Response deletion");
 	STAssertTrue(post.responses.count == 1, @"Local responses array should still have response (deleted properly).");
@@ -550,7 +562,7 @@ static BOOL noServer = NO;
 	newResponse.author = @"Test";
 	newResponse.post = post;
 	
-	[newResponse remoteCreate:&e];
+	STAssertFalse([newResponse remoteCreate:&e],@"");
 	STAssertNotNil(e, @"Tried to send Rails a 'post_attributes' key in belongs_to association, where's the error?");
 	STAssertNil(newResponse.remoteID, @"newResponse's ID should be nil - there was an error in create.");
 	
@@ -562,7 +574,7 @@ static BOOL noServer = NO;
 	belongsTo.author = @"Test";
 	belongsTo.post = post;
 	
-	[belongsTo remoteCreate:&e];
+	STAssertTrue([belongsTo remoteCreate:&e],@"");
 	
 	STAssertNil(e, @"There should be no error with sending response marked with 'belongs_to' - 'post_id' should've been used instead of _attributes");
 	STAssertTrue(post == belongsTo.post, @"Belongs-to response's post should be the same after create");
@@ -570,19 +582,19 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	[belongsTo remoteFetch:&e];
+	STAssertTrue([belongsTo remoteFetch:&e],@"");
 	
 	STAssertNil(e, @"There should be no error in retrieving response.");
 	STAssertEqualObjects(belongsTo.post.remoteID, post.remoteID, @"The Post remoteID coming from the newly created Response should be the same as the post object under which we made it.");
 	
 	e = nil;
 	
-	[belongsTo remoteDestroy:&e];	
+	STAssertTrue([belongsTo remoteDestroy:&e],@"");
 	STAssertNil(e, @"Response object should've been destroyed fine (nothing to do with nesting, just cleaning up)");
 	
 	e = nil;
 	
-	[post remoteDestroy:&e];	
+	STAssertTrue([post remoteDestroy:&e],@"");	
 	STAssertNil(e, @"Post object should've been destroyed fine (nothing to do with nesting, just cleaning up)");
 	
 	e = nil;
@@ -598,7 +610,7 @@ static BOOL noServer = NO;
 	
 	[dictionariesPost.responses addObject:testResponse];
 	
-	[dictionariesPost remoteCreate:&e];
+	STAssertTrue([dictionariesPost remoteCreate:&e],@"");
 	STAssertNil(e, @"Should be no error, even though responses is set to dicts");
 	STAssertNotNil(dictionariesPost.remoteID, @"Model ID should be present if there was no error on create...");
 	
@@ -611,7 +623,7 @@ static BOOL noServer = NO;
 	
 	//same applies for retrieve
 	BOOL changes;
-	[dictionariesPost remoteFetch:&e changes:&changes];
+	STAssertTrue([dictionariesPost remoteFetch:&e changes:&changes],@"");
 	STAssertNil(e, @"There should've been no errors on the retrieve, even if no nested model defined.");
 	STAssertTrue(dictionariesPost.responses.count == 1, @"Should still come back with one response");
 	STAssertTrue([[dictionariesPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[dictionariesPost.responses objectAtIndex:0] class]));
@@ -626,12 +638,12 @@ static BOOL noServer = NO;
 	
 	//now, let's manually add it from the dictionary and destroy
 	testResponse.remoteID = [[dictionariesPost.responses objectAtIndex:0] objectForKey:@"id"];
-	[testResponse remoteDestroy:&e];	
+	STAssertTrue([testResponse remoteDestroy:&e],@"");	
 	STAssertNil(e, @"testResponse object should've been destroyed fine after manually setting ID from dictionary (nothing to do with nesting, just cleaning up)");
 	
 	e = nil;
 	
-	[dictionariesPost remoteDestroy:&e];	
+	STAssertTrue([dictionariesPost remoteDestroy:&e],@"");	
 	STAssertNil(e, @"Post object should've been destroyed fine (nothing to do with nesting, just cleaning up)");
 	
 	e = nil;
@@ -648,7 +660,7 @@ static BOOL noServer = NO;
 	post.author = @"Dan";
 	post.content = @"Text";
 	
-	[post remoteCreate:&e];
+	STAssertTrue([post remoteCreate:&e],@"");
 	
 	STAssertNil(e, @"There should be no error on a normal remoteCreate for Post");
 	STAssertNotNil(post.remoteID, @"There should be a remoteID present for newly created object");
@@ -656,7 +668,7 @@ static BOOL noServer = NO;
 	e = nil;
 	
 	BOOL changes;
-	[post remoteFetch:&e changes:&changes];
+	STAssertTrue([post remoteFetch:&e changes:&changes],@"");
 	STAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
 	STAssertFalse(changes, @"remoteFetch should've returned false - there were no changes to Post");
 	
@@ -664,7 +676,7 @@ static BOOL noServer = NO;
 	
 	post.content = @"Local change";
 	
-	[post remoteFetch:&e changes:&changes];
+	STAssertTrue([post remoteFetch:&e changes:&changes],@"");
 	STAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
 	STAssertTrue(changes, @"remoteFetch should've returned true - there was a local change to Post");
 	
@@ -677,7 +689,7 @@ static BOOL noServer = NO;
 	
 	[post.responses addObject:response];
 	
-	[post remoteFetch:&e changes:&changes];
+	STAssertTrue([post remoteFetch:&e changes:&changes], @"");
 	STAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
 	STAssertTrue(post.responses.count == 0, @"remoteFetch should've overwritten post.responses");
 	STAssertTrue(changes, @"remoteFetch should've returned true - there was a local change to Post (added a nested Response)");
@@ -685,7 +697,7 @@ static BOOL noServer = NO;
 	e = nil;
 	
 	response.post = post;
-	[response remoteCreate:&e];
+	STAssertTrue([response remoteCreate:&e],@"");
 	
 	STAssertNil(e, @"There should be no error on a normal remoteCreate for Response obj");
 	STAssertNotNil(response.remoteID, @"There should be a remoteID present for newly created object");
@@ -693,21 +705,21 @@ static BOOL noServer = NO;
 	e = nil;
 	
 	response.post = nil;
-	[response remoteFetch:&e changes:&changes];
+	STAssertTrue([response remoteFetch:&e changes:&changes],@"");
 	STAssertNil(e, @"There should be no error on a normal remoteFetch for existing Response obj");
 	STAssertNotNil(response.post, @"remoteFetch should've added the tied Post object");
 	STAssertTrue(changes, @"remoteFetch should've returned true - locally the post attr was set to nil.");
 	
 	e = nil;
 	
-	[post remoteFetch:&e changes:&changes];
+	STAssertTrue([post remoteFetch:&e changes:&changes],@"");
 	STAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
 	STAssertTrue(post.responses.count == 1, @"remoteFetch should've added the newly created response");
 	STAssertTrue(changes, @"remoteFetch should've returned true - there was a remote change to Post (Response was created)");
 	
 	e = nil;
 	
-	[post remoteFetch:&e changes:&changes];
+	STAssertTrue([post remoteFetch:&e changes:&changes],@"");
 	STAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
 	STAssertFalse(changes, @"remoteFetch should've returned false - there were no changes to Post");
 	
@@ -715,11 +727,11 @@ static BOOL noServer = NO;
 	
 	//clean up
 	
-	[response remoteDestroy:&e];
+	STAssertTrue([response remoteDestroy:&e],@"");
 	STAssertNil(e, @"There should be no error on a normal remoteDestroy for existing Response obj");
 	e = nil;
 	
-	[post remoteDestroy:&e];
+	STAssertTrue([post remoteDestroy:&e],@"");
 	STAssertNil(e, @"There should be no error on a normal remoteDestroy for existing Post obj");
 }
 
@@ -733,7 +745,7 @@ static BOOL noServer = NO;
 	
 	NSError *e = nil;
 	
-	[post remoteCreate:&e];
+	STAssertTrue([post remoteCreate:&e],@"");
 	
 	STAssertNil(e, @"There should be no error in remoteCreate");
 	STAssertNotNil(post.updatedAt,@"updatedAt should've been set from remoteCreate");
@@ -744,14 +756,14 @@ static BOOL noServer = NO;
 	sleep(1);
 	
 	post.content = @"change";
-	[post remoteUpdate:&e];
+	STAssertTrue([post remoteUpdate:&e],@"");
 	
 	STAssertNil(e,@"There should be no error in updating post");
 	
 	e = nil;
 	
 	BOOL changes;
-	[post remoteFetch:&e changes:&changes];
+	STAssertTrue([post remoteFetch:&e changes:&changes],@"");
 	
 	STAssertNil(e, @"There should be no error in remoteFetch");
 	STAssertNotNil(post.updatedAt,@"updatedAt should be present");
@@ -769,7 +781,7 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	[post remoteDestroy:&e];
+	STAssertTrue([post remoteDestroy:&e],@"");
 	
 	STAssertNil(e,@"There should be no problem remotely destroying post - just cleaning up.");
 }
