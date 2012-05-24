@@ -132,12 +132,26 @@ extern NSString * const NSRNullRemoteIDException;
 	You can nest several config contexts within each other.
 
 
- ### Subclassing `NSRConfig`
+ ### Subclassing NSRConfig
  
- Subclassing `NSRConfig` can be useful if you want to implement a connection method that's not HTTP (for example, HTTPS), or if you're using a non-Rails REST service with different standards. Moreover, it can be used to generate errors specific to your app.
+ Subclassing NSRConfig can be useful if you want to implement a connection method that's not HTTP (for example, HTTPS), or if you're using a non-Rails REST service with different standards. Moreover, it can be used to generate errors specific to your app.
  
- Please see the last two methods in this document if this interests you. See [this wiki page](https://github.com/dingbat/nsrails/wiki/NSRConfig) for even *more* detail!
+ - The main method to override if you wish to do so is responseForRequestType:requestBody:url:sync:orAsync:. This method is called internally by NSRails and expects a Foundation objects that correspond to the returned JSON (ie, NSArray, NSDictionary).
  
+ - This should also set the `NSError **error` or perform the `NSRHTTPCompletionBlock completionBlock`, whichever one is present.
+	- In determining errors, it is highly recommend to use the helper method errorForResponse:statusCode:. This method will return you any Rails-specific errors (like validation errors), as well as make the error message succinct. In addition to being used, it is also possible to override this method (making sure to check if a `super` call to it returns anything) if your Rails app has specific errors you want to handle.
+ 
+ - You can set your new `NSRConfig` subclass to be the default config like so (this would be instead of the first code example of course):
+ 
+		CustomConfig *myConfig = [[CustomConfig alloc] initWithAppURL:@"http://localhost:3000"];
+ 
+		//set custom myConfig properties...
+		[NSRConfig setAsDefaultConfig:myConfig];
+ 
+		//or, to a specific environment:
+		[NSRConfig setAsDefaultConfig:myConfig forEnvironment:NSRConfigEnvironmentProduction];
+ 
+	Or, if only a _certain_ action requires it, you can use your new instance for a block of code just as you would in the section above.
  */
 
 @interface NSRConfig : NSObject <NSCoding>
