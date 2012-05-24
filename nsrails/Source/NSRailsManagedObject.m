@@ -55,6 +55,13 @@
 + (NSRPropertyCollection *) propertyCollection;
 - (NSRPropertyCollection *) propertyCollection;
 
++ (void) saveContext;
+- (void) saveContext;
+
+- (NSDictionary *) dictionaryOfRemotePropertiesShallow:(BOOL)shallow;
+- (void) testIfCanSendInstanceRequest;
++ (NSRailsManagedObject *)findFirstObjectByAttribute:(NSString *)attr_name withValue:(id)value inContext:(NSManagedObjectContext *)context;
+
 @end
 
 @interface NSRConfig (override)

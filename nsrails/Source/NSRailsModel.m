@@ -54,6 +54,9 @@
 + (NSRPropertyCollection *) propertyCollection;
 - (NSRPropertyCollection *) propertyCollection;
 
+- (NSDictionary *) dictionaryOfRemotePropertiesShallow:(BOOL)shallow;
+- (void) testIfCanSendInstanceRequest;
+
 @end
 
 @interface NSRConfig (override)

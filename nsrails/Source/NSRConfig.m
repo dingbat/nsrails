@@ -54,6 +54,13 @@
 }
 @end
 
+@interface NSRConfig()
+
+- (void) logRequestWithBody:(NSString *)body httpVerb:(NSString *)httpVerb url:(NSString *)url;
+- (NSURLRequest *) HTTPRequestForRequestType:(NSString *)type requestBody:(NSString *)requestStr url:(NSString *)url;
+- (void) logResponse:(NSString *)response statusCode:(int)code;
+
+@end
 
 //Environments
 NSString * const NSRConfigEnvironmentDevelopment		= @"NSRConfigEnvironmentDevelopment";
