@@ -34,7 +34,7 @@
 
 @class NSRPropertyCollection;
 
-static const NSString *NSRailsSaveCoreDataNotification = @"should_save_core_data";
+static NSString *NSRailsSaveCoreDataNotification = @"should_save_core_data";
 
 /**
  
