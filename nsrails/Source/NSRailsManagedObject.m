@@ -876,7 +876,11 @@ NSRailsSync(*);
 
 - (BOOL) remoteUpdate:(NSError **)error
 {
-	return !![self remoteRequest:@"PUT" method:nil error:error];
+	BOOL didUpdate = !![self remoteRequest:@"PUT" method:nil error:error];
+  if (*error == nil) {
+    [self saveContext];
+  }
+  return didUpdate;
 }
 
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock
@@ -884,6 +888,9 @@ NSRailsSync(*);
 	[self remoteRequest:@"PUT" method:nil async:
 	 
 	 ^(NSString *result, NSError *error) {
+     if (error == nil) {
+       [self saveContext];
+     }
 		 completionBlock(error);
 	 }];
 }
