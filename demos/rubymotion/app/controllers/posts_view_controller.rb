@@ -31,12 +31,18 @@ class PostsViewController < UITableViewController
   end
   
   def refresh
-    ptr = Pointer.new(:object)
-    @posts = Post.remoteAll(ptr)
-    if !@posts
-      AppDelegate.alertForError ptr[0]
+    # When the refresh button is hit, refresh our array of posts (uses an extension on Array)
+  	
+    e_ptr = Pointer.new(:object)
+    c_ptr = Pointer.new(:boolean)
+    
+    if !@posts.remoteFetchAll(Post, error:e_ptr, changes:c_ptr)
+      AppDelegate.alertForError e_ptr[0]
+    elsif c_ptr[0]
+      self.tableView.reloadData
     end
-    self.tableView.reloadData
+    
+    # This could also be done by setting @posts to the result of Post.(e_ptr), but using the Array method will persist the same objects and update their respective properties instead of replacing everything, which could be desirable
   end
   
   def deletePostAtIndexPath(indexPath)
@@ -72,6 +78,7 @@ class PostsViewController < UITableViewController
     addBtn = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd, target:self, action:(:add))
     self.navigationItem.rightBarButtonItem = addBtn
 
+    @posts = []
     refresh
   end
   

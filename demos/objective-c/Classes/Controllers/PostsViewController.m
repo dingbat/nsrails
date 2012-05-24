@@ -24,21 +24,23 @@
 
 - (void) refresh
 {
-	// When the refresh button is hit, get latest array of posts
-	NSError *error;
-	NSArray *allPosts = [Post remoteAll:&error];
+	// When the refresh button is hit, refresh our array of posts (uses a category on NSMutableArray)
 	
-	if (allPosts)
-	{
-		// Set it to our ivar
-		posts = [NSMutableArray arrayWithArray:allPosts];
-		
-		[self.tableView reloadData];		
-	}
-	else
+	BOOL changes;
+	NSError *error;
+	
+	BOOL success = [posts remoteFetchAll:[Post class] error:&error changes:&changes];
+	
+	if (!success)
 	{
 		[AppDelegate alertForError:error];
 	}
+	else if (changes)
+	{
+		[self.tableView reloadData];
+	}
+	
+	// This could also be done by setting posts to the result of [Post remoteAll:&error], but the NSMutableArray category will persist the same objects and update their respective properties instead of replacing everything, which could be desirable
 }
 
 - (void) addPost
@@ -101,6 +103,8 @@
 
 - (void)viewDidLoad
 {
+	posts = [[NSMutableArray alloc] init];
+	
 	[self refresh];
 	
 	self.title = @"Posts";
