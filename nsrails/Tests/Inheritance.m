@@ -15,8 +15,8 @@
 @implementation Parent
 @synthesize parentAttr, parentAttr2;
 NSRailsSync (*, parentAttr2 -x)
-NSRailsUseModelName(@"parent", @"parentS")
-NSRailsUseConfig(@"parent")
+NSRUseModelName(@"parent", @"parentS")
+NSRUseConfig(@"parent")
 @end
 
 	@interface Child : Parent
@@ -44,8 +44,8 @@ NSRailsUseConfig(@"parent")
 		@implementation RebelliousGrandchild
 		@synthesize r_gchildAttr;
 		NSRailsSync(NSRNoCarryFromSuper *) //NSRNoCarryFromSuper present -> won't inherit anything
-		NSRailsUseModelName(@"r_gchild") //will override Parent's modelname -> will use "r_grandchild"
-		NSRailsUseConfig(@"r_gchild") //will override Parent's config -> will use "http://r_grandchild"
+		NSRUseModelName(@"r_gchild") //will override Parent's modelname -> will use "r_grandchild"
+		NSRUseConfig(@"r_gchild") //will override Parent's config -> will use "http://r_grandchild"
 		@end
 
 	@interface RebelliousChild : Parent
@@ -54,8 +54,8 @@ NSRailsUseConfig(@"parent")
 	@implementation RebelliousChild
 	@synthesize r_childAttr;
 	NSRailsSync(* NSRNoCarryFromSuper) //NSRNoCarryFromSuper present -> won't inherit anything
-	NSRailsUseDefaultModelName //will override Parent's modelname in favor of default behavior
-	NSRailsUseDefaultConfig //will override Parent's config in favor of default behavior (defaultConfig)
+	NSRUseDefaultModelName //will override Parent's modelname in favor of default behavior
+	NSRUseDefaultConfig //will override Parent's config in favor of default behavior (defaultConfig)
 	@end
 
 		@interface GrandchildOfRebellious : RebelliousChild
@@ -64,7 +64,7 @@ NSRailsUseConfig(@"parent")
 		@implementation GrandchildOfRebellious
 		@synthesize gchild_rAttr;
 		NSRailsSync(*) //absent NSRNoCarryFromSuper -> will inherit from r.child, BUT inheritance will stop @ R.Child 
-		//absent model name + config BUT will inherit his parent's NSRailsUseDefault..., meaning default behavior will occur
+		//absent model name + config BUT will inherit his parent's NSRUseDefault..., meaning default behavior will occur
 		@end
 
 		@interface RebelliousGrandchildOfRebellious : RebelliousChild
@@ -73,8 +73,8 @@ NSRailsUseConfig(@"parent")
 		@implementation RebelliousGrandchildOfRebellious
 		@synthesize r_gchild_rAttr;
 		NSRailsSync(NSRNoCarryFromSuper, *) //NSRNoCarryFromSuper present -> won't inherit anything
-		NSRailsUseModelName(@"r_gchild_r", @"r_gchild_rS") //will override R.Child's modelname -> will use "r_r_gchild"
-		NSRailsUseConfig(@"r_gchild_r") //will override R.Child's config -> will use "http://r_r_gchild"
+		NSRUseModelName(@"r_gchild_r", @"r_gchild_rS") //will override R.Child's modelname -> will use "r_r_gchild"
+		NSRUseConfig(@"r_gchild_r") //will override R.Child's config -> will use "http://r_r_gchild"
 		@end
 
 
@@ -103,21 +103,21 @@ NSRailsUseConfig(@"parent")
 	NSRAssertClassPluralName(@"parentS", [Parent class]);
 	
 	//complacent child
-	//is complacent (doesn't explicitly set NSRailsUseModelName or NSRailsUseDefaultModelName), so will inherit the "parent" from Parent
+	//is complacent (doesn't explicitly set NSRUseModelName or NSRUseDefaultModelName), so will inherit the "parent" from Parent
 	NSRAssertClassModelName(@"parent", [Child class]);
 	NSRAssertClassPluralName(@"parentS", [Child class]); //explicit plural set
 	
-	//is complacent (doesn't explicitly set NSRailsUseModelName or NSRailsUseDefaultModelName), so will inherit the "parent" from Child
+	//is complacent (doesn't explicitly set NSRUseModelName or NSRUseDefaultModelName), so will inherit the "parent" from Child
 	NSRAssertClassModelName(@"parent", [Grandchild class]);
 	NSRAssertClassPluralName(@"parentS", [Grandchild class]);
 	
-	//is not complacent (defines NSRailsUseModelName), as set to "r_grandchild"
+	//is not complacent (defines NSRUseModelName), as set to "r_grandchild"
 	NSRAssertClassModelName(@"r_gchild", [RebelliousGrandchild class]);
 	NSRAssertClassPluralName(@"r_gchilds", [RebelliousGrandchild class]); //no explicit plural set
 	
 	
 	//rebellious child
-	//is rebellious (explicitly defines NSRailsUseDefaultModelName for itself, so should be default behavior)
+	//is rebellious (explicitly defines NSRUseDefaultModelName for itself, so should be default behavior)
 	NSRAssertClassModelName(@"rebellious_child", [RebelliousChild class]);
 	NSRAssertClassPluralName(@"rebellious_childs", [RebelliousChild class]); //default plural set
 	
@@ -125,7 +125,7 @@ NSRailsUseConfig(@"parent")
 	NSRAssertClassModelName(@"grandchild_of_rebellious", [GrandchildOfRebellious class]);
 	NSRAssertClassPluralName(@"grandchild_of_rebelliouses", [GrandchildOfRebellious class]); //inherits default
 	
-	//is rebellious (defines NSRailsUseModelName as "r_gchild_r"), so it'll use that name
+	//is rebellious (defines NSRUseModelName as "r_gchild_r"), so it'll use that name
 	NSRAssertClassModelName(@"r_gchild_r", [RebelliousGrandchildOfRebellious class]);
 	NSRAssertClassPluralName(@"r_gchild_rS", [RebelliousGrandchildOfRebellious class]); //explicitly set
 }
@@ -138,24 +138,24 @@ NSRailsUseConfig(@"parent")
 	NSRAssertClassAndInstanceConfig([Parent class], @"parent");
 	
 	//complacent child
-	//is complacent (doesn't explicitly set NSRailsUseConfig or NSRailsUseDefaultConfig), so will inherit the "parent" from Parent
+	//is complacent (doesn't explicitly set NSRUseConfig or NSRUseDefaultConfig), so will inherit the "parent" from Parent
 	NSRAssertClassAndInstanceConfig([Child class], @"parent");
 	
-	//is complacent (doesn't explicitly set NSRailsUseConfig or NSRailsUseDefaultConfig), so will inherit the "parent" from Child
+	//is complacent (doesn't explicitly set NSRUseConfig or NSRUseDefaultConfig), so will inherit the "parent" from Child
 	NSRAssertClassAndInstanceConfig([Grandchild class], @"parent");
 	
-	//is not complacent (defines NSRailsUseConfig), as set to "r_grandchild"
+	//is not complacent (defines NSRUseConfig), as set to "r_grandchild"
 	NSRAssertClassAndInstanceConfig([RebelliousGrandchild class], @"r_gchild");
 	
 	
 	//rebellious child
-	//is rebellious (explicitly defines NSRailsUseDefaultConfig for itself, so should be defaultConfig returned)
+	//is rebellious (explicitly defines NSRUseDefaultConfig for itself, so should be defaultConfig returned)
 	NSRAssertClassAndInstanceConfig([RebelliousChild class], @"Default");
 	
 	//is complacent (doesn't explicitly set), BUT will inherit default behavior from R.Child, so default behavior
 	NSRAssertClassAndInstanceConfig([GrandchildOfRebellious class], @"Default");
 	
-	//is rebellious (defines NSRailsUseConfig as "r_gchild_r"), so it'll use that name
+	//is rebellious (defines NSRUseConfig as "r_gchild_r"), so it'll use that name
 	NSRAssertClassAndInstanceConfig([RebelliousGrandchildOfRebellious class], @"r_gchild_r");
 }
 

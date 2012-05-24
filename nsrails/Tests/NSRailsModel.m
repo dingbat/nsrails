@@ -201,7 +201,7 @@ NSRailsSync(lotsOfDates:NSDate, lotsOfStrings);
 @end
 
 @implementation CustomGuy
-NSRailsUseConfig(@"url", @"user", @"pass");
+NSRUseConfig(@"url", @"user", @"pass");
 NSRailsSync(something);
 @end
 
@@ -303,7 +303,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	// Instance
 	
 	Empty *smth = [[Empty alloc] init];
-	STAssertThrowsSpecificNamed([smth routeForInstanceMethod:nil], NSException, NSRailsNullRemoteIDException, @"Should have been an exception getting instance route if nil remoteID");
+	STAssertThrowsSpecificNamed([smth routeForInstanceMethod:nil], NSException, NSRNullRemoteIDException, @"Should have been an exception getting instance route if nil remoteID");
 	
 	smth.remoteID = [NSNumber numberWithInt:1];
 	STAssertEqualObjects([smth routeForInstanceMethod:nil], @"empties/1", @"Nil instance route failed");
@@ -350,7 +350,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	
 	p.encodeNonJSON = YES;
 	
-	STAssertThrowsSpecificNamed([p remoteDictionaryRepresentationWrapped:NO], NSException, NSRailsJSONParsingException, @"Encoding into non-JSON for sendable dict - where's the error?");
+	STAssertThrowsSpecificNamed([p remoteDictionaryRepresentationWrapped:NO], NSException, NSRJSONParsingException, @"Encoding into non-JSON for sendable dict - where's the error?");
 }
 
 - (void) test_send_retrieve

@@ -53,7 +53,7 @@
 [[NSRPropertyCollection alloc] initWithClass:[TestClass class] syncString:customProperties customConfig:nil]
 
 #define NSRThrowsSyncException(exp, desc) \
-STAssertThrowsSpecificNamed(exp, NSException, NSRailsSyncException, desc)
+STAssertThrowsSpecificNamed(exp, NSException, NSRSyncException, desc)
 
 
 - (void) test_invalid_sync_params

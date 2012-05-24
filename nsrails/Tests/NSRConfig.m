@@ -135,7 +135,7 @@
 	[[NSRConfig defaultConfig] setDateFormat:@"yyyy"];
 	
 	//string -> date
-	STAssertThrowsSpecificNamed([[NSRConfig defaultConfig] dateFromString:mockDatetime], NSException, NSRailsInternalError, @"Should throw exception - receiving config format != server format");
+	STAssertThrowsSpecificNamed([[NSRConfig defaultConfig] dateFromString:mockDatetime], NSException, NSRInternalError, @"Should throw exception - receiving config format != server format");
 
 	//date -> string
 	NSString *string2 = [[NSRConfig defaultConfig] stringFromDate:date];

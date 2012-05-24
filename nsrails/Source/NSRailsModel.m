@@ -74,8 +74,8 @@
 
 
 // Use default config + model name by default
-NSRailsUseDefaultModelName;
-NSRailsUseDefaultConfig;
+NSRUseDefaultModelName;
+NSRUseDefaultConfig;
 
 // If NSRailsSync isn't overriden (ie, if NSRailsSync() macro is not declared in subclass), default to *
 NSRailsSync(*);
@@ -124,12 +124,12 @@ NSRailsSync(*);
 {
 	//check for a custom config for the class
 	
-	NSString *url = [self NSRailsUseConfigURL];
+	NSString *url = [self NSRUseConfigURL];
 	if (url)
 	{
 		NSRConfig *custom = [[NSRConfig alloc] initWithAppURL:url];
-		custom.appUsername = [self NSRailsUseConfigUsername];
-		custom.appPassword = [self NSRailsUseConfigPassword];
+		custom.appUsername = [self NSRUseConfigUsername];
+		custom.appPassword = [self NSRUseConfigPassword];
 		
 		return custom;
 	}
@@ -142,7 +142,7 @@ NSRailsSync(*);
 	if (self == [NSRailsModel class])
 		return nil;
 	
-	NSString *defined = [self NSRailsUseModelName];
+	NSString *defined = [self NSRUseModelName];
 	if (defined)
 		return defined;
 	
@@ -161,7 +161,7 @@ NSRailsSync(*);
 
 + (NSString *) masterPluralName
 {
-	NSString *defined = [self NSRailsUsePluralName];
+	NSString *defined = [self NSRUsePluralName];
 	if (defined)
 		return defined;
 
@@ -209,7 +209,7 @@ NSRailsSync(*);
 		return [NSRConfig overrideConfig];
 	}
 	
-	//if this class/instance defines NSRailsUseConfig, use it over the default
+	//if this class/instance defines NSRUseConfig, use it over the default
 	else if (propertyCollection.customConfig)
 	{
 		return propertyCollection.customConfig;
@@ -338,7 +338,7 @@ NSRailsSync(*);
 		
 		if (!JSONParsable)
 		{
-			[NSException raise:NSRailsJSONParsingException format:@"Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return NSDictionary, NSArray, NSString, NSNumber, or NSNull here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop.name, NSStringFromClass([self class]),NSStringFromSelector(encoder)];
+			[NSException raise:NSRJSONParsingException format:@"Trying to encode property '%@' in class '%@', but the result from %@ was not JSON-parsable. Please make sure you return NSDictionary, NSArray, NSString, NSNumber, or NSNull here. Remember, these are the values you want to send in the JSON to Rails. Also, defining this encoder method will override the automatic NSDate translation.",prop.name, NSStringFromClass([self class]),NSStringFromSelector(encoder)];
 			return nil;
 		}
 		
@@ -457,7 +457,7 @@ NSRailsSync(*);
 					if (property.isHasMany)
 					{
 						if (![railsObject isKindOfClass:[NSArray class]])
-							[NSException raise:NSRailsInternalError format:@"Attempt to set property '%@' in class '%@' (declared as has-many) to a non-array non-null value ('%@').", property, self.class, railsObject];
+							[NSException raise:NSRInternalError format:@"Attempt to set property '%@' in class '%@' (declared as has-many) to a non-array non-null value ('%@').", property, self.class, railsObject];
 						
 						//array of NSRailsModels is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
 						
@@ -686,7 +686,7 @@ NSRailsSync(*);
 {
 	if (!self.remoteID)
 	{
-		[NSException raise:NSRailsNullRemoteIDException format:@"Attempted to update, delete, or retrieve an object with no ID. (Instance of %@)",NSStringFromClass([self class])];
+		[NSException raise:NSRNullRemoteIDException format:@"Attempted to update, delete, or retrieve an object with no ID. (Instance of %@)",NSStringFromClass([self class])];
 	}
 }
 
@@ -920,7 +920,7 @@ NSRailsSync(*);
 {
 	if (![json isKindOfClass:[NSArray class]])
 	{
-		[NSException raise:NSRailsInternalError format:@"getAll method (index) for %@ controller (from %@ class) retuned this JSON: `%@`, which is not an array - check your server output.", [self masterPluralName], self.class, json];	
+		[NSException raise:NSRInternalError format:@"getAll method (index) for %@ controller (from %@ class) retuned this JSON: `%@`, which is not an array - check your server output.", [self masterPluralName], self.class, json];	
 	}
 }
 

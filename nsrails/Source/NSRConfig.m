@@ -61,12 +61,12 @@ NSString * const NSRConfigEnvironmentProduction			= @"NSRConfigEnvironmentProduc
 
 NSString * const NSRValidationErrorsKey					= @"NSRValidationErrorsKey";
 
-NSString * const NSRRemoteErrorDomain					= @"NSRRemoteErrorDomain";
-NSString * const NSRailsSyncException					= @"NSRailsSyncException";
-NSString * const NSRailsJSONParsingException			= @"NSRailsJSONParsingException";
-NSString * const NSRailsInternalError					= @"NSRailsInternalError";
-NSString * const NSRailsMissingURLException				= @"NSRailsMissingURLException";
-NSString * const NSRailsNullRemoteIDException			= @"NSRailsNullRemoteIDException";
+NSString * const NSRRemoteErrorDomain				= @"NSRRemoteErrorDomain";
+NSString * const NSRSyncException					= @"NSRSyncException";
+NSString * const NSRJSONParsingException			= @"NSRJSONParsingException";
+NSString * const NSRInternalError					= @"NSRInternalError";
+NSString * const NSRMissingURLException				= @"NSRMissingURLException";
+NSString * const NSRNullRemoteIDException			= @"NSRNullRemoteIDException";
 
 
 
@@ -194,7 +194,7 @@ static NSString *currentEnvironment = nil;
 	
 	if (!date && string)
 	{
-		[NSException raise:NSRailsInternalError format:@"Attempted to convert remote date string (\"%@\") into an NSDate object, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation).",string,dateFormatter.dateFormat];
+		[NSException raise:NSRInternalError format:@"Attempted to convert remote date string (\"%@\") into an NSDate object, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation).",string,dateFormatter.dateFormat];
 		return nil;
 	}
 	
@@ -225,7 +225,7 @@ static NSString *currentEnvironment = nil;
 	//make sure the app URL is set
 	if (!self.appURL)
 	{
-		[NSException raise:NSRailsMissingURLException format:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup. (env=%@)", [NSRConfig currentEnvironment]];
+		[NSException raise:NSRMissingURLException format:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup. (env=%@)", [NSRConfig currentEnvironment]];
 		
 		return nil;
 	}

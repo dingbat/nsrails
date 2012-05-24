@@ -84,7 +84,7 @@
 @end
 
 
-#define NSRRaiseSyncError(x, ...) [NSException raise:NSRailsSyncException format:x,__VA_ARGS__,nil]
+#define NSRRaiseSyncError(x, ...) [NSException raise:NSRSyncException format:x,__VA_ARGS__,nil]
 
 @implementation NSRPropertyCollection
 @synthesize properties;

@@ -133,7 +133,7 @@ static BOOL noServer = NO;
 				newPost.remoteID = nil;
 				
 				//test to see that it'll fail on trying to update instance with nil ID
-				STAssertThrowsSpecificNamed([newPost remoteUpdateAsync:^(NSError *error) {}], NSException, NSRailsNullRemoteIDException, @"ASYNC Tried to update an instance with a nil ID, where's the exception?");
+				STAssertThrowsSpecificNamed([newPost remoteUpdateAsync:^(NSError *error) {}], NSException, NSRNullRemoteIDException, @"ASYNC Tried to update an instance with a nil ID, where's the exception?");
 				
 				newPost.remoteID = postID;
 				
@@ -155,13 +155,13 @@ static BOOL noServer = NO;
 						newPost.remoteID = nil;
 						
 						//see if there's an exception if trying to retrieve with a nil ID
-						STAssertThrowsSpecificNamed([newPost remoteFetchAsync:^(BOOL changed, NSError *error) {}], NSException, NSRailsNullRemoteIDException, @"ASYNC Tried to retrieve an instance with a nil ID, where's the exception?");
+						STAssertThrowsSpecificNamed([newPost remoteFetchAsync:^(BOOL changed, NSError *error) {}], NSException, NSRNullRemoteIDException, @"ASYNC Tried to retrieve an instance with a nil ID, where's the exception?");
 						
 						///////////////////////
 						//TEST DESTROY
 						
 						//test trying to destroy instance with nil ID
-						STAssertThrowsSpecificNamed([newPost remoteDestroyAsync:^(NSError *error) {}], NSException, NSRailsNullRemoteIDException, @"ASYNC Tried to delete an instance with a nil ID, where's the exception?");
+						STAssertThrowsSpecificNamed([newPost remoteDestroyAsync:^(NSError *error) {}], NSException, NSRNullRemoteIDException, @"ASYNC Tried to delete an instance with a nil ID, where's the exception?");
 						newPost.remoteID = postID;
 						
 						[newPost remoteDestroyAsync:^(NSError *e6) {
@@ -259,7 +259,7 @@ static BOOL noServer = NO;
 	newPost.remoteID = nil;
 	
 	//test to see that it'll fail on trying to update instance with nil ID
-	STAssertThrowsSpecificNamed([newPost remoteUpdate:&e], NSException, NSRailsNullRemoteIDException, @"Tried to update an instance with a nil ID, where's the exception?");
+	STAssertThrowsSpecificNamed([newPost remoteUpdate:&e], NSException, NSRNullRemoteIDException, @"Tried to update an instance with a nil ID, where's the exception?");
 	newPost.remoteID = postID;
 	
 	e = nil;
@@ -288,7 +288,7 @@ static BOOL noServer = NO;
 	//see if there's an error if trying to retrieve with a nil ID
 	newPost.remoteID = nil;
 	
-	STAssertThrowsSpecificNamed([newPost remoteFetch:&e], NSException, NSRailsNullRemoteIDException, @"Tried to retrieve an instance with a nil ID, where's the exception?");
+	STAssertThrowsSpecificNamed([newPost remoteFetch:&e], NSException, NSRNullRemoteIDException, @"Tried to retrieve an instance with a nil ID, where's the exception?");
 	
 	e = nil;
 	
@@ -296,7 +296,7 @@ static BOOL noServer = NO;
 	//TEST DESTROY
 	
 	//test trying to destroy instance with nil ID
-	STAssertThrowsSpecificNamed([newPost remoteDestroy:&e], NSException, NSRailsNullRemoteIDException, @"Tried to delete an instance with a nil ID, where's the exception?");
+	STAssertThrowsSpecificNamed([newPost remoteDestroy:&e], NSException, NSRNullRemoteIDException, @"Tried to delete an instance with a nil ID, where's the exception?");
 	newPost.remoteID = postID;
 	
 	e = nil;
@@ -382,7 +382,7 @@ static BOOL noServer = NO;
 	
 	NSError *e = nil;
 	
-	STAssertThrowsSpecificNamed([[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:nil sync:&e orAsync:nil], NSException, NSRailsMissingURLException, @"Should fail on no app URL set in config, where's the error?");
+	STAssertThrowsSpecificNamed([[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:nil sync:&e orAsync:nil], NSException, NSRMissingURLException, @"Should fail on no app URL set in config, where's the error?");
 	
 	e = nil;
 	
@@ -632,7 +632,7 @@ static BOOL noServer = NO;
 	e = nil;
 	
 	//testResponse will fail destroy
-	STAssertThrowsSpecificNamed([testResponse remoteDestroy:&e], NSException, NSRailsNullRemoteIDException, @"testResponse object was never set an ID (since the retrieve only returned dictionaries), so it should throw an exception on destroy.");
+	STAssertThrowsSpecificNamed([testResponse remoteDestroy:&e], NSException, NSRNullRemoteIDException, @"testResponse object was never set an ID (since the retrieve only returned dictionaries), so it should throw an exception on destroy.");
 	
 	e = nil;
 	
@@ -778,7 +778,7 @@ static BOOL noServer = NO;
 	
 	//invalid date format
 	[[NSRConfig defaultConfig] setDateFormat:@"!@#@$"];
-	STAssertThrowsSpecificNamed([post remoteFetch:&e], NSException, NSRailsInternalError, @"There should be an exception in setting to a bad format");
+	STAssertThrowsSpecificNamed([post remoteFetch:&e], NSException, NSRInternalError, @"There should be an exception in setting to a bad format");
 	
 	NSDictionary *dict = [post remoteDictionaryRepresentationWrapped:NO];
 	STAssertNotNil(dict, @"There should be no problem making a dict, even if format is bad");

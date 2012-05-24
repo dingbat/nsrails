@@ -65,11 +65,11 @@ extern NSString * const NSRValidationErrorsKey;
 
 //Exceptions+Domains
 extern NSString * const NSRRemoteErrorDomain;
-extern NSString * const NSRailsSyncException;
-extern NSString * const NSRailsJSONParsingException;
-extern NSString * const NSRailsInternalError;
-extern NSString * const NSRailsMissingURLException;
-extern NSString * const NSRailsNullRemoteIDException;
+extern NSString * const NSRSyncException;
+extern NSString * const NSRJSONParsingException;
+extern NSString * const NSRInternalError;
+extern NSString * const NSRMissingURLException;
+extern NSString * const NSRNullRemoteIDException;
 
 ////////////////////////////////
 
@@ -118,7 +118,7 @@ extern NSString * const NSRailsNullRemoteIDException;
  
  ### Using several configs in one project
  
- - If you simply need to direct different models to different URLs, you can use the [NSRailsUseConfig](https://github.com/dingbat/nsrails/wiki/Macros) macro.
+ - If you simply need to direct different models to different URLs, you can use the [NSRUseConfig](https://github.com/dingbat/nsrails/wiki/Macros) macro.
  - If specific actions must be called using a separate config, an `NSRConfig` instance can be used to define a context block in which to call those config-specific methods:
 		
 		NSRConfig *myConfig = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com/"];
@@ -172,7 +172,7 @@ extern NSString * const NSRailsNullRemoteIDException;
  
  When false, names must be identical to their corresponding models in Rails.
  
- If there are just a few cases where you don't want this, see the NSRailsUseModelName macro to override model names.
+ If there are just a few cases where you don't want this, see the NSRUseModelName macro to override model names.
  
  **Default:** `YES`.
  */

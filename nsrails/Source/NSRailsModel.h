@@ -44,18 +44,18 @@
  About this document:
  
  - You'll notice that almost all `NSRailsModel` properties and methods are prefixed with `remote`, so you can quickly navigate through them with autocomplete.
- - When this document refers to an object's "model name", that means (by default) the name of its class. If you wish to define a custom model name (if the name of your model in Rails is distinct from your class name), use the `NSRailsUseModelName()` macro.
+ - When this document refers to an object's "model name", that means (by default) the name of its class. If you wish to define a custom model name (if the name of your model in Rails is distinct from your class name), use the `NSRUseModelName()` macro.
  - Before exploring this document, make sure that your class inherits from `NSRailsModel`, or of course these methods & properties will not be available.
  
  ### Available Macros
  
  - `NSRailsSync()` - define specific properties to be shared with Rails, along with configurable behaviors.
- - `NSRailsUseModelName()` - define a custom model name for your class, optionally with a custom plural. Takes string literal(s).
- - `NSRailsUseConfig()` - define a custom app URL for your class, optionally with username/password. Takes string literal(s).
+ - `NSRUseModelName()` - define a custom model name for your class, optionally with a custom plural. Takes string literal(s).
+ - `NSRUseConfig()` - define a custom app URL for your class, optionally with username/password. Takes string literal(s).
  
  These macros can be defined right inside your subclass's implementation:
  
-	@implementation Article  NSRailsUseModelName(@"post")
+	@implementation Article  NSRUseModelName(@"post")
 	@synthesize title, content;
 	NSRailsSync(title, content)
 	
@@ -297,7 +297,7 @@
  Sends a `GET` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
  Request made synchronously. See remoteFetchAsync: for asynchronous operation.
  
- Requires presence of `remoteID`, or will throw an `NSRailsRequiresRemoteIDException`.
+ Requires presence of `remoteID`, or will throw an `NSRNullRemoteIDException`.
  
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`. 
  @return `YES` if fetch was successful. Returns `NO` if an error occurred.
@@ -312,7 +312,7 @@
  Sends a `GET` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
  Request made synchronously. See remoteFetchAsync: for asynchronous operation.
  
- Requires presence of `remoteID`, or will throw an `NSRailsRequiresRemoteIDException`.
+ Requires presence of `remoteID`, or will throw an `NSRNullRemoteIDException`.
  
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`. 
  @param changesPtr Pointer to boolean value set to whether or not the receiver changed in any way after the fetch (ie, if this fetch modified one of receiver's local properties due to a change in value server-side). This will also take into account diffs to any nested `NSRailsModel` objects that are affected by this fetch (done recursively).
@@ -330,7 +330,7 @@
  
  Asynchronously sends a `GET` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
  
- Requires presence of `remoteID`, or will throw an `NSRailsRequiresRemoteIDException`.
+ Requires presence of `remoteID`, or will throw an `NSRNullRemoteIDException`.
 
  @param completionBlock Block to be executed when the request is complete. The second parameter passed in is a BOOL whether or not there was a *local* change. This means changes in `updated_at`, etc, will only apply if your Objective-C class implement this as a property as well. This also applies when updating any of its nested objects (done recursively).
  */
@@ -343,7 +343,7 @@
  Sends an `UPDATE` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
  Request made synchronously. See remoteUpdateAsync: for asynchronous operation.
 
- Requires presence of `remoteID`, or will throw an `NSRailsRequiresRemoteIDException`.
+ Requires presence of `remoteID`, or will throw an `NSRNullRemoteIDException`.
  
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return `YES` if update was successful. Returns `NO` if an error occurred.
@@ -357,7 +357,7 @@
  
  Asynchronously sends an `UPDATE` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
  
- Requires presence of `remoteID`, or will throw an `NSRailsRequiresRemoteIDException`.
+ Requires presence of `remoteID`, or will throw an `NSRNullRemoteIDException`.
  
  @param completionBlock Block to be executed when the request is complete.
  
@@ -560,7 +560,7 @@
 /**
  Initializes a new instance of the receiver's class with a custom NSRailsSync string and config.
  
- The given NSRailsSync string and config will be used only for this **instance**. This instance will not use its class's NSRailsSync or NSRailsUseConfig or any default configs (although any config in a context block (with use or useIn) will take precedence). This is very uncommon and triple checking is recommended before going with this implementation strategy.
+ The given NSRailsSync string and config will be used only for this **instance**. This instance will not use its class's NSRailsSync or NSRUseConfig or any default configs (although any config in a context block (with use or useIn) will take precedence). This is very uncommon and triple checking is recommended before going with this implementation strategy.
  
  Pass in a string as you would type it into NSRailsSync():
 	Person *zombie = [[Person alloc] initWithCustomSyncProperties:@"*, brain -x" customConfig:nonInflectingConfig];
@@ -615,38 +615,38 @@
 
 
 /// =============================================================================================
-#pragma mark NSRailsUseModelName
+#pragma mark NSRUseModelName
 /// =============================================================================================
 
-//define NSRailsUseModelName to concat either _NSR_Name1(x) or _NSR_Name2(x,y), depending on the number of args passed in
-#define NSRailsUseModelName(...) _CAT(_NSR_Name,_N_ARGS(__VA_ARGS__))(__VA_ARGS__)
+//define NSRUseModelName to concat either _NSR_Name1(x) or _NSR_Name2(x,y), depending on the number of args passed in
+#define NSRUseModelName(...) _CAT(_NSR_Name,_N_ARGS(__VA_ARGS__))(__VA_ARGS__)
 
 //using default is the same thing as passing nil for both model name + plural name
-#define NSRailsUseDefaultModelName _NSR_Name2(nil,nil)
+#define NSRUseDefaultModelName _NSR_Name2(nil,nil)
 
-//_NSR_Name1 (only with 1 parameter, ie, custom model name but default plurality), creates NSRailsUseModelName method that returns param, return nil for plural to make it go to default
+//_NSR_Name1 (only with 1 parameter, ie, custom model name but default plurality), creates NSRUseModelName method that returns param, return nil for plural to make it go to default
 #define _NSR_Name1(name)	_NSR_Name2(name, nil)
 
-//_NSR_Name2 (2 parameters, ie, custom model name and custom plurality), creates NSRailsUseModelName and NSRailsUsePluralName
+//_NSR_Name2 (2 parameters, ie, custom model name and custom plurality), creates NSRUseModelName and NSRUsePluralName
 #define _NSR_Name2(name,plural)  \
-+ (NSString*) NSRailsUseModelName { return name; } \
-+ (NSString*) NSRailsUsePluralName { return plural; }
++ (NSString*) NSRUseModelName { return name; } \
++ (NSString*) NSRUsePluralName { return plural; }
 
 
 /// =============================================================================================
-#pragma mark NSRailsUseConfig
+#pragma mark NSRUseConfig
 /// =============================================================================================
 
-//works the same way as NSRailsUseModelName
+//works the same way as NSRUseModelName
 
-#define NSRailsUseConfig(...) _CAT(_NSR_Config,_N_ARGS(__VA_ARGS__))(__VA_ARGS__)
+#define NSRUseConfig(...) _CAT(_NSR_Config,_N_ARGS(__VA_ARGS__))(__VA_ARGS__)
 
-#define NSRailsUseDefaultConfig	_NSR_Config3(nil, nil, nil)
+#define NSRUseDefaultConfig	_NSR_Config3(nil, nil, nil)
 
 #define _NSR_Config1(url)	_NSR_Config3(url, nil, nil)
 
 #define _NSR_Config3(url,user,pass)  \
-+ (NSString *) NSRailsUseConfigURL { return url; } \
-+ (NSString *) NSRailsUseConfigUsername { return user; } \
-+ (NSString *) NSRailsUseConfigPassword { return pass; }
++ (NSString *) NSRUseConfigURL { return url; } \
++ (NSString *) NSRUseConfigUsername { return user; } \
++ (NSString *) NSRUseConfigPassword { return pass; }
 
