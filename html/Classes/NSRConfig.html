@@ -323,11 +323,32 @@
 </ul>
 
 
-<h3>Subclassing <code>NSRConfig</code></h3>
+<h3>Subclassing NSRConfig</h3>
 
-<p>Subclassing <code>NSRConfig</code> can be useful if you want to implement a connection method that&rsquo;s not HTTP (for example, HTTPS), or if you&rsquo;re using a non-Rails REST service with different standards. Moreover, it can be used to generate errors specific to your app.</p>
+<p>Subclassing NSRConfig can be useful if you want to implement a connection method that&rsquo;s not HTTP (for example, HTTPS), or if you&rsquo;re using a non-Rails REST service with different standards. Moreover, it can be used to generate errors specific to your app.</p>
 
-<p>Please see the last two methods in this document if this interests you. See <a href="https://github.com/dingbat/nsrails/wiki/NSRConfig">this wiki page</a> for even <em>more</em> detail!</p>
+<ul>
+<li><p>The main method to override if you wish to do so is <a href="#//api/name/responseForRequestType:requestBody:url:sync:orAsync:">responseForRequestType:requestBody:url:sync:orAsync:</a>. This method is called internally by NSRails and expects a Foundation objects that correspond to the returned JSON (ie, NSArray, NSDictionary).</p></li>
+<li><p>This should also set the <code>NSError **error</code> or perform the <code>NSRHTTPCompletionBlock completionBlock</code>, whichever one is present.</p>
+
+<ul>
+<li>In determining errors, it is highly recomm<a href="#//api/name/end">end</a> to <a href="#//api/name/use">use</a> the helper method <a href="#//api/name/errorForResponse:statusCode:">errorForResponse:statusCode:</a>. This method will return you any Rails-specific errors (like validation errors), as well as make the error message succinct. In addition to being used, it is also possible to override this method (making sure to check if a <code>super</code> call to it returns anything) if your Rails app has specific errors you want to handle.</li>
+</ul>
+</li>
+<li><p>You can set your new <code>NSRConfig</code> subclass to be the default config like so (this would be instead of the first code example of course):</p>
+
+<pre><code>  CustomConfig *myConfig = [[CustomConfig alloc] initWithAppURL:@"http://localhost:3000"];
+
+  //set custom myConfig properties...
+  [NSRConfig setAsDefaultConfig:myConfig];
+
+  //or, to a specific environment:
+  [NSRConfig setAsDefaultConfig:myConfig forEnvironment:NSRConfigEnvironmentProduction];
+</code></pre>
+
+<p>  Or, if only a <em>certain</em> action requires it, you can <a href="#//api/name/use">use</a> your new instance for a block of code just as you would in the section above.</p></li>
+</ul>
+
 					</div>
 					
 					
