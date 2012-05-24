@@ -467,7 +467,7 @@
 					<Abstract type="html">The HTTP method to use (GET, POST, PUT, DELETE, etc.)</Abstract>
 				</Parameter><Parameter>
 					<Name>body</Name>
-					<Abstract type="html">The request body.</Abstract>
+					<Abstract type="html">Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).</Abstract>
 				</Parameter><Parameter>
 					<Name>route</Name>
 					<Abstract type="html">The route to which the request will be made. This is appended to the appURL, so not the full URL. For instance, articles/1.</Abstract>
@@ -495,7 +495,7 @@
 					<Abstract type="html">The HTTP method to use (GET, POST, PUT, DELETE, etc.)</Abstract>
 				</Parameter><Parameter>
 					<Name>body</Name>
-					<Abstract type="html">The request body.</Abstract>
+					<Abstract type="html">Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).</Abstract>
 				</Parameter><Parameter>
 					<Name>url</Name>
 					<Abstract type="html">The url to which the request will be made (full URL.)</Abstract>

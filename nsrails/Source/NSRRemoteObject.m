@@ -28,7 +28,7 @@
  
  */
 
-#import "NSRailsModel.h"
+#import "NSRRemoteObject.h"
 
 #import "NSRPropertyCollection.h"
 #import "NSRConfig.h"
@@ -45,7 +45,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface NSRailsModel (internal)
+@interface NSRRemoteObject (internal)
 
 + (NSRConfig *) getRelevantConfig;
 - (NSRConfig *) getRelevantConfig;
@@ -63,7 +63,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@implementation NSRailsModel
+@implementation NSRRemoteObject
 @synthesize remoteID, remoteDestroyOnNesting, remoteAttributes;
 
 #pragma mark - Meta-NSR stuff
@@ -77,19 +77,18 @@
 NSRUseDefaultModelName;
 NSRUseDefaultConfig;
 
-// If NSRailsSync isn't overriden (ie, if NSRailsSync() macro is not declared in subclass), default to *
-NSRailsSync(*);
+// If NSRMap isn't overriden (ie, if NSRMap() macro is not declared in subclass), default to *
+NSRMap(*);
 
-
-//returns the sync string expanded (* => all properties) & inherited (adds NSRailsSyncs from superclasses)
+//returns the sync string expanded (* => all properties) & inherited (adds NSRMaps from superclasses)
 //override string is in case there's a custom sync string defined
-+ (NSString *) masterNSRailsSyncWithOverrideString:(NSString *)override
++ (NSString *) masterNSRMapWithOverrideString:(NSString *)override
 {
 	//base case
-	if (self == [NSRailsModel class])
+	if (self == [NSRRemoteObject class])
 		return @"remoteID=id";
 	
-	NSString *syncStr = (override ? override : [self NSRailsSync]);	
+	NSString *syncStr = (override ? override : [self NSRMap]);	
 	if ([syncStr rangeOfString:@"*"].location != NSNotFound)
 	{
 		syncStr = [syncStr stringByReplacingOccurrencesOfString:@"*" withString:@""];
@@ -107,17 +106,17 @@ NSRailsSync(*);
 	{
 		syncStr = [syncStr stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
 
-		//skip right up the hierarchy to NSRailsModel
-		return [syncStr stringByAppendingFormat:@", %@", [NSRailsModel masterNSRailsSyncWithOverrideString:nil]];
+		//skip right up the hierarchy to NSRRemoteObject
+		return [syncStr stringByAppendingFormat:@", %@", [NSRRemoteObject masterNSRMapWithOverrideString:nil]];
 	}
 	
-	//traverse up the hierarchy (always getting the default NSRailsSync)
-	return [syncStr stringByAppendingFormat:@", %@", [self.superclass masterNSRailsSyncWithOverrideString:nil]];
+	//traverse up the hierarchy (always getting the default NSRMap)
+	return [syncStr stringByAppendingFormat:@", %@", [self.superclass masterNSRMapWithOverrideString:nil]];
 }
 
-+ (NSString *) masterNSRailsSync
++ (NSString *) masterNSRMap
 {
-	return [self masterNSRailsSyncWithOverrideString:nil];
+	return [self masterNSRMapWithOverrideString:nil];
 }
 
 + (NSRConfig *) masterClassConfig
@@ -139,7 +138,7 @@ NSRailsSync(*);
 
 + (NSString *) masterModelName
 {
-	if (self == [NSRailsModel class])
+	if (self == [NSRRemoteObject class])
 		return nil;
 	
 	NSString *defined = [self NSRUseModelName];
@@ -184,7 +183,7 @@ NSRailsSync(*);
 	if (!collection)
 	{
 		collection = [[NSRPropertyCollection alloc] initWithClass:self 
-													   syncString:[self masterNSRailsSync] 
+													   syncString:[self masterNSRMap] 
 													 customConfig:[self masterClassConfig]];
 		
 		[propertyCollections setObject:collection forKey:class];
@@ -236,12 +235,12 @@ NSRailsSync(*);
 }
 
 
-- (id) initWithCustomSyncProperties:(NSString *)str customConfig:(NSRConfig *)config
+- (id) initWithCustomMap:(NSString *)str customConfig:(NSRConfig *)config
 {
 	if ((self = [super init]))
 	{
 		//apply inheritance rules etc to the given string
-		str = [[self class] masterNSRailsSyncWithOverrideString:str];
+		str = [[self class] masterNSRMapWithOverrideString:str];
 		
 		customProperties = [[NSRPropertyCollection alloc] initWithClass:[self class] 
 															 syncString:str 
@@ -250,9 +249,9 @@ NSRailsSync(*);
 	return self;
 }
 
-- (id) initWithCustomSyncProperties:(NSString *)str
+- (id) initWithCustomMap:(NSString *)str
 {
-	self = [self initWithCustomSyncProperties:str customConfig:nil];
+	self = [self initWithCustomMap:str customConfig:nil];
 	return self;
 }
 
@@ -272,10 +271,10 @@ NSRailsSync(*);
 }
 
 // Helper method used when mapping nested properties to JSON
-- (NSRailsModel *) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
+- (NSRRemoteObject *) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
 {
-	//make a new class to be entered for this property/array (we can assume it subclasses NSRailsModel)
-	NSRailsModel *model = [[NSClassFromString(classN) alloc] initWithRemoteDictionary:dict];
+	//make a new class to be entered for this property/array (we can assume it subclasses NSRRemoteObject)
+	NSRRemoteObject *model = [[NSClassFromString(classN) alloc] initWithRemoteDictionary:dict];
 	
 	//see if we can assign an association to its parent (self)
 	NSString *parentModelName = [[self class] masterModelName];
@@ -362,8 +361,8 @@ NSRailsSync(*);
 					
 					id encodedObj = element;
 					
-					//if it's an NSRailsModel, we can use its dictionaryOfRemoteProperties
-					if ([element isKindOfClass:[NSRailsModel class]])
+					//if it's an NSRRemoteObject, we can use its dictionaryOfRemoteProperties
+					if ([element isKindOfClass:[NSRRemoteObject class]])
 					{
 						encodedObj = [element dictionaryOfRemotePropertiesFromNesting:YES];
 					}
@@ -378,7 +377,7 @@ NSRailsSync(*);
 			}
 			
 			//otherwise, if it's not array but nested, make the nested object a dictionary
-			if (![val isKindOfClass:[NSRailsModel class]])
+			if (![val isKindOfClass:[NSRRemoteObject class]])
 				return nil;
 			
 			//if it's belongs_to, we're only returning ID
@@ -459,7 +458,7 @@ NSRailsSync(*);
 						if (![railsObject isKindOfClass:[NSArray class]])
 							[NSException raise:NSRInternalError format:@"Attempt to set property '%@' in class '%@' (declared as has-many) to a non-array non-null value ('%@').", property, self.class, railsObject];
 						
-						//array of NSRailsModels is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
+						//array of NSRRemoteObjects is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
 						
 						NSMutableArray *newArray = [[NSMutableArray alloc] init];
 						
@@ -469,7 +468,7 @@ NSRailsSync(*);
 							
 							//see if there's a nester that matches this ID - we'd just have to update it w/this dict
 							NSUInteger idx = [previousVal indexOfObjectPassingTest:
-											  ^BOOL(NSRailsModel *obj, NSUInteger idx, BOOL *stop) 
+											  ^BOOL(NSRRemoteObject *obj, NSUInteger idx, BOOL *stop) 
 											  {
 												  if ([obj.remoteID isEqualToNumber:[railsElement objectForKey:@"id"]])
 												  {
@@ -659,12 +658,12 @@ NSRailsSync(*);
 	NSString *route = customRESTMethod;
 	if (controller)
 	{
-		//this means this method was called on an NSRailsMethod _subclass_, so appropriately point the method to its controller
+		//this means this method was called on an NSRRemoteObject _subclass_, so appropriately point the method to its controller
 		//eg, ([User makeGET:@"hello"] => myapp.com/users/hello)
 		route = [NSString stringWithFormat:@"%@%@",controller, (customRESTMethod ? [@"/" stringByAppendingString:customRESTMethod] : @"")];
 		
-		//otherwise, if it was called on NSRailsModel (to access a "root method"), don't modify the route:
-		//eg, ([NSRailsModel makeGET:@"hello"] => myapp.com/hello)
+		//otherwise, if it was called on NSRRemoteObject (to access a "root method"), don't modify the route:
+		//eg, ([NSRRemoteObject makeGET:@"hello"] => myapp.com/hello)
 	}
 	return (route ? route : @"");
 }
@@ -749,12 +748,12 @@ NSRailsSync(*);
 
 //these are really just convenience methods that'll call the above method with the JSON representation of the object
 
-+ (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj error:(NSError **)error
++ (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRRemoteObject *)obj error:(NSError **)error
 {
 	return [self remoteRequest:httpVerb method:customRESTMethod body:[obj remoteDictionaryRepresentationWrapped:YES] error:error];
 }
 
-+ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj async:(NSRHTTPCompletionBlock)completionBlock
++ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRRemoteObject *)obj async:(NSRHTTPCompletionBlock)completionBlock
 {
 	[self remoteRequest:httpVerb method:customRESTMethod body:[obj remoteDictionaryRepresentationWrapped:YES] async:completionBlock];
 }
@@ -872,7 +871,7 @@ NSRailsSync(*);
 
 + (id) remoteObjectWithID:(NSInteger)mID error:(NSError **)error
 {
-	NSRailsModel *obj = [[[self class] alloc] init];
+	NSRRemoteObject *obj = [[[self class] alloc] init];
 	obj.remoteID = [NSDecimalNumber numberWithInteger:mID];
 	
 	if (![obj remoteFetch:error])
@@ -885,7 +884,7 @@ NSRailsSync(*);
 
 + (void) remoteObjectWithID:(NSInteger)mID async:(NSRFetchObjectCompletionBlock)completionBlock
 {
-	NSRailsModel *obj = [[[self class] alloc] init];
+	NSRRemoteObject *obj = [[[self class] alloc] init];
 	obj.remoteID = [NSDecimalNumber numberWithInteger:mID];
 		
 	[obj remoteFetchAsync:
@@ -908,7 +907,7 @@ NSRailsSync(*);
 	//iterate through every object returned by Rails (as dicts)
 	for (NSDictionary *dict in jsonArray)
 	{
-		NSRailsModel *obj = [[[self class] alloc] initWithRemoteDictionary:dict];	
+		NSRRemoteObject *obj = [[[self class] alloc] initWithRemoteDictionary:dict];	
 		
 		[objects addObject:obj];
 	}

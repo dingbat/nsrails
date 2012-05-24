@@ -29,8 +29,8 @@
 			<Path>Classes/NSRConfig.html</Path>
 		</Node>
 		<Node id="2">
-			<Name>NSRailsModel</Name>
-			<Path>Classes/NSRailsModel.html</Path>
+			<Name>NSRRemoteObject</Name>
+			<Path>Classes/NSRRemoteObject.html</Path>
 		</Node>
 		
 		

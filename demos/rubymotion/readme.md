@@ -29,8 +29,8 @@ Quirks
 Due to differences with Objective-C, there are some quick additional requirements in the Ruby environment:
 
 * Right now there's a bug in RubyMotion (v1.4) where getter methods cannot be defined via `attr_accessor` - they'll have to be manually defined (`attr_writer` still works)
-* Macros like **[NSRailsSync](https://github.com/dingbat/nsrails/wiki/NSRailsSync)** should be defined as class methods returning a string
-* **NSRailsSync** is required. And because Ruby is not statically typed, some extra things need to be added...
+* Macros like **[NSRMap](https://github.com/dingbat/nsrails/wiki/NSRMap)** should be defined as class methods returning a string
+* **NSRMap** is required. And because Ruby is not statically typed, some extra things need to be added...
  1. `*` is unavailable - every property you wish to share needs to be explicitly declared
  2. The rarely used `-m` flag is necessary to define any has-many associations (ie, for arrays)
  3. Dates have to be declared as dates by specifying `NSDate` as a "nested" type
@@ -41,7 +41,7 @@ Examples
 ### Class
 
 ```ruby
-class Post < NSRailsModel
+class Post < NSRRemoteObject
   attr_writer :author, :content, :responses, :created_at
 
   # Hopefully soon you'll be able just do "attr_accessor" above instead of this
@@ -51,8 +51,8 @@ class Post < NSRailsModel
   def created_at; @created_at; end
   
   # For details on this method see this wiki page:
-  # https://github.com/dingbat/nsrails/wiki/NSRailsSync
-  def self.NSRailsSync
+  # https://github.com/dingbat/nsrails/wiki/NSRMap
+  def self.NSRMap
     'author, content, created_at:NSDate -r, responses:Response -m'
   end
 end

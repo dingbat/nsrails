@@ -8,12 +8,12 @@
 
 #import "NSRAsserts.h"
 
-@interface TestClassParent : NSRailsModel
+@interface TestClassParent : NSRRemoteObject
 @end
 @implementation TestClassParent
 @end
 
-@interface TestClass : NSRailsModel
+@interface TestClass : NSRRemoteObject
 
 @property (nonatomic) int primitiveAttr;
 @property (nonatomic, strong) NSString *myID;
@@ -33,7 +33,7 @@
 @synthesize retrieve, send, local, decode, encode, parent, badRetrieve;
 @end
 
-@interface FlagTestClass : NSRailsModel
+@interface FlagTestClass : NSRRemoteObject
 @property (nonatomic, strong) NSDate *date;
 @property (nonatomic, strong) NSString *sendretrieve, *nothing, *retrieve, *send, *local, *decode, *encode, *sendOnly, *encodedecode, *objc, *fakeDate;
 @property (nonatomic, strong) NSArray *nestedArrayExplicit, *nestedArrayExplicitM, *nestedArrayM, *nestedArrayNothing, *dateArray;
@@ -53,7 +53,7 @@
 [[NSRPropertyCollection alloc] initWithClass:[TestClass class] syncString:customProperties customConfig:nil]
 
 #define NSRThrowsSyncException(exp, desc) \
-STAssertThrowsSpecificNamed(exp, NSException, NSRSyncException, desc)
+STAssertThrowsSpecificNamed(exp, NSException, NSRMapException, desc)
 
 
 - (void) test_invalid_sync_params
@@ -67,16 +67,16 @@ STAssertThrowsSpecificNamed(exp, NSException, NSRSyncException, desc)
 	
 	// Attributes, equivalents, send/retrieve
 	
-	NSRThrowsSyncException(NSRInitTestClass(@"primitiveAttr"), @"Should crash if a primitive attribute was defined in NSRailsSync");
-	STAssertNoThrow(NSRInitTestClass(@"nonexistent"), @"Shouldn't crash if trying to set a nonexistent property in NSRS");
+	NSRThrowsSyncException(NSRInitTestClass(@"primitiveAttr"), @"Should crash if a primitive attribute was defined in NSRMap");
+	STAssertNoThrow(NSRInitTestClass(@"nonexistent"), @"Shouldn't crash if trying to set a nonexistent property in NSRMap");
 	STAssertNoThrow(NSRInitTestClass(@"attr1="), @"Shouldn't crash for setting a property to exact name (just =)");
 		
-	NSRThrowsSyncException(NSRInitTestClass(@"remoteID=id, myID=id"), @"Should crash if trying to set a property to ID equiv in NSRS");
+	NSRThrowsSyncException(NSRInitTestClass(@"remoteID=id, myID=id"), @"Should crash if trying to set a property to ID equiv in NSRMap");
 	STAssertNoThrow(NSRInitTestClass(@"remoteID=id, myID=id -r"), @"Shouldn't crash for setting a property to ID -r only");
 	
-	NSRThrowsSyncException(NSRInitTestClass(@"attr1=hello, attr2=hello"), @"Should crash if trying to set two properties to the same rails equiv in NSRS");
-	NSRThrowsSyncException(NSRInitTestClass(@"attr1=hello -r, attr2=hello, myID=hello"), @"Should crash if trying to set two sendable properties to the same rails equiv in NSRS");
-	STAssertNoThrow(NSRInitTestClass(@"attr1=hello -r, attr2=hello"), @"Shouldn't crash if two properties are set to the same rails equiv in NSRS, but only one is sendable");
+	NSRThrowsSyncException(NSRInitTestClass(@"attr1=hello, attr2=hello"), @"Should crash if trying to set two properties to the same rails equiv in NSRMap");
+	NSRThrowsSyncException(NSRInitTestClass(@"attr1=hello -r, attr2=hello, myID=hello"), @"Should crash if trying to set two sendable properties to the same rails equiv in NSRMap");
+	STAssertNoThrow(NSRInitTestClass(@"attr1=hello -r, attr2=hello"), @"Shouldn't crash if two properties are set to the same rails equiv in NSRMap, but only one is sendable");
 
 	// Nesting
 	
@@ -86,7 +86,7 @@ STAssertThrowsSpecificNamed(exp, NSException, NSRSyncException, desc)
 	NSRThrowsSyncException(NSRInitTestClass(@"attr1: -m"), @"Should crash if no nesting class declared");
 	
 	NSRThrowsSyncException(NSRInitTestClass(@"array:FakeClass"), @"Should crash without real class to fill array");
-	NSRThrowsSyncException(NSRInitTestClass(@"array:BadResponse"), @"Should crash because class exists but doesn't inherit from NSRM");
+	NSRThrowsSyncException(NSRInitTestClass(@"array:BadResponse"), @"Should crash because class exists but doesn't inherit from NSRRO");
 }
 
 - (void) test_property_detection

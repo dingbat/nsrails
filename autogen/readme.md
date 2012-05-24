@@ -32,7 +32,7 @@ Use the `-h` (`--help`) flag for a list of these options.
   </tr>
   <tr>
     <td><pre>--nesting-retrievable-only</pre></td>
-    <td>Make all nested properties <a href="https://github.com/dingbat/nsrails/wiki/NSRailsSync">retrievable-only</a>. (Use this if you don't want to <a href="https://github.com/dingbat/nsrails/wiki/Nesting">support accepting nested attributes</a>)</td>
+    <td>Make all nested properties <a href="https://github.com/dingbat/nsrails/wiki/NSRMap">retrievable-only</a>. (Use this if you don't want to <a href="https://github.com/dingbat/nsrails/wiki/Nesting">support accepting nested attributes</a>)</td>
   </tr>
   <tr>
     <td><pre>--author, -a<br/>--company, -c<br/>--project, -p</pre><p>(Each expects a string following it)</p></td>
@@ -66,7 +66,7 @@ Could generate files like these:
 
 @class NSRResponse;
 
-@interface NSRPost : NSRailsModel
+@interface NSRPost : NSRRemoteObject
 
 @property (nonatomic, strong) NSRAuthor *author;
 @property (nonatomic, strong) NSString *content;
@@ -90,7 +90,7 @@ Could generate files like these:
 
 @implementation NSRPost
 @synthesize content, author, createdAt, responses;
-NSRailsSync(*, author -b, createdAt -r, responses:NSRResponse);
+NSRMap(*, author -b, createdAt -r, responses:NSRResponse);
 
 @end
 ```

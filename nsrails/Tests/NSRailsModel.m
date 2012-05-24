@@ -1,5 +1,5 @@
 //
-//  NSRailsModel.m
+//  NSRRemoteObject.m
 //  NSRails
 //
 //  Created by Dan Hassin on 1/29/12.
@@ -8,7 +8,7 @@
 
 #import "NSRAsserts.h"
 
-@interface ArrayMan : NSRailsModel
+@interface ArrayMan : NSRRemoteObject
 @property (nonatomic, strong) NSArray *array;
 @end
 
@@ -16,16 +16,16 @@
 @synthesize array;
 @end
 
-@interface PickySender : NSRailsModel
+@interface PickySender : NSRRemoteObject
 @property (nonatomic, strong) NSString *local, *retrieveOnly, *sendOnly, *shared, *sharedExplicit, *undefined;
 @end
 
 @implementation PickySender
 @synthesize local, retrieveOnly, shared, sharedExplicit, sendOnly, undefined;
-NSRailsSync(local -x, retrieveOnly -r, shared, sharedExplicit -rs, sendOnly -s)
+NSRMap(local -x, retrieveOnly -r, shared, sharedExplicit -rs, sendOnly -s)
 @end
 
-@interface PropertyTester : NSRailsModel
+@interface PropertyTester : NSRRemoteObject
 @property (nonatomic, strong) id propertyTester;
 @end 
 
@@ -41,13 +41,13 @@ NSRailsSync(local -x, retrieveOnly -r, shared, sharedExplicit -rs, sendOnly -s)
 @synthesize subclassProp;
 @end
 
-@interface BadCoder : NSRailsModel
+@interface BadCoder : NSRRemoteObject
 @end
 
 @implementation BadCoder
 @end
 
-@interface PickyCoderComponent : NSRailsModel
+@interface PickyCoderComponent : NSRRemoteObject
 @property (nonatomic, strong) NSString *componentName;
 @end
 
@@ -55,7 +55,7 @@ NSRailsSync(local -x, retrieveOnly -r, shared, sharedExplicit -rs, sendOnly -s)
 @synthesize componentName;
 @end
 
-@interface PickyCoder : NSRailsModel
+@interface PickyCoder : NSRRemoteObject
 
 @property (nonatomic) BOOL encodeNonJSON;
 @property (nonatomic, strong) NSURL *locallyURL;
@@ -68,7 +68,7 @@ NSRailsSync(local -x, retrieveOnly -r, shared, sharedExplicit -rs, sendOnly -s)
 
 @implementation PickyCoder
 @synthesize locallyURL, locallyLowercase, remotelyUppercase, componentWithFlippingName, codeToNil, encodeNonJSON, dateOverrideSend, dateOverrideRet, csvArray;
-NSRailsSync(locallyURL=locally_url -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnly -se, codeToNil -ed, componentWithFlippingName=component -de, dateOverrideSend -e, dateOverrideRet -d, csvArray -ed);
+NSRMap(locallyURL=locally_url -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnly -se, codeToNil -ed, componentWithFlippingName=component -de, dateOverrideSend -e, dateOverrideRet -d, csvArray -ed);
 
 - (id) encodeRemoteOnly
 {
@@ -146,63 +146,63 @@ NSRailsSync(locallyURL=locally_url -ed, locallyLowercase -d, remotelyUppercase -
 
 @end
 
-@interface NoSyncStringTester : NSRailsModel
+@interface NoSyncStringTester : NSRRemoteObject
 @property (nonatomic, strong) NSString *property1;
 @end
 @implementation NoSyncStringTester
 @synthesize property1;
 @end
 
-@interface SyncStringTester : NSRailsModel
+@interface SyncStringTester : NSRRemoteObject
 @property (nonatomic, strong) NSString *property1, *property2, *property3;
 @end
 
 @implementation SyncStringTester
 @synthesize property1, property2, property3;
-NSRailsSync(property1, property2, property3)
+NSRMap(property1, property2, property3)
 @end
 
-@interface SyncStringTesterChild : NSRailsModel
+@interface SyncStringTesterChild : NSRRemoteObject
 @property (nonatomic, strong) NSString *childProperty1, *childProperty2;
 @end
 
 @implementation SyncStringTesterChild
 @synthesize childProperty1, childProperty2;
-NSRailsSync(childProperty1, childProperty2)
+NSRMap(childProperty1, childProperty2)
 @end
 
-@interface Empty : NSRailsModel
+@interface Empty : NSRRemoteObject
 @end
 
 @implementation Empty
 @end
 
-@interface DictionaryNester : NSRailsModel
+@interface DictionaryNester : NSRRemoteObject
 @property (nonatomic, strong) NSArray *dictionaries;
 @end
 
 @implementation DictionaryNester
 @synthesize dictionaries;
-NSRailsSync(dictionaries -m);
+NSRMap(dictionaries -m);
 @end
 
-@interface LadiesMan : NSRailsModel
+@interface LadiesMan : NSRRemoteObject
 @property (nonatomic, strong) NSArray *lotsOfDates;
 @property (nonatomic, strong) NSArray *lotsOfStrings;
 @end
 
 @implementation LadiesMan
 @synthesize lotsOfDates, lotsOfStrings;
-NSRailsSync(lotsOfDates:NSDate, lotsOfStrings);
+NSRMap(lotsOfDates:NSDate, lotsOfStrings);
 
 @end
 
-@interface CustomGuy : NSRailsModel
+@interface CustomGuy : NSRRemoteObject
 @end
 
 @implementation CustomGuy
 NSRUseConfig(@"url", @"user", @"pass");
-NSRailsSync(something);
+NSRMap(something);
 @end
 
 @implementation MockServer (pickys)
@@ -229,7 +229,7 @@ NSRailsSync(something);
 
 @end
 
-@interface Bird : NSRailsModel
+@interface Bird : NSRRemoteObject
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSMutableArray *eggs;
 @end
@@ -238,7 +238,7 @@ NSRailsSync(something);
 @synthesize name, eggs;
 @end
 
-@interface Egg : NSRailsModel
+@interface Egg : NSRRemoteObject
 @property (nonatomic, strong) NSString *color;
 @property (nonatomic, strong) Bird *mother;
 @end
@@ -247,7 +247,7 @@ NSRailsSync(something);
 @synthesize color, mother;
 @end
 
-@interface Book : NSRailsModel
+@interface Book : NSRRemoteObject
 @property (nonatomic, strong) NSMutableArray *owners;
 @end
 
@@ -255,7 +255,7 @@ NSRailsSync(something);
 @synthesize owners;
 @end
 
-@interface Person : NSRailsModel
+@interface Person : NSRRemoteObject
 @property (nonatomic, strong) NSMutableArray *books;
 @end
 
@@ -263,38 +263,38 @@ NSRailsSync(something);
 @synthesize books;
 @end
 
-@interface TNSRailsModel : SenTestCase
+@interface TNSRRemoteObject : SenTestCase
 @end
 
 #define NSRAssertEqualSyncStrings(a,b,reason) \
 NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b componentsSeparatedByString:@","])
 
-@implementation TNSRailsModel
+@implementation TNSRRemoteObject
 
-- (void) test_nsrailssync
+- (void) test_NSRMap
 {
-	NSRAssertEqualSyncStrings([Empty masterNSRailsSync], @"remoteID=id", @"failed default (no NSRS) being * AND empty");
+	NSRAssertEqualSyncStrings([Empty masterNSRMap], @"remoteID=id", @"failed default (no NSRMap) being * AND empty");
 	
-	NSRAssertEqualSyncStrings([NoSyncStringTester masterNSRailsSync], @"property1, remoteID=id", @"failed default (no NSRS) being *");
+	NSRAssertEqualSyncStrings([NoSyncStringTester masterNSRMap], @"property1, remoteID=id", @"failed default (no NSRMap) being *");
 	
-	NSRAssertEqualSyncStrings([SyncStringTester masterNSRailsSync], @"property1, property2, property3, remoteID=id", @"default (no override) failed");
-	NSRAssertEqualSyncStrings([SyncStringTester masterNSRailsSyncWithOverrideString:@"property1, property2, property3"], @"property1, property2, property3, remoteID=id", @"override failed");
-	NSRAssertEqualSyncStrings([SyncStringTester masterNSRailsSyncWithOverrideString:@"*"], @"property3, property2, property1, remoteID=id", @"* failed");
-	NSRAssertEqualSyncStrings([SyncStringTester masterNSRailsSyncWithOverrideString:@"*, property1 -x"], @"property1 -x, property3, property2, property1, remoteID=id", @"* with extraneous failed");
-	NSRAssertEqualSyncStrings([SyncStringTester masterNSRailsSyncWithOverrideString:@"*, property1 -x, remoteID -x"], @"property1 -x, remoteID -x, property3, property2, property1, remoteID=id", @"* with extraneous failed");
+	NSRAssertEqualSyncStrings([SyncStringTester masterNSRMap], @"property1, property2, property3, remoteID=id", @"default (no override) failed");
+	NSRAssertEqualSyncStrings([SyncStringTester masterNSRMapWithOverrideString:@"property1, property2, property3"], @"property1, property2, property3, remoteID=id", @"override failed");
+	NSRAssertEqualSyncStrings([SyncStringTester masterNSRMapWithOverrideString:@"*"], @"property3, property2, property1, remoteID=id", @"* failed");
+	NSRAssertEqualSyncStrings([SyncStringTester masterNSRMapWithOverrideString:@"*, property1 -x"], @"property1 -x, property3, property2, property1, remoteID=id", @"* with extraneous failed");
+	NSRAssertEqualSyncStrings([SyncStringTester masterNSRMapWithOverrideString:@"*, property1 -x, remoteID -x"], @"property1 -x, remoteID -x, property3, property2, property1, remoteID=id", @"* with extraneous failed");
 	
 	// Inheritance
 	
-	NSRAssertEqualSyncStrings([SyncStringTester masterNSRailsSyncWithOverrideString:@"NSRNoCarryFromSuper"], @"remoteID=id", @"should be blank if nothing declared and nothing inherited");
-	NSRAssertEqualSyncStrings([SyncStringTester masterNSRailsSyncWithOverrideString:@"NSRNoCarryFromSuper *"], @"property3, property2, property1, remoteID=id", @"should be only my properties if * declared and nothing inherited");
+	NSRAssertEqualSyncStrings([SyncStringTester masterNSRMapWithOverrideString:@"NSRNoCarryFromSuper"], @"remoteID=id", @"should be blank if nothing declared and nothing inherited");
+	NSRAssertEqualSyncStrings([SyncStringTester masterNSRMapWithOverrideString:@"NSRNoCarryFromSuper *"], @"property3, property2, property1, remoteID=id", @"should be only my properties if * declared and nothing inherited");
 }
 
 - (void) test_custom_requests
 {
 	// Root
 	
-	STAssertEqualObjects([NSRailsModel routeForControllerMethod:nil], @"", @"Root route failed");	
-	STAssertEqualObjects([NSRailsModel routeForControllerMethod:@"action"], @"action", @"Root route failed");	
+	STAssertEqualObjects([NSRRemoteObject routeForControllerMethod:nil], @"", @"Root route failed");	
+	STAssertEqualObjects([NSRRemoteObject routeForControllerMethod:@"action"], @"action", @"Root route failed");	
 	
 	// Controller (class)
 	STAssertEqualObjects([Empty routeForControllerMethod:nil], @"empties", @"Nil controller route failed");	
@@ -312,10 +312,10 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 
 - (void) test_encode_decode
 {
-	BadCoder *e = [[BadCoder alloc] initWithCustomSyncProperties:@"something -e"];
+	BadCoder *e = [[BadCoder alloc] initWithCustomMap:@"something -e"];
 	STAssertThrows([e remoteDictionaryRepresentationWrapped:NO], @"Should throw unrecognized selector for encode:");
 
-	BadCoder *d = [[BadCoder alloc] initWithCustomSyncProperties:@"something -d"];
+	BadCoder *d = [[BadCoder alloc] initWithCustomMap:@"something -d"];
 	STAssertThrows([d remoteDictionaryRepresentationWrapped:NO], @"Should throw unrecognized selector for decode:");
 
 	PickyCoder *p = [[PickyCoder alloc] initWithRemoteDictionary:[MockServer newPickyCoder]];
@@ -366,12 +366,12 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertEqualObjects(p.retrieveOnly, @"retrieve", @"Should've set retrieve... -r");
 	STAssertEqualObjects(p.shared, @"shared", @"Should've set shared... blank");
 	STAssertEqualObjects(p.sharedExplicit, @"shared explicit", @"Should've set sharedExplicit... -rs");
-	STAssertEqualObjects(p.undefined, @"local", @"Shouldn't have set undefined... not in NSRS");
+	STAssertEqualObjects(p.undefined, @"local", @"Shouldn't have set undefined... not in NSRMap");
 	
 	NSDictionary *sendDict = [p remoteDictionaryRepresentationWrapped:NO];
 	STAssertNil([sendDict objectForKey:@"retrieve_only"], @"Shouldn't send retrieve-only... -r");
 	STAssertNil([sendDict objectForKey:@"local"], @"Shouldn't send local-only... -x");
-	STAssertNil([sendDict objectForKey:@"undefined"], @"Shouldn't send undefined... not in NSRS");
+	STAssertNil([sendDict objectForKey:@"undefined"], @"Shouldn't send undefined... not in NSRMap");
 	STAssertEqualObjects([sendDict objectForKey:@"send_only"], @"send--local", @"Should've sent send... -s");
 	STAssertEqualObjects([sendDict objectForKey:@"shared"], @"shared", @"Should've sent shared... blank");
 	STAssertEqualObjects([sendDict objectForKey:@"shared_explicit"], @"shared explicit", @"Should've sent sharedExplicit... -rs");
@@ -403,7 +403,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertEqualObjects([[[send objectForKey:@"dictionaries"] objectAtIndex:0] objectForKey:@"key"], @"obj", @"Dict elements should've been set");
 
 	//no -m, no nothing -- this time should send without _attributes, since it's not marked as has_many
-	DictionaryNester *plainNester = [[DictionaryNester alloc] initWithCustomSyncProperties:@"dictionaries"];
+	DictionaryNester *plainNester = [[DictionaryNester alloc] initWithCustomMap:@"dictionaries"];
 	[plainNester setPropertiesUsingRemoteDictionary:[MockServer newDictionaryNester]];
 	STAssertNotNil(plainNester.dictionaries, @"Dictionaries shouldn't be nil after JSON set");
 	STAssertTrue(plainNester.dictionaries.count == 2, @"Dictionaries should have 2 elements");
@@ -484,31 +484,31 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 
 - (void) test_custom_sync
 {
-	PropertyTester *pt = [[PropertyTester alloc] initWithCustomSyncProperties:@""];
+	PropertyTester *pt = [[PropertyTester alloc] initWithCustomMap:@""];
 	NSRAssertEqualArraysNoOrder(pt.propertyCollection.properties.allKeys, NSRArray(@"remoteID"));
 	
-	PropertyTester *pt2 = [[PropertyTester alloc] initWithCustomSyncProperties:@"*"];
+	PropertyTester *pt2 = [[PropertyTester alloc] initWithCustomMap:@"*"];
 	NSRAssertEqualArraysNoOrder(pt2.propertyCollection.properties.allKeys, NSRArray(@"remoteID", @"propertyTester"));
 	
-	PropertyTester *pt3 = [[PropertyTester alloc] initWithCustomSyncProperties:@"*, something"];
+	PropertyTester *pt3 = [[PropertyTester alloc] initWithCustomMap:@"*, something"];
 	NSRAssertEqualArraysNoOrder(pt3.propertyCollection.properties.allKeys, NSRArray(@"remoteID", @"propertyTester", @"something"));
 
-	PropertyTester *pt4 = [[PropertyTester alloc] initWithCustomSyncProperties:@"NSRNoCarryFromSuper"];
+	PropertyTester *pt4 = [[PropertyTester alloc] initWithCustomMap:@"NSRNoCarryFromSuper"];
 	NSRAssertEqualArraysNoOrder(pt4.propertyCollection.properties.allKeys, NSRArray(@"remoteID"));
 
-	PropertyTesterSubclass *pts = [[PropertyTesterSubclass alloc] initWithCustomSyncProperties:@""];
+	PropertyTesterSubclass *pts = [[PropertyTesterSubclass alloc] initWithCustomMap:@""];
 	NSRAssertEqualArraysNoOrder(pts.propertyCollection.properties.allKeys, NSRArray(@"remoteID", @"propertyTester"));
 
-	PropertyTesterSubclass *pts2 = [[PropertyTesterSubclass alloc] initWithCustomSyncProperties:@"NSRNoCarryFromSuper"];
+	PropertyTesterSubclass *pts2 = [[PropertyTesterSubclass alloc] initWithCustomMap:@"NSRNoCarryFromSuper"];
 	NSRAssertEqualArraysNoOrder(pts2.propertyCollection.properties.allKeys, NSRArray(@"remoteID"));
 
-	PropertyTesterSubclass *pts3 = [[PropertyTesterSubclass alloc] initWithCustomSyncProperties:@"*, NSRNoCarryFromSuper"];
+	PropertyTesterSubclass *pts3 = [[PropertyTesterSubclass alloc] initWithCustomMap:@"*, NSRNoCarryFromSuper"];
 	NSRAssertEqualArraysNoOrder(pts3.propertyCollection.properties.allKeys, NSRArray(@"remoteID", @"subclassProp"));
 
-	PropertyTesterSubclass *pts4 = [[PropertyTesterSubclass alloc] initWithCustomSyncProperties:@"something"];
+	PropertyTesterSubclass *pts4 = [[PropertyTesterSubclass alloc] initWithCustomMap:@"something"];
 	NSRAssertEqualArraysNoOrder(pts4.propertyCollection.properties.allKeys, NSRArray(@"remoteID", @"something", @"propertyTester"));
 
-	PropertyTesterSubclass *pts5 = [[PropertyTesterSubclass alloc] initWithCustomSyncProperties:@"*, something"];
+	PropertyTesterSubclass *pts5 = [[PropertyTesterSubclass alloc] initWithCustomMap:@"*, something"];
 	NSRAssertEqualArraysNoOrder(pts5.propertyCollection.properties.allKeys, NSRArray(@"remoteID", @"something", @"propertyTester", @"subclassProp"));
 }
 
@@ -521,10 +521,10 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	NSString *BooksKey = @"books_attributes";
 	NSString *OwnersKey = @"owners_attributes";
 	
-	Person *guy = [[Person alloc] initWithCustomSyncProperties:@"books:Book"];
+	Person *guy = [[Person alloc] initWithCustomMap:@"books:Book"];
 	guy.books = [[NSMutableArray alloc] init];
 	
-	Book *book = [[Book alloc] initWithCustomSyncProperties:@"owners:Person"];
+	Book *book = [[Book alloc] initWithCustomMap:@"owners:Person"];
 	book.owners = [[NSMutableArray alloc] init];
 	
 	[book.owners addObject:guy];
@@ -542,7 +542,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertNil([[[bDict objectForKey:OwnersKey] lastObject] objectForKey:BooksKey], @"Shouldn't include owner's books since it's not included in nesting");
 
 
-	Book *book2 = [[Book alloc] initWithCustomSyncProperties:@"owners:Person -n"];
+	Book *book2 = [[Book alloc] initWithCustomMap:@"owners:Person -n"];
 	book2.owners = [[NSMutableArray alloc] init];
 	[book2.owners addObject:guy];
 
@@ -563,10 +563,10 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	NSString *EggsKey = @"eggs_attributes";
 	NSString *MotherKey = @"mother_attributes";
 	
-	Bird *b = [[Bird alloc] initWithCustomSyncProperties:@"eggs:Egg"];
+	Bird *b = [[Bird alloc] initWithCustomMap:@"eggs:Egg"];
 	b.eggs = [[NSMutableArray alloc] init];
 	
-	Egg *e = [[Egg alloc] initWithCustomSyncProperties:@"mother:Bird"];
+	Egg *e = [[Egg alloc] initWithCustomMap:@"mother:Bird"];
 	[b.eggs addObject:e];
 	
 	NSDictionary *birdDict = [b remoteDictionaryRepresentationWrapped:NO];
@@ -587,7 +587,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	
 	[b.eggs removeAllObjects];
 	
-	Egg *motherExposingEgg = [[Egg alloc] initWithCustomSyncProperties:@"mother:Bird -n"];
+	Egg *motherExposingEgg = [[Egg alloc] initWithCustomMap:@"mother:Bird -n"];
 	motherExposingEgg.mother = b;
 	
 	[b.eggs addObject:motherExposingEgg];
@@ -604,11 +604,11 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertNil([[eggDict objectForKey:MotherKey] objectForKey:EggsKey],@"Mother should not include eggs (since no -n)");
 	
 	
-	Bird *nesterBird = [[Bird alloc] initWithCustomSyncProperties:@"eggs:Egg -n"];
+	Bird *nesterBird = [[Bird alloc] initWithCustomMap:@"eggs:Egg -n"];
 	nesterBird.eggs = [[NSMutableArray alloc] init];
 	nesterBird.remoteID = [NSNumber numberWithInt:1];
 	
-	Egg *e2 = [[Egg alloc] initWithCustomSyncProperties:@"mother:Bird"];
+	Egg *e2 = [[Egg alloc] initWithCustomMap:@"mother:Bird"];
 	e2.mother = nesterBird;
 	[nesterBird.eggs addObject:e2];
 	
@@ -625,7 +625,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	
 	[nesterBird.eggs removeAllObjects];
 	
-	Egg *attachedEgg = [[Egg alloc] initWithCustomSyncProperties:@"mother:Bird -b"];
+	Egg *attachedEgg = [[Egg alloc] initWithCustomMap:@"mother:Bird -b"];
 	attachedEgg.mother = nesterBird;
 	[nesterBird.eggs addObject:attachedEgg];
 	
@@ -654,9 +654,9 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 		
 		//these two cases should be identical
 		if (i == 0)
-			plain = [[ArrayMan alloc] initWithCustomSyncProperties:@"array"];
+			plain = [[ArrayMan alloc] initWithCustomMap:@"array"];
 		else
-			plain = [[ArrayMan alloc] initWithCustomSyncProperties:@"array -m"];
+			plain = [[ArrayMan alloc] initWithCustomMap:@"array -m"];
 		
 		//redundant property testing
 		STAssertTrue([[plain.propertyCollection.properties objectForKey:@"array"] isArray], @"Should be an array");
@@ -706,9 +706,9 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 		
 		//these two cases should be identical
 		if (i == 0)
-			nested = [[ArrayMan alloc] initWithCustomSyncProperties:@"array:Egg"];
+			nested = [[ArrayMan alloc] initWithCustomMap:@"array:Egg"];
 		else
-			nested = [[ArrayMan alloc] initWithCustomSyncProperties:@"array:Egg -m"];
+			nested = [[ArrayMan alloc] initWithCustomMap:@"array:Egg -m"];
 		
 		//redundant property testing
 		STAssertTrue([[nested.propertyCollection.properties objectForKey:@"array"] isArray], @"Should be an array");
@@ -754,9 +754,9 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 		
 		//these two cases should be identical
 		if (i == 0)
-			dates = [[ArrayMan alloc] initWithCustomSyncProperties:@"array:NSDate"];
+			dates = [[ArrayMan alloc] initWithCustomMap:@"array:NSDate"];
 		else
-			dates = [[ArrayMan alloc] initWithCustomSyncProperties:@"array:NSDate -m"];
+			dates = [[ArrayMan alloc] initWithCustomMap:@"array:NSDate -m"];
 		
 		//redundant property testing
 		STAssertTrue([[dates.propertyCollection.properties objectForKey:@"array"] isArray], @"Should be an array");
@@ -801,7 +801,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertEqualObjects(e.remoteID, eRetrieve.remoteID, @"Should've carried over remoteID");
 	
 
-	Empty *eCustomSync = [[Empty alloc] initWithCustomSyncProperties:@"custom"];
+	Empty *eCustomSync = [[Empty alloc] initWithCustomMap:@"custom"];
 	s = [NSKeyedArchiver archiveRootObject:eCustomSync toFile:file];
 	
 	STAssertTrue(s, @"Archiving should've worked (serialize)");
@@ -809,7 +809,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	Empty *eCustomSyncRetrieve = [NSKeyedUnarchiver unarchiveObjectWithFile:file];
 	NSRAssertEqualArraysNoOrder(eCustomSyncRetrieve.propertyCollection.properties.allKeys, NSRArray(@"custom", @"remoteID"));
 
-	Empty *eCustomSyncConfig = [[Empty alloc] initWithCustomSyncProperties:@"custom" customConfig:[[NSRConfig alloc] initWithAppURL:@"URL"]];
+	Empty *eCustomSyncConfig = [[Empty alloc] initWithCustomMap:@"custom" customConfig:[[NSRConfig alloc] initWithAppURL:@"URL"]];
 	s = [NSKeyedArchiver archiveRootObject:eCustomSyncConfig toFile:file];
 	
 	STAssertTrue(s, @"Archiving should've worked (serialize)");
@@ -832,7 +832,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 
 - (void) test_destroy_on_nesting
 {
-	Bird *bird = [[Bird alloc] initWithCustomSyncProperties:@"eggs:Egg"];
+	Bird *bird = [[Bird alloc] initWithCustomMap:@"eggs:Egg"];
 
 	NSDictionary *dict = [bird remoteDictionaryRepresentationWrapped:NO];
 	STAssertNil([dict objectForKey:@"_destroy"],@"No _destroy key if no remoteDestroyOnNesting");

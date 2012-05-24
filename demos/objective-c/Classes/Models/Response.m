@@ -10,9 +10,9 @@
 
 @implementation Response
 @synthesize content, author, post;
-NSRailsSync(*, post -b)
+NSRMap(*, post -b)
 
-// The NSRailsSync above will sync all properties w/Rails, and specially flag "post" to behave as a belongs_to association
+// The NSRMap above will sync all properties w/Rails, and specially flag "post" to behave as a belongs_to association
 
 
 /*
@@ -37,7 +37,7 @@ NSRailsSync(*, post -b)
  
  Of course, this is only relevant for belongs_to since you'd typically *want* the "_attributes" key in most cases.
 
- See the Wiki ( https://github.com/dingbat/nsrails/wiki ) for more, specifically under NSRailsSync ( https://github.com/dingbat/nsrails/wiki/NSRailsSync )
+ See the wiki for more, specifically under NSRMap: https://github.com/dingbat/nsrails/wiki/NSRMap
  
  */
 

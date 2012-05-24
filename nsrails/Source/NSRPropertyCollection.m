@@ -29,7 +29,7 @@
  */
 
 #import "NSRPropertyCollection.h"
-#import "NSRailsModel.h"
+#import "NSRRemoteObject.h"
 #import "NSObject+Properties.h"
 #import "NSString+Inflection.h"
 
@@ -84,7 +84,7 @@
 @end
 
 
-#define NSRRaiseSyncError(x, ...) [NSException raise:NSRSyncException format:x,__VA_ARGS__,nil]
+#define NSRRaiseSyncError(x, ...) [NSException raise:NSRMapException format:x,__VA_ARGS__,nil]
 
 @implementation NSRPropertyCollection
 @synthesize properties;
@@ -151,7 +151,7 @@
 			if ([alreadyAdded containsObject:objcProp])
 				continue;
 
-			//now ignore it (done so that explicit flags can override the * (which comes after), and so subclasses can  override their parents' NSRS - properties furthest up the list will have greatest priority)
+			//now ignore it (done so that explicit flags can override the * (which comes after), and so subclasses can  override their parents' NSRMap - properties furthest up the list will have greatest priority)
 			[alreadyAdded addObject:objcProp];
 
 			//if options contain an -x, skip the rest of this
@@ -171,7 +171,7 @@
 			NSString *type = [class typeForProperty:objcProp isPrimitive:&primitive];
 			if (primitive)
 			{
-				NSRRaiseSyncError(@"Property '%@' declared in NSRailsSync for class %@ was found to be of primitive type '%@' - please use NSNumber*.", objcProp, NSStringFromClass(class), type);
+				NSRRaiseSyncError(@"Property '%@' declared in NSRMap for class %@ was found to be of primitive type '%@' - please use NSNumber*.", objcProp, NSStringFromClass(class), type);
 				continue;
 			}
 			
@@ -240,17 +240,17 @@
 				{
 					NSRRaiseSyncError(@"Failed to find class '%@', declared as class for nested property '%@' of class '%@'.",nestedModel,objcProp,class);
 				}
-				else if (![nestedClass isSubclassOfClass:[NSRailsModel class]] && !explicitDate)
+				else if (![nestedClass isSubclassOfClass:[NSRRemoteObject class]] && !explicitDate)
 				{
-					NSRRaiseSyncError(@"'%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel.",nestedModel,objcProp, NSStringFromClass(class),nestedModel);
+					NSRRaiseSyncError(@"'%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRRemoteObject.",nestedModel,objcProp, NSStringFromClass(class),nestedModel);
 				}
 				else
 				{
 					property.nestedClass = nestedModel;
 				}
 			}
-			//if not array or has an explicit nested model set, see if we should automatically nest it (if it's an NSRailsModel)
-			else if ([NSClassFromString(type) isSubclassOfClass:[NSRailsModel class]])
+			//if not array or has an explicit nested model set, see if we should automatically nest it (if it's an NSRRemoteObject)
+			else if ([NSClassFromString(type) isSubclassOfClass:[NSRRemoteObject class]])
 			{
 				property.nestedClass = type;
 			}

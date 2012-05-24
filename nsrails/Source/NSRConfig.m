@@ -67,7 +67,7 @@ NSString * const NSRConfigEnvironmentProduction			= @"NSRConfigEnvironmentProduc
 NSString * const NSRValidationErrorsKey					= @"NSRValidationErrorsKey";
 
 NSString * const NSRRemoteErrorDomain				= @"NSRRemoteErrorDomain";
-NSString * const NSRSyncException					= @"NSRSyncException";
+NSString * const NSRMapException					= @"NSRMapException";
 NSString * const NSRJSONParsingException			= @"NSRJSONParsingException";
 NSString * const NSRInternalError					= @"NSRInternalError";
 NSString * const NSRMissingURLException				= @"NSRMissingURLException";
@@ -341,7 +341,7 @@ static NSString *currentEnvironment = nil;
 {
 	NSInteger code = [(NSHTTPURLResponse *)response statusCode];
 	
-	NSLog(@"IN<=== Code %d;",code);
+	NSLog(@"IN<=== Code %d;",(int)code);
 	
 	id jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
 	if (!jsonResponse)

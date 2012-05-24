@@ -17,17 +17,15 @@
 #import "MockServer.h"
 
 //Make some private methods accessible
-@interface NSRailsModel (internal)
+@interface NSRRemoteObject (internal)
 
 + (NSRConfig *) getRelevantConfig;
 
-+ (NSString *) masterNSRailsSync;
-+ (NSString *) masterNSRailsSyncWithOverrideString:(NSString *)override;
++ (NSString *) masterNSRMap;
++ (NSString *) masterNSRMapWithOverrideString:(NSString *)override;
 
 + (NSString *) masterModelName;
 + (NSString *) masterPluralName;
-
-+ (NSDictionary *) NSRailsProperties;
 
 + (NSRPropertyCollection *) propertyCollection;
 - (NSRPropertyCollection *) propertyCollection;

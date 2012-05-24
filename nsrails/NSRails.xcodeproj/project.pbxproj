@@ -18,10 +18,10 @@
 		594764FD1569F63200C07A62 /* NSRailsMac.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 594764EB1569F63200C07A62 /* NSRailsMac.dylib */; };
 		594765751569F65C00C07A62 /* NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 594765301569F65C00C07A62 /* NSRails.h */; };
 		594765761569F65C00C07A62 /* NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 594765301569F65C00C07A62 /* NSRails.h */; };
-		594765771569F65C00C07A62 /* NSRailsModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 594765311569F65C00C07A62 /* NSRailsModel.h */; };
-		594765781569F65C00C07A62 /* NSRailsModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 594765311569F65C00C07A62 /* NSRailsModel.h */; };
-		594765791569F65C00C07A62 /* NSRailsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765321569F65C00C07A62 /* NSRailsModel.m */; };
-		5947657A1569F65C00C07A62 /* NSRailsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765321569F65C00C07A62 /* NSRailsModel.m */; };
+		594765771569F65C00C07A62 /* NSRRemoteObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 594765311569F65C00C07A62 /* NSRRemoteObject.h */; };
+		594765781569F65C00C07A62 /* NSRRemoteObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 594765311569F65C00C07A62 /* NSRRemoteObject.h */; };
+		594765791569F65C00C07A62 /* NSRRemoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765321569F65C00C07A62 /* NSRRemoteObject.m */; };
+		5947657A1569F65C00C07A62 /* NSRRemoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765321569F65C00C07A62 /* NSRRemoteObject.m */; };
 		5947657B1569F65C00C07A62 /* NSRConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 594765331569F65C00C07A62 /* NSRConfig.h */; };
 		5947657C1569F65C00C07A62 /* NSRConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 594765331569F65C00C07A62 /* NSRConfig.h */; };
 		5947657D1569F65C00C07A62 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765341569F65C00C07A62 /* NSRConfig.m */; };
@@ -91,8 +91,8 @@
 		594764EB1569F63200C07A62 /* NSRailsMac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = NSRailsMac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		594764F81569F63200C07A62 /* NSRailsMacTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NSRailsMacTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		594765301569F65C00C07A62 /* NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRails.h; sourceTree = "<group>"; };
-		594765311569F65C00C07A62 /* NSRailsModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = NSRailsModel.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		594765321569F65C00C07A62 /* NSRailsModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRailsModel.m; sourceTree = "<group>"; };
+		594765311569F65C00C07A62 /* NSRRemoteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = NSRRemoteObject.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		594765321569F65C00C07A62 /* NSRRemoteObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRemoteObject.m; sourceTree = "<group>"; };
 		594765331569F65C00C07A62 /* NSRConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRConfig.h; sourceTree = "<group>"; };
 		594765341569F65C00C07A62 /* NSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConfig.m; sourceTree = "<group>"; };
 		594765351569F65C00C07A62 /* NSRPropertyCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRPropertyCollection.h; sourceTree = "<group>"; };
@@ -177,8 +177,8 @@
 			children = (
 				597DED2E156AE174005CB6F9 /* Categories */,
 				594765301569F65C00C07A62 /* NSRails.h */,
-				594765311569F65C00C07A62 /* NSRailsModel.h */,
-				594765321569F65C00C07A62 /* NSRailsModel.m */,
+				594765311569F65C00C07A62 /* NSRRemoteObject.h */,
+				594765321569F65C00C07A62 /* NSRRemoteObject.m */,
 				594765331569F65C00C07A62 /* NSRConfig.h */,
 				594765341569F65C00C07A62 /* NSRConfig.m */,
 				594765351569F65C00C07A62 /* NSRPropertyCollection.h */,
@@ -269,7 +269,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				594765751569F65C00C07A62 /* NSRails.h in Headers */,
-				594765771569F65C00C07A62 /* NSRailsModel.h in Headers */,
+				594765771569F65C00C07A62 /* NSRRemoteObject.h in Headers */,
 				5947657B1569F65C00C07A62 /* NSRConfig.h in Headers */,
 				5947657F1569F65C00C07A62 /* NSRPropertyCollection.h in Headers */,
 				597DED35156AE174005CB6F9 /* NSData+Additions.h in Headers */,
@@ -283,7 +283,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				594765761569F65C00C07A62 /* NSRails.h in Headers */,
-				594765781569F65C00C07A62 /* NSRailsModel.h in Headers */,
+				594765781569F65C00C07A62 /* NSRRemoteObject.h in Headers */,
 				5947657C1569F65C00C07A62 /* NSRConfig.h in Headers */,
 				594765801569F65C00C07A62 /* NSRPropertyCollection.h in Headers */,
 				597DED36156AE174005CB6F9 /* NSData+Additions.h in Headers */,
@@ -452,7 +452,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				594765791569F65C00C07A62 /* NSRailsModel.m in Sources */,
+				594765791569F65C00C07A62 /* NSRRemoteObject.m in Sources */,
 				5947657D1569F65C00C07A62 /* NSRConfig.m in Sources */,
 				594765811569F65C00C07A62 /* NSRPropertyCollection.m in Sources */,
 				597DED37156AE174005CB6F9 /* NSData+Additions.m in Sources */,
@@ -479,7 +479,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5947657A1569F65C00C07A62 /* NSRailsModel.m in Sources */,
+				5947657A1569F65C00C07A62 /* NSRRemoteObject.m in Sources */,
 				5947657E1569F65C00C07A62 /* NSRConfig.m in Sources */,
 				594765821569F65C00C07A62 /* NSRPropertyCollection.m in Sources */,
 				597DED38156AE174005CB6F9 /* NSData+Additions.m in Sources */,

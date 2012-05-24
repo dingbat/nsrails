@@ -12,7 +12,7 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
-@interface Post : NSRailsModel
+@interface Post : NSRRemoteObject
 
 @property (nonatomic, strong) NSString *author, *content;
 @property (nonatomic, strong) NSMutableArray *responses;
@@ -21,7 +21,7 @@
 @end
 
 
-@interface NSRResponse : NSRailsModel   //prefix to test ignore-prefix feature
+@interface NSRResponse : NSRRemoteObject   //prefix to test ignore-prefix feature
 
 @property (nonatomic, strong) NSString *content, *author;
 @property (nonatomic, strong) Post *post;
@@ -29,7 +29,7 @@
 @end
 
 
-//bad because doesn't inherit from NSRailsModel
+//bad because doesn't inherit from NSRRemoteObject
 @interface BadResponse : NSObject
 
 @property (nonatomic, strong) NSString *content, *author;
@@ -39,23 +39,23 @@
 
 @implementation Post
 @synthesize author, content, responses, updatedAt, createdAt;
-NSRailsSync(*, responses:NSRResponse, updatedAt -r)
+NSRMap(*, responses:NSRResponse, updatedAt -r)
 
 @end
 
 @implementation NSRResponse
 @synthesize post, content, author;
-NSRailsSync(*)
+NSRMap(*)
 
 @end
 
 @implementation BadResponse
 @synthesize post, content, author;
-NSRailsSync(*)
+NSRMap(*)
 
 @end
 
-@interface Faker : NSRailsModel
+@interface Faker : NSRRemoteObject
 @end
 @implementation Faker
 @end
@@ -229,7 +229,7 @@ static BOOL noServer = NO;
 	STAssertNil(e, @"New post should've been created fine, there should be no error.");
 	STAssertNotNil(newPost.remoteID, @"New post was just created, remoteID shouldn't be nil.");
 	STAssertNotNil(newPost.remoteAttributes, @"New post was just created, remoteAttributes shouldn't be nil.");
-	STAssertNotNil([newPost.remoteAttributes objectForKey:@"updated_at"], @"Remote attributes should have updated_at, even though not declared in NSRS.");
+	STAssertNotNil([newPost.remoteAttributes objectForKey:@"updated_at"], @"Remote attributes should have updated_at, even though not declared in NSRMap.");
 	
 	e = nil;
 	
@@ -568,7 +568,7 @@ static BOOL noServer = NO;
 	e = nil;
 	
 	//now try with -b flag
-	NSRResponse *belongsTo = [[NSRResponse alloc] initWithCustomSyncProperties:@"*, post -b"];
+	NSRResponse *belongsTo = [[NSRResponse alloc] initWithCustomMap:@"*, post -b"];
 	belongsTo.content = @"Test";
 	belongsTo.author = @"Test";
 	belongsTo.post = post;
@@ -602,7 +602,7 @@ static BOOL noServer = NO;
 	STAssertFalse(changes,@"Should be no changes since we 'deleted' the nested response by nulling its 'post'");
 
 	
-	Post *dictionariesPost = [[Post alloc] initWithCustomSyncProperties:@"*, responses -m"];
+	Post *dictionariesPost = [[Post alloc] initWithCustomMap:@"*, responses -m"];
 	dictionariesPost.author = @"author";
 	dictionariesPost.content = @"content";
 	dictionariesPost.responses = [NSMutableArray array];
@@ -661,7 +661,7 @@ static BOOL noServer = NO;
 	NSError *e = nil;
 	
 	//remove the two dates, which could modify our object (not relevant currently in this test, but i'll forget later)
-	Post *post = [[Post alloc] initWithCustomSyncProperties:@"*, responses:NSRResponse, updatedAt -x, createdAt -x"];
+	Post *post = [[Post alloc] initWithCustomMap:@"*, responses:NSRResponse, updatedAt -x, createdAt -x"];
 	post.author = @"Dan";
 	post.content = @"Text";
 	
@@ -688,7 +688,7 @@ static BOOL noServer = NO;
 	e = nil;
 	
 	//default NSRResponse class doesn't have -b, used for some other test
-	NSRResponse *response = [[NSRResponse alloc] initWithCustomSyncProperties:@"*, post -b"];
+	NSRResponse *response = [[NSRResponse alloc] initWithCustomMap:@"*, post -b"];
 	response.author = @"John";
 	response.content = @"Response";
 	
@@ -799,7 +799,7 @@ static BOOL noServer = NO;
 	
 	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
 	
-	[NSRailsModel remoteGET:@"404.html" error:&e];
+	[NSRRemoteObject remoteGET:@"404.html" error:&e];
 	
 	//if error, and it's NSURL domain, must be that the server isn't running
 	if (e && [[e domain] isEqualToString:NSURLErrorDomain])

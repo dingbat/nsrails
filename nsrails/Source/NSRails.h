@@ -29,4 +29,4 @@
  */
 
 #import "NSRConfig.h"
-#import "NSRailsModel.h"
+#import "NSRRemoteObject.h"

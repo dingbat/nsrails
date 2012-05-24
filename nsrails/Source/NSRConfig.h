@@ -52,7 +52,7 @@ extern NSString * const NSRValidationErrorsKey;
 
 //Exceptions+Domains
 extern NSString * const NSRRemoteErrorDomain;
-extern NSString * const NSRSyncException;
+extern NSString * const NSRMapException;
 extern NSString * const NSRJSONParsingException;
 extern NSString * const NSRInternalError;
 extern NSString * const NSRMissingURLException;
@@ -172,7 +172,7 @@ extern NSString * const NSRNullRemoteIDException;
  
  When false, names must be identical to their corresponding attributes in Rails.
  
- If there are just a few cases where you don't want this, see the NSRailsSync macro to override equivalents.
+ If there are just a few cases where you don't want this, see the NSRMap macro to override equivalents.
  
  **Default:** `YES`.
  */
@@ -382,7 +382,7 @@ extern NSString * const NSRNullRemoteIDException;
 /**
  Makes a custom request. Returns the response string if synchronous; otherwise executes given block.
  
- Used by every remote NSRailsModel method.
+ Used by every remote NSRRemoteObject method.
  
  @warning Do not override this method if you wish to override NSRConfig, since this method contains important workflows such as checking if the appURL is nil, managing the network activity indicator, and logging. Rather, override responseForRequestType:requestBody:url:sync:orAsync:.
  

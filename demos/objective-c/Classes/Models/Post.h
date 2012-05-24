@@ -8,7 +8,7 @@
 
 #import "NSRails.h"
 
-@interface Post : NSRailsModel
+@interface Post : NSRRemoteObject
 
 @property (nonatomic, strong) NSMutableArray *responses;
 @property (nonatomic, strong) NSString *author, *content;

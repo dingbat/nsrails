@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Tokens version="1.0">
-	<File path="Classes/NSRailsModel.html">
+	<File path="Classes/NSRRemoteObject.html">
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/cl/NSRailsModel</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/cl/NSRRemoteObject</TokenIdentifier>
 			<Abstract type="html">### Summary</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>
 			
 			<NodeRef refid="2"/>
 		</Token>
 		
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/setRemoteID:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/setRemoteID:</TokenIdentifier>
 			<Abstract type="html">The corresponding local property for id.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSNumber *remoteID</Declaration>
 			
@@ -23,9 +23,9 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instp/NSRailsModel/remoteID</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instp/NSRRemoteObject/remoteID</TokenIdentifier>
 			<Abstract type="html">The corresponding local property for id.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSNumber *remoteID</Declaration>
 			
@@ -34,9 +34,9 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/setRemoteAttributes:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/setRemoteAttributes:</TokenIdentifier>
 			<Abstract type="html">The most recent dictionary of all properties returned by Rails, exactly as it returned it. (read-only)</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong, readonly) NSDictionary *remoteAttributes</Declaration>
 			
@@ -45,9 +45,9 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instp/NSRailsModel/remoteAttributes</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instp/NSRRemoteObject/remoteAttributes</TokenIdentifier>
 			<Abstract type="html">The most recent dictionary of all properties returned by Rails, exactly as it returned it. (read-only)</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong, readonly) NSDictionary *remoteAttributes</Declaration>
 			
@@ -56,9 +56,9 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/setRemoteDestroyOnNesting:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/setRemoteDestroyOnNesting:</TokenIdentifier>
 			<Abstract type="html">If true, will remotely destroy this object if sent nested.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic) BOOL remoteDestroyOnNesting</Declaration>
 			
@@ -67,9 +67,9 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instp/NSRailsModel/remoteDestroyOnNesting</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instp/NSRRemoteObject/remoteDestroyOnNesting</TokenIdentifier>
 			<Abstract type="html">If true, will remotely destroy this object if sent nested.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic) BOOL remoteDestroyOnNesting</Declaration>
 			
@@ -78,9 +78,9 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRailsModel/remoteAll:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteAll:</TokenIdentifier>
 			<Abstract type="html">Returns an array of all remote objects (as instances of receiver&apos;s class.) Each instance’s properties will be set to those returned by Rails.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>+ (NSArray *)remoteAll:(NSError **)error</Declaration>
 			<Parameters>
@@ -94,11 +94,11 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRailsModel/remoteAllAsync:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteAllAsync:</TokenIdentifier>
 			<Abstract type="html">Retrieves an array of all remote objects (as instances of receiver&apos;s class.) Each instance’s properties will be set to those returned by Rails.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>+ (void)remoteAllAsync:(NSRGetAllCompletionBlock)completionBlock</Declaration>
+			<Declaration>+ (void)remoteAllAsync:(NSRFetchAllCompletionBlock)completionBlock</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>completionBlock</Name>
@@ -110,9 +110,9 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRailsModel/remoteObjectWithID:error:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteObjectWithID:error:</TokenIdentifier>
 			<Abstract type="html">Returns an instance of receiver&apos;s class corresponding to the remote object with that ID.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>+ (id)remoteObjectWithID:(NSInteger)objectID error:(NSError **)error</Declaration>
 			<Parameters>
@@ -129,11 +129,11 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRailsModel/remoteObjectWithID:async:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteObjectWithID:async:</TokenIdentifier>
 			<Abstract type="html">Retrieves an instance receiver&apos;s class corresponding to the remote object with that ID.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>+ (void)remoteObjectWithID:(NSInteger)objectID async:(NSRGetObjectCompletionBlock)completionBlock</Declaration>
+			<Declaration>+ (void)remoteObjectWithID:(NSInteger)objectID async:(NSRFetchObjectCompletionBlock)completionBlock</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>objectID</Name>
@@ -148,9 +148,9 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRailsModel/remoteGET:error:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteGET:error:</TokenIdentifier>
 			<Abstract type="html">Returns the JSON response for a GET request to a custom method.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>+ (id)remoteGET:(NSString *)customRESTMethod error:(NSError **)error</Declaration>
 			<Parameters>
@@ -167,9 +167,9 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRailsModel/remoteGET:async:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteGET:async:</TokenIdentifier>
 			<Abstract type="html">Makes a GET request to a custom method.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>+ (void)remoteGET:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock</Declaration>
 			<Parameters>
@@ -186,11 +186,11 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRailsModel/remoteRequest:method:bodyAsObject:error:</TokenIdentifier>
-			<Abstract type="html">Returns the JSON response for a request with a custom method, sending an NSRailsModel subclass instance as the body.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteRequest:method:bodyAsObject:error:</TokenIdentifier>
+			<Abstract type="html">Returns the JSON response for a request with a custom method, sending an NSRRemoteObject subclass instance as the body.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>+ (id)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj error:(NSError **)error</Declaration>
+			<Declaration>+ (id)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRRemoteObject *)obj error:(NSError **)error</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>httpVerb</Name>
@@ -200,7 +200,7 @@
 					<Abstract type="html">Custom REST method to be called on the subclass&apos;s controller. If nil, will route to index.</Abstract>
 				</Parameter><Parameter>
 					<Name>obj</Name>
-					<Abstract type="html">NSRailsModel subclass instance - object you want to send in the body.</Abstract>
+					<Abstract type="html">NSRRemoteObject subclass instance - object you want to send in the body.</Abstract>
 				</Parameter><Parameter>
 					<Name>error</Name>
 					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
@@ -211,11 +211,11 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRailsModel/remoteRequest:method:bodyAsObject:async:</TokenIdentifier>
-			<Abstract type="html">Makes a request with a custom method, sending an NSRailsModel subclass instance as the body.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteRequest:method:bodyAsObject:async:</TokenIdentifier>
+			<Abstract type="html">Makes a request with a custom method, sending an NSRRemoteObject subclass instance as the body.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>+ (void)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj async:(NSRHTTPCompletionBlock)completionBlock</Declaration>
+			<Declaration>+ (void)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRRemoteObject *)obj async:(NSRHTTPCompletionBlock)completionBlock</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>httpVerb</Name>
@@ -225,7 +225,7 @@
 					<Abstract type="html">Custom REST method to be called on the subclass&apos;s controller. If nil, will route to index.</Abstract>
 				</Parameter><Parameter>
 					<Name>obj</Name>
-					<Abstract type="html">NSRailsModel subclass instance - object you want to send in the body.</Abstract>
+					<Abstract type="html">NSRRemoteObject subclass instance - object you want to send in the body.</Abstract>
 				</Parameter><Parameter>
 					<Name>completionBlock</Name>
 					<Abstract type="html">Block to be executed when the request is complete.</Abstract>
@@ -236,9 +236,9 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRailsModel/remoteRequest:method:body:error:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteRequest:method:body:error:</TokenIdentifier>
 			<Abstract type="html">Returns the JSON response for a request with a custom method.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>+ (id)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body error:(NSError **)error</Declaration>
 			<Parameters>
@@ -261,9 +261,9 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRailsModel/remoteRequest:method:body:async:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteRequest:method:body:async:</TokenIdentifier>
 			<Abstract type="html">Makes a request with a custom method.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>+ (void)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body async:(NSRHTTPCompletionBlock)completionBlock</Declaration>
 			<Parameters>
@@ -286,12 +286,12 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteFetch:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteFetch:</TokenIdentifier>
 			<Abstract type="html">Retrieves the latest remote data for receiver and sets its properties to received response.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 	<RelatedTokens>
-		<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteFetch:changes:</TokenIdentifier>
+		<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteFetch:changes:</TokenIdentifier>
 		
 	</RelatedTokens>
 	
@@ -307,12 +307,12 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteFetch:changes:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteFetch:changes:</TokenIdentifier>
 			<Abstract type="html">Retrieves the latest remote data for receiver and sets its properties to received response.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 	<RelatedTokens>
-		<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteFetch:</TokenIdentifier>
+		<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteFetch:</TokenIdentifier>
 		
 	</RelatedTokens>
 	
@@ -323,7 +323,7 @@
 					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
 				</Parameter><Parameter>
 					<Name>changesPtr</Name>
-					<Abstract type="html">Pointer to boolean value set to whether or not the receiver changed in any way after the fetch (ie, if this fetch modified one of receiver&apos;s local properties due to a change in value server-side). This will also take into account diffs to any nested NSRailsModel objects that are affected by this fetch (done recursively).
+					<Abstract type="html">Pointer to boolean value set to whether or not the receiver changed in any way after the fetch (ie, if this fetch modified one of receiver&apos;s local properties due to a change in value server-side). This will also take into account diffs to any nested NSRRemoteObject objects that are affected by this fetch (done recursively).
 
 Note that because this only tracks differences in local changes, properties that changed server-side that are not defined in the receiver&apos;s class will not report back a change (ie, if receiver&apos;s class doesn&apos;t implement an updatedat property and updatedat is changed in your remote DB, no change will be reported.) This parameter may be NULL if this information is not useful, or use remoteFetch:.</Abstract>
 				</Parameter>
@@ -333,11 +333,11 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteFetchAsync:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteFetchAsync:</TokenIdentifier>
 			<Abstract type="html">Retrieves the latest remote data for receiver and sets its properties to received response.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>- (void)remoteFetchAsync:(NSRGetLatestCompletionBlock)completionBlock</Declaration>
+			<Declaration>- (void)remoteFetchAsync:(NSRFetchCompletionBlock)completionBlock</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>completionBlock</Name>
@@ -349,9 +349,9 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteUpdate:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteUpdate:</TokenIdentifier>
 			<Abstract type="html">Updates receiver&apos;s corresponding remote object.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (BOOL)remoteUpdate:(NSError **)error</Declaration>
 			<Parameters>
@@ -365,9 +365,9 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteUpdateAsync:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteUpdateAsync:</TokenIdentifier>
 			<Abstract type="html">Updates receiver&apos;s corresponding remote object.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (void)remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock</Declaration>
 			<Parameters>
@@ -381,9 +381,9 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteCreate:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteCreate:</TokenIdentifier>
 			<Abstract type="html">Creates the receiver remotely. Receiver&apos;s properties will be set to those given by Rails (including remoteID.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (BOOL)remoteCreate:(NSError **)error</Declaration>
 			<Parameters>
@@ -397,9 +397,9 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteCreateAsync:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteCreateAsync:</TokenIdentifier>
 			<Abstract type="html">Creates the receiver remotely. Receiver&apos;s properties will be set to those given by Rails (including remoteID.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (void)remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock</Declaration>
 			<Parameters>
@@ -413,9 +413,9 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteDestroy:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteDestroy:</TokenIdentifier>
 			<Abstract type="html">Destroys receiver&apos;s corresponding remote object. Local object will be unaffected.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (BOOL)remoteDestroy:(NSError **)error</Declaration>
 			<Parameters>
@@ -429,9 +429,9 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteDestroyAsync:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteDestroyAsync:</TokenIdentifier>
 			<Abstract type="html">Destroys receiver&apos;s corresponding remote object. Local object will be unaffected.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (void)remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock</Declaration>
 			<Parameters>
@@ -445,9 +445,9 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteGET:error:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteGET:error:</TokenIdentifier>
 			<Abstract type="html">Returns the JSON response for a GET request to a custom method.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (id)remoteGET:(NSString *)customRESTMethod error:(NSError **)error</Declaration>
 			<Parameters>
@@ -464,9 +464,9 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteGET:async:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteGET:async:</TokenIdentifier>
 			<Abstract type="html">Makes a GET request to a custom method.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (void)remoteGET:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock</Declaration>
 			<Parameters>
@@ -483,9 +483,9 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteRequest:method:error:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteRequest:method:error:</TokenIdentifier>
 			<Abstract type="html">Returns the JSON response for a request with a custom method, sending the JSON representation of the receiver as the request body.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (id)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod error:(NSError **)error</Declaration>
 			<Parameters>
@@ -505,9 +505,9 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteRequest:method:async:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteRequest:method:async:</TokenIdentifier>
 			<Abstract type="html">Makes a request with a custom method, sending the JSON representation of the receiver as the request body.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (void)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock</Declaration>
 			<Parameters>
@@ -527,9 +527,9 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteRequest:method:body:error:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteRequest:method:body:error:</TokenIdentifier>
 			<Abstract type="html">Returns the JSON response for a request with a custom method on the receiver&apos;s corresponding remote object.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (id)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body error:(NSError **)error</Declaration>
 			<Parameters>
@@ -552,9 +552,9 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteRequest:method:body:async:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteRequest:method:body:async:</TokenIdentifier>
 			<Abstract type="html">Makes a request with a custom method on the receiver&apos;s corresponding remote object.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (void)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body async:(NSRHTTPCompletionBlock)completionBlock</Declaration>
 			<Parameters>
@@ -577,10 +577,10 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/remoteDictionaryRepresentationWrapped:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteDictionaryRepresentationWrapped:</TokenIdentifier>
 			<Abstract type="html">Serializes the receiver&apos;s properties into a dictionary.
   </Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (NSDictionary *)remoteDictionaryRepresentationWrapped:(BOOL)wrapped</Declaration>
 			<Parameters>
@@ -591,14 +591,14 @@ Note that because this only tracks differences in local changes, properties that
 	{&quot;user&quot;=&gt;{&quot;name&quot;=&gt;&quot;x&quot;, &quot;email&quot;=&gt;&quot;y&quot;}}</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract type="html">The receiver&apos;s properties as a dictionary (takes into account rules in NSRailsSync).</Abstract></ReturnValue>
+			<ReturnValue><Abstract type="html">The receiver&apos;s properties as a dictionary (takes into account rules in NSRMap).</Abstract></ReturnValue>
 			<Anchor>//api/name/remoteDictionaryRepresentationWrapped:</Anchor>
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/setPropertiesUsingRemoteDictionary:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/setPropertiesUsingRemoteDictionary:</TokenIdentifier>
 			<Abstract type="html">Sets the receiver&apos;s properties given a dictionary.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (BOOL)setPropertiesUsingRemoteDictionary:(NSDictionary *)dictionary</Declaration>
 			<Parameters>
@@ -612,9 +612,9 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/initWithRemoteDictionary:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/initWithRemoteDictionary:</TokenIdentifier>
 			<Abstract type="html">Initializes a new instance of the receiver&apos;s class with a given dictionary input.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (id)initWithRemoteDictionary:(NSDictionary *)dictionary</Declaration>
 			<Parameters>
@@ -628,15 +628,15 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/initWithCustomSyncProperties:</TokenIdentifier>
-			<Abstract type="html">Initializes a new instance of the receiver&apos;s class with a custom NSRailsSync string.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/initWithCustomSyncProperties:</TokenIdentifier>
+			<Abstract type="html">Initializes a new instance of the receiver&apos;s class with a custom NSRMap string.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (id)initWithCustomSyncProperties:(NSString *)str</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>str</Name>
-					<Abstract type="html">String to become this instance&apos;s NSRailsSync - pass as you would an NSRailsSync string (see above).</Abstract>
+					<Abstract type="html">String to become this instance&apos;s NSRMap - pass as you would an NSRMap string (see above).</Abstract>
 				</Parameter>
 			</Parameters>
 			<ReturnValue><Abstract type="html">YES if any changes were made to the local object, NO if object was identical before/after.</Abstract></ReturnValue>
@@ -644,15 +644,15 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRailsModel/initWithCustomSyncProperties:customConfig:</TokenIdentifier>
-			<Abstract type="html">Initializes a new instance of the receiver&apos;s class with a custom NSRailsSync string and config.</Abstract>
-			<DeclaredIn>NSRailsModel.h</DeclaredIn>			
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/initWithCustomSyncProperties:customConfig:</TokenIdentifier>
+			<Abstract type="html">Initializes a new instance of the receiver&apos;s class with a custom NSRMap string and config.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (id)initWithCustomSyncProperties:(NSString *)str customConfig:(NSRConfig *)config</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>str</Name>
-					<Abstract type="html">String to become this instance&apos;s NSRailsSync - pass as you would an NSRailsSync string (see above).</Abstract>
+					<Abstract type="html">String to become this instance&apos;s NSRMap - pass as you would an NSRMap string (see above).</Abstract>
 				</Parameter><Parameter>
 					<Name>config</Name>
 					<Abstract type="html">Config to become this instance&apos;s config.</Abstract>

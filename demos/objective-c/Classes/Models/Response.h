@@ -9,7 +9,7 @@
 #import "Post.h"
 #import "NSRails.h"
 
-@interface Response : NSRailsModel
+@interface Response : NSRRemoteObject
 
 @property (nonatomic, strong) Post *post;
 @property (nonatomic, strong) NSString *author, *content;

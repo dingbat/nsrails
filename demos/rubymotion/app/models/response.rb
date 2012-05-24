@@ -1,4 +1,4 @@
-class Response < NSRailsModel  
+class Response < NSRRemoteObject  
   attr_accessor :author, :content, :post
 
   # Right now there's a bug in RubyMotion that requires you to define getter methods manually
@@ -7,11 +7,11 @@ class Response < NSRailsModel
   def content; @content; end
   def post; @post; end
   
-  def self.NSRailsSync
+  def self.NSRMap
     'author, content, post:Post -b'
   end
     
-  # The NSRailsSync above will sync all properties w/Rails, and specially flag "post" to behave as a belongs_to association
+  # The NSRMap above will sync all properties w/Rails, and specially flag "post" to behave as a belongs_to association
    
   # ==================
   # If you're curious about the "-b" flag:
@@ -34,5 +34,5 @@ class Response < NSRailsModel
   # 
   # Of course, this is only relevant for belongs_to since you'd typically *want* the "_attributes" key in most cases.
   # 
-  # See the Wiki ( https://github.com/dingbat/nsrails/wiki ) for more, specifically under NSRailsSync ( https://github.com/dingbat/nsrails/wiki/NSRailsSync )
+  # See the Wiki ( https://github.com/dingbat/nsrails/wiki ) for more, specifically under NSRMap ( https://github.com/dingbat/nsrails/wiki/NSRMap )
 end

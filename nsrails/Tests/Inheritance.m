@@ -8,13 +8,13 @@
 
 #import "NSRAsserts.h"
 
-@interface Parent : NSRailsModel
+@interface Parent : NSRRemoteObject
 @property (nonatomic, strong) id parentAttr;
 @property (nonatomic, strong) id parentAttr2;
 @end
 @implementation Parent
 @synthesize parentAttr, parentAttr2;
-NSRailsSync (*, parentAttr2 -x)
+NSRMap (*, parentAttr2 -x)
 NSRUseModelName(@"parent", @"parentS")
 NSRUseConfig(@"parent")
 @end
@@ -25,7 +25,7 @@ NSRUseConfig(@"parent")
 	@end
 	@implementation Child
 	@synthesize childAttr1, childAttr2;
-	NSRailsSync (childAttr1, parentAttr2) //absent NSRNoCarryFromSuper -> will inherit from parent
+	NSRMap (childAttr1, parentAttr2) //absent NSRNoCarryFromSuper -> will inherit from parent
 	//absent model name, config -> will inherit "parent"
 	@end
 
@@ -34,7 +34,7 @@ NSRUseConfig(@"parent")
 		@end
 		@implementation Grandchild
 		@synthesize gchildAttr;
-		NSRailsSync(*, parentAttr2 -x) //absent NSRNoCarryFromSuper -> will inherit from parent, but ignored parentAttr2 as test
+		NSRMap(*, parentAttr2 -x) //absent NSRNoCarryFromSuper -> will inherit from parent, but ignored parentAttr2 as test
 		//absent model name, config -> will inherit "parent"
 		@end
 
@@ -43,7 +43,7 @@ NSRUseConfig(@"parent")
 		@end
 		@implementation RebelliousGrandchild
 		@synthesize r_gchildAttr;
-		NSRailsSync(NSRNoCarryFromSuper *) //NSRNoCarryFromSuper present -> won't inherit anything
+		NSRMap(NSRNoCarryFromSuper *) //NSRNoCarryFromSuper present -> won't inherit anything
 		NSRUseModelName(@"r_gchild") //will override Parent's modelname -> will use "r_grandchild"
 		NSRUseConfig(@"r_gchild") //will override Parent's config -> will use "http://r_grandchild"
 		@end
@@ -53,7 +53,7 @@ NSRUseConfig(@"parent")
 	@end
 	@implementation RebelliousChild
 	@synthesize r_childAttr;
-	NSRailsSync(* NSRNoCarryFromSuper) //NSRNoCarryFromSuper present -> won't inherit anything
+	NSRMap(* NSRNoCarryFromSuper) //NSRNoCarryFromSuper present -> won't inherit anything
 	NSRUseDefaultModelName //will override Parent's modelname in favor of default behavior
 	NSRUseDefaultConfig //will override Parent's config in favor of default behavior (defaultConfig)
 	@end
@@ -63,7 +63,7 @@ NSRUseConfig(@"parent")
 		@end
 		@implementation GrandchildOfRebellious
 		@synthesize gchild_rAttr;
-		NSRailsSync(*) //absent NSRNoCarryFromSuper -> will inherit from r.child, BUT inheritance will stop @ R.Child 
+		NSRMap(*) //absent NSRNoCarryFromSuper -> will inherit from r.child, BUT inheritance will stop @ R.Child 
 		//absent model name + config BUT will inherit his parent's NSRUseDefault..., meaning default behavior will occur
 		@end
 
@@ -72,7 +72,7 @@ NSRUseConfig(@"parent")
 		@end
 		@implementation RebelliousGrandchildOfRebellious
 		@synthesize r_gchild_rAttr;
-		NSRailsSync(NSRNoCarryFromSuper, *) //NSRNoCarryFromSuper present -> won't inherit anything
+		NSRMap(NSRNoCarryFromSuper, *) //NSRNoCarryFromSuper present -> won't inherit anything
 		NSRUseModelName(@"r_gchild_r", @"r_gchild_rS") //will override R.Child's modelname -> will use "r_r_gchild"
 		NSRUseConfig(@"r_gchild_r") //will override R.Child's config -> will use "http://r_r_gchild"
 		@end

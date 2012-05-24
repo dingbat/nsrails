@@ -8,7 +8,7 @@
 
 #import "NSRAsserts.h"
 
-@interface SomeClass : NSRailsModel
+@interface SomeClass : NSRRemoteObject
 @end
 
 @implementation SomeClass
@@ -24,7 +24,7 @@
 @end
 
 
-#define NSRAssertRelevantConfigURL(string,desc) NSRAssertEqualConfigs([NSRailsModel getRelevantConfig], string, desc, nil)
+#define NSRAssertRelevantConfigURL(string,desc) NSRAssertEqualConfigs([NSRRemoteObject getRelevantConfig], string, desc, nil)
 
 
 @implementation TNSRConfig

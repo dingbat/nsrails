@@ -25,10 +25,10 @@ Post *postNumber1 = [Post remoteObjectWithID:1 error:&error];
 Features
 --------
 
-* [High-level API](http://dingbat.github.com/nsrails/html/Classes/NSRailsModel.html), yet flexible enough even to work with any RESTful server
-* [Highly customizable “syncing”](https://github.com/dingbat/nsrails/wiki/NSRailsSync) with your Rails attributes
+* [High-level API](http://dingbat.github.com/nsrails/html/Classes/NSRRemoteObject.html), yet flexible enough even to work with any RESTful server
+* [Highly customizable “syncing”](https://github.com/dingbat/nsrails/wiki/NSRMap) with your Rails attributes
 * [Nesting](https://github.com/dingbat/nsrails/wiki/Nesting) supported for relations like has-many, belongs-to, etc
-* [Asynchronous requests](http://dingbat.github.com/nsrails/html/Classes/NSRailsModel.html)
+* [Asynchronous requests](http://dingbat.github.com/nsrails/html/Classes/NSRRemoteObject.html)
 * [Autogenerate](https://github.com/dingbat/nsrails/tree/master/autogen) NSRails-ready classes from a Rails project
 * [Supported in RubyMotion and MacRuby](https://github.com/dingbat/nsrails/tree/master/demos/rubymotion)
 
@@ -45,12 +45,12 @@ Getting started
       ```
   
       This will clone the entire NSRails repo, but you'll only need to add `nsrails/Source` to your project in Xcode.
-2. Make an Objective-C class for your Rails model and have it subclass **NSRailsModel** (you'll need to `#import NSRails.h`)
+2. Make an Objective-C class for your Rails model and have it subclass **NSRRemoteObject** (you'll need to `#import NSRails.h`)
 
   ```objc
   #import "NSRails.h"
 
-  @interface Post : NSRailsModel
+  @interface Post : NSRRemoteObject
 
   @property (nonatomic, strong) NSString *author, *content;
   @property (nonatomic, strong) NSDate *createdAt;
@@ -76,7 +76,7 @@ Getting started
 Getting warmed up
 ----------
 
-By subclassing NSRailsModel, your class gets tons of instance and class methods that'll act on your remote objects. Here are a few of the things you can do with your new class:
+By subclassing NSRRemoteObject, your class gets tons of instance and class methods that'll act on your remote objects. Here are a few of the things you can do with your new class:
 
 ```objc
 // Retrieve post with ID 1
@@ -99,24 +99,24 @@ BOOL objectDidChange;
 
 See the [documentation](http://dingbat.github.com/nsrails/) for more details.
 
-### NSRailsSync
+### NSRMap
 
-Use the **NSRailsSync()** macro if you want to define special behaviors for certain properties:
+Use the **NSRMap()** macro if you want to define special behaviors for certain properties:
 
 ```objc
 @implementation Post
 @synthesize author, content, createdAt, responses;
-NSRailsSync(*, createdAt -r, responses:Response);
+NSRMap(*, createdAt -r, responses:Response);
 
 ...
 ```
 
-- The `*` includes all of this class's properties as remote-relevant (default if NSRailsSync isn't defined). 
+- The `*` includes all of this class's properties as remote-relevant (default if NSRMap isn't defined). 
 - `createdAt -r` makes `createdAt` retrievable-only (so that it's never *sent* to Rails - only retrieved).
-- `responses:Response` tells NSRails to fill the `responses` array with instances of the Response class (also an NSRailsModel subclass, whose NSRailsSync will also be considered when nested).
+- `responses:Response` tells NSRails to fill the `responses` array with instances of the Response class (also an NSRRemoteObject subclass, whose NSRMap will also be considered when nested).
 
 
-See the [NSRailsSync wiki page](https://github.com/dingbat/nsrails/wiki/NSRailsSync) for even more options!
+See the [NSRMap wiki page](https://github.com/dingbat/nsrails/wiki/NSRMap) for even more options!
 
 Dependencies
 --------

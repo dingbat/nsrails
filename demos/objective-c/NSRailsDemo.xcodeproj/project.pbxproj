@@ -20,9 +20,9 @@
 		5975A5691563686F0088E453 /* ResponsesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A55F1563686F0088E453 /* ResponsesViewController.m */; };
 		5975A56A1563686F0088E453 /* Post.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A5621563686F0088E453 /* Post.m */; };
 		5975A56B1563686F0088E453 /* Response.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A5641563686F0088E453 /* Response.m */; };
-		5975A6CF156374430088E453 /* NSRailsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A6BA156374420088E453 /* NSRailsModel.m */; };
 		5975A6D0156374430088E453 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A6BC156374420088E453 /* NSRConfig.m */; };
 		5975A6D1156374430088E453 /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A6BE156374420088E453 /* NSRPropertyCollection.m */; };
+		599568D0156E91450061EA91 /* NSRRemoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 599568CF156E91450061EA91 /* NSRRemoteObject.m */; };
 		59B4B5CE15681CD70005A505 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 59B4B5CB15681CD70005A505 /* main.m */; };
 /* End PBXBuildFile section */
 
@@ -51,12 +51,12 @@
 		5975A5631563686F0088E453 /* Response.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Response.h; sourceTree = "<group>"; };
 		5975A5641563686F0088E453 /* Response.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Response.m; sourceTree = "<group>"; };
 		5975A6B8156374420088E453 /* NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRails.h; sourceTree = "<group>"; };
-		5975A6B9156374420088E453 /* NSRailsModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = NSRailsModel.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		5975A6BA156374420088E453 /* NSRailsModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRailsModel.m; sourceTree = "<group>"; };
 		5975A6BB156374420088E453 /* NSRConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRConfig.h; sourceTree = "<group>"; };
 		5975A6BC156374420088E453 /* NSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConfig.m; sourceTree = "<group>"; };
 		5975A6BD156374420088E453 /* NSRPropertyCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRPropertyCollection.h; sourceTree = "<group>"; };
 		5975A6BE156374420088E453 /* NSRPropertyCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRPropertyCollection.m; sourceTree = "<group>"; };
+		599568CE156E91450061EA91 /* NSRRemoteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRRemoteObject.h; sourceTree = "<group>"; };
+		599568CF156E91450061EA91 /* NSRRemoteObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRemoteObject.m; sourceTree = "<group>"; };
 		59B4B5CB15681CD70005A505 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		59B4B5CC15681CD70005A505 /* NSRailsDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "NSRailsDemo-Info.plist"; sourceTree = "<group>"; };
 		59B4B5CD15681CD70005A505 /* NSRailsDemo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSRailsDemo-Prefix.pch"; sourceTree = "<group>"; };
@@ -161,10 +161,10 @@
 			children = (
 				596C984D156B136800CA4BA0 /* Categories */,
 				5975A6B8156374420088E453 /* NSRails.h */,
-				5975A6B9156374420088E453 /* NSRailsModel.h */,
-				5975A6BA156374420088E453 /* NSRailsModel.m */,
 				5975A6BB156374420088E453 /* NSRConfig.h */,
 				5975A6BC156374420088E453 /* NSRConfig.m */,
+				599568CE156E91450061EA91 /* NSRRemoteObject.h */,
+				599568CF156E91450061EA91 /* NSRRemoteObject.m */,
 				5975A6BD156374420088E453 /* NSRPropertyCollection.h */,
 				5975A6BE156374420088E453 /* NSRPropertyCollection.m */,
 			);
@@ -249,13 +249,13 @@
 				5975A5691563686F0088E453 /* ResponsesViewController.m in Sources */,
 				5975A56A1563686F0088E453 /* Post.m in Sources */,
 				5975A56B1563686F0088E453 /* Response.m in Sources */,
-				5975A6CF156374430088E453 /* NSRailsModel.m in Sources */,
 				5975A6D0156374430088E453 /* NSRConfig.m in Sources */,
 				5975A6D1156374430088E453 /* NSRPropertyCollection.m in Sources */,
 				59B4B5CE15681CD70005A505 /* main.m in Sources */,
 				596C9854156B136800CA4BA0 /* NSData+Additions.m in Sources */,
 				596C9855156B136800CA4BA0 /* NSObject+Properties.m in Sources */,
 				596C9856156B136800CA4BA0 /* NSString+Inflection.m in Sources */,
+				599568D0156E91450061EA91 /* NSRRemoteObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

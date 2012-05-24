@@ -37,19 +37,19 @@
  
  ### Summary
  
- `NSRailsModel` is the primary class in NSRails - any classes that inherit from it will be treated with a "remote correspondance" and ActiveResource-like APIs will be available.
+ `NSRRemoteObject` is the primary class in NSRails - any classes that inherit from it will be treated with a "remote correspondance" and ActiveResource-like APIs will be available.
   
- Note that you do not have to define an `id` property for your Objective-C class, as your subclass will inherit `NSRailsModel`'s `remoteID` property. Foreign keys are optional but also unnecessary (see [nesting](https://github.com/dingbat/nsrails/wiki/Nesting) on the NSRails wiki).
+ Note that you do not have to define an `id` property for your Objective-C class, as your subclass will inherit `NSRRemoteObject`'s `remoteID` property. Foreign keys are optional but also unnecessary (see [nesting](https://github.com/dingbat/nsrails/wiki/Nesting) on the NSRails wiki).
  
  About this document:
  
- - You'll notice that almost all `NSRailsModel` properties and methods are prefixed with `remote`, so you can quickly navigate through them with autocomplete.
+ - You'll notice that almost all `NSRRemoteObject` properties and methods are prefixed with `remote`, so you can quickly navigate through them with autocomplete.
  - When this document refers to an object's "model name", that means (by default) the name of its class. If you wish to define a custom model name (if the name of your model in Rails is distinct from your class name), use the `NSRUseModelName()` macro.
- - Before exploring this document, make sure that your class inherits from `NSRailsModel`, or of course these methods & properties will not be available.
+ - Before exploring this document, make sure that your class inherits from `NSRRemoteObject`, or of course these methods & properties will not be available.
  
  ### Available Macros
  
- - `NSRailsSync()` - define specific properties to be shared with Rails, along with configurable behaviors.
+ - `NSRMap()` - define specific properties to be shared with Rails, along with configurable behaviors.
  - `NSRUseModelName()` - define a custom model name for your class, optionally with a custom plural. Takes string literal(s).
  - `NSRUseConfig()` - define a custom app URL for your class, optionally with username/password. Takes string literal(s).
  
@@ -57,7 +57,7 @@
  
 	@implementation Article  NSRUseModelName(@"post")
 	@synthesize title, content;
-	NSRailsSync(title, content)
+	NSRMap(title, content)
 	
 	@end
  
@@ -86,9 +86,9 @@
  */
 
 
-@interface NSRailsModel : NSObject <NSCoding>
+@interface NSRRemoteObject : NSObject <NSCoding>
 {
-	//used if initialized with initWithCustomSyncProperties
+	//used if initialized with initWithCustomMap
 	NSRPropertyCollection *customProperties;
 }
 
@@ -108,7 +108,7 @@
  
  This will include properties that you may not have defined in your Objective-C class, allowing you to dynamically add fields to your app if the server-side model changes.
  
- Moreover, this will not take into account anything in NSRailsSync - it is exactly the hash as was sent by Rails.
+ Moreover, this will not take into account anything in NSRMap - it is exactly the hash as was sent by Rails.
  
  You're safe to use this property after any method that sets your object's properties from remote. For example:
 	
@@ -217,7 +217,7 @@
 
 
 /**
- Returns the JSON response for a request with a custom method, sending an `NSRailsModel` subclass instance as the body.
+ Returns the JSON response for a request with a custom method, sending an `NSRRemoteObject` subclass instance as the body.
 
  Calls remoteRequest:method:body:error: with `obj`'s remote dictionary representation for *body*.
 
@@ -225,23 +225,23 @@
  
  @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
  @param customRESTMethod Custom REST method to be called on the subclass's controller. If `nil`, will route to index.
- @param obj NSRailsModel subclass instance - object you want to send in the body.
+ @param obj NSRRemoteObject subclass instance - object you want to send in the body.
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return JSON response object (could be an `NSArray` or `NSDictionary`).
  */
-+ (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj error:(NSError **)error;
++ (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRRemoteObject *)obj error:(NSError **)error;
 
 /**
- Makes a request with a custom method, sending an `NSRailsModel` subclass instance as the body.
+ Makes a request with a custom method, sending an `NSRRemoteObject` subclass instance as the body.
  
  Calls remoteRequest:method:body:error: with `obj`'s remote dictionary representation for *body*.
  
  @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
  @param customRESTMethod Custom REST method to be called on the subclass's controller. If `nil`, will route to index.
- @param obj NSRailsModel subclass instance - object you want to send in the body.
+ @param obj NSRRemoteObject subclass instance - object you want to send in the body.
  @param completionBlock Block to be executed when the request is complete.
  */
-+ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRailsModel *)obj async:(NSRHTTPCompletionBlock)completionBlock;
++ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRRemoteObject *)obj async:(NSRHTTPCompletionBlock)completionBlock;
 
 
 /**
@@ -249,13 +249,13 @@
  
  If called on a subclass, makes the request to `/objects/method` (where `objects` is the pluralization of receiver's model name, and `method` is *customRESTMethod*).
  
- If called on `NSRailsModel`, makes the request to `/method` (where `method` is *customRESTMethod*).
+ If called on `NSRRemoteObject`, makes the request to `/method` (where `method` is *customRESTMethod*).
  
  `/method` is omitted if `customRESTMethod` is nil.
  
 	 [Article remoteRequest:@"POST" method:nil body:json error:&e];           ==> POST /articles
 	 [Article remoteRequest:@"POST" method:@"register" body:json error:&e];   ==> POST /articles/register
-	 [NSRailsModel remoteGET:@"root" error:&e];                               ==> GET /root
+	 [NSRRemoteObject remoteGET:@"root" error:&e];                               ==> GET /root
  
  Request made synchronously. See remoteRequest:method:body:async: for asynchronous operation.
  
@@ -272,13 +272,13 @@
  
  If called on a subclass, makes the request to `/objects/method` (where `objects` is the pluralization of receiver's model name, and `method` is *customRESTMethod*).
  
- If called on `NSRailsModel`, makes the request to `/method` (where `method` is *customRESTMethod*).
+ If called on `NSRRemoteObject`, makes the request to `/method` (where `method` is *customRESTMethod*).
  
  `/method` is omitted if `customRESTMethod` is nil.
  
 	 [Article remoteRequest:@"POST" method:nil body:json async:block];           ==> POST /articles
 	 [Article remoteRequest:@"POST" method:@"register" body:json async:block];   ==> POST /articles/register
-	 [NSRailsModel remoteRequest:@"GET" method:@"root" body:nil async:block];    ==> GET /root
+	 [NSRRemoteObject remoteRequest:@"GET" method:@"root" body:nil async:block];    ==> GET /root
  
  @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
  @param customRESTMethod The REST method to call (appended to the route). If `nil`, will call index. See above for examples.
@@ -315,7 +315,7 @@
  Requires presence of `remoteID`, or will throw an `NSRNullRemoteIDException`.
  
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`. 
- @param changesPtr Pointer to boolean value set to whether or not the receiver changed in any way after the fetch (ie, if this fetch modified one of receiver's local properties due to a change in value server-side). This will also take into account diffs to any nested `NSRailsModel` objects that are affected by this fetch (done recursively).
+ @param changesPtr Pointer to boolean value set to whether or not the receiver changed in any way after the fetch (ie, if this fetch modified one of receiver's local properties due to a change in value server-side). This will also take into account diffs to any nested `NSRRemoteObject` objects that are affected by this fetch (done recursively).
  
  Note that because this only tracks differences in local changes, properties that changed server-side that are not defined in the receiver's class will *not* report back a change (ie, if receiver's class doesn't implement an `updated_at` property and `updated_at` is changed in your remote DB, no change will be reported.) This parameter may be `NULL` if this information is not useful, or use remoteFetch:.
  @return `YES` if fetch was successful. Returns `NO` if an error occurred.
@@ -514,14 +514,14 @@
  
 	{"user"=>{"name"=>"x", "email"=>"y"}}
  
- @return The receiver's properties as a dictionary (takes into account rules in NSRailsSync).
+ @return The receiver's properties as a dictionary (takes into account rules in NSRMap).
  */
 - (NSDictionary *) remoteDictionaryRepresentationWrapped:(BOOL)wrapped;
 
 /**
  Sets the receiver's properties given a dictionary.
  
- Takes into account rules in NSRailsSync.
+ Takes into account rules in NSRMap.
  
  @param dictionary Dictionary to be evaluated. 
  @return YES if any changes were made to the local object, NO if object was identical before/after.
@@ -536,7 +536,7 @@
 /**
  Initializes a new instance of the receiver's class with a given dictionary input.
  
- Takes into account rules in NSRailsSync.
+ Takes into account rules in NSRMap.
  
  @param dictionary Dictionary to be evaluated. 
  @return YES if any changes were made to the local object, NO if object was identical before/after.
@@ -544,32 +544,32 @@
 - (id) initWithRemoteDictionary:(NSDictionary *)dictionary;
 
 /**
- Initializes a new instance of the receiver's class with a custom NSRailsSync string.
+ Initializes a new instance of the receiver's class with a custom NSRMap string.
  
- The given NSRailsSync string will be used only for this **instance**. This instance will not use its class's NSRailsSync. This is very uncommon and triple checking is recommended before going with this implementation strategy.
+ The given NSRMap string will be used only for this **instance**. This instance will not use its class's NSRMap. This is very uncommon and triple checking is recommended before going with this implementation strategy.
  
- Pass in a string as you would type it into NSRailsSync():
-	Person *zombie = [[Person alloc] initWithCustomSyncProperties:@"*, brain -x"];
+ Pass in a string as you would type it into NSRMap():
+	Person *zombie = [[Person alloc] initWithCustomMap:@"*, brain -x"];
 
  
- @param str String to become this instance's NSRailsSync - pass as you would an NSRailsSync string (see above). 
+ @param str String to become this instance's NSRMap - pass as you would an NSRMap string (see above). 
  @return YES if any changes were made to the local object, NO if object was identical before/after.
  */
-- (id) initWithCustomSyncProperties:(NSString *)str;
+- (id) initWithCustomMap:(NSString *)str;
 
 /**
- Initializes a new instance of the receiver's class with a custom NSRailsSync string and config.
+ Initializes a new instance of the receiver's class with a custom NSRMap string and config.
  
- The given NSRailsSync string and config will be used only for this **instance**. This instance will not use its class's NSRailsSync or NSRUseConfig or any default configs (although any config in a context block (with use or useIn) will take precedence). This is very uncommon and triple checking is recommended before going with this implementation strategy.
+ The given NSRMap string and config will be used only for this **instance**. This instance will not use its class's NSRMap or NSRUseConfig or any default configs (although any config in a context block (with use or useIn) will take precedence). This is very uncommon and triple checking is recommended before going with this implementation strategy.
  
- Pass in a string as you would type it into NSRailsSync():
-	Person *zombie = [[Person alloc] initWithCustomSyncProperties:@"*, brain -x" customConfig:nonInflectingConfig];
+ Pass in a string as you would type it into NSRMap():
+	Person *zombie = [[Person alloc] initWithCustomMap:@"*, brain -x" customConfig:nonInflectingConfig];
  
- @param str String to become this instance's NSRailsSync - pass as you would an NSRailsSync string (see above).  
+ @param str String to become this instance's NSRMap - pass as you would an NSRMap string (see above).  
  @param config Config to become this instance's config. 
  @return YES if any changes were made to the local object, NO if object was identical before/after.
  */
-- (id) initWithCustomSyncProperties:(NSString *)str customConfig:(NSRConfig *)config;
+- (id) initWithCustomMap:(NSString *)str customConfig:(NSRConfig *)config;
 
 
 @end
@@ -600,17 +600,17 @@
 
 
 /// =============================================================================================
-#pragma mark NSRailsSync
+#pragma mark NSRMap
 /// =============================================================================================
 
-//define NSRailsSync to create a method called NSRailsSync, which returns the entire param list
-#define NSRailsSync(...) \
-+ (NSString*) NSRailsSync { return _MAKE_STR(__VA_ARGS__); }
+//define NSRMap to create a method called NSRMap, which returns the entire param list
+#define NSRMap(...) \
++ (NSString*) NSRMap { return _MAKE_STR(__VA_ARGS__); }
 
 //define NSRNoCarryFromSuper as NSRNoCarryFromSuper - not a string, since it's placed directly in the macro
 #define NSRNoCarryFromSuper			NSRNoCarryFromSuper
 
-//returns the string version of NSRNoCarryFromSuper so we can find it when evaluating NSRailsSync string
+//returns the string version of NSRNoCarryFromSuper so we can find it when evaluating NSRMap string
 #define _NSRNoCarryFromSuper_STR	_MAKE_STR(NSRNoCarryFromSuper)
 
 
