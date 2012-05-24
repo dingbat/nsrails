@@ -549,8 +549,8 @@ NSRailsSync(*);
 				}
 			}
 			
-			//check for plain equality
-			if (![decodedObj isEqual:previousVal])
+			//check for plain equality (have to make sure decodedObj is not nil, otherwise isEqual: will return NO!)
+			if (decodedObj && ![decodedObj isEqual:previousVal])
 			{
 				changes = YES;
 			}

@@ -667,12 +667,37 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 		STAssertTrue([[sendDict objectForKey:@"array"] isKindOfClass:[NSArray class]], @"'array' key should exist & be an array");
 		STAssertTrue([[sendDict objectForKey:@"array"] count] == 0, @"'array' key should be empty");
 		
+		//Strings
+		
 		plain.array = [[NSArray alloc] initWithObjects:@"test", nil];
 		
 		sendDict = [plain remoteDictionaryRepresentationWrapped:NO];
 		STAssertTrue([[[sendDict objectForKey:@"array"] lastObject] isKindOfClass:[NSString class]], @"'array' key object should exist & be a string");
 		STAssertTrue([[sendDict objectForKey:@"array"] count] == 1, @"'array' key should have one element");
 		STAssertEqualObjects([[sendDict objectForKey:@"array"] lastObject], @"test", @"'array' key should have 'test' in it");
+		
+		BOOL changes = [plain setPropertiesUsingRemoteDictionary:sendDict];
+		STAssertFalse(changes, @"Should be no changes - same in as out");
+		STAssertNotNil(plain.array, @"Array shouldn't be nil");
+		STAssertTrue([plain.array isKindOfClass:[NSArray class]], @"plain.array should be set to array");
+		STAssertTrue(plain.array.count == 1, @"plain.array should have one element");
+		STAssertTrue([[plain.array lastObject] isKindOfClass:[NSString class]], @"plain.array should be filled w/strings");
+					   
+		//Numbers
+		
+		plain.array = [[NSArray alloc] initWithObjects:[NSNumber numberWithInt:5], nil];
+		
+		sendDict = [plain remoteDictionaryRepresentationWrapped:NO];
+		STAssertTrue([[[sendDict objectForKey:@"array"] lastObject] isKindOfClass:[NSNumber class]], @"'array' key object should exist & be a string");
+		STAssertTrue([[sendDict objectForKey:@"array"] count] == 1, @"'array' key should have one element");
+		STAssertEqualObjects([[sendDict objectForKey:@"array"] lastObject], [NSNumber numberWithInt:5], @"'array' key should have 'test' in it");
+		
+		changes = [plain setPropertiesUsingRemoteDictionary:sendDict];
+		STAssertFalse(changes, @"Should be no changes - same in as out");
+		STAssertNotNil(plain.array, @"Array shouldn't be nil");
+		STAssertTrue([plain.array isKindOfClass:[NSArray class]], @"plain.array should be set to array");
+		STAssertTrue(plain.array.count == 1, @"plain.array should have one element");
+		STAssertTrue([[plain.array lastObject] isKindOfClass:[NSNumber class]], @"plain.array should be filled w/numbers");
 	}
 
 	for (int i = 0; i < 2; i++)
@@ -691,15 +716,36 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 		STAssertEqualObjects([[nested.propertyCollection.properties objectForKey:@"array"] nestedClass], @"Egg", @"Should define nested class as Egg");
 		
 		//drop _attributes if blank array
-		NSDictionary *sendDict = [nested remoteDictionaryRepresentationWrapped:NO];
+		NSMutableDictionary *sendDict = (NSMutableDictionary *)[nested remoteDictionaryRepresentationWrapped:NO];
 		STAssertTrue([[sendDict objectForKey:@"array"] isKindOfClass:[NSArray class]], @"'array' key should exist & be an array");
 		STAssertTrue([[sendDict objectForKey:@"array"] count] == 0, @"'array' key should be empty");
 		
 		nested.array = [[NSArray alloc] initWithObjects:[[Egg alloc] init], nil];
 		
-		sendDict = [nested remoteDictionaryRepresentationWrapped:NO];
+		sendDict = (NSMutableDictionary *)[nested remoteDictionaryRepresentationWrapped:NO];
 		STAssertTrue([[[sendDict objectForKey:@"array_attributes"] lastObject] isKindOfClass:[NSDictionary class]], @"'array' key should exist & be a dict (egg representation)");
 		STAssertTrue([[sendDict objectForKey:@"array_attributes"] count] == 1, @"'array' key should have one element");
+		
+		//right now it's array_attributes - change to just "array" as if it was coming from rails
+		[sendDict setObject:[sendDict objectForKey:@"array_attributes"] forKey:@"array"];
+		[sendDict removeObjectForKey:@"array_attributes"];
+		
+		BOOL changes = [nested setPropertiesUsingRemoteDictionary:sendDict];
+		STAssertTrue(changes, @"Should be changes - egg never had an ID so it doesn't know to persist");
+		STAssertNotNil(nested.array, @"Array shouldn't be nil");
+		STAssertTrue([nested.array isKindOfClass:[NSArray class]], @"plain.array should be set to array");
+		STAssertTrue(nested.array.count == 1, @"plain.array should have one element");
+		STAssertTrue([[nested.array lastObject] isKindOfClass:[Egg class]], @"plain.array should be filled w/Egg");
+
+		[[nested.array lastObject] setRemoteID:[NSNumber numberWithInt:5]];
+		sendDict = (NSMutableDictionary *)[nested remoteDictionaryRepresentationWrapped:NO];
+		
+		//right now it's array_attributes - change to just "array" as if it was coming from rails
+		[sendDict setObject:[sendDict objectForKey:@"array_attributes"] forKey:@"array"];
+		[sendDict removeObjectForKey:@"array_attributes"];
+
+		changes = [nested setPropertiesUsingRemoteDictionary:sendDict];
+		STAssertFalse(changes, @"Should be no changes - should've detected same egg ID");
 	}
 	
 	for (int i = 0; i < 2; i++)
@@ -722,12 +768,22 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 		STAssertTrue([[sendDict objectForKey:@"array"] isKindOfClass:[NSArray class]], @"'array' key should exist & be an array");
 		STAssertTrue([[sendDict objectForKey:@"array"] count] == 0, @"'array' key should be empty");
 		
-		dates.array = [[NSArray alloc] initWithObjects:[NSDate date], nil];
+		NSDate *date = [NSDate date];
+		dates.array = [[NSArray alloc] initWithObjects:date, nil];
 		
 		sendDict = [dates remoteDictionaryRepresentationWrapped:NO];
 		STAssertTrue([[[sendDict objectForKey:@"array"] lastObject] isKindOfClass:[NSString class]], @"'array' key object should exist & be a string (date representation)");
 		STAssertTrue([[sendDict objectForKey:@"array"] count] == 1, @"'array' key should have one element");
 		STAssertEqualObjects([[sendDict objectForKey:@"array"] lastObject], [[NSRConfig defaultConfig] stringFromDate:[dates.array lastObject]], @"'array' key obejct should equal the representation of the date passed in in it");
+		
+		BOOL changes = [dates setPropertiesUsingRemoteDictionary:sendDict];
+		// Not using this test because when [NSDate date] is used, a precise value (with like milliseconds) is set. When converting to a string, this precision is obviously lost. Then, when testing for equality for changes, of course isEqual: returns false because there's like a 0.4 second discrepancy. This is ensured in the last test, though
+		//STAssertFalse(changes, @"Should be no changes - same in as out");
+		STAssertNotNil(dates.array, @"Array shouldn't be nil");
+		STAssertTrue([dates.array isKindOfClass:[NSArray class]], @"plain.array should be set to array");
+		STAssertTrue(dates.array.count == 1, @"plain.array should have one element");
+		STAssertTrue([[dates.array lastObject] isKindOfClass:[NSDate class]], @"plain.array should be filled w/dates");
+		STAssertTrue([[dates.array lastObject] timeIntervalSinceDate:date] < 1, @"plain.array's date should be pretty much the same as the date we set to");
 	}
 }
 
