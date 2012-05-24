@@ -558,8 +558,9 @@ NSRailsSync(*);
 							
 							[newArray addObject:decodedElement];
 						}
-						
-						decodedObj = newArray;
+            NSMutableOrderedSet *s = [NSMutableOrderedSet orderedSetWithArray:newArray];
+            decodedObj = s;
+//            decodedObj = newArray;
 					}
 					else if (property.nestedClass)
 					{
