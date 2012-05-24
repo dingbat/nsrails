@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
-		<title>NSRailsModel Class Reference</title>
+		<title>NSRRemoteObject Class Reference</title>
 		<meta id="xcode-display" name="xcode-display" content="render"/>
 		<meta name="viewport" content="width=550" />
 		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
@@ -17,7 +17,7 @@
 			</div>
 			
 			<div id="title" role="banner">
-				<h1 class="hideInXcode">NSRailsModel Class Reference</h1>
+				<h1 class="hideInXcode">NSRRemoteObject Class Reference</h1>
 			</div>
 			<ul id="headerButtons" role="toolbar">
 				<li id="toc_button">
@@ -239,7 +239,7 @@
 		</nav>
 		<article>
 			<div id="contents" class="isShowingTOC" role="main">
-				<a title="NSRailsModel Class Reference" name="top"></a>
+				<a title="NSRRemoteObject Class Reference" name="top"></a>
 				<div class="main-navigation navigation-top">
 					<ul>
 	<li><a href="../index.html">Index</a></li>
@@ -248,7 +248,7 @@
 				</div>
 				<div id="header">
 					<div class="section-header">
-						<h1 class="title title-header">NSRailsModel Class Reference</h1>
+						<h1 class="title title-header">NSRRemoteObject Class Reference</h1>
 					</div>		
 				</div>
 				<div id="container">	
@@ -262,7 +262,7 @@
 	<td class="specification-value">NSCoding</td>
 </tr><tr>
 	<td class="specification-title">Declared in</td>
-	<td class="specification-value">NSRailsModel.h</td>
+	<td class="specification-value">NSRRemoteObject.h</td>
 </tr>
 						</tbody></table></div>
 					
@@ -274,33 +274,33 @@
 						<h2 class="subtitle subtitle-overview">Overview</h2>
 						<h3>Summary</h3>
 
-<p><code>NSRailsModel</code> is the primary class in NSRails &ndash; any classes that inherit from it will be treated with a &ldquo;remote correspondance&rdquo; and ActiveResource-like APIs will be available.</p>
+<p><code>NSRRemoteObject</code> is the primary class in NSRails &ndash; any classes that inherit from it will be treated with a &ldquo;remote correspondance&rdquo; and ActiveResource-like APIs will be available.</p>
 
-<p>Note that you do not have to define an <code>id</code> property for your Objective-C class, as your subclass will inherit <code>NSRailsModel</code>&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a> property. Foreign keys are optional but also unnecessary (see <a href="https://github.com/dingbat/nsrails/wiki/Nesting">nesting</a> on the NSRails wiki).</p>
+<p>Note that you do not have to define an <code>id</code> property for your Objective-C class, as your subclass will inherit <code>NSRRemoteObject</code>&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a> property. Foreign keys are optional but also unnecessary (see <a href="https://github.com/dingbat/nsrails/wiki/Nesting">nesting</a> on the NSRails wiki).</p>
 
 <p>About this document:</p>
 
 <ul>
-<li>You&rsquo;ll notice that almost all <code>NSRailsModel</code> properties and methods are prefixed with <code>remote</code>, so you can quickly navigate through them with autocomplete.</li>
-<li>When this document refers to an object&rsquo;s &ldquo;model name&rdquo;, that means (by default) the name of its class. If you wish to define a custom model name (if the name of your model in Rails is distinct from your class name), use the <code>NSRailsUseModelName()</code> macro.</li>
-<li>Before exploring this document, make sure that your class inherits from <code>NSRailsModel</code>, or of course these methods &amp; properties will not be available.</li>
+<li>You&rsquo;ll notice that almost all <code>NSRRemoteObject</code> properties and methods are prefixed with <code>remote</code>, so you can quickly navigate through them with autocomplete.</li>
+<li>When this document refers to an object&rsquo;s &ldquo;model name&rdquo;, that means (by default) the name of its class. If you wish to define a custom model name (if the name of your model in Rails is distinct from your class name), use the <code>NSRUseModelName()</code> macro.</li>
+<li>Before exploring this document, make sure that your class inherits from <code>NSRRemoteObject</code>, or of course these methods &amp; properties will not be available.</li>
 </ul>
 
 
 <h3>Available Macros</h3>
 
 <ul>
-<li><code>NSRailsSync()</code> &ndash; define specific properties to be shared with Rails, along with configurable behaviors.</li>
-<li><code>NSRailsUseModelName()</code> &ndash; define a custom model name for your class, optionally with a custom plural. Takes string literal(s).</li>
-<li><code>NSRailsUseConfig()</code> &ndash; define a custom app URL for your class, optionally with username/password. Takes string literal(s).</li>
+<li><code>NSRMap()</code> &ndash; define specific properties to be shared with Rails, along with configurable behaviors.</li>
+<li><code>NSRUseModelName()</code> &ndash; define a custom model name for your class, optionally with a custom plural. Takes string literal(s).</li>
+<li><code>NSRUseConfig()</code> &ndash; define a custom app URL for your class, optionally with username/password. Takes string literal(s).</li>
 </ul>
 
 
 <p>These macros can be defined right inside your subclass&rsquo;s implementation:</p>
 
-<pre><code>@implementation Article  NSRailsUseModelName(@"post")
+<pre><code>@implementation Article  NSRUseModelName(@"post")
 @synthesize title, content;
-NSRailsSync(title, content)
+NSRMap(title, content)
 
 @end
 </code></pre>
@@ -423,14 +423,14 @@ NSRailsSync(title, content)
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteRequest:method:bodyAsObject:error:">+&nbsp;remoteRequest:method:bodyAsObject:error:</a></code>
-		<span class="tooltip"><p>Returns the JSON response for a request with a custom method, sending an <code>NSRailsModel</code> subclass instance as the body.</p></span>
+		<span class="tooltip"><p>Returns the JSON response for a request with a custom method, sending an <code>NSRRemoteObject</code> subclass instance as the body.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteRequest:method:bodyAsObject:async:">+&nbsp;remoteRequest:method:bodyAsObject:async:</a></code>
-		<span class="tooltip"><p>Makes a request with a custom method, sending an <code>NSRailsModel</code> subclass instance as the body.</p></span>
+		<span class="tooltip"><p>Makes a request with a custom method, sending an <code>NSRRemoteObject</code> subclass instance as the body.</p></span>
 	</span>
 	
 	
@@ -609,14 +609,14 @@ NSRailsSync(title, content)
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/initWithCustomSyncProperties:">&ndash;&nbsp;initWithCustomSyncProperties:</a></code>
-		<span class="tooltip"><p>Initializes a new instance of the receiver&rsquo;s class with a custom NSRailsSync string.</p></span>
+		<span class="tooltip"><p>Initializes a new instance of the receiver&rsquo;s class with a custom NSRMap string.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/initWithCustomSyncProperties:customConfig:">&ndash;&nbsp;initWithCustomSyncProperties:customConfig:</a></code>
-		<span class="tooltip"><p>Initializes a new instance of the receiver&rsquo;s class with a custom NSRailsSync string and config.</p></span>
+		<span class="tooltip"><p>Initializes a new instance of the receiver&rsquo;s class with a custom NSRMap string and config.</p></span>
 	</span>
 	
 	
@@ -657,7 +657,7 @@ NSRailsSync(title, content)
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>This will include properties that you may not have defined in your Objective-C class, allowing you to dynamically add fields to your app if the server-side model changes.</p>
 
-<p>Moreover, this will not take into account anything in NSRailsSync &ndash; it is exactly the hash as was sent by Rails.</p>
+<p>Moreover, this will not take into account anything in NSRMap &ndash; it is exactly the hash as was sent by Rails.</p>
 
 <p>You&rsquo;re safe to use this property after any method that sets your object&rsquo;s properties from remote. For example:</p>
 
@@ -678,7 +678,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -719,7 +719,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -758,7 +758,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -822,7 +822,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -839,7 +839,7 @@ if ([myObj remoteFetch:&amp;error])
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>+ (void)remoteAllAsync:(NSRGetAllCompletionBlock)<em>completionBlock</em></code></div>
+	<div class="method-subsection method-declaration"><code>+ (void)remoteAllAsync:(NSRFetchAllCompletionBlock)<em>completionBlock</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
@@ -871,7 +871,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -925,7 +925,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -986,7 +986,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -1003,7 +1003,7 @@ if ([myObj remoteFetch:&amp;error])
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>+ (void)remoteObjectWithID:(NSInteger)<em>objectID</em> async:(NSRGetObjectCompletionBlock)<em>completionBlock</em></code></div>
+	<div class="method-subsection method-declaration"><code>+ (void)remoteObjectWithID:(NSInteger)<em>objectID</em> async:(NSRFetchObjectCompletionBlock)<em>completionBlock</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
@@ -1040,7 +1040,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -1101,7 +1101,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -1156,13 +1156,13 @@ if ([myObj remoteFetch:&amp;error])
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>If called on a subclass, makes the request to <code>/objects/method</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>method</code> is <em>customRESTMethod</em>).</p>
 
-<p>If called on <code>NSRailsModel</code>, makes the request to <code>/method</code> (where <code>method</code> is <em>customRESTMethod</em>).</p>
+<p>If called on <code>NSRRemoteObject</code>, makes the request to <code>/method</code> (where <code>method</code> is <em>customRESTMethod</em>).</p>
 
 <p><code>/method</code> is omitted if <code>customRESTMethod</code> is nil.</p>
 
 <pre><code> [Article remoteRequest:@"POST" method:nil body:json async:block];           ==&gt; POST /articles
  [Article remoteRequest:@"POST" method:@"register" body:json async:block];   ==&gt; POST /articles/register
- [NSRailsModel remoteRequest:@"GET" method:@"root" body:nil async:block];    ==&gt; GET /root
+ [NSRRemoteObject remoteRequest:@"GET" method:@"root" body:nil async:block];    ==&gt; GET /root
 </code></pre>
 	</div>
 	
@@ -1174,7 +1174,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -1234,13 +1234,13 @@ if ([myObj remoteFetch:&amp;error])
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>If called on a subclass, makes the request to <code>/objects/method</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>method</code> is <em>customRESTMethod</em>).</p>
 
-<p>If called on <code>NSRailsModel</code>, makes the request to <code>/method</code> (where <code>method</code> is <em>customRESTMethod</em>).</p>
+<p>If called on <code>NSRRemoteObject</code>, makes the request to <code>/method</code> (where <code>method</code> is <em>customRESTMethod</em>).</p>
 
 <p><code>/method</code> is omitted if <code>customRESTMethod</code> is nil.</p>
 
 <pre><code> [Article remoteRequest:@"POST" method:nil body:json error:&amp;e];           ==&gt; POST /articles
  [Article remoteRequest:@"POST" method:@"register" body:json error:&amp;e];   ==&gt; POST /articles/register
- [NSRailsModel remoteGET:@"root" error:&amp;e];                               ==&gt; GET /root
+ [NSRRemoteObject remoteGET:@"root" error:&amp;e];                               ==&gt; GET /root
 </code></pre>
 
 <p>Request made synchronously. See <a href="#//api/name/remoteRequest:method:body:async:">remoteRequest:method:body:async:</a> for asynchronous operation.</p>
@@ -1254,7 +1254,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -1267,11 +1267,11 @@ if ([myObj remoteFetch:&amp;error])
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Makes a request with a custom method, sending an <code>NSRailsModel</code> subclass instance as the body.</p>
+		<p>Makes a request with a custom method, sending an <code>NSRRemoteObject</code> subclass instance as the body.</p>
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>+ (void)remoteRequest:(NSString *)<em>httpVerb</em> method:(NSString *)<em>customRESTMethod</em> bodyAsObject:(NSRailsModel *)<em>obj</em> async:(NSRHTTPCompletionBlock)<em>completionBlock</em></code></div>
+	<div class="method-subsection method-declaration"><code>+ (void)remoteRequest:(NSString *)<em>httpVerb</em> method:(NSString *)<em>customRESTMethod</em> bodyAsObject:(NSRRemoteObject *)<em>obj</em> async:(NSRHTTPCompletionBlock)<em>completionBlock</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
@@ -1289,7 +1289,7 @@ if ([myObj remoteFetch:&amp;error])
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>obj</em></dt>
-			<dd><p>NSRailsModel subclass instance &ndash; object you want to send in the body.</p></dd>
+			<dd><p>NSRRemoteObject subclass instance &ndash; object you want to send in the body.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -1318,7 +1318,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -1331,11 +1331,11 @@ if ([myObj remoteFetch:&amp;error])
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Returns the JSON response for a request with a custom method, sending an <code>NSRailsModel</code> subclass instance as the body.</p>
+		<p>Returns the JSON response for a request with a custom method, sending an <code>NSRRemoteObject</code> subclass instance as the body.</p>
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>+ (id)remoteRequest:(NSString *)<em>httpVerb</em> method:(NSString *)<em>customRESTMethod</em> bodyAsObject:(NSRailsModel *)<em>obj</em> error:(NSError **)<em>error</em></code></div>
+	<div class="method-subsection method-declaration"><code>+ (id)remoteRequest:(NSString *)<em>httpVerb</em> method:(NSString *)<em>customRESTMethod</em> bodyAsObject:(NSRRemoteObject *)<em>obj</em> error:(NSError **)<em>error</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
@@ -1353,7 +1353,7 @@ if ([myObj remoteFetch:&amp;error])
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>obj</em></dt>
-			<dd><p>NSRailsModel subclass instance &ndash; object you want to send in the body.</p></dd>
+			<dd><p>NSRRemoteObject subclass instance &ndash; object you want to send in the body.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -1389,7 +1389,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -1410,7 +1410,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Initializes a new instance of the receiver&rsquo;s class with a custom NSRailsSync string.</p>
+		<p>Initializes a new instance of the receiver&rsquo;s class with a custom NSRMap string.</p>
 	</div>		
 	
 	
@@ -1422,7 +1422,7 @@ if ([myObj remoteFetch:&amp;error])
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>str</em></dt>
-			<dd><p>String to become this instance&rsquo;s NSRailsSync &ndash; pass as you would an NSRailsSync string (see above).</p></dd>
+			<dd><p>String to become this instance&rsquo;s NSRMap &ndash; pass as you would an NSRMap string (see above).</p></dd>
 		</dl>
 		
 	</div>
@@ -1440,9 +1440,9 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>The given NSRailsSync string will be used only for this <strong>instance</strong>. This instance will not use its class&rsquo;s NSRailsSync. This is very uncommon and triple checking is recommended before going with this implementation strategy.</p>
+		<p>The given NSRMap string will be used only for this <strong>instance</strong>. This instance will not use its class&rsquo;s NSRMap. This is very uncommon and triple checking is recommended before going with this implementation strategy.</p>
 
-<p>Pass in a string as you would type it into NSRailsSync():</p>
+<p>Pass in a string as you would type it into NSRMap():</p>
 
 <pre><code>Person *zombie = [[Person alloc] initWithCustomSyncProperties:@"*, brain -x"];
 </code></pre>
@@ -1456,7 +1456,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -1469,7 +1469,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Initializes a new instance of the receiver&rsquo;s class with a custom NSRailsSync string and config.</p>
+		<p>Initializes a new instance of the receiver&rsquo;s class with a custom NSRMap string and config.</p>
 	</div>		
 	
 	
@@ -1481,7 +1481,7 @@ if ([myObj remoteFetch:&amp;error])
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>str</em></dt>
-			<dd><p>String to become this instance&rsquo;s NSRailsSync &ndash; pass as you would an NSRailsSync string (see above).</p></dd>
+			<dd><p>String to become this instance&rsquo;s NSRMap &ndash; pass as you would an NSRMap string (see above).</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -1504,9 +1504,9 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>The given NSRailsSync string and config will be used only for this <strong>instance</strong>. This instance will not use its class&rsquo;s NSRailsSync or NSRailsUseConfig or any default configs (although any config in a context block (with use or useIn) will take precedence). This is very uncommon and triple checking is recommended before going with this implementation strategy.</p>
+		<p>The given NSRMap string and config will be used only for this <strong>instance</strong>. This instance will not use its class&rsquo;s NSRMap or NSRUseConfig or any default configs (although any config in a context block (with use or useIn) will take precedence). This is very uncommon and triple checking is recommended before going with this implementation strategy.</p>
 
-<p>Pass in a string as you would type it into NSRailsSync():</p>
+<p>Pass in a string as you would type it into NSRMap():</p>
 
 <pre><code>Person *zombie = [[Person alloc] initWithCustomSyncProperties:@"*, brain -x" customConfig:nonInflectingConfig];
 </code></pre>
@@ -1520,7 +1520,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -1563,7 +1563,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Takes into account rules in NSRailsSync.</p>
+		<p>Takes into account rules in NSRMap.</p>
 	</div>
 	
 	
@@ -1574,7 +1574,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -1629,7 +1629,7 @@ Request made synchronously. See <a href="#//api/name/remoteCreateAsync:">remoteC
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -1678,7 +1678,7 @@ Request made synchronously. See <a href="#//api/name/remoteCreateAsync:">remoteC
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -1733,7 +1733,7 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:">remote
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -1782,7 +1782,7 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:">remote
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -1819,7 +1819,7 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:">remote
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>The receiver&rsquo;s properties as a dictionary (takes into account rules in NSRailsSync).</p>
+		<p>The receiver&rsquo;s properties as a dictionary (takes into account rules in NSRMap).</p>
 	</div>
 	
 	
@@ -1834,7 +1834,7 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:">remote
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -1880,7 +1880,7 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:">remote
 		<p>Sends a <code>GET</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).
 Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFetchAsync:</a> for asynchronous operation.</p>
 
-<p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRailsRequiresRemoteIDException</code>.</p>
+<p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRNullRemoteIDException</code>.</p>
 	</div>
 	
 	
@@ -1900,7 +1900,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -1930,7 +1930,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>changesPtr</em></dt>
-			<dd><p>Pointer to boolean value set to whether or not the receiver changed in any way after the fetch (ie, if this fetch modified one of receiver&rsquo;s local properties due to a change in value server-side). This will also take into account diffs to any nested <code>NSRailsModel</code> objects that are affected by this fetch (done recursively).</p>
+			<dd><p>Pointer to boolean value set to whether or not the receiver changed in any way after the fetch (ie, if this fetch modified one of receiver&rsquo;s local properties due to a change in value server-side). This will also take into account diffs to any nested <code>NSRRemoteObject</code> objects that are affected by this fetch (done recursively).</p>
 
 <p>Note that because this only tracks differences in local changes, properties that changed server-side that are not defined in the receiver&rsquo;s class will <em>not</em> report back a change (ie, if receiver&rsquo;s class doesn&rsquo;t implement an <code>updated_at</code> property and <code>updated_at</code> is changed in your remote DB, no change will be reported.) This parameter may be <code>NULL</code> if this information is not useful, or use <a href="#//api/name/remoteFetch:">remoteFetch:</a>.</p></dd>
 		</dl>
@@ -1953,7 +1953,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 		<p>Sends a <code>GET</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).
 Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFetchAsync:</a> for asynchronous operation.</p>
 
-<p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRailsRequiresRemoteIDException</code>.</p>
+<p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRNullRemoteIDException</code>.</p>
 	</div>
 	
 	
@@ -1973,7 +1973,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -1990,7 +1990,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>- (void)remoteFetchAsync:(NSRGetLatestCompletionBlock)<em>completionBlock</em></code></div>
+	<div class="method-subsection method-declaration"><code>- (void)remoteFetchAsync:(NSRFetchCompletionBlock)<em>completionBlock</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
@@ -2013,7 +2013,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Asynchronously sends a <code>GET</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).</p>
 
-<p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRailsRequiresRemoteIDException</code>.</p>
+<p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRNullRemoteIDException</code>.</p>
 	</div>
 	
 	
@@ -2024,7 +2024,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -2078,7 +2078,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -2139,7 +2139,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -2198,7 +2198,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -2268,7 +2268,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -2345,7 +2345,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -2411,7 +2411,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -2457,7 +2457,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 		<p>Sends an <code>UPDATE</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).
 Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteUpdateAsync:</a> for asynchronous operation.</p>
 
-<p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRailsRequiresRemoteIDException</code>.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
+<p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRNullRemoteIDException</code>.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
 	</div>
 	
 	
@@ -2468,7 +2468,7 @@ Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteU
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -2508,7 +2508,7 @@ Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteU
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Asynchronously sends an <code>UPDATE</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a>).</p>
 
-<p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRailsRequiresRemoteIDException</code>.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
+<p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRNullRemoteIDException</code>.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
 	</div>
 	
 	
@@ -2519,7 +2519,7 @@ Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteU
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -2562,7 +2562,7 @@ Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteU
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Takes into account rules in NSRailsSync.</p>
+		<p>Takes into account rules in NSRMap.</p>
 	</div>
 	
 	
@@ -2573,7 +2573,7 @@ Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteU
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRailsModel.h</code><br />
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
 	</div>				
 	
 	
@@ -2592,7 +2592,7 @@ Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteU
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-05-22)</span><br />
+						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-05-24)</span><br />
 						
 						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 789)</a>.</span></p>
 						
