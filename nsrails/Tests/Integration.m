@@ -758,7 +758,7 @@ static BOOL noServer = NO;
 	e = nil;
 	
 	//sleep to make a substantial difference in updated_at
-	sleep(1);
+	sleep(2);
 	
 	post.content = @"change";
 	STAssertTrue([post remoteUpdate:&e],@"");

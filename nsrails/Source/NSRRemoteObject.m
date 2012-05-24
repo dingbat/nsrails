@@ -61,6 +61,22 @@
 
 @end
 
+///////////////////////////////////
+
+//Quick NSDate category
+
+@implementation NSDate (NSRApproximation)
+
+- (BOOL) significantChangeSinceDate:(NSDate *)date
+{
+	if (!date) return YES;
+	
+	NSTimeInterval diff = [self timeIntervalSinceDate:date];
+	return (fabs(diff) > 1.25);
+}
+
+@end
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @implementation NSRRemoteObject
@@ -444,74 +460,90 @@ NSRMap(*);
 				customDecode = @selector(nsrails_decodeDate:);
 			}
 			
+			BOOL checkForPlainEquality = NO;
+			
 			id decodedObj = nil;
 			if (customDecode)
 			{
 				decodedObj = [self performSelector:customDecode withObject:railsObject];
+				checkForPlainEquality = YES;
 			}
 			else	
 			{
 				if (railsObject)
 				{
-					if (property.isHasMany)
+					//custom-encode if it's a datearray or if it's an array of nested classes
+					if (property.isHasMany || (property.isDate && property.isArray))
 					{
 						if (![railsObject isKindOfClass:[NSArray class]])
-							[NSException raise:NSRInternalError format:@"Attempt to set property '%@' in class '%@' (declared as has-many) to a non-array non-null value ('%@').", property, self.class, railsObject];
-						
-						//array of NSRRemoteObjects is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
-						
+							[NSException raise:NSRInternalError format:@"Attempt to set property '%@' in class '%@' (declared as array) to a non-array non-null value ('%@').", property, self.class, railsObject];
+
+						BOOL checkForChange = !changes && ([railsObject count] == [previousVal count]);
+						if (!checkForChange)
+							changes = YES;
+
 						NSMutableArray *newArray = [[NSMutableArray alloc] init];
-						
-						for (id railsElement in railsObject)
-						{
-							id decodedElement;
+
+						if (property.nestedClass)
+						{							
+							//array of NSRRemoteObjects is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
 							
-							//see if there's a nester that matches this ID - we'd just have to update it w/this dict
-							NSUInteger idx = [previousVal indexOfObjectPassingTest:
-											  ^BOOL(NSRRemoteObject *obj, NSUInteger idx, BOOL *stop) 
-											  {
-												  if ([obj.remoteID isEqualToNumber:[railsElement objectForKey:@"id"]])
+							for (id railsElement in railsObject)
+							{
+								id decodedElement;
+								
+								//see if there's a nester that matches this ID - we'd just have to update it w/this dict
+								NSUInteger idx = [previousVal indexOfObjectPassingTest:
+												  ^BOOL(NSRRemoteObject *obj, NSUInteger idx, BOOL *stop) 
 												  {
-													  if (stop)
-														  *stop = YES;
-													  return YES;
-												  }
-												  return NO;
-											  }];
-							
-							if (!previousVal || idx == NSNotFound)
-							{
-								//didn't previously exist - make a new one
-								decodedElement = [self makeRelevantModelFromClass:property.nestedClass basedOn:railsElement];
+													  if ([obj.remoteID isEqualToNumber:[railsElement objectForKey:@"id"]])
+													  {
+														  if (stop)
+															  *stop = YES;
+														  return YES;
+													  }
+													  return NO;
+												  }];
 								
-								changes = YES;
-							}
-							else
-							{
-								//existed - simply update that one (recursively)
-								decodedElement = [previousVal objectAtIndex:idx];
-								BOOL neededChange = [decodedElement setPropertiesUsingRemoteDictionary:railsElement applyToRemoteAttributes:YES];
-								
-								if (neededChange)
+								if (!previousVal || idx == NSNotFound)
+								{
+									//didn't previously exist - make a new one
+									decodedElement = [self makeRelevantModelFromClass:property.nestedClass basedOn:railsElement];
+									
 									changes = YES;
+								}
+								else
+								{
+									//existed - simply update that one (recursively)
+									decodedElement = [previousVal objectAtIndex:idx];
+									BOOL neededChange = [decodedElement setPropertiesUsingRemoteDictionary:railsElement applyToRemoteAttributes:YES];
+									
+									if (neededChange)
+										changes = YES;
+								}
+
+								
+								[newArray addObject:decodedElement];
 							}
-
-							
-							[newArray addObject:decodedElement];
 						}
-						
-						decodedObj = newArray;
-					}
-					else if (property.isArray && property.isDate)
-					{
-						NSMutableArray *newArray = [[NSMutableArray alloc] init];
-
-						//array of NSDates
-						for (id railsElement in railsObject)
+						else if (property.isDate)
 						{
-							[newArray addObject:[self nsrails_decodeDate:railsElement]];
+							//array of NSDates
+							for (int i = 0; i < [railsObject count]; i++)
+							{
+								id railsElement = [railsObject objectAtIndex:i];
+								NSDate *newDate = [self nsrails_decodeDate:railsElement];
+								[newArray addObject:newDate];
+								
+								if (checkForChange && !changes)
+								{
+									NSDate *oldDate = [previousVal objectAtIndex:i];
+									
+									if ([newDate significantChangeSinceDate:oldDate])
+										changes = YES;
+								}
+							}
 						}
-						
 						decodedObj = newArray;
 					}
 					else if (property.nestedClass)
@@ -533,10 +565,12 @@ NSRMap(*);
 								changes = YES;
 						}
 					}
-					//otherwise, if not nested or anything, just use what we got (number, string, dictionary)
+					//otherwise, if not nested or anything, just use what we got (number, string, dictionary, array)
 					else
 					{
 						decodedObj = railsObject;
+						
+						checkForPlainEquality = YES;
 					}
 				}
 				//if new value is nil
@@ -548,12 +582,20 @@ NSRMap(*);
 				}
 			}
 			
-			//check for plain equality (have to make sure decodedObj is not nil, otherwise isEqual: will return NO!)
-			if (decodedObj && ![decodedObj isEqual:previousVal])
+			if (checkForPlainEquality && !changes)
 			{
-				changes = YES;
+				if (property.isDate)
+				{
+					if ([decodedObj significantChangeSinceDate:previousVal])
+						changes = YES;
+				}
+				
+				//otherwise, check for plain equality
+				else if (![decodedObj isEqual:previousVal])
+				{
+					changes = YES;
+				}	
 			}
-			
 			
 			[self performSelector:setter withObject:decodedObj];
 		}

@@ -9,11 +9,19 @@
 #import "NSRAsserts.h"
 
 @interface ArrayMan : NSRRemoteObject
-@property (nonatomic, strong) NSArray *array;
+@property (nonatomic, strong) NSMutableArray *array;
 @end
 
 @implementation ArrayMan
 @synthesize array;
+@end
+
+
+@interface DateMan : NSRRemoteObject
+@property (nonatomic, strong) NSDate *date;
+@end
+@implementation DateMan
+@synthesize date;
 @end
 
 @interface PickySender : NSRRemoteObject
@@ -669,7 +677,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 		
 		//Strings
 		
-		plain.array = [[NSArray alloc] initWithObjects:@"test", nil];
+		plain.array = [[NSMutableArray alloc] initWithObjects:@"test", nil];
 		
 		sendDict = [plain remoteDictionaryRepresentationWrapped:NO];
 		STAssertTrue([[[sendDict objectForKey:@"array"] lastObject] isKindOfClass:[NSString class]], @"'array' key object should exist & be a string");
@@ -685,7 +693,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 					   
 		//Numbers
 		
-		plain.array = [[NSArray alloc] initWithObjects:[NSNumber numberWithInt:5], nil];
+		plain.array = [[NSMutableArray alloc] initWithObjects:[NSNumber numberWithInt:5], nil];
 		
 		sendDict = [plain remoteDictionaryRepresentationWrapped:NO];
 		STAssertTrue([[[sendDict objectForKey:@"array"] lastObject] isKindOfClass:[NSNumber class]], @"'array' key object should exist & be a string");
@@ -720,7 +728,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 		STAssertTrue([[sendDict objectForKey:@"array"] isKindOfClass:[NSArray class]], @"'array' key should exist & be an array");
 		STAssertTrue([[sendDict objectForKey:@"array"] count] == 0, @"'array' key should be empty");
 		
-		nested.array = [[NSArray alloc] initWithObjects:[[Egg alloc] init], nil];
+		nested.array = [[NSMutableArray alloc] initWithObjects:[[Egg alloc] init], nil];
 		
 		sendDict = (NSMutableDictionary *)[nested remoteDictionaryRepresentationWrapped:NO];
 		STAssertTrue([[[sendDict objectForKey:@"array_attributes"] lastObject] isKindOfClass:[NSDictionary class]], @"'array' key should exist & be a dict (egg representation)");
@@ -769,7 +777,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 		STAssertTrue([[sendDict objectForKey:@"array"] count] == 0, @"'array' key should be empty");
 		
 		NSDate *date = [NSDate date];
-		dates.array = [[NSArray alloc] initWithObjects:date, nil];
+		dates.array = [[NSMutableArray alloc] initWithObjects:date, nil];
 		
 		sendDict = [dates remoteDictionaryRepresentationWrapped:NO];
 		STAssertTrue([[[sendDict objectForKey:@"array"] lastObject] isKindOfClass:[NSString class]], @"'array' key object should exist & be a string (date representation)");
@@ -777,14 +785,56 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 		STAssertEqualObjects([[sendDict objectForKey:@"array"] lastObject], [[NSRConfig defaultConfig] stringFromDate:[dates.array lastObject]], @"'array' key obejct should equal the representation of the date passed in in it");
 		
 		BOOL changes = [dates setPropertiesUsingRemoteDictionary:sendDict];
-		// Not using this test because when [NSDate date] is used, a precise value (with like milliseconds) is set. When converting to a string, this precision is obviously lost. Then, when testing for equality for changes, of course isEqual: returns false because there's like a 0.4 second discrepancy. This is ensured in the last test, though
-		//STAssertFalse(changes, @"Should be no changes - same in as out");
+		STAssertFalse(changes, @"Should be no changes - same in as out");
 		STAssertNotNil(dates.array, @"Array shouldn't be nil");
 		STAssertTrue([dates.array isKindOfClass:[NSArray class]], @"plain.array should be set to array");
 		STAssertTrue(dates.array.count == 1, @"plain.array should have one element");
 		STAssertTrue([[dates.array lastObject] isKindOfClass:[NSDate class]], @"plain.array should be filled w/dates");
 		STAssertTrue([[dates.array lastObject] timeIntervalSinceDate:date] < 1, @"plain.array's date should be pretty much the same as the date we set to");
 	}
+}
+
+- (void) test_date_diff_detection
+{
+	//array
+	ArrayMan *dates = [[ArrayMan alloc] initWithCustomMap:@"array:NSDate"];
+	dates.array = [[NSMutableArray alloc] init];
+
+	NSDate *date = [NSDate date];
+	[dates.array addObject:date];
+	
+	NSDictionary *sendDict = [dates remoteDictionaryRepresentationWrapped:NO];
+
+	
+	[dates.array removeLastObject];
+	[dates.array addObject:[date dateByAddingTimeInterval:0.1]];
+
+	BOOL changes = [dates setPropertiesUsingRemoteDictionary:sendDict];
+	STAssertFalse(changes, @"Should be no changes - too minute");
+	
+	[dates.array removeLastObject];
+	[dates.array addObject:[date dateByAddingTimeInterval:1.5]];
+	
+	changes = [dates setPropertiesUsingRemoteDictionary:sendDict];
+	STAssertTrue(changes, @"Should be changes - modified significantly");
+	
+
+	//single NSDate
+	DateMan *man = [[DateMan alloc] init];
+	man.date = date;
+	
+	NSDictionary *manDict = [man remoteDictionaryRepresentationWrapped:NO];
+	
+	man.date = [date dateByAddingTimeInterval:0.1];
+	
+	changes = [man setPropertiesUsingRemoteDictionary:manDict];
+	STAssertFalse(changes, @"Should be no changes - too minute");
+	
+	man.date = [date dateByAddingTimeInterval:1.5];
+	
+	changes = [man setPropertiesUsingRemoteDictionary:manDict];
+	STAssertTrue(changes, @"Should be changes - modified significantly");
+
 }
 
 - (void) test_serialization
