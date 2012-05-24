@@ -128,7 +128,7 @@ Dependencies
 Credits
 ----------
 
-Version 1.0.1.
+Version 1.0.2.
 
 A lot of NSRails was inspired by the [ObjectiveResource](https://github.com/yfactorial/objectiveresource) project. Thanks!
 
