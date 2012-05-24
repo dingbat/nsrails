@@ -38,7 +38,14 @@ Getting started
 ### Objective-C
 
 1. Drop the `Source` folder into your Xcode project.
-2. Make an Objective-C class for your Rails model. Make sure it subclasses **NSRailsModel** (you'll need to `#import NSRails.h`)
+  * If you're using Git, you should add NSRails as a submodule to your project so you can `git pull` and always be up to date:
+   
+      ```
+      $ git submodule add git@github.com:dingbat/nsrails.git NSRails
+      ```
+  
+      This will clone the entire NSRails repo, but you'll only need to add `nsrails/Source` to your project in Xcode.
+2. Make an Objective-C class for your Rails model and have it subclass **NSRailsModel** (you'll need to `#import NSRails.h`)
 
   ```objc
   #import "NSRails.h"
@@ -79,7 +86,7 @@ Post *post = [Post remoteObjectWithID:1 error:&error];
 post.content = @"Changed!";
 [post remoteUpdate:&error];
 
-// fetch any latest data for this post (and see if anything changed)
+// Fetch any latest data for this post (and know if anything changed)
 BOOL objectDidChange;
 [post remoteFetch:&error changes:&objectDidChange];
 
