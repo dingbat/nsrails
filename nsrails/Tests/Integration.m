@@ -497,6 +497,7 @@ static BOOL noServer = NO;
 	
 	STAssertNil(e, @"Creating post (with nil responses) shouldn't have resulted in an error.");
 	STAssertNotNil(post.responses, @"Created a post with nil responses array, should have an empty array on return.");
+	STAssertTrue(post.responses.count == 0, @"Array should be empty on return.");
 	
 	e = nil;
 	
@@ -587,15 +588,19 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	STAssertTrue([belongsTo remoteDestroy:&e],@"");
-	STAssertNil(e, @"Response object should've been destroyed fine (nothing to do with nesting, just cleaning up)");
+	belongsTo.post = nil;	
+	
+	STAssertTrue([belongsTo remoteUpdate:&e],@"");
+	STAssertNil(e, @"There should be no error with sending response marked with nil 'belongs_to' post");
+	STAssertNil(belongsTo.post, @"belongsTo.post should still be nil");
 	
 	e = nil;
 	
-	STAssertTrue([post remoteDestroy:&e],@"");	
-	STAssertNil(e, @"Post object should've been destroyed fine (nothing to do with nesting, just cleaning up)");
-	
-	e = nil;
+	BOOL changes;
+	STAssertTrue([retrievedPost remoteFetch:&e changes:&changes],@"Should retrieve post just fine");
+	STAssertTrue(retrievedPost.responses.count == 1, @"Retrieved post should have 1 response ('deleted' b-t)");
+	STAssertFalse(changes,@"Should be no changes since we 'deleted' the nested response by nulling its 'post'");
+
 	
 	Post *dictionariesPost = [[Post alloc] initWithCustomSyncProperties:@"*, responses -m"];
 	dictionariesPost.author = @"author";
@@ -608,24 +613,21 @@ static BOOL noServer = NO;
 	
 	[dictionariesPost.responses addObject:testResponse];
 	
-	STAssertTrue([dictionariesPost remoteCreate:&e],@"");
-	STAssertNil(e, @"Should be no error, even though responses is set to dicts");
-	STAssertNotNil(dictionariesPost.remoteID, @"Model ID should be present if there was no error on create...");
+	STAssertFalse([dictionariesPost remoteCreate:&e],@"");
+	STAssertNotNil(e, @"Should be error, since tried to send attrs without _attributes");
+	STAssertNil(dictionariesPost.remoteID, @"Model ID shouldn't be present if there was an error on create...");
 	
 	e = nil;
+		
+	// on retrieve, it should set responses in dictionary form
+	dictionariesPost.remoteID = post.remoteID;
 	
-	STAssertTrue(dictionariesPost.responses.count == 1, @"Should have one response returned from Post create");
-	
-	//now, as the retrieve part of the create, it won't know what to stick in the array and put NSDictionaries in instead
-	STAssertTrue([[dictionariesPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[dictionariesPost.responses objectAtIndex:0] class]));
-	
-	//same applies for retrieve
-	BOOL changes;
-	STAssertTrue([dictionariesPost remoteFetch:&e changes:&changes],@"");
+	BOOL changes2;
+	STAssertTrue([dictionariesPost remoteFetch:&e changes:&changes2],@"e=%@",e);
 	STAssertNil(e, @"There should've been no errors on the retrieve, even if no nested model defined.");
-	STAssertTrue(dictionariesPost.responses.count == 1, @"Should still come back with one response");
+	STAssertEquals(dictionariesPost.responses.count, retrievedPost.responses.count, @"Should still come back with same number of dicts as responses (1)");
 	STAssertTrue([[dictionariesPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[dictionariesPost.responses objectAtIndex:0] class]));
-	STAssertFalse(changes,@"There should be no changes, even when using dicts");
+	STAssertTrue(changes2,@"There should be changes since new dicts were introduced");
 	
 	e = nil;
 	
@@ -641,7 +643,12 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	STAssertTrue([dictionariesPost remoteDestroy:&e],@"");	
+	STAssertTrue([belongsTo remoteDestroy:&e],@"");
+	STAssertNil(e, @"Response object should've been destroyed fine (nothing to do with nesting, just cleaning up)");
+	
+	e = nil;
+	
+	STAssertTrue([post remoteDestroy:&e],@"");	
 	STAssertNil(e, @"Post object should've been destroyed fine (nothing to do with nesting, just cleaning up)");
 	
 	e = nil;

@@ -41,12 +41,14 @@
 @property (nonatomic, getter = isRetrievable) BOOL retrievable;
 @property (nonatomic, getter = isEncodable) BOOL encodable;
 @property (nonatomic, getter = isDecodable) BOOL decodable;
-@property (nonatomic, getter = isHasMany) BOOL hasMany;
+@property (nonatomic, getter = isArray) BOOL array;
 @property (nonatomic, getter = isBelongsTo) BOOL belongsTo;
 @property (nonatomic, getter = isDate) BOOL date;
 @property (nonatomic) BOOL includedOnNesting;
 @property (nonatomic, strong) NSString *nestedClass, *remoteEquivalent;
 @property (nonatomic, strong) NSString *name;
+
+- (BOOL) isHasMany;
 
 @end
 

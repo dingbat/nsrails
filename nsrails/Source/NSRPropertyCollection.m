@@ -35,7 +35,12 @@
 
 @implementation NSRProperty
 @synthesize sendable, retrievable, encodable, decodable, remoteEquivalent, nestedClass, date, name, includedOnNesting;
-@synthesize belongsTo, hasMany;
+@synthesize belongsTo, array;
+
+- (BOOL) isHasMany
+{
+	return array && nestedClass;
+}
 
 #pragma mark - NSCoding
 
@@ -47,7 +52,7 @@
 		self.retrievable = [aDecoder decodeBoolForKey:@"retrievable"];
 		self.decodable = [aDecoder decodeBoolForKey:@"decodable"];
 		self.encodable = [aDecoder decodeBoolForKey:@"encodable"];
-		self.hasMany = [aDecoder decodeBoolForKey:@"hasMany"];
+		self.array = [aDecoder decodeBoolForKey:@"array"];
 		self.belongsTo = [aDecoder decodeBoolForKey:@"belongsTo"];
 		self.date = [aDecoder decodeBoolForKey:@"date"];
 		self.includedOnNesting = [aDecoder decodeBoolForKey:@"includedOnNesting"];
@@ -70,7 +75,7 @@
 	[aCoder encodeBool:retrievable forKey:@"retrievable"];
 	[aCoder encodeBool:decodable forKey:@"decodable"];
 	[aCoder encodeBool:encodable forKey:@"encodable"];
-	[aCoder encodeBool:hasMany forKey:@"hasMany"];
+	[aCoder encodeBool:array forKey:@"array"];
 	[aCoder encodeBool:belongsTo forKey:@"belongsTo"];
 	[aCoder encodeBool:date forKey:@"date"];
 }
@@ -212,38 +217,36 @@
 					property.includedOnNesting = YES;
 				
 				if ([options rangeOfString:@"m"].location != NSNotFound) 
-					property.hasMany = YES;
-			}
-			
-			if (typeIsArray && nestedModel)
-			{
-				property.hasMany = YES;
+					property.array = YES;
 			}
 			
 			BOOL explicitDate = [nestedModel isEqualToString:@"NSDate"];
-			
-			if ((explicitDate || [type isEqualToString:@"NSDate"]) && !property.hasMany)
+			if (explicitDate || [type isEqualToString:@"NSDate"])
 			{
+				nestedModel = nil;
 				property.date = YES;
 			}
-			else if (property.isHasMany || nestedModel)
+			
+			if (typeIsArray)
 			{
-				if (nestedModel)
+				property.array = YES;
+			}
+			
+			if (nestedModel)
+			{
+				Class nestedClass = NSClassFromString(nestedModel);
+				
+				if (!nestedClass)
 				{
-					Class nestedClass = NSClassFromString(nestedModel);
-					
-					if (!nestedClass)
-					{
-						NSRRaiseSyncError(@"Failed to find class '%@', declared as class for nested property '%@' of class '%@'.",nestedModel,objcProp,class);
-					}
-					else if (![nestedClass isSubclassOfClass:[NSRailsModel class]] && !explicitDate)
-					{
-						NSRRaiseSyncError(@"'%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel.",nestedModel,objcProp, NSStringFromClass(class),nestedModel);
-					}
-					else
-					{
-						property.nestedClass = nestedModel;
-					}
+					NSRRaiseSyncError(@"Failed to find class '%@', declared as class for nested property '%@' of class '%@'.",nestedModel,objcProp,class);
+				}
+				else if (![nestedClass isSubclassOfClass:[NSRailsModel class]] && !explicitDate)
+				{
+					NSRRaiseSyncError(@"'%@' was declared as the class for the nested property '%@' of class '%@', but '%@' is not a subclass of NSRailsModel.",nestedModel,objcProp, NSStringFromClass(class),nestedModel);
+				}
+				else
+				{
+					property.nestedClass = nestedModel;
 				}
 			}
 			//if not array or has an explicit nested model set, see if we should automatically nest it (if it's an NSRailsModel)

@@ -177,25 +177,29 @@ STAssertThrowsSpecificNamed(exp, NSException, NSRailsSyncException, desc)
 	STAssertFalse(date.isHasMany, @"date shouldn't be seen as array");
 	STAssertFalse(date.isBelongsTo, @"date shouldn't be seen as belongs-to");
 	STAssertTrue(date.isDate, @"date should be seen as date");
+	STAssertFalse(date.isArray, @"date should not be seen as array");
 	STAssertNil(date.nestedClass, @"date should not be marked as nested class");
 	
 	NSRProperty *fakeDate = [pc.properties objectForKey:@"fakeDate"];
-	STAssertFalse(date.isHasMany, @"fakeDate shouldn't be seen as array");
-	STAssertFalse(date.isBelongsTo, @"fakeDate shouldn't be seen as belongs-to");
-	STAssertTrue(date.isDate, @"fakedate should be seen as date, even if string");
-	STAssertNil(date.nestedClass, @"fakeDate should not be marked as nested class");
+	STAssertFalse(fakeDate.isHasMany, @"fakeDate shouldn't be seen as array");
+	STAssertFalse(fakeDate.isBelongsTo, @"fakeDate shouldn't be seen as belongs-to");
+	STAssertTrue(fakeDate.isDate, @"fakedate should be seen as date, even if string");
+	STAssertFalse(fakeDate.isArray, @"fakeDate should not be seen as array");
+	STAssertNil(fakeDate.nestedClass, @"fakeDate should not be marked as nested class");
 	
 	NSRProperty *dateArray = [pc.properties objectForKey:@"dateArray"];
-	STAssertTrue(dateArray.isHasMany, @"dateArray should be seen as array");
+	STAssertFalse(dateArray.isHasMany, @"dateArray should be seen as array, but NOT has-many since it's not relational");
 	STAssertFalse(dateArray.isBelongsTo, @"dateArray shouldn't be seen as belongs-to");
-	STAssertFalse(dateArray.isDate, @"dateArray shouldn't be seen as date");
-	STAssertEqualObjects(dateArray.nestedClass, @"NSDate", @"dateArray should have NSDate as nested class");
+	STAssertTrue(dateArray.isDate, @"dateArray should be seen as 'date'");
+	STAssertTrue(dateArray.isArray, @"dateArray should be seen as array");
+	STAssertNil(dateArray.nestedClass, @"dateArray should have no nested class");
 
 	NSRProperty *dateArrayExplicit = [pc.properties objectForKey:@"dateArrayExplicit"];
-	STAssertTrue(dateArrayExplicit.isHasMany, @"dateArrayExplicit should be seen as array");
+	STAssertFalse(dateArrayExplicit.isHasMany, @"dateArrayExplicit should be seen as array");
 	STAssertFalse(dateArrayExplicit.isBelongsTo, @"dateArrayExplicit shouldn't be seen as belongs-to");
-	STAssertFalse(dateArrayExplicit.isDate, @"dateArrayExplicit shouldn't be seen as date");
-	STAssertEqualObjects(dateArrayExplicit.nestedClass, @"NSDate", @"dateArrayExplicit should have NSDate as nested class");
+	STAssertTrue(dateArrayExplicit.isDate, @"dateArrayExplicit should be seen as 'date'");
+	STAssertTrue(dateArrayExplicit.isArray, @"dateArrayExplicit should be seen as array");
+	STAssertNil(dateArrayExplicit.nestedClass, @"dateArray should have no nested class");
 }
 
 - (void) test_nesting_flags
@@ -209,32 +213,38 @@ STAssertThrowsSpecificNamed(exp, NSException, NSRailsSyncException, desc)
 	NSRProperty *nestedNothing = [pc.properties objectForKey:@"nestedNothing"];
 	STAssertFalse(nestedNothing.isBelongsTo, @"nestedNothing shouldn't be marked belongs-to (no -b)");
 	STAssertFalse(nestedNothing.isHasMany, @"nestedNothing shouldn't be marked has-many");
+	STAssertFalse(nestedNothing.isArray, @"nestedNothing shouldn't be implicit array since not NSArray");
 	STAssertEqualObjects(nestedNothing.nestedClass, @"TestClass", @"nestedNothing's nested class should be TestClass");
 
 	NSRProperty *nestedExplicit = [pc.properties objectForKey:@"nestedExplicit"];
 	STAssertFalse(nestedExplicit.isBelongsTo, @"nestedExplicit shouldn't be marked belongs-to (no -b)");
 	STAssertFalse(nestedExplicit.isHasMany, @"nestedExplicit shouldn't be marked as has-many");
+	STAssertFalse(nestedExplicit.isArray, @"nestedExplicit shouldn't be implicit array since not NSArray");
 	STAssertEqualObjects(nestedExplicit.nestedClass, @"TestClass", @"nestedNothing's nested class should be TestClass");
 
 	NSRProperty *nestedArrayM = [pc.properties objectForKey:@"nestedArrayM"];
 	STAssertFalse(nestedArrayM.isBelongsTo, @"nestedArrayM shouldn't be marked belongs-to");
-	STAssertTrue(nestedArrayM.isHasMany, @"nestedArrayM was explicitly marked -m, should be h-m");
+	STAssertTrue(nestedArrayM.isArray, @"nestedArrayM was explicitly marked -m, should be array");
+	STAssertFalse(nestedArrayM.isHasMany, @"nestedArrayM was explicitly marked -m, so array but not H-M");
 	STAssertNil(nestedArrayM.nestedClass, @"nestedArrayM's nested class should be nil (dicts)");
 
 	NSRProperty *nestedArrayNothing = [pc.properties objectForKey:@"nestedArrayNothing"];
 	STAssertFalse(nestedArrayNothing.isBelongsTo, @"nestedArrayNothing shouldn't be marked belongs-to");
 	STAssertFalse(nestedArrayNothing.isHasMany, @"nestedArrayNothing is an array but shouldn't be seen as has-many");
+	STAssertTrue(nestedArrayNothing.isArray, @"nestedArrayNothing should be an implicit array");
 	STAssertNil(nestedArrayNothing.nestedClass, @"nestedArrayNothing's nested class should be nil (it's just an array left alone)");
 
 	NSRProperty *nestedArrayExplicit = [pc.properties objectForKey:@"nestedArrayExplicit"];
 	STAssertFalse(nestedArrayExplicit.isBelongsTo, @"nestedArrayExplicit shouldn't be marked belongs-to");
 	STAssertTrue(nestedArrayExplicit.isHasMany, @"nestedArrayExplicit should be seen as implicit has-many");
+	STAssertTrue(nestedArrayExplicit.isArray, @"nestedArrayExplicit should be an implicit array");
 	STAssertEqualObjects(nestedArrayExplicit.nestedClass, @"TestClass", @"nestedArrayExplicit's nested class should be TestClass");
 
 	NSRProperty *nestedArrayExplicitM = [pc.properties objectForKey:@"nestedArrayExplicitM"];
-	STAssertFalse(nestedArrayExplicitM.isBelongsTo, @"nestedArrayExplicit shouldn't be marked belongs-to");
-	STAssertTrue(nestedArrayExplicitM.isHasMany, @"nestedArrayExplicit should be seen as explicit has-many");
-	STAssertEqualObjects(nestedArrayExplicitM.nestedClass, @"TestClass", @"nestedArrayExplicit's nested class should be TestClass");
+	STAssertFalse(nestedArrayExplicitM.isBelongsTo, @"nestedArrayExplicitM shouldn't be marked belongs-to");
+	STAssertTrue(nestedArrayExplicitM.isHasMany, @"nestedArrayExplicitM should be seen as explicit has-many");
+	STAssertTrue(nestedArrayExplicitM.isArray, @"nestedArrayExplicitM was marked with -m, explicit array");
+	STAssertEqualObjects(nestedArrayExplicitM.nestedClass, @"TestClass", @"nestedArrayExplicitM's nested class should be TestClass");
 }
 
 - (void)setUpClass

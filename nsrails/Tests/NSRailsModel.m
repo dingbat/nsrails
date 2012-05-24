@@ -8,6 +8,14 @@
 
 #import "NSRAsserts.h"
 
+@interface ArrayMan : NSRailsModel
+@property (nonatomic, strong) NSArray *array;
+@end
+
+@implementation ArrayMan
+@synthesize array;
+@end
+
 @interface PickySender : NSRailsModel
 @property (nonatomic, strong) NSString *local, *retrieveOnly, *sendOnly, *shared, *sharedExplicit, *undefined;
 @end
@@ -180,11 +188,12 @@ NSRailsSync(dictionaries -m);
 
 @interface LadiesMan : NSRailsModel
 @property (nonatomic, strong) NSArray *lotsOfDates;
+@property (nonatomic, strong) NSArray *lotsOfStrings;
 @end
 
 @implementation LadiesMan
-@synthesize lotsOfDates;
-NSRailsSync(lotsOfDates:NSDate);
+@synthesize lotsOfDates, lotsOfStrings;
+NSRailsSync(lotsOfDates:NSDate, lotsOfStrings);
 
 @end
 
@@ -215,7 +224,7 @@ NSRailsSync(something);
 
 + (NSDictionary *) newLadiesMan
 {
-	return NSRDictionary(NSRArray(@"2012-05-07T04:41:52Z",@"2012-05-07T04:41:52Z",@"2012-05-07T04:41:52Z"), @"lots_of_dates");
+	return NSRDictionary(NSRArray(@"2012-05-07T04:41:52Z",@"2012-05-07T04:41:52Z",@"2012-05-07T04:41:52Z"), @"lots_of_dates", NSRArray(@"string1", @"string2", @"string3"),@"lots_of_strings");
 }
 
 @end
@@ -389,9 +398,9 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	
 	NSDictionary *send = [nester remoteDictionaryRepresentationWrapped:NO];
 	STAssertNotNil(send, @"Dictionaries shouldn't be nil after trying to make it");
-	STAssertTrue([[send objectForKey:@"dictionaries_attributes"] count] == 2, @"Dictionaries should have 2 elements");
-	STAssertTrue([[[send objectForKey:@"dictionaries_attributes"] objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Dictionaries obj should be of type NSDictionary");
-	STAssertEqualObjects([[[send objectForKey:@"dictionaries_attributes"] objectAtIndex:0] objectForKey:@"key"], @"obj", @"Dict elements should've been set");
+	STAssertTrue([[send objectForKey:@"dictionaries"] count] == 2, @"Dictionaries should have 2 elements");
+	STAssertTrue([[[send objectForKey:@"dictionaries"] objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Dictionaries obj should be of type NSDictionary");
+	STAssertEqualObjects([[[send objectForKey:@"dictionaries"] objectAtIndex:0] objectForKey:@"key"], @"obj", @"Dict elements should've been set");
 
 	//no -m, no nothing -- this time should send without _attributes, since it's not marked as has_many
 	DictionaryNester *plainNester = [[DictionaryNester alloc] initWithCustomSyncProperties:@"dictionaries"];
@@ -416,13 +425,23 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertNotNil(guy.lotsOfDates, @"Dates shouldn't be nil after JSON set");
 	STAssertTrue(guy.lotsOfDates.count == 3, @"Should have 3 dates");
 	STAssertTrue([[guy.lotsOfDates objectAtIndex:0] isKindOfClass:[NSDate class]], @"Date obj should be of type NSDate");
+
+	STAssertNotNil(guy.lotsOfStrings, @"Strings shouldn't be nil after JSON set");
+	STAssertTrue(guy.lotsOfStrings.count == 3, @"Should have 3 strings");
+	STAssertTrue([[guy.lotsOfStrings objectAtIndex:0] isKindOfClass:[NSString class]], @"lotsOfStrings obj should be of type string");
+
 	
 	NSDictionary *send = [guy remoteDictionaryRepresentationWrapped:NO];
 	
-	STAssertNotNil([send objectForKey:@"lots_of_dates_attributes"], @"Dates shouldn't be nil after remote dict");
-	STAssertTrue([[send objectForKey:@"lots_of_dates_attributes"] count] == 3, @"Send should have 3 dates");
-	STAssertTrue([[[send objectForKey:@"lots_of_dates_attributes"] lastObject] isKindOfClass:[NSString class]], @"Date obj should be of type NSString on send");
-	STAssertEqualObjects([[send objectForKey:@"lots_of_dates_attributes"] lastObject], @"2012-05-07T04:41:52Z", @"Converted date should be equal to original val");
+	STAssertNotNil([send objectForKey:@"lots_of_dates"], @"Dates shouldn't be nil after remote dict");
+	STAssertTrue([[send objectForKey:@"lots_of_dates"] count] == 3, @"Send should have 3 dates");
+	STAssertTrue([[[send objectForKey:@"lots_of_dates"] lastObject] isKindOfClass:[NSString class]], @"Date obj should be of type NSString on send");
+	STAssertEqualObjects([[send objectForKey:@"lots_of_dates"] lastObject], @"2012-05-07T04:41:52Z", @"Converted date should be equal to original val");
+	
+	STAssertNotNil([send objectForKey:@"lots_of_strings"], @"Strings shouldn't be nil after remote dict");
+	STAssertTrue([[send objectForKey:@"lots_of_strings"] count] == 3, @"Strings should have 3 strs");
+	STAssertTrue([[[send objectForKey:@"lots_of_strings"] lastObject] isKindOfClass:[NSString class]], @"String obj should be of type NSString on send");
+	STAssertEqualObjects([[send objectForKey:@"lots_of_strings"] lastObject], @"string3", @"Converted date should be equal to original val");
 }
 
 - (void) test_set_properties
@@ -620,6 +639,96 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	eggDict = [attachedEgg remoteDictionaryRepresentationWrapped:NO];
 	STAssertNil([eggDict objectForKey:MotherKey], @"'mother' key shouldn't exist - belongs-to, so should be bird_id");
 	STAssertTrue([[eggDict objectForKey:@"mother_id"] isKindOfClass:[NSNumber class]], @"mother ID should be exist and be a number");
+	
+	attachedEgg.mother = nil;
+	eggDict = [attachedEgg remoteDictionaryRepresentationWrapped:NO];
+	STAssertNotNil([eggDict objectForKey:@"mother"], @"'mother' key should exist - belongs-to but NULL");
+	STAssertTrue([[eggDict objectForKey:@"mother"] isKindOfClass:[NSNull class]], @"mother should be exist and be null");
+}
+
+- (void) test_arrays
+{
+	for (int i = 0; i < 2; i++)
+	{
+		ArrayMan *plain;
+		
+		//these two cases should be identical
+		if (i == 0)
+			plain = [[ArrayMan alloc] initWithCustomSyncProperties:@"array"];
+		else
+			plain = [[ArrayMan alloc] initWithCustomSyncProperties:@"array -m"];
+		
+		//redundant property testing
+		STAssertTrue([[plain.propertyCollection.properties objectForKey:@"array"] isArray], @"Should be an array");
+		STAssertFalse([[plain.propertyCollection.properties objectForKey:@"array"] isHasMany], @"Should be an array but not HM");
+		STAssertNil([[plain.propertyCollection.properties objectForKey:@"array"] nestedClass], @"Should be an array but without nested class");
+		
+		NSDictionary *sendDict = [plain remoteDictionaryRepresentationWrapped:NO];
+		STAssertTrue([[sendDict objectForKey:@"array"] isKindOfClass:[NSArray class]], @"'array' key should exist & be an array");
+		STAssertTrue([[sendDict objectForKey:@"array"] count] == 0, @"'array' key should be empty");
+		
+		plain.array = [[NSArray alloc] initWithObjects:@"test", nil];
+		
+		sendDict = [plain remoteDictionaryRepresentationWrapped:NO];
+		STAssertTrue([[[sendDict objectForKey:@"array"] lastObject] isKindOfClass:[NSString class]], @"'array' key object should exist & be a string");
+		STAssertTrue([[sendDict objectForKey:@"array"] count] == 1, @"'array' key should have one element");
+		STAssertEqualObjects([[sendDict objectForKey:@"array"] lastObject], @"test", @"'array' key should have 'test' in it");
+	}
+
+	for (int i = 0; i < 2; i++)
+	{
+		ArrayMan *nested;
+		
+		//these two cases should be identical
+		if (i == 0)
+			nested = [[ArrayMan alloc] initWithCustomSyncProperties:@"array:Egg"];
+		else
+			nested = [[ArrayMan alloc] initWithCustomSyncProperties:@"array:Egg -m"];
+		
+		//redundant property testing
+		STAssertTrue([[nested.propertyCollection.properties objectForKey:@"array"] isArray], @"Should be an array");
+		STAssertTrue([[nested.propertyCollection.properties objectForKey:@"array"] isHasMany], @"Should be an array & HM");
+		STAssertEqualObjects([[nested.propertyCollection.properties objectForKey:@"array"] nestedClass], @"Egg", @"Should define nested class as Egg");
+		
+		//drop _attributes if blank array
+		NSDictionary *sendDict = [nested remoteDictionaryRepresentationWrapped:NO];
+		STAssertTrue([[sendDict objectForKey:@"array"] isKindOfClass:[NSArray class]], @"'array' key should exist & be an array");
+		STAssertTrue([[sendDict objectForKey:@"array"] count] == 0, @"'array' key should be empty");
+		
+		nested.array = [[NSArray alloc] initWithObjects:[[Egg alloc] init], nil];
+		
+		sendDict = [nested remoteDictionaryRepresentationWrapped:NO];
+		STAssertTrue([[[sendDict objectForKey:@"array_attributes"] lastObject] isKindOfClass:[NSDictionary class]], @"'array' key should exist & be a dict (egg representation)");
+		STAssertTrue([[sendDict objectForKey:@"array_attributes"] count] == 1, @"'array' key should have one element");
+	}
+	
+	for (int i = 0; i < 2; i++)
+	{
+		ArrayMan *dates;
+		
+		//these two cases should be identical
+		if (i == 0)
+			dates = [[ArrayMan alloc] initWithCustomSyncProperties:@"array:NSDate"];
+		else
+			dates = [[ArrayMan alloc] initWithCustomSyncProperties:@"array:NSDate -m"];
+		
+		//redundant property testing
+		STAssertTrue([[dates.propertyCollection.properties objectForKey:@"array"] isArray], @"Should be an array");
+		STAssertTrue([[dates.propertyCollection.properties objectForKey:@"array"] isDate], @"Should be a 'date'");
+		STAssertFalse([[dates.propertyCollection.properties objectForKey:@"array"] isHasMany], @"Should be an array but not HM");
+		STAssertNil([[dates.propertyCollection.properties objectForKey:@"array"] nestedClass], @"Should be an array but without nested class");
+		
+		NSDictionary *sendDict = [dates remoteDictionaryRepresentationWrapped:NO];
+		STAssertTrue([[sendDict objectForKey:@"array"] isKindOfClass:[NSArray class]], @"'array' key should exist & be an array");
+		STAssertTrue([[sendDict objectForKey:@"array"] count] == 0, @"'array' key should be empty");
+		
+		dates.array = [[NSArray alloc] initWithObjects:[NSDate date], nil];
+		
+		sendDict = [dates remoteDictionaryRepresentationWrapped:NO];
+		STAssertTrue([[[sendDict objectForKey:@"array"] lastObject] isKindOfClass:[NSString class]], @"'array' key object should exist & be a string (date representation)");
+		STAssertTrue([[sendDict objectForKey:@"array"] count] == 1, @"'array' key should have one element");
+		STAssertEqualObjects([[sendDict objectForKey:@"array"] lastObject], [[NSRConfig defaultConfig] stringFromDate:[dates.array lastObject]], @"'array' key obejct should equal the representation of the date passed in in it");
+	}
 }
 
 - (void) test_serialization
