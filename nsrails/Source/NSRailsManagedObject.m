@@ -592,7 +592,16 @@ NSRailsSync(*);
 					//otherwise, if not nested or anything, just use what we got (number, string, dictionary)
 					else
 					{
-						decodedObj = railsObject;
+            // If we encounter a dictionary, it's probably a nested object, since this IS CoreData we're dealing with 
+            if ([railsObject isKindOfClass:[NSDictionary class]]) {
+              Class k = NSClassFromString([[property name] capitalizedString]);
+              NSString *pKey = [k primaryKeyAttributeName];
+              decodedObj = [k findExistingModelWithPrimaryKeyAttributeValue:[railsObject objectForKey:pKey]];
+              [decodedObj setPropertiesUsingRemoteDictionary:railsObject];
+              [self setValue:decodedObj forKey:[property name]];
+            } else {
+              decodedObj = railsObject;
+            }
 					}
 				}
 				//if new value is nil
@@ -1093,14 +1102,11 @@ NSRailsSync(*);
 #pragma mark - CoreData helpers
 
 + (id)findExistingModelWithPrimaryKeyAttributeValue:(id)value {
-//  NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
   NSManagedObjectContext *ctx = _context;
   NSString *attribute_name = [self primaryKeyAttributeName];
   
-//  NSRailsManagedObject *obj = [[self class] MR_findFirstByAttribute:attribute_name withValue:value];
   NSRailsManagedObject *obj = [[self class] findFirstObjectByAttribute:attribute_name withValue:value inContext:ctx];
   if (obj == nil) {
-//    obj = [[self class] MR_createEntity];
     obj = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([self class]) inManagedObjectContext:ctx];
     [self saveContext];
   }
@@ -1114,11 +1120,7 @@ NSRailsSync(*);
 }
 
 + (id)new {
-//  NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
   NSManagedObjectContext *ctx = _context;
-//  NSEntityDescription *desc = [NSEntityDescription entityForName:[[self class] description] inManagedObjectContext:ctx];
-  
-//  NSRailsManagedObject *obj = [[NSRailsManagedObject alloc] initWithEntity:desc insertIntoManagedObjectContext:ctx];
   NSRailsManagedObject *obj = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([self class]) inManagedObjectContext:ctx];
   return obj;
 }
