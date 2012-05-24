@@ -30,3 +30,4 @@
 
 #import "NSRConfig.h"
 #import "NSRailsModel.h"
+#import "NSRailsManagedObject.h"

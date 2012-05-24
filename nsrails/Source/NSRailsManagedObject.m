@@ -1150,7 +1150,7 @@ NSRailsSync(*);
 //  if (error) {
 //    NSLog(@"Failed to save core data: %@", [error localizedDescription]);
 //  }
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"should_save_core_data" object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:(NSString *)NSRailsSaveCoreDataNotification object:nil];
 }
 
 - (void)saveContext {
@@ -1160,7 +1160,7 @@ NSRailsSync(*);
 //  if (error) {
 //    NSLog(@"Failed to save core data: %@", [error localizedDescription]);
 //  }  
-  [[NSNotificationCenter defaultCenter] postNotificationName:@"should_save_core_data" object:nil];
+  [[NSNotificationCenter defaultCenter] postNotificationName:(NSString *)NSRailsSaveCoreDataNotification object:nil];
 }
 
 - (void)awakeFromFetch {
