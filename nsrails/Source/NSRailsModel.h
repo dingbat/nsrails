@@ -158,7 +158,7 @@
   
  @param completionBlock Block to be executed when the request is complete.
  */
-+ (void) remoteAllAsync:(NSRGetAllCompletionBlock)completionBlock;
++ (void) remoteAllAsync:(NSRFetchAllCompletionBlock)completionBlock;
 
 
 
@@ -183,7 +183,7 @@
  @param objectID The ID of the remote object.
  @param completionBlock Block to be executed when the request is complete.
  */
-+ (void) remoteObjectWithID:(NSInteger)objectID async:(NSRGetObjectCompletionBlock)completionBlock;
++ (void) remoteObjectWithID:(NSInteger)objectID async:(NSRFetchObjectCompletionBlock)completionBlock;
 
 
 
@@ -334,7 +334,7 @@
 
  @param completionBlock Block to be executed when the request is complete. The second parameter passed in is a BOOL whether or not there was a *local* change. This means changes in `updated_at`, etc, will only apply if your Objective-C class implement this as a property as well. This also applies when updating any of its nested objects (done recursively).
  */
-- (void) remoteFetchAsync:(NSRGetLatestCompletionBlock)completionBlock;
+- (void) remoteFetchAsync:(NSRFetchCompletionBlock)completionBlock;
 
 
 /**

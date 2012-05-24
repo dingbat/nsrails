@@ -38,9 +38,9 @@
 typedef void(^NSRHTTPCompletionBlock)(id jsonRep, NSError *error);
 
 typedef void(^NSRBasicCompletionBlock)(NSError *error);
-typedef void(^NSRGetLatestCompletionBlock)(BOOL changed, NSError *error);
-typedef void(^NSRGetAllCompletionBlock)(NSArray *allRemote, NSError *error);
-typedef void(^NSRGetObjectCompletionBlock)(id object, NSError *error);
+typedef void(^NSRFetchCompletionBlock)(BOOL changed, NSError *error);
+typedef void(^NSRFetchAllCompletionBlock)(NSArray *allRemote, NSError *error);
+typedef void(^NSRFetchObjectCompletionBlock)(id object, NSError *error);
 
 
 //Environments

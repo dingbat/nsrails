@@ -856,7 +856,7 @@ NSRailsSync(*);
 	return [self remoteFetch:error changes:NULL];
 }
 
-- (void) remoteFetchAsync:(NSRGetLatestCompletionBlock)completionBlock
+- (void) remoteFetchAsync:(NSRFetchCompletionBlock)completionBlock
 {
 	[self remoteGET:nil async:
 	 ^(id result, NSError *error) 
@@ -883,7 +883,7 @@ NSRailsSync(*);
 	return obj;
 }
 
-+ (void) remoteObjectWithID:(NSInteger)mID async:(NSRGetObjectCompletionBlock)completionBlock
++ (void) remoteObjectWithID:(NSInteger)mID async:(NSRFetchObjectCompletionBlock)completionBlock
 {
 	NSRailsModel *obj = [[[self class] alloc] init];
 	obj.remoteID = [NSDecimalNumber numberWithInteger:mID];
@@ -936,7 +936,7 @@ NSRailsSync(*);
 	return [self objectsWithRemoteArray:json];
 }
 
-+ (void) remoteAllAsync:(NSRGetAllCompletionBlock)completionBlock
++ (void) remoteAllAsync:(NSRFetchAllCompletionBlock)completionBlock
 {
 	[self remoteGET:nil async:
 	 ^(id result, NSError *error) 
