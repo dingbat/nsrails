@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5956957C156EBEFE0033F762 /* NSMutableArray+NSRails.m in Sources */ = {isa = PBXBuildFile; fileRef = 5956957B156EBEFE0033F762 /* NSMutableArray+NSRails.m */; };
 		596C9854156B136800CA4BA0 /* NSData+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 596C984F156B136800CA4BA0 /* NSData+Additions.m */; };
 		596C9855156B136800CA4BA0 /* NSObject+Properties.m in Sources */ = {isa = PBXBuildFile; fileRef = 596C9851156B136800CA4BA0 /* NSObject+Properties.m */; };
 		596C9856156B136800CA4BA0 /* NSString+Inflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 596C9853156B136800CA4BA0 /* NSString+Inflection.m */; };
@@ -27,6 +28,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5956957A156EBEFE0033F762 /* NSMutableArray+NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+NSRails.h"; sourceTree = "<group>"; };
+		5956957B156EBEFE0033F762 /* NSMutableArray+NSRails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+NSRails.m"; sourceTree = "<group>"; };
 		596C984E156B136800CA4BA0 /* NSData+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Additions.h"; sourceTree = "<group>"; };
 		596C984F156B136800CA4BA0 /* NSData+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Additions.m"; sourceTree = "<group>"; };
 		596C9850156B136800CA4BA0 /* NSObject+Properties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Properties.h"; sourceTree = "<group>"; };
@@ -79,6 +82,8 @@
 		596C984D156B136800CA4BA0 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				5956957A156EBEFE0033F762 /* NSMutableArray+NSRails.h */,
+				5956957B156EBEFE0033F762 /* NSMutableArray+NSRails.m */,
 				596C984E156B136800CA4BA0 /* NSData+Additions.h */,
 				596C984F156B136800CA4BA0 /* NSData+Additions.m */,
 				596C9850156B136800CA4BA0 /* NSObject+Properties.h */,
@@ -256,6 +261,7 @@
 				596C9855156B136800CA4BA0 /* NSObject+Properties.m in Sources */,
 				596C9856156B136800CA4BA0 /* NSString+Inflection.m in Sources */,
 				599568D0156E91450061EA91 /* NSRRemoteObject.m in Sources */,
+				5956957C156EBEFE0033F762 /* NSMutableArray+NSRails.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

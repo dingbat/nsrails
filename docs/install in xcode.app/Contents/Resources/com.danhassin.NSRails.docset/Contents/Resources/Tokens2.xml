@@ -628,11 +628,11 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/initWithCustomSyncProperties:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/initWithCustomMap:</TokenIdentifier>
 			<Abstract type="html">Initializes a new instance of the receiver&apos;s class with a custom NSRMap string.</Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>- (id)initWithCustomSyncProperties:(NSString *)str</Declaration>
+			<Declaration>- (id)initWithCustomMap:(NSString *)str</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>str</Name>
@@ -640,15 +640,15 @@ Note that because this only tracks differences in local changes, properties that
 				</Parameter>
 			</Parameters>
 			<ReturnValue><Abstract type="html">YES if any changes were made to the local object, NO if object was identical before/after.</Abstract></ReturnValue>
-			<Anchor>//api/name/initWithCustomSyncProperties:</Anchor>
+			<Anchor>//api/name/initWithCustomMap:</Anchor>
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/initWithCustomSyncProperties:customConfig:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/initWithCustomMap:customConfig:</TokenIdentifier>
 			<Abstract type="html">Initializes a new instance of the receiver&apos;s class with a custom NSRMap string and config.</Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>- (id)initWithCustomSyncProperties:(NSString *)str customConfig:(NSRConfig *)config</Declaration>
+			<Declaration>- (id)initWithCustomMap:(NSString *)str customConfig:(NSRConfig *)config</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>str</Name>
@@ -659,7 +659,7 @@ Note that because this only tracks differences in local changes, properties that
 				</Parameter>
 			</Parameters>
 			<ReturnValue><Abstract type="html">YES if any changes were made to the local object, NO if object was identical before/after.</Abstract></ReturnValue>
-			<Anchor>//api/name/initWithCustomSyncProperties:customConfig:</Anchor>
+			<Anchor>//api/name/initWithCustomMap:customConfig:</Anchor>
 		</Token>
 		
 	</File>

@@ -44,12 +44,16 @@
 		594765B91569F9E100C07A62 /* Inheritance.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B01569F9E100C07A62 /* Inheritance.m */; };
 		594765BA1569F9E100C07A62 /* Integration.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B11569F9E100C07A62 /* Integration.m */; };
 		594765BB1569F9E100C07A62 /* Integration.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B11569F9E100C07A62 /* Integration.m */; };
-		594765BC1569F9E100C07A62 /* NSRailsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B21569F9E100C07A62 /* NSRailsModel.m */; };
-		594765BD1569F9E100C07A62 /* NSRailsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B21569F9E100C07A62 /* NSRailsModel.m */; };
+		594765BC1569F9E100C07A62 /* NSRRemoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B21569F9E100C07A62 /* NSRRemoteObject.m */; };
+		594765BD1569F9E100C07A62 /* NSRRemoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B21569F9E100C07A62 /* NSRRemoteObject.m */; };
 		594765BE1569F9E100C07A62 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B41569F9E100C07A62 /* NSRConfig.m */; };
 		594765BF1569F9E100C07A62 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B41569F9E100C07A62 /* NSRConfig.m */; };
 		594765C01569F9E100C07A62 /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B51569F9E100C07A62 /* NSRPropertyCollection.m */; };
 		594765C11569F9E100C07A62 /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B51569F9E100C07A62 /* NSRPropertyCollection.m */; };
+		59569568156EB7540033F762 /* NSMutableArray+NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 59569566156EB7540033F762 /* NSMutableArray+NSRails.h */; };
+		59569569156EB7540033F762 /* NSMutableArray+NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 59569566156EB7540033F762 /* NSMutableArray+NSRails.h */; };
+		5956956A156EB7540033F762 /* NSMutableArray+NSRails.m in Sources */ = {isa = PBXBuildFile; fileRef = 59569567156EB7540033F762 /* NSMutableArray+NSRails.m */; };
+		5956956B156EB7540033F762 /* NSMutableArray+NSRails.m in Sources */ = {isa = PBXBuildFile; fileRef = 59569567156EB7540033F762 /* NSMutableArray+NSRails.m */; };
 		597DED35156AE174005CB6F9 /* NSData+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 597DED2F156AE174005CB6F9 /* NSData+Additions.h */; };
 		597DED36156AE174005CB6F9 /* NSData+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 597DED2F156AE174005CB6F9 /* NSData+Additions.h */; };
 		597DED37156AE174005CB6F9 /* NSData+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 597DED30156AE174005CB6F9 /* NSData+Additions.m */; };
@@ -105,10 +109,12 @@
 		594765AF1569F9E100C07A62 /* Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Helpers.m; sourceTree = "<group>"; };
 		594765B01569F9E100C07A62 /* Inheritance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Inheritance.m; sourceTree = "<group>"; };
 		594765B11569F9E100C07A62 /* Integration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Integration.m; sourceTree = "<group>"; };
-		594765B21569F9E100C07A62 /* NSRailsModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRailsModel.m; sourceTree = "<group>"; };
+		594765B21569F9E100C07A62 /* NSRRemoteObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRemoteObject.m; sourceTree = "<group>"; };
 		594765B31569F9E100C07A62 /* NSRAsserts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRAsserts.h; sourceTree = "<group>"; };
 		594765B41569F9E100C07A62 /* NSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = NSRConfig.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		594765B51569F9E100C07A62 /* NSRPropertyCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRPropertyCollection.m; sourceTree = "<group>"; };
+		59569566156EB7540033F762 /* NSMutableArray+NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+NSRails.h"; sourceTree = "<group>"; };
+		59569567156EB7540033F762 /* NSMutableArray+NSRails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+NSRails.m"; sourceTree = "<group>"; };
 		597DED2F156AE174005CB6F9 /* NSData+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Additions.h"; sourceTree = "<group>"; };
 		597DED30156AE174005CB6F9 /* NSData+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Additions.m"; sourceTree = "<group>"; };
 		597DED31156AE174005CB6F9 /* NSObject+Properties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Properties.h"; sourceTree = "<group>"; };
@@ -194,7 +200,7 @@
 				594765AF1569F9E100C07A62 /* Helpers.m */,
 				594765B01569F9E100C07A62 /* Inheritance.m */,
 				594765B11569F9E100C07A62 /* Integration.m */,
-				594765B21569F9E100C07A62 /* NSRailsModel.m */,
+				594765B21569F9E100C07A62 /* NSRRemoteObject.m */,
 				594765B31569F9E100C07A62 /* NSRAsserts.h */,
 				594765B41569F9E100C07A62 /* NSRConfig.m */,
 				594765B51569F9E100C07A62 /* NSRPropertyCollection.m */,
@@ -217,6 +223,8 @@
 		597DED2E156AE174005CB6F9 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				59569566156EB7540033F762 /* NSMutableArray+NSRails.h */,
+				59569567156EB7540033F762 /* NSMutableArray+NSRails.m */,
 				597DED2F156AE174005CB6F9 /* NSData+Additions.h */,
 				597DED30156AE174005CB6F9 /* NSData+Additions.m */,
 				597DED31156AE174005CB6F9 /* NSObject+Properties.h */,
@@ -275,6 +283,7 @@
 				597DED35156AE174005CB6F9 /* NSData+Additions.h in Headers */,
 				597DED39156AE174005CB6F9 /* NSObject+Properties.h in Headers */,
 				597DED3D156AE174005CB6F9 /* NSString+Inflection.h in Headers */,
+				59569568156EB7540033F762 /* NSMutableArray+NSRails.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,6 +298,7 @@
 				597DED36156AE174005CB6F9 /* NSData+Additions.h in Headers */,
 				597DED3A156AE174005CB6F9 /* NSObject+Properties.h in Headers */,
 				597DED3E156AE174005CB6F9 /* NSString+Inflection.h in Headers */,
+				59569569156EB7540033F762 /* NSMutableArray+NSRails.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -458,6 +468,7 @@
 				597DED37156AE174005CB6F9 /* NSData+Additions.m in Sources */,
 				597DED3B156AE174005CB6F9 /* NSObject+Properties.m in Sources */,
 				597DED3F156AE174005CB6F9 /* NSString+Inflection.m in Sources */,
+				5956956A156EB7540033F762 /* NSMutableArray+NSRails.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -469,7 +480,7 @@
 				594765B61569F9E100C07A62 /* Helpers.m in Sources */,
 				594765B81569F9E100C07A62 /* Inheritance.m in Sources */,
 				594765BA1569F9E100C07A62 /* Integration.m in Sources */,
-				594765BC1569F9E100C07A62 /* NSRailsModel.m in Sources */,
+				594765BC1569F9E100C07A62 /* NSRRemoteObject.m in Sources */,
 				594765BE1569F9E100C07A62 /* NSRConfig.m in Sources */,
 				594765C01569F9E100C07A62 /* NSRPropertyCollection.m in Sources */,
 			);
@@ -485,6 +496,7 @@
 				597DED38156AE174005CB6F9 /* NSData+Additions.m in Sources */,
 				597DED3C156AE174005CB6F9 /* NSObject+Properties.m in Sources */,
 				597DED40156AE174005CB6F9 /* NSString+Inflection.m in Sources */,
+				5956956B156EB7540033F762 /* NSMutableArray+NSRails.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -496,7 +508,7 @@
 				594765B71569F9E100C07A62 /* Helpers.m in Sources */,
 				594765B91569F9E100C07A62 /* Inheritance.m in Sources */,
 				594765BB1569F9E100C07A62 /* Integration.m in Sources */,
-				594765BD1569F9E100C07A62 /* NSRailsModel.m in Sources */,
+				594765BD1569F9E100C07A62 /* NSRRemoteObject.m in Sources */,
 				594765BF1569F9E100C07A62 /* NSRConfig.m in Sources */,
 				594765C11569F9E100C07A62 /* NSRPropertyCollection.m in Sources */,
 			);

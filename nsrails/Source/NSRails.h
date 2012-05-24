@@ -30,3 +30,4 @@
 
 #import "NSRConfig.h"
 #import "NSRRemoteObject.h"
+#import "NSMutableArray+NSRails.h"
