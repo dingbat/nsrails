@@ -510,7 +510,7 @@ NSRailsSync(*);
 			{
 				if (railsObject)
 				{
-					if (property.isHasMany && property.nestedClass)
+					if ([railsObject isKindOfClass:[NSArray class]])
 					{
 						if (![railsObject isKindOfClass:[NSArray class]])
 							[NSException raise:NSRailsInternalError format:@"Attempt to set property '%@' in class '%@' (declared as has-many) to a non-array non-null value ('%@').", property, self.class, railsObject];
@@ -548,6 +548,7 @@ NSRailsSync(*);
 								if (!previousVal || idx == NSNotFound)
 								{
 									//didn't previously exist - make a new one
+                  property.nestedClass = [[[railsElement allKeys] objectAtIndex:0] capitalizedString];
 									decodedElement = [self makeRelevantModelFromClass:property.nestedClass basedOn:railsElement];
 									
 									changes = YES;
