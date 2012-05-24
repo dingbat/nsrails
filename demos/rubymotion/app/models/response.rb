@@ -1,8 +1,8 @@
 class Response < NSRailsModel  
-  attr_writer :author, :content, :post
+  attr_accessor :author, :content, :post
 
   # Right now there's a bug in RubyMotion that requires you to define getter methods manually
-  # Soon you'll be able just do "attr_accessor" above instead of this
+  # Hopefully soon you'll be able delete all of this
   def author; @author; end  
   def content; @content; end
   def post; @post; end

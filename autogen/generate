@@ -136,16 +136,16 @@ class Model
     str = "class #{@name} < NSRailsModel\n"
     
     names = @property_collection.property_names
-    if names
-      if false
-        #for when attr_accessor bug is fixed
-        str += "  attr_accessor :#{names.join(', :')}\n"
-      else
-        str += "  attr_writer :#{names.join(', :')}\n\n"
-        names.each do |x|
-          str += "  def #{x}; @#{x}; end\n"
-        end
+    if names && !names.empty?
+      str += "  attr_accessor :#{names.join(', :')}\n"
+      
+      ###TODO: Remove this when attr_reader bug is fixed!
+      str += "\n  #TODO: Remove this when attr_reader bug is fixed\n"
+      names.each do |x|
+        str += "  def #{x}; @#{x}; end\n"
       end
+      ###
+      
       str += "\n  def self.NSRailsSync\n    '#{sync_string(true)}'\n  end"
     end
     
