@@ -892,7 +892,12 @@ NSRailsSync(*);
 
 - (BOOL) remoteDestroy:(NSError **)error
 {
-	return !![self remoteRequest:@"DELETE" method:nil body:nil error:error];
+	BOOL didDestroy = !![self remoteRequest:@"DELETE" method:nil body:nil error:error];
+  if (*error == nil) {
+    [self.managedObjectContext deleteObject:self];
+    [self saveContext];
+  }
+  return didDestroy;
 }
 
 - (void) remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock
@@ -900,6 +905,10 @@ NSRailsSync(*);
 	[self remoteRequest:@"DELETE" method:nil body:nil async:
 	 ^(NSString *result, NSError *error) 
 	{
+    if (error == nil) {
+      [self.managedObjectContext deleteObject:self];
+      [self saveContext];
+    }
 		completionBlock(error);
 	}];
 }
@@ -997,7 +1006,11 @@ NSRailsSync(*);
 	for (NSDictionary *dict in arr)
 	{
     NSString *attr_name = [[self class] primaryKeyAttributeName];
-    NSRailsManagedObject *obj = [[self class] findExistingModelWithPrimaryKeyAttributeValue:[dict objectForKey:attr_name]];		
+    NSString *keyPath = [[NSStringFromClass([self class]) lowercaseString] stringByAppendingFormat:@".%@", attr_name];
+    NSNumber *identifier = [dict valueForKeyPath:keyPath];
+    NSRailsManagedObject *obj = [[self class] findExistingModelWithPrimaryKeyAttributeValue:identifier];
+    [obj setPropertiesUsingRemoteDictionary:dict];
+    obj.remoteID = identifier;
 		[objects addObject:obj];
 	}
 	
@@ -1130,6 +1143,15 @@ NSRailsSync(*);
 //    NSLog(@"Failed to save core data: %@", [error localizedDescription]);
 //  }  
   [[NSNotificationCenter defaultCenter] postNotificationName:@"should_save_core_data" object:nil];
+}
+
+- (void)awakeFromFetch {
+  [super awakeFromFetch];
+  NSString *primaryKey = [[self class] primaryKeyAttributeName];
+  NSNumber *primaryKeyValue = [self valueForKey:primaryKey];
+  if (self.remoteID == nil && primaryKeyValue != nil) {
+    self.remoteID = primaryKeyValue;
+  }
 }
 
 @end
