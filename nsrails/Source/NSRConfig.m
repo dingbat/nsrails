@@ -41,16 +41,21 @@
 //the stack will be comprised of this element, whose sole purpose is to point to a config, meaning it can be pushed to the stack multiple times if needed be
 
 @interface NSRConfigStackElement : NSObject
+
 @property (nonatomic, assign) NSRConfig *config;
+
 @end
+
 @implementation NSRConfigStackElement
 @synthesize config;
+
 + (NSRConfigStackElement *) elementForConfig:(NSRConfig *)c
 {
 	NSRConfigStackElement *element = [[NSRConfigStackElement alloc] init];
 	element.config = c;
 	return element;
 }
+
 @end
 
 
@@ -68,6 +73,19 @@ NSString * const NSRInternalError					= @"NSRInternalError";
 NSString * const NSRMissingURLException				= @"NSRMissingURLException";
 NSString * const NSRNullRemoteIDException			= @"NSRNullRemoteIDException";
 
+
+// Logging
+
+                     //undefined, NSRails will log nothing
+//#define NSRLog 1   //As 1, NSRails will log HTTP verbs with their outgoing URLs and any server errors being returned.
+#define NSRLog 2     //As 2, NSRails will also log any JSON going out/coming in.
+
+
+#if NSRLog > 0
+#define NSRLogError(x)	NSLog(@"%@",x);
+#else
+#define NSRLogError(x)
+#endif
 
 
 @implementation NSRConfig
