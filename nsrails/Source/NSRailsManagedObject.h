@@ -35,15 +35,16 @@
 @class NSRPropertyCollection;
 
 static NSString *NSRailsSaveCoreDataNotification = @"should_save_core_data";
-static const char contextKey;
 
 /**
  
  ### Summary
  
- `NSRailsModel` is the primary class in NSRails - any classes that inherit from it will be treated with a "remote correspondance" and ActiveResource-like APIs will be available.
-  
- Note that you do not have to define an `id` property for your Objective-C class, as your subclass will inherit `NSRailsModel`'s `remoteID` property. Foreign keys are optional but also unnecessary (see [nesting](https://github.com/dingbat/nsrails/wiki/Nesting) on the NSRails wiki).
+ `NSRailsManagedObject` is the class in NSRails for using CoreData - any classes that inherit from it will be treated with a "remote correspondance" and ActiveResource-like APIs will be available, as well as any methods from its parent class NSManagedObject.
+ This class contains the same methods as its NSRailsModel counterpart. The difference is that inheriting from this class will automatically insert the fetched objects into Core Data using a find-or-create methodology. You must ensure to name the class and its primary key according to the "Model"/"model_id" convention.
+ You must set the managed object context by using the class method setManagedObjectContext: so that NSRails can automatically CRUD Core Data objects when using its ActiveResource-like methods.
+ When the managed object context should be saved, this class will broadcast a notification defined in the NSRailsSaveCoreDataNotification constant. If you are using thread-specific contexts, you should respond to this notification and save the context according to your Core Data thread architecture. It is otherwise safe to disregard this notification.
+ When defining the data model in the *.xcdatamodeld file, you must ensure to set the Class of any entities which inherit from NSRailsManagedObject to the same value as the entity name. Otherwise, Core Data will assume your entity inherits from NSManagedObject rather than from NSRailsManagedObject. If this is not done, your application *will* crash when NSRails attempts to insert new objects.
  
  About this document:
  
