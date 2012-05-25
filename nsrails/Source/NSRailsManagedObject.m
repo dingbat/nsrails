@@ -1145,24 +1145,21 @@ NSRailsSync(*);
 + (void)saveContext {
   dispatch_async(dispatch_get_main_queue(), ^{
     NSManagedObjectContext *ctx = _context;
-    while (ctx.parentContext != nil) {
-      @try {
-        [ctx performBlockAndWait:^{
-          NSError *error = nil;
-          if (![ctx save:&error]) {
-            NSLog(@"Failed to save core data: %@", [error localizedDescription]);
-          } else {
-            NSLog(@"\"Successfully\" saved your data.");
-          }
-        }];
-      }
-      @catch (NSException *exception) {
-        NSLog(@"Couldn't save your data! Try again later :(");
-      }
-      @finally {
-        NSLog(@"Look, I don't know what else to tell you, mang.");
-        ctx = ctx.parentContext;
-      }
+    @try {
+      [ctx performBlockAndWait:^{
+        NSError *error = nil;
+        if (![ctx save:&error]) {
+          NSLog(@"NSRailsManagedObject class %@: failed to save core data with error: %@", NSStringFromClass([self class]), [error localizedDescription]);
+        } else {
+          NSLog(@"NSRailsManagedObject class %@: successfully saved core data!", NSStringFromClass([self class]));
+        }
+      }];
+    }
+    @catch (NSException *exception) {
+      NSLog(@"NSRailsManagedObject class %@ triggered an exception when trying to save core data: %@", NSStringFromClass([self class]), [exception reason]);
+    }
+    @finally {
+      
     }
   });
     [[NSNotificationCenter defaultCenter] postNotificationName:NSRailsSaveCoreDataNotification object:nil];
@@ -1173,16 +1170,15 @@ NSRailsSync(*);
     @try {
         NSError *error = nil;
         if (![self.managedObjectContext save:&error]) {
-          NSLog(@"Failed to save core data: %@", [error localizedDescription]);
+          NSLog(@"NSRailsManagedObject instance %@: failed to save core data with error: %@", NSStringFromClass([self class]), [error localizedDescription]);
         } else {
-          NSLog(@"\"Successfully\" saved your data.");
+          NSLog(@"NSRailsManagedObject instance %@: successfully saved core data!", NSStringFromClass([self class]));
         }
     }
     @catch (NSException *exception) {
-      NSLog(@"Couldn't save your data! Try again later :(");
+      NSLog(@"NSRailsManagedObject instance (%@) triggered an exception when trying to save core data: %@", NSStringFromClass([self class]), [exception reason]);
     }
     @finally {
-      NSLog(@"Look, I don't know what else to tell you, mang.");
     }
   });
   [[NSNotificationCenter defaultCenter] postNotificationName:NSRailsSaveCoreDataNotification object:nil];
