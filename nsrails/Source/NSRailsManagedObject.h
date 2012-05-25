@@ -35,6 +35,7 @@
 @class NSRPropertyCollection;
 
 static NSString *NSRailsSaveCoreDataNotification = @"should_save_core_data";
+static const char contextKey;
 
 /**
  
@@ -594,14 +595,44 @@ static NSString *NSRailsSaveCoreDataNotification = @"should_save_core_data";
  */
 - (id) initWithCustomSyncProperties:(NSString *)str customConfig:(NSRConfig *)config;
 
+/** 
+ Finds a model in Core Data whose primary key attribute is equal to the value passed in. Note that the primary key attribute is assumed to be of the form "classname_id", corresponding to a class named "Classname". 
+ 
+ @param value The value of the primary key attribute. This value will typically be an NSNumber wrapping a positive integer.
+ @return The NSRailsManagedObject from Core Data, if it exists. If it does not exist, this method will create it and return it with its primary key attribute set equal to the value parameter.
+ */
 + (id)findExistingModelWithPrimaryKeyAttributeValue:(id)value;
-+ (NSString *)primaryKeyAttributeName;
-+ (void)setManagedObjectContext:(NSManagedObjectContext *)context;
-+ (void)saveContext;
 
+/**
+ Finds the first object whose specified attribute is equal to the value passed in within the given object context.
+ @param attr_name A property name as a string on the receiver of this method.
+ @param value The desired value of attr_name.
+ @param context The managed object context on which to search for the NSRailsManagedObject
+ @return Returns if found, the first NSRailsManagedObject instance whose attr_name property is equal to value. If not found, this method returns nil. 
+ */
++ (NSRailsManagedObject *)findFirstObjectByAttribute:(NSString *)attr_name withValue:(id)value inContext:(NSManagedObjectContext *)context;
+
+/** 
+ This method takes the class name, lowercases it, then appends "_id" to it. For example, for a class called User, the primary key attribute would be "user_id".
+ @return The primary key attribute of the receiver class. 
+ */
++ (NSString *)primaryKeyAttributeName;
+
+/**
+ This method sets a static NSManagedObjectContext for NSRailsManagedObjects to use for inserting new objects and saving the context. 
+ @param context The desired managed object context.
+ */
++ (void)setManagedObjectContext:(NSManagedObjectContext *)context;
+/**
+ This method will save the statically set managed object context. It also broadcasts the NSNotification named in the NSRailsSaveCoreDataNotification constant, so if thread-specific object contexts are used, responding to this notification will allow the object context for the current thread to be saved (such as when using MagicalRecord to initialize the Core Data stack).
+ */
++ (void)saveContext;
+/**
+ This method will save the object context of the receiver. It also broadcasts the NSNotification named in the NSRailsSaveCoreDataNotification constant, so if thread-specific object contexts are used, responding to this notification will allow the object context for the current thread to be saved (such as when using MagicalRecord to initialize the Core Data stack).
+ */
+- (void)saveContext;
 
 @end
-
 
 
 /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// /

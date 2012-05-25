@@ -38,6 +38,7 @@
 #import "NSData+Additions.h"
 #import "NSObject+Properties.h"
 #import "SBJson.h"
+#import <objc/objc-runtime.h>
 
 /* 
     If this file is too intimidating, 
@@ -249,7 +250,6 @@ NSRailsSync(*);
 
 - (id) initWithCustomSyncProperties:(NSString *)str customConfig:(NSRConfig *)config
 {
-//  NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
   NSManagedObjectContext *ctx = _context;
   NSEntityDescription *desc = [NSEntityDescription entityForName:[[self class] description] inManagedObjectContext:ctx];
   
@@ -440,7 +440,6 @@ NSRailsSync(*);
 
 - (id) initWithRemoteJSON:(NSString *)json
 {
-//  NSManagedObjectContext *ctx = [NSManagedObjectContext MR_defaultContext];
   NSManagedObjectContext *ctx = _context;
   NSEntityDescription *desc = [NSEntityDescription entityForName:[[self class] description] inManagedObjectContext:ctx];
   
@@ -1144,22 +1143,48 @@ NSRailsSync(*);
 }
 
 + (void)saveContext {
-//  [[NSManagedObjectContext MR_defaultContext] MR_save];
-//  NSError *error = nil;
-//  [_context save:&error];
-//  if (error) {
-//    NSLog(@"Failed to save core data: %@", [error localizedDescription]);
-//  }
+  dispatch_async(dispatch_get_main_queue(), ^{
+    NSManagedObjectContext *ctx = _context;
+    while (ctx.parentContext != nil) {
+      @try {
+        [ctx performBlockAndWait:^{
+          NSError *error = nil;
+          if (![ctx save:&error]) {
+            NSLog(@"Failed to save core data: %@", [error localizedDescription]);
+          } else {
+            NSLog(@"\"Successfully\" saved your data.");
+          }
+        }];
+      }
+      @catch (NSException *exception) {
+        NSLog(@"Couldn't save your data! Try again later :(");
+      }
+      @finally {
+        NSLog(@"Look, I don't know what else to tell you, mang.");
+        ctx = ctx.parentContext;
+      }
+    }
+  });
     [[NSNotificationCenter defaultCenter] postNotificationName:NSRailsSaveCoreDataNotification object:nil];
 }
 
 - (void)saveContext {
-//  [[NSManagedObjectContext MR_defaultContext] MR_save];
-//  NSError *error = nil;
-//  [self.managedObjectContext save:&error];
-//  if (error) {
-//    NSLog(@"Failed to save core data: %@", [error localizedDescription]);
-//  }  
+  dispatch_async(dispatch_get_main_queue(), ^{
+    @try {
+        NSError *error = nil;
+        if (![self.managedObjectContext save:&error]) {
+          NSLog(@"Failed to save core data: %@", [error localizedDescription]);
+        } else {
+          NSLog(@"\"Successfully\" saved your data.");
+        }
+    }
+    @catch (NSException *exception) {
+      NSLog(@"Couldn't save your data! Try again later :(");
+    }
+    @finally {
+      NSLog(@"Look, I don't know what else to tell you, mang.");
+    }
+  });
   [[NSNotificationCenter defaultCenter] postNotificationName:NSRailsSaveCoreDataNotification object:nil];
 }
 
