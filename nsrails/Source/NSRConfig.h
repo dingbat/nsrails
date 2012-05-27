@@ -271,9 +271,9 @@ extern NSString * const NSRNullRemoteIDException;
 /**
  Managed object context if CoreData is being used.
  
- Should stay `nil` if CoreData is not being used.
+ This is the context into which NSRails will insert any new objects created by various internal methods (with remoteObjectWithID, remoteAll:, and initWithRemoteDictionary:). This also includes any nested objects created by the previously listed methods or remoteFetch/remoteCreate.
  
- **Default:** `nil`.
+ Should stay `nil` (default) if CoreData is not being used.
  */
 @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
 

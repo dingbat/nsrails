@@ -582,6 +582,12 @@
  */
 - (id) initWithCustomMap:(NSString *)str customConfig:(NSRConfig *)config;
 
+/**
+ Save the object context of the receiver.
+ 
+ It also broadcasts the NSNotification named in the NSRailsSaveCoreDataNotification constant, so if thread-specific object contexts are used, responding to this notification will allow the object context for the current thread to be saved (such as when using MagicalRecord to initialize the Core Data stack).
+ */
+- (void)saveContext;
 
 @end
 

@@ -53,6 +53,8 @@
 + (NSRPropertyCollection *) propertyCollection;
 - (NSRPropertyCollection *) propertyCollection;
 
+- (NSManagedObjectContext *) managedObjectContext;
+
 @end
 
 @interface NSRConfig (override)
@@ -83,6 +85,15 @@
 
 @implementation NSRRemoteObject
 @synthesize remoteID, remoteDestroyOnNesting, remoteAttributes;
+
+- (NSManagedObjectContext *) managedObjectContext
+{
+	if (self.superclass == [NSManagedObject class])
+		return [super performSelector:@selector(managedObjectContext) withObject:nil];
+	
+	return nil;
+}
+
 
 #pragma mark - Meta-NSR stuff
 
@@ -641,7 +652,7 @@ NSRMap(*);
 	
 	if (changes)
 	{
-		[[self getRelevantConfig] saveContext];
+		[self saveContext];
 	}
 	
 	return changes;
@@ -893,7 +904,12 @@ NSRMap(*);
 
 - (BOOL) remoteUpdate:(NSError **)error
 {
-	return !![self remoteRequest:@"PUT" method:nil error:error];
+	BOOL didUpdate = !![self remoteRequest:@"PUT" method:nil error:error];
+	if (didUpdate && self.managedObjectContext)
+	{
+		[self saveContext];
+	}
+	return didUpdate;
 }
 
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock
@@ -901,6 +917,10 @@ NSRMap(*);
 	[self remoteRequest:@"PUT" method:nil async:
 	 ^(id result, NSError *error) 
 	 {
+		 if (result && self.managedObjectContext)
+		 {
+			 [self saveContext];
+		 }
 		 completionBlock(error);
 	 }];
 }
@@ -909,7 +929,12 @@ NSRMap(*);
 
 - (BOOL) remoteDestroy:(NSError **)error
 {
-	return !![self remoteRequest:@"DELETE" method:nil body:nil error:error];
+	BOOL didDestroy = !![self remoteRequest:@"DELETE" method:nil body:nil error:error];
+	if (didDestroy && self.managedObjectContext)
+	{
+		[self.managedObjectContext deleteObject:CD_SELF];
+	}
+	return didDestroy;
 }
 
 - (void) remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock
@@ -917,6 +942,10 @@ NSRMap(*);
 	[self remoteRequest:@"DELETE" method:nil body:nil async:
 	 ^(id result, NSError *error) 
 	{
+		if (result && self.managedObjectContext)
+		{
+			[self.managedObjectContext deleteObject:CD_SELF];
+		}
 		completionBlock(error);
 	}];
 }
@@ -1041,6 +1070,34 @@ NSRMap(*);
 		 }
 	 }];
 }
+
+
+#pragma mark - CoreData helpers
+
+- (void) saveContext 
+{
+	dispatch_async(dispatch_get_main_queue(), ^
+	{
+		@try
+		{
+			NSError *error = nil;
+			if (![self.managedObjectContext save:&error]) 
+			{
+				NSLog(@"NSRailsManagedObject instance %@: failed to save core data with error: %@", NSStringFromClass([self class]), [error localizedDescription]);
+			} 
+			else 
+			{
+				NSLog(@"NSRailsManagedObject instance %@: successfully saved core data!", NSStringFromClass([self class]));
+			}
+		}
+		@catch (NSException *exception) 
+		{
+			NSLog(@"NSRailsManagedObject instance (%@) triggered an exception when trying to save core data: %@", NSStringFromClass([self class]), [exception reason]);
+		}
+	});
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"" object:nil];
+}
+
 
 
 #pragma mark - NSCoding
