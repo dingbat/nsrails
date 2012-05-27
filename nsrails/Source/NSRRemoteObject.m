@@ -541,7 +541,16 @@ NSRMap(*);
 						if (!checkForChange)
 							changes = YES;
 
-						NSMutableArray *newArray = [[NSMutableArray alloc] init];
+						id newArray;
+						
+						if (NSR_USE_COREDATA)
+						{
+							newArray = [[NSOrderedSet alloc] init];
+						}
+						else
+						{
+							newArray = [[NSMutableArray alloc] init];
+						}
 
 						if (property.nestedClass)
 						{							
