@@ -34,7 +34,7 @@
 #import <CoreData/CoreData.h>
 
 
-#define NSR_USE_COREDATA 1
+#define NSR_USE_COREDATA 0
 
 
 @class NSRPropertyCollection;

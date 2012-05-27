@@ -503,6 +503,27 @@ static NSString *currentEnvironment = nil;
 	[self end];
 }
 
+#pragma mark - CoreData
+
+- (void) saveContext
+{
+	dispatch_async(dispatch_get_main_queue(), ^{
+		@try {
+			[managedObjectContext performBlockAndWait:^{
+				NSError *error = nil;
+				if (![managedObjectContext save:&error]) {
+					NSLog(@"NSRailsManagedObject class %@: failed to save core data with error: %@", NSStringFromClass([self class]), [error localizedDescription]);
+				} else {
+					NSLog(@"NSRailsManagedObject class %@: successfully saved core data!", NSStringFromClass([self class]));
+				}
+			}];
+		}
+		@catch (NSException *exception) {
+			NSLog(@"NSRailsManagedObject class %@ triggered an exception when trying to save core data: %@", NSStringFromClass([self class]), [exception reason]);
+		}
+	});
+}
+
 #pragma mark - NSCoding
 
 - (id) initWithCoder:(NSCoder *)aDecoder

@@ -79,6 +79,8 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#define CD_SELF	(id)self
+
 @implementation NSRRemoteObject
 @synthesize remoteID, remoteDestroyOnNesting, remoteAttributes;
 
@@ -253,7 +255,25 @@ NSRMap(*);
 
 - (id) initWithCustomMap:(NSString *)str customConfig:(NSRConfig *)config
 {
-	if ((self = [super init]))
+	NSRConfig *relevantConfig;
+	if (config)
+		relevantConfig = config;
+	else
+		relevantConfig = [[self class] getRelevantConfig];
+	
+	if (relevantConfig.managedObjectContext)
+	{
+		NSEntityDescription *desc = [NSEntityDescription entityForName:[[self class] description] 
+												inManagedObjectContext:relevantConfig.managedObjectContext];
+		
+		self = [CD_SELF initWithEntity:desc insertIntoManagedObjectContext:relevantConfig.managedObjectContext];
+	}
+	else
+	{
+		self = [super init];
+	}
+	
+	if (self)
 	{
 		//apply inheritance rules etc to the given string
 		str = [[self class] masterNSRMapWithOverrideString:str];
@@ -410,10 +430,28 @@ NSRMap(*);
 
 - (id) initWithRemoteDictionary:(NSDictionary *)railsDict
 {
-	if ((self = [super init]))
+	NSManagedObjectContext *ctx = [[self class] getRelevantConfig].managedObjectContext;
+	
+	if (ctx)
+	{
+		NSEntityDescription *desc = [NSEntityDescription entityForName:[[self class] description] 
+												inManagedObjectContext:ctx];
+		
+		self = [CD_SELF initWithEntity:desc insertIntoManagedObjectContext:ctx];
+		
+		//don't need to save context because the setPropertiesUsingRemoteDictionary: will do it anyway
+	}
+	else
+	{
+		self = [super init];
+	}
+
+	
+	if (self)
 	{
 		[self setPropertiesUsingRemoteDictionary:railsDict applyToRemoteAttributes:YES];
 	}
+	
 	return self;
 }
 
@@ -600,6 +638,12 @@ NSRMap(*);
 			[self performSelector:setter withObject:decodedObj];
 		}
 	}
+	
+	if (changes)
+	{
+		[[self getRelevantConfig] saveContext];
+	}
+	
 	return changes;
 }
 
@@ -710,14 +754,19 @@ NSRMap(*);
 	return (route ? route : @"");
 }
 
++ (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod withID:(NSInteger)rID
+{
+	//make request on an instance, so make route "id", or "id/route" if there's an additional route included (1/edit)
+	NSString *idAndMethod = [NSString stringWithFormat:@"%d%@",rID,(customRESTMethod ? [@"/" stringByAppendingString:customRESTMethod] : @"")];
+	
+	return [self routeForControllerMethod:idAndMethod];
+}
+
 - (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod
 {
 	[self testIfCanSendInstanceRequest];
 
-	//make request on an instance, so make route "id", or "id/route" if there's an additional route included (1/edit)
-	NSString *idAndMethod = [NSString stringWithFormat:@"%@%@",self.remoteID,(customRESTMethod ? [@"/" stringByAppendingString:customRESTMethod] : @"")];
-	
-	return [[self class] routeForControllerMethod:idAndMethod];
+	return [[self class] routeForInstanceMethod:customRESTMethod withID:self.remoteID.integerValue];
 }
 
 
@@ -913,30 +962,33 @@ NSRMap(*);
 
 + (id) remoteObjectWithID:(NSInteger)mID error:(NSError **)error
 {
-	NSRRemoteObject *obj = [[[self class] alloc] init];
-	obj.remoteID = [NSDecimalNumber numberWithInteger:mID];
+	NSDictionary *objData = [[self class] remoteGET:[NSString stringWithFormat:@"%d", mID] error:error];
 	
-	if (![obj remoteFetch:error])
+	if (objData)
 	{
-		obj = nil;
+		id obj = [[[self class] alloc] initWithRemoteDictionary:objData];
+		return obj;
 	}
-
-	return obj;
+	
+	return nil;
 }
 
 + (void) remoteObjectWithID:(NSInteger)mID async:(NSRFetchObjectCompletionBlock)completionBlock
 {
-	NSRRemoteObject *obj = [[[self class] alloc] init];
-	obj.remoteID = [NSDecimalNumber numberWithInteger:mID];
-		
-	[obj remoteFetchAsync:
-	 ^(BOOL changed, NSError *error) 
-	 {
-		if (error)
-			completionBlock(nil, error);
-		else
-			completionBlock(obj, error);
-	 }];
+	[[self class] remoteGET:[NSString stringWithFormat:@"%d", mID]
+					  async:
+							 ^(id jsonRep, NSError *error) 
+							 {
+								 if (!jsonRep)
+								 {
+									 completionBlock(nil, error);
+								 }
+								 else
+								 {
+									 id obj = [[[self class] alloc] initWithRemoteDictionary:jsonRep];
+									 completionBlock(obj, nil);
+								 }
+							 }];
 }
 
 #pragma mark Get all objects (class-level)
@@ -944,6 +996,11 @@ NSRMap(*);
 //helper method for both sync+async for remoteAll
 + (NSArray *) objectsWithRemoteArray:(NSArray *)jsonArray
 {
+	if (![jsonArray isKindOfClass:[NSArray class]])
+	{
+		[NSException raise:NSRInternalError format:@"getAll method (index) for %@ controller (from %@ class) retuned this JSON: `%@`, which is not an array - check your server output.", [self masterPluralName], self.class, jsonArray];	
+	}
+	
 	NSMutableArray *objects = [NSMutableArray array];
 	
 	//iterate through every object returned by Rails (as dicts)
@@ -957,14 +1014,6 @@ NSRMap(*);
 	return objects;
 }
 
-+ (void) assertIsArray:(id)json
-{
-	if (![json isKindOfClass:[NSArray class]])
-	{
-		[NSException raise:NSRInternalError format:@"getAll method (index) for %@ controller (from %@ class) retuned this JSON: `%@`, which is not an array - check your server output.", [self masterPluralName], self.class, json];	
-	}
-}
-
 + (NSArray *) remoteAll:(NSError **)error
 {
 	//make a class GET call (so just the controller - myapp.com/users)
@@ -972,8 +1021,6 @@ NSRMap(*);
 	if (!json)
 		return nil;
 
-	[self assertIsArray:json];
-	
 	return [self objectsWithRemoteArray:json];
 }
 
@@ -988,8 +1035,6 @@ NSRMap(*);
 		 }
 		 else
 		 {
-			 [self assertIsArray:result];
-			 
 			 NSArray *array = [self objectsWithRemoteArray:result];
 			 
 			 completionBlock(array,error);

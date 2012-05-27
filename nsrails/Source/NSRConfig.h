@@ -420,6 +420,12 @@ extern NSString * const NSRNullRemoteIDException;
  */
 - (id) makeRequest:(NSString *)httpVerb requestBody:(id)body route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock;
 
+/// =============================================================================================
+/// @name CoreData
+/// =============================================================================================
+
+
+- (void) saveContext;
 
 /// =============================================================================================
 /// @name Methods to override
