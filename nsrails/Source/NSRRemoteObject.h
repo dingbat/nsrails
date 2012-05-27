@@ -29,13 +29,9 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "NSRConfig.h"
+#import "NSRails.h"
 
 #import <CoreData/CoreData.h>
-
-
-#define NSR_USE_COREDATA 0
-
 
 @class NSRPropertyCollection;
 
@@ -91,10 +87,12 @@
  
  */
 
-#if NSR_USE_COREDATA
+#ifdef NSR_USE_COREDATA
 #define _NSR_SUPERCLASS		NSManagedObject
+#define _NSR_ARRAY_CLASS	NSMutableOrderedSet
 #else
 #define _NSR_SUPERCLASS		NSObject
+#define _NSR_ARRAY_CLASS	NSMutableArray
 #endif
 
 @interface NSRRemoteObject : _NSR_SUPERCLASS <NSCoding>

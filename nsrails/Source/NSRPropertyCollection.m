@@ -29,7 +29,6 @@
  */
 
 #import "NSRPropertyCollection.h"
-#import "NSRRemoteObject.h"
 #import "NSObject+Properties.h"
 #import "NSString+Inflection.h"
 

@@ -31,7 +31,6 @@
 #import "NSRRemoteObject.h"
 
 #import "NSRPropertyCollection.h"
-#import "NSRConfig.h"
 
 #import "NSString+Inflection.h"
 #import "NSData+Additions.h"
@@ -95,15 +94,6 @@
 
 @implementation NSRRemoteObject
 @synthesize remoteID, remoteDestroyOnNesting, remoteAttributes;
-
-- (NSManagedObjectContext *) managedObjectContext
-{
-	if ([self isKindOfClass:[NSManagedObject class]])
-		return [super managedObjectContext];
-	
-	return nil;
-}
-
 
 #pragma mark - Meta-NSR stuff
 
@@ -541,16 +531,7 @@ NSRMap(*);
 						if (!checkForChange)
 							changes = YES;
 
-						id newArray;
-						
-						if (NSR_USE_COREDATA)
-						{
-							newArray = [[NSOrderedSet alloc] init];
-						}
-						else
-						{
-							newArray = [[NSMutableArray alloc] init];
-						}
+						id newArray = [[_NSR_ARRAY_CLASS alloc] init];
 
 						if (property.nestedClass)
 						{							
@@ -1103,7 +1084,15 @@ NSRMap(*);
 }
 
 
-#pragma mark - CoreData helpers
+#pragma mark - CoreData Helpers
+
+- (NSManagedObjectContext *) managedObjectContext
+{
+	if ([self isKindOfClass:[NSManagedObject class]])
+		return [super managedObjectContext];
+	
+	return nil;
+}
 
 - (void) saveContext 
 {

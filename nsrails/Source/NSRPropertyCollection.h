@@ -33,7 +33,7 @@
 //There's not much to do here.
 
 #import <Foundation/Foundation.h>
-#import "NSRConfig.h"
+#import "NSRails.h"
 
 @interface NSRProperty : NSObject <NSCoding>
 
