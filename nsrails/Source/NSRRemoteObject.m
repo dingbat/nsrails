@@ -393,12 +393,11 @@ NSRMap(*);
 	else
 	{
 		id val = [self performSelector:getter];
-		BOOL isArray = [val isKindOfClass:[NSArray class]];
 		
 		if (prop.nestedClass || prop.isArray)
 		{
 			//if the ivar is an array, we need to make every element into JSON and then put them back in the array
-			if (isArray)
+			if (prop.isArray)
 			{
 				NSMutableArray *new = [NSMutableArray arrayWithCapacity:[val count]];
 				

@@ -174,7 +174,9 @@
 				continue;
 			}
 			
-			BOOL typeIsArray = [type isEqualToString:@"NSArray"] || [type isEqualToString:@"NSMutableArray"];
+			BOOL typeIsArray = ([NSClassFromString(type) isSubclassOfClass:NSClassFromString(@"NSArray")] || 
+								[NSClassFromString(type) isSubclassOfClass:NSClassFromString(@"NSSet")] ||
+								[NSClassFromString(type) isSubclassOfClass:NSClassFromString(@"NSOrderedSet")]);
 			
 			// Looks like we're ready to officially add this property
 			NSRProperty *property = [[NSRProperty alloc] init];
