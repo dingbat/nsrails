@@ -86,7 +86,7 @@ static BOOL noServer = NO;
 	//TEST READ BY ID
 	
 	//try to retrieve ID = -1, obviously error
-	[Post remoteObjectWithID:-1 async:^(id post, NSError *error) {
+	[Post remoteObjectWithID:NSRNumber(-1) async:^(id post, NSError *error) {
 		STAssertNotNil(error, @"ASYNC Obviously no one with ID -1, where's the error?");
 		STAssertNil(post, @"ASYNC There was an error on remoteObjectWithID, post should be nil.");
 	}];
@@ -116,7 +116,7 @@ static BOOL noServer = NO;
 		/////////////////
 		//TEST READ BY ID (again)
 		
-		[Post remoteObjectWithID:[newPost.remoteID integerValue] async:^(id retrievedPost, NSError *e2) {
+		[Post remoteObjectWithID:newPost.remoteID async:^(id retrievedPost, NSError *e2) {
 			STAssertNil(e2, @"ASYNC Retrieving post we just made, should be no errors.");
 			STAssertNotNil(retrievedPost, @"ASYNC No errors retrieving post we just made, he should not be nil.");
 			STAssertEqualObjects([retrievedPost remoteID], newPost.remoteID, @"ASYNC Retrieved post should have same remoteID as created post");
@@ -198,7 +198,7 @@ static BOOL noServer = NO;
 	//TEST READ BY ID
 	
 	//try to retrieve ID = -1, obviously error
-	Post *post = [Post remoteObjectWithID:-1 error:&e];
+	Post *post = [Post remoteObjectWithID:NSRNumber(-1) error:&e];
 	
 	STAssertNotNil(e, @"Obviously no one with ID -1, where's the error?");
 	STAssertNil(post, @"There was an error on remoteObjectWithID, post should be nil.");
@@ -236,7 +236,7 @@ static BOOL noServer = NO;
 	/////////////////
 	//TEST READ BY ID (again)
 	
-	Post *retrievedPost = [Post remoteObjectWithID:[newPost.remoteID integerValue] error:&e];
+	Post *retrievedPost = [Post remoteObjectWithID:newPost.remoteID error:&e];
 	
 	STAssertNil(e, @"Retrieving post we just made, should be no errors.");
 	STAssertNotNil(retrievedPost, @"No errors retrieving post we just made, he should not be nil.");
@@ -533,7 +533,7 @@ static BOOL noServer = NO;
 	e = nil;
 	
 	//now try retrieving post and see if remoteID exists
-	Post *retrievedPost = [Post remoteObjectWithID:post.remoteID.integerValue error:&e];
+	Post *retrievedPost = [Post remoteObjectWithID:post.remoteID error:&e];
 	STAssertNil(e, @"There should be no errors in post retrieval");
 	STAssertTrue(retrievedPost.responses.count == 1, @"The retrieved post should have one response (we just made it)");
 	STAssertNotNil([[retrievedPost.responses objectAtIndex:0] remoteID], @"The response inside post's responses should have a present remoteID (we just made it)");
@@ -550,7 +550,7 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	NSRResponse *retrieveResponse = [NSRResponse remoteObjectWithID:[responseID integerValue] error:&e];
+	NSRResponse *retrieveResponse = [NSRResponse remoteObjectWithID:responseID error:&e];
 	STAssertNotNil(e, @"Response object should've been nest-deleted, where's the error in retrieving it?");
 	
 	e = nil;
@@ -901,7 +901,7 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	Post *thePostRetrieved = [Post remoteObjectWithID:thePost2.remoteID.integerValue error:&e];
+	Post *thePostRetrieved = [Post remoteObjectWithID:thePost2.remoteID error:&e];
 	STAssertNotNil(thePostRetrieved, @"should exist (we just created it");
 	STAssertNil(e,@"Should be no error retrieving post (e=%@)",e);
 

@@ -79,6 +79,16 @@
 
 @end
 
+///////////////////////////////////
+
+//Quick NSObject category to "pose" as NSManagedObject
+
+@interface NSObject (NSRCoreData)
+
+- (id) managedObjectContext;
+
+@end
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define CD_SELF	(id)self
@@ -88,8 +98,8 @@
 
 - (NSManagedObjectContext *) managedObjectContext
 {
-	if (self.superclass == [NSManagedObject class])
-		return [super performSelector:@selector(managedObjectContext) withObject:nil];
+	if ([self isKindOfClass:[NSManagedObject class]])
+		return [super managedObjectContext];
 	
 	return nil;
 }
@@ -320,13 +330,13 @@ NSRMap(*);
 // Helper method used when mapping nested properties to JSON
 - (NSRRemoteObject *) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
 {
-	//make a new class to be entered for this property/array (we can assume it subclasses NSRRemoteObject)
-	NSRRemoteObject *model = [[NSClassFromString(classN) alloc] initWithRemoteDictionary:dict];
+	Class objClass = NSClassFromString(classN);
+	NSRRemoteObject *obj = [objClass findAndUpdateExistingObjectOrCreateObjectUsingRemoteDictionary:dict];
 	
 	//see if we can assign an association to its parent (self)
 	NSString *parentModelName = [[self class] masterModelName];
-	NSArray *properties = [[model propertyCollection] objcPropertiesForRemoteEquivalent:parentModelName 
-																			autoinflect:[self getRelevantConfig].autoinflectsPropertyNames];
+	NSArray *properties = [[obj propertyCollection] objcPropertiesForRemoteEquivalent:parentModelName 
+																		  autoinflect:[self getRelevantConfig].autoinflectsPropertyNames];
 	
 	for (NSRProperty *property in properties)
 	{
@@ -334,12 +344,12 @@ NSRMap(*);
 		if (property.retrievable &&
 			[property.nestedClass isEqualToString:[self.class description]])
 		{
-			SEL setter = [[model class] setterForProperty:property.name];
-			[model performSelector:setter withObject:self];
+			SEL setter = [objClass setterForProperty:property.name];
+			[obj performSelector:setter withObject:self];
 		}
 	}
 	
-	return model;
+	return obj;
 }
 
 - (id) remoteRepresentationOfObjectForProperty:(NSRProperty *)prop
@@ -989,22 +999,22 @@ NSRMap(*);
 
 #pragma mark Get specific object (class-level)
 
-+ (id) remoteObjectWithID:(NSInteger)mID error:(NSError **)error
++ (id) remoteObjectWithID:(NSNumber *)mID error:(NSError **)error
 {
-	NSDictionary *objData = [[self class] remoteGET:[NSString stringWithFormat:@"%d", mID] error:error];
+	NSDictionary *objData = [[self class] remoteGET:[mID stringValue] error:error];
 	
 	if (objData)
 	{
-		id obj = [[[self class] alloc] initWithRemoteDictionary:objData];
+		id obj = [[self class] findAndUpdateExistingObjectOrCreateObjectUsingRemoteDictionary:objData];
 		return obj;
 	}
 	
 	return nil;
 }
 
-+ (void) remoteObjectWithID:(NSInteger)mID async:(NSRFetchObjectCompletionBlock)completionBlock
++ (void) remoteObjectWithID:(NSNumber *)mID async:(NSRFetchObjectCompletionBlock)completionBlock
 {
-	[[self class] remoteGET:[NSString stringWithFormat:@"%d", mID]
+	[[self class] remoteGET:[mID stringValue]
 					  async:
 							 ^(id jsonRep, NSError *error) 
 							 {
@@ -1014,7 +1024,7 @@ NSRMap(*);
 								 }
 								 else
 								 {
-									 id obj = [[[self class] alloc] initWithRemoteDictionary:jsonRep];
+									 id obj = [[self class] findAndUpdateExistingObjectOrCreateObjectUsingRemoteDictionary:jsonRep];
 									 completionBlock(obj, nil);
 								 }
 							 }];
@@ -1035,7 +1045,7 @@ NSRMap(*);
 	//iterate through every object returned by Rails (as dicts)
 	for (NSDictionary *dict in jsonArray)
 	{
-		NSRRemoteObject *obj = [[[self class] alloc] initWithRemoteDictionary:dict];	
+		NSRRemoteObject *obj = [[self class] findAndUpdateExistingObjectOrCreateObjectUsingRemoteDictionary:dict];	
 		
 		[objects addObject:obj];
 	}
@@ -1098,7 +1108,46 @@ NSRMap(*);
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"" object:nil];
 }
 
++ (id) findAndUpdateExistingObjectOrCreateObjectUsingRemoteDictionary:(NSDictionary *)dict
+{
+	NSRRemoteObject *obj = nil;
+	if ([[self getRelevantConfig] managedObjectContext])
+		obj = [[self class] findLocalObjectWithRemoteID:[dict objectForKey:@"id"]];
+	
+	if (obj)
+	{
+		[obj setPropertiesUsingRemoteDictionary:dict];
+	}
+	else
+	{
+		obj = [[[self class] alloc] initWithRemoteDictionary:dict];
+	}
+	return obj;
+}
 
++ (id) findLocalObjectWithRemoteID:(NSNumber *)rID
+{
+	NSManagedObjectContext *ctx = [[self getRelevantConfig] managedObjectContext];
+	
+	return [[self class] findFirstObjectByAttribute:@"remoteID" withValue:rID inContext:ctx];
+}
+
++ (id) findFirstObjectByAttribute:(NSString *)attrName withValue:(id)value inContext:(NSManagedObjectContext *)context
+{
+	NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass([self class])];
+	
+	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", attrName, value];
+	fetch.predicate = predicate;
+	fetch.fetchLimit = 1;
+	
+	NSError *error = nil;
+	NSArray *results = [context executeFetchRequest:fetch error:&error];
+	if (results.count > 0) 
+	{
+		return [results objectAtIndex:0];
+	}
+	return nil;
+}
 
 #pragma mark - NSCoding
 

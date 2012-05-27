@@ -184,7 +184,7 @@
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return Instance of receiver's class with properties from the remote object with that ID.
  */
-+ (id) remoteObjectWithID:(NSInteger)objectID error:(NSError **)error;
++ (id) remoteObjectWithID:(NSNumber *)objectID error:(NSError **)error;
 
 /**
  Retrieves an instance receiver's class corresponding to the remote object with that ID.
@@ -194,7 +194,7 @@
  @param objectID The ID of the remote object.
  @param completionBlock Block to be executed when the request is complete.
  */
-+ (void) remoteObjectWithID:(NSInteger)objectID async:(NSRFetchObjectCompletionBlock)completionBlock;
++ (void) remoteObjectWithID:(NSNumber *)objectID async:(NSRFetchObjectCompletionBlock)completionBlock;
 
 
 
