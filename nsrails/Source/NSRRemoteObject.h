@@ -542,6 +542,7 @@
 /// =============================================================================================
 
 
+
 /**
  Initializes a new instance of the receiver's class with a given dictionary input.
  
@@ -579,6 +580,23 @@
  @return YES if any changes were made to the local object, NO if object was identical before/after.
  */
 - (id) initWithCustomMap:(NSString *)str customConfig:(NSRConfig *)config;
+
+/// =============================================================================================
+/// @name CoreData
+/// =============================================================================================
+
+
++ (id) findOrInsertObjectUsingRemoteDictionary:(NSDictionary *)dict;
+
++ (id) findFirstObjectByAttribute:(NSString *)attrName withValue:(id)value inContext:(NSManagedObjectContext *)context;
+
++ (id) findObjectWithRemoteID:(NSNumber *)rID;
+
+
+- (id) initInserted;
+
+- (id) initInsertedIntoContext:(NSManagedObjectContext *)context;
+
 
 /**
  Save the object context of the receiver.

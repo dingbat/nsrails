@@ -30,7 +30,7 @@
 
 
 // CoreData
-//#define NSR_USE_COREDATA
+#define NSR_USE_COREDATA
 
 // Logging
 //					As undefined, NSRails will log nothing

@@ -321,7 +321,7 @@ NSRMap(*);
 - (NSRRemoteObject *) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict
 {
 	Class objClass = NSClassFromString(classN);
-	NSRRemoteObject *obj = [objClass findAndUpdateExistingObjectOrCreateObjectUsingRemoteDictionary:dict];
+	NSRRemoteObject *obj = [objClass findOrInsertObjectUsingRemoteDictionary:dict];
 	
 	//see if we can assign an association to its parent (self)
 	NSString *parentModelName = [[self class] masterModelName];
@@ -1005,7 +1005,7 @@ NSRMap(*);
 	
 	if (objData)
 	{
-		id obj = [[self class] findAndUpdateExistingObjectOrCreateObjectUsingRemoteDictionary:objData];
+		id obj = [[self class] findOrInsertObjectUsingRemoteDictionary:objData];
 		return obj;
 	}
 	
@@ -1026,7 +1026,7 @@ NSRMap(*);
 								 }
 								 else
 								 {
-									 id obj = [[self class] findAndUpdateExistingObjectOrCreateObjectUsingRemoteDictionary:jsonRep];
+									 id obj = [[self class] findOrInsertObjectUsingRemoteDictionary:jsonRep];
 									 completionBlock(obj, nil);
 								 }
 							 }];
@@ -1047,7 +1047,7 @@ NSRMap(*);
 	//iterate through every object returned by Rails (as dicts)
 	for (NSDictionary *dict in jsonArray)
 	{
-		NSRRemoteObject *obj = [[self class] findAndUpdateExistingObjectOrCreateObjectUsingRemoteDictionary:dict];	
+		NSRRemoteObject *obj = [[self class] findOrInsertObjectUsingRemoteDictionary:dict];	
 		
 		[objects addObject:obj];
 	}
@@ -1118,11 +1118,11 @@ NSRMap(*);
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"" object:nil];
 }
 
-+ (id) findAndUpdateExistingObjectOrCreateObjectUsingRemoteDictionary:(NSDictionary *)dict
++ (id) findOrInsertObjectUsingRemoteDictionary:(NSDictionary *)dict
 {
 	NSRRemoteObject *obj = nil;
 	if ([[self getRelevantConfig] managedObjectContext])
-		obj = [[self class] findLocalObjectWithRemoteID:[dict objectForKey:@"id"]];
+		obj = [[self class] findObjectWithRemoteID:[dict objectForKey:@"id"]];
 	
 	if (obj)
 	{
@@ -1135,16 +1135,18 @@ NSRMap(*);
 	return obj;
 }
 
-+ (id) findLocalObjectWithRemoteID:(NSNumber *)rID
++ (id) findObjectWithRemoteID:(NSNumber *)rID
 {
 	NSManagedObjectContext *ctx = [[self getRelevantConfig] managedObjectContext];
 	
-	return [[self class] findFirstObjectByAttribute:@"remoteID" withValue:rID inContext:ctx];
+	return [self findFirstObjectByAttribute:@"remoteID" withValue:rID inContext:ctx];
 }
 
 + (id) findFirstObjectByAttribute:(NSString *)attrName withValue:(id)value inContext:(NSManagedObjectContext *)context
 {
-	NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass([self class])];
+	NSString *str = NSStringFromClass([self class]);
+	NSLog(@"str=%@",str);
+	NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:str];
 	
 	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", attrName, value];
 	fetch.predicate = predicate;
@@ -1157,6 +1159,22 @@ NSRMap(*);
 		return [results objectAtIndex:0];
 	}
 	return nil;
+}
+
+- (id) initInsertedIntoContext:(NSManagedObjectContext *)context
+{
+	self = [super initWithEntity:[NSEntityDescription entityForName:[self.class description]
+											 inManagedObjectContext:context] insertIntoManagedObjectContext:context];
+	return self;
+}
+
+- (id) initInserted
+{
+	NSManagedObjectContext *ctx = [self.class getRelevantConfig].managedObjectContext;
+	self = [self initInsertedIntoContext:ctx];
+	
+	return self;
+	
 }
 
 #pragma mark - NSCoding
