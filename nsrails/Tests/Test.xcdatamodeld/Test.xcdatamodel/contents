@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1171" systemVersion="11D50" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Article" representedClassName="Article" syncable="YES">
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="subscriber" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Subscriber" inverseName="articles" inverseEntity="Subscriber" syncable="YES"/>
+    </entity>
+    <entity name="Subscriber" representedClassName="Subscriber" syncable="YES">
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="remoteID" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <relationship name="articles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Article" inverseName="subscriber" inverseEntity="Article" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Article" positionX="108" positionY="-36" width="128" height="75"/>
+        <element name="Subscriber" positionX="115" positionY="96" width="128" height="75"/>
+    </elements>
+</model>

@@ -68,6 +68,13 @@
 		597DED40156AE174005CB6F9 /* NSString+Inflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 597DED34156AE174005CB6F9 /* NSString+Inflection.m */; };
 		59CF24651571901B00476966 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59CF24641571901B00476966 /* CoreData.framework */; };
 		59CF246F1571917500476966 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59CF246E1571917500476966 /* CoreData.framework */; };
+		59EC6A7E1572A93A00AA6D79 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59CF24641571901B00476966 /* CoreData.framework */; };
+		59EC6A7F1572A93A00AA6D79 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592585C21569F067009AD599 /* SenTestingKit.framework */; };
+		59EC6A801572A93A00AA6D79 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17AA155C74890092B048 /* UIKit.framework */; };
+		59EC6A811572A93A00AA6D79 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17A8155C74200092B048 /* Foundation.framework */; };
+		59EC6A821572A93A00AA6D79 /* libNSRails.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5947645A1569F24400C07A62 /* libNSRails.a */; };
+		59EC6A8C1572A94E00AA6D79 /* NSRRemoteObject+CoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = 59EC6A4715729FE600AA6D79 /* NSRRemoteObject+CoreData.m */; };
+		59EC6A8D1572A95900AA6D79 /* Test.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 59EC6A661572A24900AA6D79 /* Test.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +91,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 594764EA1569F63200C07A62;
 			remoteInfo = NSRailsMac;
+		};
+		59EC6A741572A93A00AA6D79 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 59C4648D155C580D00920FD5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 594764591569F24400C07A62;
+			remoteInfo = NSRails;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -129,6 +143,9 @@
 		59DD17A8155C74200092B048 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		59DD17AA155C74890092B048 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		59DD17AE155C74BE0092B048 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		59EC6A4715729FE600AA6D79 /* NSRRemoteObject+CoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSRRemoteObject+CoreData.m"; sourceTree = "<group>"; };
+		59EC6A671572A24A00AA6D79 /* Test.xcdatamodel */ = {isa = PBXFileReference; path = Test.xcdatamodel; sourceTree = "<group>"; };
+		59EC6A8B1572A93A00AA6D79 /* NSRailsTests copy.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NSRailsTests copy.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -171,6 +188,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		59EC6A7D1572A93A00AA6D79 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59EC6A7E1572A93A00AA6D79 /* CoreData.framework in Frameworks */,
+				59EC6A7F1572A93A00AA6D79 /* SenTestingKit.framework in Frameworks */,
+				59EC6A801572A93A00AA6D79 /* UIKit.framework in Frameworks */,
+				59EC6A811572A93A00AA6D79 /* Foundation.framework in Frameworks */,
+				59EC6A821572A93A00AA6D79 /* libNSRails.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -210,6 +239,8 @@
 				594765B31569F9E100C07A62 /* NSRAsserts.h */,
 				594765B41569F9E100C07A62 /* NSRConfig.m */,
 				594765B51569F9E100C07A62 /* NSRPropertyCollection.m */,
+				59EC6A661572A24900AA6D79 /* Test.xcdatamodeld */,
+				59EC6A4715729FE600AA6D79 /* NSRRemoteObject+CoreData.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -258,6 +289,7 @@
 				594764671569F24400C07A62 /* NSRailsTests.octest */,
 				594764EB1569F63200C07A62 /* NSRailsMac.dylib */,
 				594764F81569F63200C07A62 /* NSRailsMacTests.octest */,
+				59EC6A8B1572A93A00AA6D79 /* NSRailsTests copy.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -385,6 +417,25 @@
 			productReference = 594764F81569F63200C07A62 /* NSRailsMacTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
+		59EC6A721572A93A00AA6D79 /* NSRailsTests CD */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 59EC6A881572A93A00AA6D79 /* Build configuration list for PBXNativeTarget "NSRailsTests CD" */;
+			buildPhases = (
+				59EC6A751572A93A00AA6D79 /* Sources */,
+				59EC6A7D1572A93A00AA6D79 /* Frameworks */,
+				59EC6A831572A93A00AA6D79 /* Resources */,
+				59EC6A871572A93A00AA6D79 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				59EC6A731572A93A00AA6D79 /* PBXTargetDependency */,
+			);
+			name = "NSRailsTests CD";
+			productName = NSRailsTests;
+			productReference = 59EC6A8B1572A93A00AA6D79 /* NSRailsTests copy.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -407,6 +458,7 @@
 			targets = (
 				594764591569F24400C07A62 /* NSRails */,
 				594764661569F24400C07A62 /* NSRailsTests */,
+				59EC6A721572A93A00AA6D79 /* NSRailsTests CD */,
 				594764EA1569F63200C07A62 /* NSRailsMac */,
 				594764F71569F63200C07A62 /* NSRailsMacTests */,
 			);
@@ -434,6 +486,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		59EC6A831572A93A00AA6D79 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59EC6A8D1572A95900AA6D79 /* Test.xcdatamodeld in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -451,6 +511,19 @@
 			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
 		594764F61569F63200C07A62 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+		59EC6A871572A93A00AA6D79 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -522,6 +595,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		59EC6A751572A93A00AA6D79 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59EC6A8C1572A94E00AA6D79 /* NSRRemoteObject+CoreData.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -534,6 +615,11 @@
 			isa = PBXTargetDependency;
 			target = 594764EA1569F63200C07A62 /* NSRailsMac */;
 			targetProxy = 594764FB1569F63200C07A62 /* PBXContainerItemProxy */;
+		};
+		59EC6A731572A93A00AA6D79 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 594764591569F24400C07A62 /* NSRails */;
+			targetProxy = 59EC6A741572A93A00AA6D79 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -776,6 +862,68 @@
 			};
 			name = Release;
 		};
+		59EC6A891572A93A00AA6D79 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "NSRailsTests copy";
+				SDKROOT = iphoneos;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		59EC6A8A1572A93A00AA6D79 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "NSRailsTests copy";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -824,7 +972,29 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		59EC6A881572A93A00AA6D79 /* Build configuration list for PBXNativeTarget "NSRailsTests CD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				59EC6A891572A93A00AA6D79 /* Debug */,
+				59EC6A8A1572A93A00AA6D79 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		59EC6A661572A24900AA6D79 /* Test.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				59EC6A671572A24A00AA6D79 /* Test.xcdatamodel */,
+			);
+			currentVersion = 59EC6A671572A24A00AA6D79 /* Test.xcdatamodel */;
+			path = Test.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 59C4648D155C580D00920FD5 /* Project object */;
 }

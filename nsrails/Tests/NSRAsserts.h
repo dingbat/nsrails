@@ -10,7 +10,6 @@
 
 #import "NSRails.h"
 #import "NSRPropertyCollection.h"
-#import "NSRConfig.h"
 #import "NSString+Inflection.h"
 #import "NSObject+Properties.h"
 
