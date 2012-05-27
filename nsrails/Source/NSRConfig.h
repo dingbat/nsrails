@@ -29,6 +29,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 #if TARGET_OS_IPHONE
 //UIKit needed for managing activity indicator
 #import <UIKit/UIKit.h>
@@ -266,6 +267,16 @@ extern NSString * const NSRNullRemoteIDException;
  **Default:** `"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'"` (Rails default).
  */
 @property (nonatomic, strong) NSString *dateFormat;
+
+/**
+ Managed object context if CoreData is being used.
+ 
+ Should stay `nil` if CoreData is not being used.
+ 
+ **Default:** `nil`.
+ */
+@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+
 
 /// =============================================================================================
 /// @name Retrieving the default config

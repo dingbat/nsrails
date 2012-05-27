@@ -90,7 +90,7 @@ NSString * const NSRNullRemoteIDException			= @"NSRNullRemoteIDException";
 
 @implementation NSRConfig
 @synthesize appURL, appUsername, appPassword;
-@synthesize autoinflectsClassNames, autoinflectsPropertyNames, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages, performsCompletionBlocksOnMainThread;
+@synthesize autoinflectsClassNames, autoinflectsPropertyNames, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages, performsCompletionBlocksOnMainThread, managedObjectContext;
 @dynamic dateFormat;
 
 #pragma mark -

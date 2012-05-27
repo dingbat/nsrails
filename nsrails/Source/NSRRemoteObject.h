@@ -31,6 +31,12 @@
 #import <Foundation/Foundation.h>
 #import "NSRConfig.h"
 
+#import <CoreData/CoreData.h>
+
+
+#define NSR_USE_COREDATA 1
+
+
 @class NSRPropertyCollection;
 
 /**
@@ -85,8 +91,13 @@
  
  */
 
+#if NSR_USE_COREDATA
+#define _NSR_SUPERCLASS		NSManagedObject
+#else
+#define _NSR_SUPERCLASS		NSObject
+#endif
 
-@interface NSRRemoteObject : NSObject <NSCoding>
+@interface NSRRemoteObject : _NSR_SUPERCLASS <NSCoding>
 {
 	//used if initialized with initWithCustomMap
 	NSRPropertyCollection *customProperties;

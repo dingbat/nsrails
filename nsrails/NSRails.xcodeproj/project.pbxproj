@@ -66,6 +66,8 @@
 		597DED3E156AE174005CB6F9 /* NSString+Inflection.h in Headers */ = {isa = PBXBuildFile; fileRef = 597DED33156AE174005CB6F9 /* NSString+Inflection.h */; };
 		597DED3F156AE174005CB6F9 /* NSString+Inflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 597DED34156AE174005CB6F9 /* NSString+Inflection.m */; };
 		597DED40156AE174005CB6F9 /* NSString+Inflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 597DED34156AE174005CB6F9 /* NSString+Inflection.m */; };
+		59CF24651571901B00476966 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59CF24641571901B00476966 /* CoreData.framework */; };
+		59CF246F1571917500476966 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59CF246E1571917500476966 /* CoreData.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -122,6 +124,8 @@
 		597DED33156AE174005CB6F9 /* NSString+Inflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Inflection.h"; sourceTree = "<group>"; };
 		597DED34156AE174005CB6F9 /* NSString+Inflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Inflection.m"; sourceTree = "<group>"; };
 		59C464D1155C59DF00920FD5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		59CF24641571901B00476966 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk/System/Library/Frameworks/CoreData.framework; sourceTree = DEVELOPER_DIR; };
+		59CF246E1571917500476966 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/CoreData.framework; sourceTree = DEVELOPER_DIR; };
 		59DD17A8155C74200092B048 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		59DD17AA155C74890092B048 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		59DD17AE155C74BE0092B048 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
@@ -140,6 +144,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59CF24651571901B00476966 /* CoreData.framework in Frameworks */,
 				594764681569F24400C07A62 /* SenTestingKit.framework in Frameworks */,
 				594764691569F24400C07A62 /* UIKit.framework in Frameworks */,
 				5947646A1569F24400C07A62 /* Foundation.framework in Frameworks */,
@@ -159,6 +164,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59CF246F1571917500476966 /* CoreData.framework in Frameworks */,
 				594764F91569F63200C07A62 /* SenTestingKit.framework in Frameworks */,
 				594764FA1569F63200C07A62 /* Cocoa.framework in Frameworks */,
 				594764FD1569F63200C07A62 /* NSRailsMac.dylib in Frameworks */,
@@ -259,6 +265,8 @@
 		59C4649B155C583900920FD5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				59CF246E1571917500476966 /* CoreData.framework */,
+				59CF24641571901B00476966 /* CoreData.framework */,
 				59DD17AE155C74BE0092B048 /* CoreGraphics.framework */,
 				59DD17AA155C74890092B048 /* UIKit.framework */,
 				59DD17A8155C74200092B048 /* Foundation.framework */,
