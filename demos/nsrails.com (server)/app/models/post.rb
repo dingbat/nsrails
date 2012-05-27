@@ -1,6 +1,6 @@
 class Post < ActiveRecord::Base
   has_many :responses, :dependent => :destroy
-  accepts_nested_attributes_for :responses
+  accepts_nested_attributes_for :responses, :allow_destroy => true
   
   validates :content, :presence => true
   validates :author, :presence => true

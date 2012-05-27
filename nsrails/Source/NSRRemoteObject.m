@@ -999,8 +999,18 @@ NSRMap(*);
 
 #pragma mark Get specific object (class-level)
 
++ (void) assertValidRemoteID:(NSNumber *)mID cmd:(SEL)sel
+{
+	if (!mID)
+	{
+		[NSException raise:NSInvalidArgumentException format:@"Attempt to call +[%@ %@] with a null remoteID.", self.class, NSStringFromSelector(sel)];
+	}
+}
+
 + (id) remoteObjectWithID:(NSNumber *)mID error:(NSError **)error
 {
+	[self assertValidRemoteID:mID cmd:_cmd];
+	
 	NSDictionary *objData = [[self class] remoteGET:[mID stringValue] error:error];
 	
 	if (objData)
@@ -1014,6 +1024,8 @@ NSRMap(*);
 
 + (void) remoteObjectWithID:(NSNumber *)mID async:(NSRFetchObjectCompletionBlock)completionBlock
 {
+	[self assertValidRemoteID:mID cmd:_cmd];
+	
 	[[self class] remoteGET:[mID stringValue]
 					  async:
 							 ^(id jsonRep, NSError *error) 

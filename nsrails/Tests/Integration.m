@@ -474,11 +474,11 @@ static BOOL noServer = NO;
 - (void) test_nesting
 {
 	NSRAssertNoServer(noServer);
-		
+	
 	NSError *e = nil;
 	
 	[[NSRConfig defaultConfig] setIgnoresClassPrefixes:NO];
-
+	
 	NSArray *resps = [NSRResponse remoteAll:&e];
 	STAssertNotNil(e, @"Without 'prefix ignore' set it should fail trying to access nsr_response...");
 	
@@ -530,27 +530,37 @@ static BOOL noServer = NO;
 	STAssertTrue(post.responses.count == 1, @"Local responses array should still have response (created properly).");
 	STAssertNotNil(response, @"Local Response object should still be here (created properly)");
 	
+	STAssertNil(response.remoteID, @"Response should have a nil remoteID since it was created on update");
+	STAssertThrowsSpecificNamed([NSRResponse remoteObjectWithID:response.remoteID error:&e], NSException, NSInvalidArgumentException, @"Should throw NSInvalidArgumentException for nil remoteID");
+	
 	e = nil;
 	
-	//now try retrieving post and see if remoteID exists
-	Post *retrievedPost = [Post remoteObjectWithID:post.remoteID error:&e];
-	STAssertNil(e, @"There should be no errors in post retrieval");
-	STAssertTrue(retrievedPost.responses.count == 1, @"The retrieved post should have one response (we just made it)");
-	STAssertNotNil([[retrievedPost.responses objectAtIndex:0] remoteID], @"The response inside post's responses should have a present remoteID (we just made it)");
-	STAssertNotNil([[retrievedPost.responses objectAtIndex:0] post], @"The response inside post's responses should have a post");
-	STAssertTrue(retrievedPost == [[retrievedPost.responses objectAtIndex:0] post], @"The retrieved post's response should point to it in the 'post' property");
+	//try fetching and seeing if rID exists
+	STAssertTrue([post remoteFetch:&e], @"");
 	
-	NSNumber *responseID = response.remoteID;
-	response.remoteDestroyOnNesting = YES;
+	NSRResponse *fetchedResponse = [[post responses] lastObject];
+	
+	STAssertTrue(fetchedResponse != response, @"Should be different because first response had no ID, so didn't know to reuse this object");
+	
+	STAssertNotNil([fetchedResponse remoteID], @"Response should have a remoteID after fetching the post");
+	
+	e = nil;
+	
+	STAssertNotNil([NSRResponse remoteObjectWithID:fetchedResponse.remoteID error:&e], @"Should be a vaild ID");
+	STAssertNil(e, @"Should be no error");
+	
+	e = nil;
+	
+	fetchedResponse.remoteDestroyOnNesting = YES;
 	STAssertTrue([post remoteUpdate:&e],@"");
 	
 	STAssertNil(e, @"There should be no error nesting Response deletion");
 	STAssertTrue(post.responses.count == 1, @"Local responses array should still have response (deleted properly).");
-	STAssertNotNil(response, @"Local Response object should still be here (deleted properly)");
 	
 	e = nil;
 	
-	NSRResponse *retrieveResponse = [NSRResponse remoteObjectWithID:responseID error:&e];
+	
+	STAssertNil([NSRResponse remoteObjectWithID:fetchedResponse.remoteID error:&e], @"Should've been deleted");
 	STAssertNotNil(e, @"Response object should've been nest-deleted, where's the error in retrieving it?");
 	
 	e = nil;
@@ -597,17 +607,27 @@ static BOOL noServer = NO;
 	e = nil;
 	
 	BOOL changes;
-	STAssertTrue([retrievedPost remoteFetch:&e changes:&changes],@"Should retrieve post just fine");
-	STAssertTrue(retrievedPost.responses.count == 1, @"Retrieved post should have 1 response ('deleted' b-t)");
-	STAssertFalse(changes,@"Should be no changes since we 'deleted' the nested response by nulling its 'post'");
-
+	STAssertTrue([post remoteFetch:&e changes:&changes],@"Should retrieve post just fine");
+	STAssertTrue(post.responses.count == 0, @"Retrieved post should have 0 responses ('deleted' b-t)");
+	STAssertTrue(changes,@"Should be changes since we 'deleted' the nested response by nulling its 'post'");
 	
+	//recreate belongsTo
+	belongsTo.post = post;
+	belongsTo.remoteID = nil;
+	
+	STAssertTrue([belongsTo remoteCreate:&e],@"");
+	STAssertTrue([post remoteFetch:&e changes:&changes],@"Should retrieve post just fine");
+	STAssertTrue(post.responses.count == 1, @"Retrieved post should have 1 responses (just recreated b-t)");
+	STAssertTrue(changes,@"Should be changes since we created a nested response");
+
+
+	//now test with dicts
 	Post *dictionariesPost = [[Post alloc] initWithCustomMap:@"*, responses -m"];
 	dictionariesPost.author = @"author";
 	dictionariesPost.content = @"content";
 	dictionariesPost.responses = [NSMutableArray array];
 	
-	NSRResponse *testResponse = [[NSRResponse alloc] init];
+	NSRResponse *testResponse = [[NSRResponse alloc] initWithCustomMap:@"*, post -b"];
 	testResponse.author = @"Test";
 	testResponse.content = @"Test";
 	
@@ -616,16 +636,16 @@ static BOOL noServer = NO;
 	STAssertFalse([dictionariesPost remoteCreate:&e],@"");
 	STAssertNotNil(e, @"Should be error, since tried to send attrs without _attributes");
 	STAssertNil(dictionariesPost.remoteID, @"Model ID shouldn't be present if there was an error on create...");
-	
-	e = nil;
 		
+	e = nil;
+	
 	// on retrieve, it should set responses in dictionary form
 	dictionariesPost.remoteID = post.remoteID;
 	
 	BOOL changes2;
 	STAssertTrue([dictionariesPost remoteFetch:&e changes:&changes2],@"e=%@",e);
 	STAssertNil(e, @"There should've been no errors on the retrieve, even if no nested model defined.");
-	STAssertEquals(dictionariesPost.responses.count, retrievedPost.responses.count, @"Should still come back with same number of dicts as responses (1)");
+	STAssertEquals(dictionariesPost.responses.count, post.responses.count, @"Should still come back with same number of dicts as responses (1)");
 	STAssertTrue([[dictionariesPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[dictionariesPost.responses objectAtIndex:0] class]));
 	STAssertTrue(changes2,@"There should be changes since new dicts were introduced");
 	
@@ -640,18 +660,6 @@ static BOOL noServer = NO;
 	testResponse.remoteID = [[dictionariesPost.responses objectAtIndex:0] objectForKey:@"id"];
 	STAssertTrue([testResponse remoteDestroy:&e],@"");	
 	STAssertNil(e, @"testResponse object should've been destroyed fine after manually setting ID from dictionary (nothing to do with nesting, just cleaning up)");
-	
-	e = nil;
-	
-	STAssertTrue([belongsTo remoteDestroy:&e],@"");
-	STAssertNil(e, @"Response object should've been destroyed fine (nothing to do with nesting, just cleaning up)");
-	
-	e = nil;
-	
-	STAssertTrue([post remoteDestroy:&e],@"");	
-	STAssertNil(e, @"Post object should've been destroyed fine (nothing to do with nesting, just cleaning up)");
-	
-	e = nil;
 }
 
 - (void) test_diff_detection
