@@ -10,6 +10,35 @@
 
 #import "NSRAsserts.h"
 
+
+@interface Post : NSRRemoteObject
+
+@property (nonatomic, strong) NSString *author, *content;
+@property (nonatomic, strong) NSMutableSet *responses;
+
+@end
+
+@implementation Post
+@synthesize author, content, responses;
+NSRMap(*, responses:Response);
+
+@end
+
+
+@interface Response : NSRRemoteObject
+
+@property (nonatomic, strong) NSString *content, *author;
+@property (nonatomic, strong) Post *post;
+
+@end
+
+@implementation Response
+@synthesize author, content, post;
+NSRMap(*, post -b);
+
+@end
+
+
 @interface NSRRemoteObject_CoreData : SenTestCase
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
@@ -27,6 +56,39 @@
 - (void) test_crud
 {
 	STAssertTrue([NSRRemoteObject isSubclassOfClass:[NSManagedObject class]], @"");
+	
+	STAssertNil([Post findObjectWithRemoteID:NSRNumber(12)], @"should be nothing with rID 12");
+	
+	Post *p = [[Post alloc] initInserted];
+	p.author = @"hi";
+	p.content = @"hello";
+	p.remoteID = NSRNumber(15);
+	
+	STAssertTrue([p remoteCreate:nil], @"");
+	STAssertTrue(p == [Post findObjectWithRemoteID:NSRNumber(p.remoteID.integerValue)], @"should find obj with that ID (just made)");
+
+	
+	Response *r = [[Response alloc] initInserted];
+	r.author = @"yo";
+	r.content = @"po";
+	r.post = p;
+	
+	STAssertTrue([r remoteCreate:nil],@"");
+	STAssertTrue(r == [Response findObjectWithRemoteID:NSRNumber(r.remoteID.integerValue)], @"should find obj with that ID (just made)");
+
+	
+	STAssertTrue([p remoteFetch:nil], @"");
+	STAssertEquals(p.responses.count, (NSUInteger)1, @"");
+	STAssertTrue([[p.responses anyObject] isKindOfClass:[Response class]], @"");
+	
+	
+	p.content = @"changed!";
+	STAssertTrue([p remoteUpdate:nil], @"");
+	
+	Post *retrieved = [Post findObjectWithRemoteID:NSRNumber(p.remoteID.integerValue)];
+	STAssertTrue(p == retrieved, @"??");
+	STAssertEqualObjects(retrieved.content, p.content, @"");
+	STAssertEqualObjects(retrieved.author, p.author, @"");
 }
 
 - (void) setUp
@@ -44,8 +106,8 @@
 	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
 }
 
-// Returns the managed object context for the application.
-// If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
+
+
 - (NSManagedObjectContext *)managedObjectContext
 {
     if (__managedObjectContext != nil) {
@@ -60,19 +122,18 @@
     return __managedObjectContext;
 }
 
-// Returns the managed object model for the application.
-// If the model doesn't already exist, it is created from the application's model.
 - (NSManagedObjectModel *)managedObjectModel
 {
     if (__managedObjectModel != nil) {
         return __managedObjectModel;
     }
-    __managedObjectModel = [NSManagedObjectModel mergedModelFromBundles:nil];
+	NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSURL *url = [bundle URLForResource:@"Test" withExtension:@"momd"];
+	
+    __managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:url];
     return __managedObjectModel;
 }
 
-// Returns the persistent store coordinator for the application.
-// If the coordinator doesn't already exist, it is created and the application's store added to it.
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
     if (__persistentStoreCoordinator != nil) {

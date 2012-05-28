@@ -144,7 +144,7 @@
 		59DD17AA155C74890092B048 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		59DD17AE155C74BE0092B048 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		59EC6A4715729FE600AA6D79 /* NSRRemoteObject+CoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSRRemoteObject+CoreData.m"; sourceTree = "<group>"; };
-		59EC6A671572A24A00AA6D79 /* Test.xcdatamodel */ = {isa = PBXFileReference; path = Test.xcdatamodel; sourceTree = "<group>"; };
+		59EC6A671572A24A00AA6D79 /* Test.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Test.xcdatamodel; sourceTree = "<group>"; };
 		59EC6A8B1572A93A00AA6D79 /* NSRailsTests copy.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NSRailsTests copy.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 

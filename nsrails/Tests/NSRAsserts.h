@@ -34,6 +34,8 @@
 
 + (NSString *) typeForProperty:(NSString *)prop;
 
++ (id) findFirstObjectByAttribute:(NSString *)attrName withValue:(id)value inContext:(NSManagedObjectContext *)context;
+
 @end
 
 @interface NSRConfig (internal)
@@ -51,7 +53,7 @@
 
 #define NSRArray(...) [NSArray arrayWithObjects:__VA_ARGS__, nil]
 #define NSRDictionary(...) [NSDictionary dictionaryWithObjectsAndKeys:__VA_ARGS__, nil]
-#define NSRNumber(x)	[NSNumber numberWithInt:x]
+#define NSRNumber(x)	[NSNumber numberWithInteger:x]
 
 #define NSRAssertEqualArraysNoOrder(arr, arr2) \
 if ([arr2 count] != arr.count) STFail(@"%@ should be equal (order doesn't matter) to %@",arr,arr2); \
