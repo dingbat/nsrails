@@ -403,10 +403,8 @@ NSRMap(*);
 			{
 				NSMutableArray *new = [NSMutableArray arrayWithCapacity:[val count]];
 				
-				for (int i = 0; i < [val count]; i++)
+				for (id element in val)
 				{
-					id element = [val objectAtIndex:i];
-					
 					id encodedObj = element;
 					
 					//if it's an NSRRemoteObject, we can use its dictionaryOfRemoteProperties
@@ -532,30 +530,27 @@ NSRMap(*);
 						if (!checkForChange)
 							changes = YES;
 
-						id newArray = [[_NSR_ARRAY_CLASS alloc] init];
+						id newArray = [[NSMutableArray alloc] init];
 
 						if (property.nestedClass)
 						{							
 							//array of NSRRemoteObjects is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
+							
+							id previousArray = ([previousVal isKindOfClass:[NSSet class]] ? 
+												[previousVal allObjects] : previousVal);
 							
 							for (id railsElement in railsObject)
 							{
 								id decodedElement;
 								
 								//see if there's a nester that matches this ID - we'd just have to update it w/this dict
-								NSUInteger idx = [previousVal indexOfObjectPassingTest:
-												  ^BOOL(NSRRemoteObject *obj, NSUInteger idx, BOOL *stop) 
-												  {
-													  if ([obj.remoteID isEqualToNumber:[railsElement objectForKey:@"id"]])
-													  {
-														  if (stop)
-															  *stop = YES;
-														  return YES;
-													  }
-													  return NO;
-												  }];
+								NSNumber *railsID = [railsElement objectForKey:@"id"];
+								id existing = nil;
 								
-								if (!previousVal || idx == NSNotFound)
+								if (railsID)
+									existing = [[previousArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"remoteID == %@",railsID]] lastObject];
+								
+								if (!existing)
 								{
 									//didn't previously exist - make a new one
 									decodedElement = [self makeRelevantModelFromClass:property.nestedClass basedOn:railsElement];
@@ -565,7 +560,7 @@ NSRMap(*);
 								else
 								{
 									//existed - simply update that one (recursively)
-									decodedElement = [previousVal objectAtIndex:idx];
+									decodedElement = existing;
 									BOOL neededChange = [decodedElement setPropertiesUsingRemoteDictionary:railsElement applyToRemoteAttributes:YES];
 									
 									if (neededChange)
@@ -575,6 +570,11 @@ NSRMap(*);
 								
 								[newArray addObject:decodedElement];
 							}
+							
+#ifdef NSR_USE_COREDATA
+							newArray = [NSMutableSet setWithArray:newArray];
+#endif
+
 						}
 						else if (property.isDate)
 						{
@@ -646,7 +646,7 @@ NSRMap(*);
 					changes = YES;
 				}	
 			}
-			
+
 			[self performSelector:setter withObject:decodedObj];
 		}
 	}
@@ -1096,7 +1096,7 @@ NSRMap(*);
 	return nil;
 }
 
-- (void) saveContext 
+- (BOOL) saveContext 
 {
 	NSError *error = nil;
 	
@@ -1104,8 +1104,11 @@ NSRMap(*);
 		if (![self.managedObjectContext save:&error]) {
 			NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
             abort();
+			
+			return NO;
 		} 
 	}
+	return YES;
 }
 
 + (id) findOrInsertObjectUsingRemoteDictionary:(NSDictionary *)dict
@@ -1135,17 +1138,14 @@ NSRMap(*);
 + (id) findFirstObjectByAttribute:(NSString *)attrName withValue:(id)value inContext:(NSManagedObjectContext *)context
 {
 	NSString *str = NSStringFromClass([self class]);
-//	NSLog(@"str=%@",str);
 	NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:str];
 	
 	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", attrName, value];
 	fetch.predicate = predicate;
 	fetch.fetchLimit = 1;
-//	NSLog(@"fetch=%@",predicate);
 	
 	NSError *error = nil;
 	NSArray *results = [context executeFetchRequest:fetch error:&error];
-//	NSLog(@"found results %@",results);
 	if (results.count > 0) 
 	{
 		return [results objectAtIndex:0];

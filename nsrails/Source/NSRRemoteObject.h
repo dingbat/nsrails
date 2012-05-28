@@ -89,7 +89,7 @@
 
 #ifdef NSR_USE_COREDATA
 #define _NSR_SUPERCLASS		NSManagedObject
-#define _NSR_ARRAY_CLASS	NSMutableOrderedSet
+#define _NSR_ARRAY_CLASS	NSMutableSet
 #define _NSR_REMOTEID_SYNTH	@dynamic
 #else
 #define _NSR_SUPERCLASS		NSObject
@@ -590,8 +590,6 @@
 
 + (id) findOrInsertObjectUsingRemoteDictionary:(NSDictionary *)dict;
 
-+ (id) findFirstObjectByAttribute:(NSString *)attrName withValue:(id)value inContext:(NSManagedObjectContext *)context;
-
 + (id) findObjectWithRemoteID:(NSNumber *)rID;
 
 
@@ -604,8 +602,10 @@
  Save the object context of the receiver.
  
  It also broadcasts the NSNotification named in the NSRailsSaveCoreDataNotification constant, so if thread-specific object contexts are used, responding to this notification will allow the object context for the current thread to be saved (such as when using MagicalRecord to initialize the Core Data stack).
+ 
+ @return Whether or not the save was successful.
  */
-- (void)saveContext;
+- (BOOL) saveContext;
 
 @end
 
