@@ -85,6 +85,7 @@
 @interface NSObject (NSRCoreData)
 
 - (id) managedObjectContext;
+- (id) initWithEntity:(id)e insertIntoManagedObjectContext:(id)ctx;
 
 @end
 
@@ -93,7 +94,8 @@
 #define CD_SELF	(id)self
 
 @implementation NSRRemoteObject
-@synthesize remoteID, remoteDestroyOnNesting, remoteAttributes;
+@synthesize remoteDestroyOnNesting, remoteAttributes;
+_NSR_REMOTEID_SYNTH remoteID;
 
 #pragma mark - Meta-NSR stuff
 
@@ -394,7 +396,7 @@ NSRMap(*);
 	{
 		id val = [self performSelector:getter];
 		
-		if (prop.nestedClass || prop.isArray)
+		if (val && (prop.nestedClass || prop.isArray))
 		{
 			//if the ivar is an array, we need to make every element into JSON and then put them back in the array
 			if (prop.isArray)
@@ -649,7 +651,7 @@ NSRMap(*);
 		}
 	}
 	
-	if (changes)
+	if (changes && self.managedObjectContext)
 	{
 		[self saveContext];
 	}
@@ -700,8 +702,8 @@ NSRMap(*);
 		
 		id remoteRep = [self remoteRepresentationOfObjectForProperty:objcProperty];
 
-		//don't include a null id in json 
-		if (!remoteRep && [railsEquivalent isEqualToString:@"id"])
+		//don't include id if it's null OR if it's the main object (nested guys need their IDs)
+		if ([railsEquivalent isEqualToString:@"id"] && (!remoteRep || !nesting))
 			continue;
 
 		if (!remoteRep)
@@ -932,6 +934,7 @@ NSRMap(*);
 	if (didDestroy && self.managedObjectContext)
 	{
 		[self.managedObjectContext deleteObject:CD_SELF];
+		[self saveContext];
 	}
 	return didDestroy;
 }
@@ -1095,26 +1098,14 @@ NSRMap(*);
 
 - (void) saveContext 
 {
-	dispatch_async(dispatch_get_main_queue(), ^
-	{
-		@try
-		{
-			NSError *error = nil;
-			if (![self.managedObjectContext save:&error]) 
-			{
-				NSLog(@"NSRailsManagedObject instance %@: failed to save core data with error: %@", NSStringFromClass([self class]), [error localizedDescription]);
-			} 
-			else 
-			{
-				NSLog(@"NSRailsManagedObject instance %@: successfully saved core data!", NSStringFromClass([self class]));
-			}
-		}
-		@catch (NSException *exception) 
-		{
-			NSLog(@"NSRailsManagedObject instance (%@) triggered an exception when trying to save core data: %@", NSStringFromClass([self class]), [exception reason]);
-		}
-	});
-	[[NSNotificationCenter defaultCenter] postNotificationName:@"" object:nil];
+	NSError *error = nil;
+	
+	if (self.managedObjectContext) {
+		if (![self.managedObjectContext save:&error]) {
+			NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            abort();
+		} 
+	}
 }
 
 + (id) findOrInsertObjectUsingRemoteDictionary:(NSDictionary *)dict
@@ -1144,15 +1135,17 @@ NSRMap(*);
 + (id) findFirstObjectByAttribute:(NSString *)attrName withValue:(id)value inContext:(NSManagedObjectContext *)context
 {
 	NSString *str = NSStringFromClass([self class]);
-	NSLog(@"str=%@",str);
+//	NSLog(@"str=%@",str);
 	NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:str];
 	
 	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", attrName, value];
 	fetch.predicate = predicate;
 	fetch.fetchLimit = 1;
+//	NSLog(@"fetch=%@",predicate);
 	
 	NSError *error = nil;
 	NSArray *results = [context executeFetchRequest:fetch error:&error];
+//	NSLog(@"found results %@",results);
 	if (results.count > 0) 
 	{
 		return [results objectAtIndex:0];
@@ -1162,8 +1155,9 @@ NSRMap(*);
 
 - (id) initInsertedIntoContext:(NSManagedObjectContext *)context
 {
-	self = [super initWithEntity:[NSEntityDescription entityForName:[self.class description]
-											 inManagedObjectContext:context] insertIntoManagedObjectContext:context];
+	self = [NSEntityDescription insertNewObjectForEntityForName:[self.class description]
+										 inManagedObjectContext:context];
+	[self saveContext];
 	return self;
 }
 
@@ -1193,7 +1187,7 @@ NSRMap(*);
 
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
-	[aCoder encodeObject:remoteID forKey:@"remoteID"];
+	[aCoder encodeObject:self.remoteID forKey:@"remoteID"];
 	[aCoder encodeObject:remoteAttributes forKey:@"remoteAttributes"];
 	[aCoder encodeBool:remoteDestroyOnNesting forKey:@"remoteDestroyOnNesting"];
 	

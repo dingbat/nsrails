@@ -90,9 +90,11 @@
 #ifdef NSR_USE_COREDATA
 #define _NSR_SUPERCLASS		NSManagedObject
 #define _NSR_ARRAY_CLASS	NSMutableOrderedSet
+#define _NSR_REMOTEID_SYNTH	@dynamic
 #else
 #define _NSR_SUPERCLASS		NSObject
 #define _NSR_ARRAY_CLASS	NSMutableArray
+#define _NSR_REMOTEID_SYNTH	@synthesize
 #endif
 
 @interface NSRRemoteObject : _NSR_SUPERCLASS <NSCoding>
