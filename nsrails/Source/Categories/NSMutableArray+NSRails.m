@@ -43,25 +43,20 @@
 	
 	for (NSDictionary *dict in array)
 	{
-		NSInteger existingIdx = [self indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) 
-								 {
-									 if ([[obj remoteID] isEqualToNumber:[dict objectForKey:@"id"]])
-									 {
-										 *stop = YES;
-										 return YES;
-									 }
-									 return NO;
-								 }];
+		NSNumber *railsID = [dict objectForKey:@"id"];
+		id existing = nil;
 		
-		if (existingIdx == NSNotFound)
+		if (railsID)
+			existing = [[self filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"remoteID == %@",railsID]] lastObject];
+		
+		if (!existing)
 		{
-			id new = [[class alloc] initWithRemoteDictionary:dict];
+			id new = [class findOrInsertObjectUsingRemoteDictionary:dict];
 			[self addObject:new];
 			changes = YES;
 		}
 		else
 		{
-			id existing = [self objectAtIndex:existingIdx];
 			BOOL neededChange = [existing setPropertiesUsingRemoteDictionary:dict];
 			if (neededChange)
 				changes = YES;
