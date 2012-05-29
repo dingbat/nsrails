@@ -1100,8 +1100,13 @@ NSRMap(*);
 	{
 		if (![self.managedObjectContext save:&error])
 		{
+			//TODO
+			// maybe notify a client delegate to handle this error?
+			// raise exception?
+
 			NSLog(@"NSR Warning: Failed to save CoreData context with error %@", error);
-            abort();
+			
+			return NO;
 		}
 		else
 		{
