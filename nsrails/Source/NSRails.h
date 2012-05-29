@@ -1,7 +1,7 @@
 /*
  
  _|_|_|    _|_|  _|_|  _|_|  _|  _|      _|_|   
- _|  _|  _|_|    _|    _|_|  _|  _|_|  _|_|    v1.0.2
+ _|  _|  _|_|    _|    _|_|  _|  _|_|  _|_|    v1.1
  
  NSRails.h
  
@@ -29,15 +29,33 @@
  */
 
 
+//////////////
 // CoreData
+//////////////
+
 //#define NSR_USE_COREDATA
 
+// Uncomment the line above if you want to enable CoreData
+//   (will make NSRRemoteObject subclass NSManagedObject instead of NSObject)
+//   See http://dingbat.github.com/nsrails/Classes/NSRRemoteObject.html#coredata for more details
+
+
+
+//////////////
 // Logging
+//////////////
+
 //					As undefined, NSRails will log nothing
 //#define NSRLog 1	//As 1, NSRails will log HTTP verbs with their outgoing URLs and any server errors being returned.
 #define NSRLog 2	//As 2, NSRails will also log any JSON going out/coming in.
 
 
+
+//////////////
+// Imports
+//////////////
+
 #import "NSRConfig.h"
 #import "NSRRemoteObject.h"
 #import "NSMutableArray+NSRails.h"
+

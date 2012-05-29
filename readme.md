@@ -25,10 +25,10 @@ Post *postNumber1 = [Post remoteObjectWithID:1 error:&error];
 Features
 --------
 
-* [High-level API](http://dingbat.github.com/nsrails/html/Classes/NSRRemoteObject.html), yet flexible enough even to work with any RESTful server
-* [Highly customizable “syncing”](https://github.com/dingbat/nsrails/wiki/NSRMap) with your Rails attributes
-* [Nesting](https://github.com/dingbat/nsrails/wiki/Nesting) supported for relations like has-many, belongs-to, etc
-* [Asynchronous requests](http://dingbat.github.com/nsrails/html/Classes/NSRRemoteObject.html)
+* [High-level API](http://dingbat.github.com/nsrails/Classes/NSRRemoteObject.html#tasks), yet flexible enough even to work with any RESTful server
+* [CoreData integration](http://dingbat.github.com/nsrails/Classes/NSRRemoteObject.html#coredata)
+* [Highly customizable “syncing”](https://github.com/dingbat/nsrails/wiki/NSRMap) with your Rails attributes (+ [nesting](https://github.com/dingbat/nsrails/wiki/Nesting) for relations like has-many, belongs-to, etc)
+* [Asynchronous requests](http://dingbat.github.com/nsrails/Classes/NSRRemoteObject.html#tasks)
 * [Autogenerate](https://github.com/dingbat/nsrails/tree/master/autogen) NSRails-ready classes from a Rails project
 * [Supported in RubyMotion and MacRuby](https://github.com/dingbat/nsrails/tree/master/demos/rubymotion)
 
@@ -128,9 +128,11 @@ Dependencies
 Credits
 ----------
 
-Version 1.0.2.
+Version 1.1.
 
-A lot of NSRails was inspired by the [ObjectiveResource](https://github.com/yfactorial/objectiveresource) project. Thanks!
+A lot of NSRails was inspired by the [ObjectiveResource](https://github.com/yfactorial/objectiveresource) project. CoreData integration help from jdjennin of Twin Engine Labs.
+
+Thanks!
 
 License (MIT)
 ---------
