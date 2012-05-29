@@ -54,6 +54,8 @@
 	
 	<option value="//api/name/ignoresClassPrefixes">&nbsp;&nbsp;&nbsp;&nbsp;ignoresClassPrefixes</option>
 	
+	<option value="//api/name/managedObjectContext">&nbsp;&nbsp;&nbsp;&nbsp;managedObjectContext</option>
+	
 	<option value="//api/name/managesNetworkActivityIndicator">&nbsp;&nbsp;&nbsp;&nbsp;managesNetworkActivityIndicator</option>
 	
 	<option value="//api/name/performsCompletionBlocksOnMainThread">&nbsp;&nbsp;&nbsp;&nbsp;performsCompletionBlocksOnMainThread</option>
@@ -158,6 +160,8 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/ignoresClassPrefixes">ignoresClassPrefixes</a></span></li>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/managedObjectContext">managedObjectContext</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/managesNetworkActivityIndicator">managesNetworkActivityIndicator</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/performsCompletionBlocksOnMainThread">performsCompletionBlocksOnMainThread</a></span></li>
@@ -248,11 +252,9 @@
 					<div class="section section-overview">
 						<a title="Overview" name="overview"></a>
 						<h2 class="subtitle subtitle-overview">Overview</h2>
-						<h3>Summary</h3>
+						<p>The NSRails configuration class is <code>NSRConfig</code>, a class that stores your Rails app&rsquo;s configuration settings (server URL, etc) for either your app globally or in specific instances. It also supports basic HTTP authentication and can be subclassed to fit specific implementations.</p>
 
-<p>The NSRails configuration class is <code>NSRConfig</code>, a class that stores your Rails app&rsquo;s configuration settings (server URL, etc) for either your app globally or in specific instances. It also supports basic HTTP authentication and can be subclassed to fit specific implementations.</p>
-
-<h3>Universal Config</h3>
+<h2>Universal Config</h2>
 
 <p>This should meet the needs of the vast majority of Rails apps. Somewhere in your app setup, set your server URL (and optionally a username and password) using the <a href="#//api/name/defaultConfig"><code>defaultConfig</code></a> singleton:</p>
 
@@ -270,7 +272,7 @@
  }
 </code></pre>
 
-<h3>Config environments</h3>
+<h2>Config environments</h2>
 
 <p><code>NSRConfig</code> supports several environments if you have a test and production server and don&rsquo;t want to switch between the two all the time. The constants <code>NSRConfigEnvironmentDevelopment</code> and <code>NSRConfigEnvironmentProduction</code> can be used, but any string will do.</p>
 
@@ -290,7 +292,7 @@
 
 <p>The environment in which a config exists (production, development, or your own) has no bearing on its behavior in sending/receiving from your server.</p>
 
-<h3>Using several configs in one project</h3>
+<h2>Using several configs in one project</h2>
 
 <ul>
 <li>If you simply need to direct different models to different URLs, you can <a href="#//api/name/use">use</a> the <a href="https://github.com/dingbat/nsrails/wiki/Macros">NSRUseConfig</a> macro.</li>
@@ -323,7 +325,7 @@
 </ul>
 
 
-<h3>Subclassing NSRConfig</h3>
+<h2>Subclassing NSRConfig</h2>
 
 <p>Subclassing NSRConfig can be useful if you want to implement a connection method that&rsquo;s not HTTP (for example, HTTPS), or if you&rsquo;re using a non-Rails REST service with different standards. Moreover, it can be used to generate errors specific to your app.</p>
 
@@ -438,6 +440,13 @@
 	<span class="tooltip">
 		<code><a href="#//api/name/dateFormat">&nbsp;&nbsp;dateFormat</a></code>
 		<span class="tooltip"><p>Date <a href="" title="[https://developer.apple.com/library/mac/](https://developer.apple.com/library/mac/)#documentation/Cocoa/Conceptual/DataFormatting/Articles/dfDateFormatting10_4.html%23//apple_ref/doc/uid/TP40002369-SW4">format</a> used if a property of type NSDate is encountered, to &ldquo;encode&rdquo; and &ldquo;decode&rdquo; NSDate objects.</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/managedObjectContext">&nbsp;&nbsp;managedObjectContext</a></code>
+		<span class="tooltip"><p>Managed object context for CoreData support. <strong>(Required if CoreData is enabled)</strong></p></span>
 	</span>
 	<span class="task-item-suffix">property</span>
 	
@@ -881,6 +890,47 @@
 		<p>Example: <code>NSRClass</code> will simply become <code>class</code>, instead of <code>nsr_class</code>.</p>
 
 <p><strong>Default:</strong> <code>YES</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRConfig.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/managedObjectContext" title="managedObjectContext"></a>
+	<h3 class="subsubtitle method-title">managedObjectContext</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Managed object context for CoreData support. <strong>(Required if CoreData is enabled)</strong></p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This is the context into which NSRails will insert any new objects created by various internal methods, or search for any existing objects.</p>
+
+<p>Should stay <code>nil</code> (default) if CoreData is not being used.</p>
 	</div>
 	
 	
@@ -1471,13 +1521,13 @@
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
 		
 		<dl class="argument-def parameter-def">
-			<dt><em>statusCode</em></dt>
-			<dd><p>Status code that was returned with the response.</p></dd>
+			<dt><em>jsonResponse</em></dt>
+			<dd><p>Response representation given by a server.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
-			<dt><em>response</em></dt>
-			<dd><p>Response representation given by a server.</p></dd>
+			<dt><em>statusCode</em></dt>
+			<dd><p>Status code that was returned with the response.</p></dd>
 		</dl>
 		
 	</div>
@@ -1591,13 +1641,13 @@
 		</dl>
 		
 		<dl class="argument-def parameter-def">
-			<dt><em>completionBlock</em></dt>
-			<dd><p>If this parameter is not <code>NULL</code>, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is <code>NULL</code>, request will be made synchronously and the <em>sync</em> paramter may be used.</p></dd>
+			<dt><em>error</em></dt>
+			<dd><p>Pointer to an <code>NSError</code> object. Only used if <em>completionBlock</em> is <code>NULL</code>. May be <code>NULL</code>.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
-			<dt><em>sync</em></dt>
-			<dd><p>Pointer to an <code>NSError</code> object. Only used if <em>completionBlock</em> is <code>NULL</code>. May be <code>NULL</code>.</p></dd>
+			<dt><em>completionBlock</em></dt>
+			<dd><p>If this parameter is not <code>NULL</code>, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is <code>NULL</code>, request will be made synchronously and the <em>sync</em> paramter may be used.</p></dd>
 		</dl>
 		
 	</div>
@@ -1665,13 +1715,13 @@
 		</dl>
 		
 		<dl class="argument-def parameter-def">
-			<dt><em>completionBlock</em></dt>
-			<dd><p>If this parameter is not <code>NULL</code>, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is <code>NULL</code>, request will be made synchronously and the <em>sync</em> paramter may be used.</p></dd>
+			<dt><em>error</em></dt>
+			<dd><p>Pointer to an <code>NSError</code> object. Only used if <em>completionBlock</em> is <code>NULL</code>. May be <code>NULL</code>.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
-			<dt><em>sync</em></dt>
-			<dd><p>Pointer to an <code>NSError</code> object. Only used if <em>completionBlock</em> is <code>NULL</code>. May be <code>NULL</code>.</p></dd>
+			<dt><em>completionBlock</em></dt>
+			<dd><p>If this parameter is not <code>NULL</code>, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is <code>NULL</code>, request will be made synchronously and the <em>sync</em> paramter may be used.</p></dd>
 		</dl>
 		
 	</div>
@@ -1875,7 +1925,7 @@
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-05-24)</span><br />
+						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-05-29)</span><br />
 						
 						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 789)</a>.</span></p>
 						

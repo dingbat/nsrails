@@ -4,7 +4,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/cl/NSRConfig</TokenIdentifier>
-			<Abstract type="html">### Summary</Abstract>
+			<Abstract type="html">The NSRails configuration class is NSRConfig, a class that stores your Rails app&apos;s configuration settings (server URL, etc) for either your app globally or in specific instances. It also supports basic HTTP authentication and can be subclassed to fit specific implementations.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>
 			
 			<NodeRef refid="1"/>
@@ -254,6 +254,28 @@
 		</Token>
 		
 		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setManagedObjectContext:</TokenIdentifier>
+			<Abstract type="html">Managed object context for CoreData support. (Required if CoreData is enabled)</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext</Declaration>
+			
+			
+			<Anchor>//api/name/managedObjectContext</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/managedObjectContext</TokenIdentifier>
+			<Abstract type="html">Managed object context for CoreData support. (Required if CoreData is enabled)</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext</Declaration>
+			
+			
+			<Anchor>//api/name/managedObjectContext</Anchor>
+		</Token>
+		
+		<Token>
 			<TokenIdentifier>//apple_ref/occ/clm/NSRConfig/defaultConfig</TokenIdentifier>
 			<Abstract type="html">Returns the current default configuration.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
@@ -472,11 +494,11 @@
 					<Name>route</Name>
 					<Abstract type="html">The route to which the request will be made. This is appended to the appURL, so not the full URL. For instance, articles/1.</Abstract>
 				</Parameter><Parameter>
+					<Name>error</Name>
+					<Abstract type="html">Pointer to an NSError object. Only used if completionBlock is NULL. May be NULL.</Abstract>
+				</Parameter><Parameter>
 					<Name>completionBlock</Name>
 					<Abstract type="html">If this parameter is not NULL, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is NULL, request will be made synchronously and the sync paramter may be used.</Abstract>
-				</Parameter><Parameter>
-					<Name>sync</Name>
-					<Abstract type="html">Pointer to an NSError object. Only used if completionBlock is NULL. May be NULL.</Abstract>
 				</Parameter>
 			</Parameters>
 			<ReturnValue><Abstract type="html">The response representation (parsed from JSON), only if request is made synchronously. Otherwise, will return nil.</Abstract></ReturnValue>
@@ -500,11 +522,11 @@
 					<Name>url</Name>
 					<Abstract type="html">The url to which the request will be made (full URL.)</Abstract>
 				</Parameter><Parameter>
+					<Name>error</Name>
+					<Abstract type="html">Pointer to an NSError object. Only used if completionBlock is NULL. May be NULL.</Abstract>
+				</Parameter><Parameter>
 					<Name>completionBlock</Name>
 					<Abstract type="html">If this parameter is not NULL, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is NULL, request will be made synchronously and the sync paramter may be used.</Abstract>
-				</Parameter><Parameter>
-					<Name>sync</Name>
-					<Abstract type="html">Pointer to an NSError object. Only used if completionBlock is NULL. May be NULL.</Abstract>
 				</Parameter>
 			</Parameters>
 			<ReturnValue><Abstract type="html">The response representation (parsed from JSON), only if request is made synchronously. Otherwise, will return nil.</Abstract></ReturnValue>
@@ -519,11 +541,11 @@
 			<Declaration>- (NSError *)errorForResponse:(id)jsonResponse statusCode:(NSInteger)statusCode</Declaration>
 			<Parameters>
 				<Parameter>
+					<Name>jsonResponse</Name>
+					<Abstract type="html">Response representation given by a server.</Abstract>
+				</Parameter><Parameter>
 					<Name>statusCode</Name>
 					<Abstract type="html">Status code that was returned with the response.</Abstract>
-				</Parameter><Parameter>
-					<Name>response</Name>
-					<Abstract type="html">Response representation given by a server.</Abstract>
 				</Parameter>
 			</Parameters>
 			<ReturnValue><Abstract type="html">Error if one could be extracted - otherwise nil.</Abstract></ReturnValue>

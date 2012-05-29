@@ -4,7 +4,9 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/cl/NSRRemoteObject</TokenIdentifier>
-			<Abstract type="html">### Summary</Abstract>
+			<Abstract type="html">NSRRemoteObject is the primary class in NSRails - any classes that inherit from it will be treated with a &quot;remote correspondance&quot; and ActiveResource-like APIs will be available.
+  
+Note that you do not have to define an id property for your Objective-C class, as your subclass will inherit NSRRemoteObject&apos;s remoteID property. Foreign keys are optional but also unnecessary (see nesting on the NSRails wiki).</Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>
 			
 			<NodeRef refid="2"/>
@@ -114,7 +116,7 @@
 			<Abstract type="html">Returns an instance of receiver&apos;s class corresponding to the remote object with that ID.</Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>+ (id)remoteObjectWithID:(NSInteger)objectID error:(NSError **)error</Declaration>
+			<Declaration>+ (id)remoteObjectWithID:(NSNumber *)objectID error:(NSError **)error</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>objectID</Name>
@@ -133,7 +135,7 @@
 			<Abstract type="html">Retrieves an instance receiver&apos;s class corresponding to the remote object with that ID.</Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>+ (void)remoteObjectWithID:(NSInteger)objectID async:(NSRFetchObjectCompletionBlock)completionBlock</Declaration>
+			<Declaration>+ (void)remoteObjectWithID:(NSNumber *)objectID async:(NSRFetchObjectCompletionBlock)completionBlock</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>objectID</Name>
@@ -620,10 +622,12 @@ Note that because this only tracks differences in local changes, properties that
 			<Parameters>
 				<Parameter>
 					<Name>dictionary</Name>
-					<Abstract type="html">Dictionary to be evaluated.</Abstract>
+					<Abstract type="html">Dictionary to be evaluated. The keys in this dictionary (being a remote dictionary) should have remote keys, since this will pass through NSRMap (eg, &quot;id&quot;, not &quot;remoteID&quot;, and if a special equivalence isn&apos;t defined, &quot;my_property&quot;, not &quot;myProperty&quot;).
+
+Note that this dictionary needs to be JSON-parasable, meaning all keys are strings and all objects are instances of NSString, NSNumber, NSArray, NSDictionary, or NSNull.</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract type="html">YES if any changes were made to the local object, NO if object was identical before/after.</Abstract></ReturnValue>
+			<ReturnValue><Abstract type="html">A new instance of the receiver&apos;s class with properties set using dictionary.</Abstract></ReturnValue>
 			<Anchor>//api/name/initWithRemoteDictionary:</Anchor>
 		</Token>
 		
@@ -639,7 +643,7 @@ Note that because this only tracks differences in local changes, properties that
 					<Abstract type="html">String to become this instance&apos;s NSRMap - pass as you would an NSRMap string (see above).</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract type="html">YES if any changes were made to the local object, NO if object was identical before/after.</Abstract></ReturnValue>
+			<ReturnValue><Abstract type="html">A new instance of the receiver&apos;s class with the given custom map string.</Abstract></ReturnValue>
 			<Anchor>//api/name/initWithCustomMap:</Anchor>
 		</Token>
 		
@@ -658,8 +662,95 @@ Note that because this only tracks differences in local changes, properties that
 					<Abstract type="html">Config to become this instance&apos;s config.</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract type="html">YES if any changes were made to the local object, NO if object was identical before/after.</Abstract></ReturnValue>
+			<ReturnValue><Abstract type="html">A new instance of the receiver&apos;s class with the given custom map string and given custom config.</Abstract></ReturnValue>
 			<Anchor>//api/name/initWithCustomMap:customConfig:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/findOrInsertObjectUsingRemoteDictionary:</TokenIdentifier>
+			<Abstract type="html">Finds the existing local object (or creates a new one) based off the dictionary passed in.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>+ (id)findOrInsertObjectUsingRemoteDictionary:(NSDictionary *)dictionary</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>dictionary</Name>
+					<Abstract type="html">The dictionary to update existing objects or to use to create new ones. This method does nothing if the dictionary does not contain object for key id.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract type="html">Either an existing object with the remoteID specified by id in dictionary, a new instance with properties set to those specified in dictionary, or nil if dictionary doesn&apos;t contain an object for the key id.</Abstract></ReturnValue>
+			<Anchor>//api/name/findOrInsertObjectUsingRemoteDictionary:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/findObjectWithRemoteID:</TokenIdentifier>
+			<Abstract type="html">Finds the object in CoreData whose remoteID is equal to the value passed in.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+	<RelatedTokens>
+		<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/findOrInsertObjectUsingRemoteDictionary:</TokenIdentifier>
+		
+	</RelatedTokens>
+	
+			<Declaration>+ (id)findObjectWithRemoteID:(NSNumber *)rID</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>rID</Name>
+					<Abstract type="html">The remoteID to search for.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract type="html">The object from CoreData, if it exists. If it does not exist, returns nil.</Abstract></ReturnValue>
+			<Anchor>//api/name/findObjectWithRemoteID:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/initInserted</TokenIdentifier>
+			<Abstract type="html">Instantiates a new instance, inserts it into the default CoreData context, and saves the context.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+	<RelatedTokens>
+		<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/initInsertedIntoContext:</TokenIdentifier>
+		
+	</RelatedTokens>
+	
+			<Declaration>- (id)initInserted</Declaration>
+			
+			<ReturnValue><Abstract type="html">The newly inserted object.</Abstract></ReturnValue>
+			<Anchor>//api/name/initInserted</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/initInsertedIntoContext:</TokenIdentifier>
+			<Abstract type="html">Instantiates a new instance, inserts it into the specified CoreData context, and saves the context.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+	<RelatedTokens>
+		<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/initInserted</TokenIdentifier>
+		
+	</RelatedTokens>
+	
+			<Declaration>- (id)initInsertedIntoContext:(NSManagedObjectContext *)context</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>context</Name>
+					<Abstract type="html">The context into which to insert this new instance.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract type="html">The newly inserted object.</Abstract></ReturnValue>
+			<Anchor>//api/name/initInsertedIntoContext:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/saveContext</TokenIdentifier>
+			<Abstract type="html">Save the CoreData object context of the receiver.
+  
+This method should not be used without CoreData enabled (see top).</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (BOOL)saveContext</Declaration>
+			
+			<ReturnValue><Abstract type="html">Whether or not the save was successful.</Abstract></ReturnValue>
+			<Anchor>//api/name/saveContext</Anchor>
 		</Token>
 		
 	</File>

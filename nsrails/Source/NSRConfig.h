@@ -64,11 +64,9 @@ extern NSString * const NSRCoreDataException;
 
 /**
  
- ### Summary
- 
  The NSRails configuration class is `NSRConfig`, a class that stores your Rails app's configuration settings (server URL, etc) for either your app globally or in specific instances. It also supports basic HTTP authentication and can be subclassed to fit specific implementations.
  
- ### Universal Config
+ ## Universal Config
  
  This should meet the needs of the vast majority of Rails apps. Somewhere in your app setup, set your server URL (and optionally a username and password) using the `defaultConfig` singleton:
 
@@ -86,7 +84,7 @@ extern NSString * const NSRCoreDataException;
 		 ...
 	 }
  
- ### Config environments
+ ## Config environments
  
  `NSRConfig` supports several environments if you have a test and production server and don't want to switch between the two all the time. The constants `NSRConfigEnvironmentDevelopment` and `NSRConfigEnvironmentProduction` can be used, but any string will do.
  
@@ -105,7 +103,7 @@ extern NSString * const NSRCoreDataException;
  
  The environment in which a config exists (production, development, or your own) has no bearing on its behavior in sending/receiving from your server.
  
- ### Using several configs in one project
+ ## Using several configs in one project
  
  - If you simply need to direct different models to different URLs, you can use the [NSRUseConfig](https://github.com/dingbat/nsrails/wiki/Macros) macro.
  - If specific actions must be called using a separate config, an `NSRConfig` instance can be used to define a context block in which to call those config-specific methods:
@@ -134,7 +132,7 @@ extern NSString * const NSRCoreDataException;
 	You can nest several config contexts within each other.
 
 
- ### Subclassing NSRConfig
+ ## Subclassing NSRConfig
  
  Subclassing NSRConfig can be useful if you want to implement a connection method that's not HTTP (for example, HTTPS), or if you're using a non-Rails REST service with different standards. Moreover, it can be used to generate errors specific to your app.
  
@@ -270,9 +268,9 @@ extern NSString * const NSRCoreDataException;
 @property (nonatomic, strong) NSString *dateFormat;
 
 /**
- Managed object context if CoreData is being used.
+ Managed object context for CoreData support. **(Required if CoreData is enabled)**
  
- This is the context into which NSRails will insert any new objects created by various internal methods (with remoteObjectWithID, remoteAll:, and initWithRemoteDictionary:). This also includes any nested objects created by the previously listed methods or remoteFetch/remoteCreate.
+ This is the context into which NSRails will insert any new objects created by various internal methods, or search for any existing objects. 
  
  Should stay `nil` (default) if CoreData is not being used.
  */
@@ -415,7 +413,7 @@ extern NSString * const NSRCoreDataException;
  @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
  @param body Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).
  @param route The route to which the request will be made. This is appended to the `appURL`, so not the full URL. For instance, `articles/1`.
- @param sync Pointer to an `NSError` object. Only used if *completionBlock* is `NULL`. May be `NULL`.
+ @param error Pointer to an `NSError` object. Only used if *completionBlock* is `NULL`. May be `NULL`.
  @param completionBlock If this parameter is not `NULL`, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is `NULL`, request will be made synchronously and the *sync* paramter may be used.
  @return The response representation (parsed from JSON), only if request is made synchronously. Otherwise, will return `nil`.
  */
@@ -433,7 +431,7 @@ extern NSString * const NSRCoreDataException;
  @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
  @param body Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).
  @param url The url to which the request will be made (full URL.)
- @param sync Pointer to an `NSError` object. Only used if *completionBlock* is `NULL`. May be `NULL`.
+ @param error Pointer to an `NSError` object. Only used if *completionBlock* is `NULL`. May be `NULL`.
  @param completionBlock If this parameter is not `NULL`, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is `NULL`, request will be made synchronously and the *sync* paramter may be used.
  @return The response representation (parsed from JSON), only if request is made synchronously. Otherwise, will return `nil`. 
  */
@@ -446,7 +444,7 @@ extern NSString * const NSRCoreDataException;
  
  You can also override this on its own if you have errors you want handled that NSRails doesn't take of already.
  
- @param response Response representation given by a server.
+ @param jsonResponse Response representation given by a server.
  @param statusCode Status code that was returned with the response.
  @return Error if one could be extracted - otherwise nil.
  */
