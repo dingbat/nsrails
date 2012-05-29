@@ -33,6 +33,30 @@
 
 @implementation NSMutableArray (NSRFetch)
 
+- (void) assertValidSubclass:(Class)class
+{
+	if (![class isSubclassOfClass:[NSRRemoteObject class]])
+	{
+		[NSException raise:NSInvalidArgumentException format:@"Class passed into remoteFetchAll:error:changes: (%@) is not a subclass of NSRRemoteObject.",class];
+	}
+}
+
+- (void) translateRemoteDictionariesIntoInstancesOfClass:(Class)class
+{
+	[self assertValidSubclass:class];
+	
+	for (int i = 0; i < self.count; i++)
+	{
+		NSDictionary *dict = [self objectAtIndex:i];
+		if ([dict isKindOfClass:[NSDictionary class]])
+		{
+			NSRRemoteObject *obj = [class findOrInsertObjectUsingRemoteDictionary:dict];	
+			
+			[self replaceObjectAtIndex:i withObject:obj];
+		}
+	}
+}
+
 //helper method to set array to returned values - has to keep the objects, just update them individually to their new dict
 //returns whether or not there was a local change
 - (BOOL) setSelfToRemoteArray:(NSArray *)array forClass:(Class)class
@@ -72,14 +96,6 @@
 	}
 	
 	return changes;
-}
-
-- (void) assertValidSubclass:(Class)class
-{
-	if (![class isSubclassOfClass:[NSRRemoteObject class]])
-	{
-		[NSException raise:NSInvalidArgumentException format:@"Class passed into remoteFetchAll:error:changes: (%@) is not a subclass of NSRRemoteObject.",class];
-	}
 }
 
 - (BOOL) remoteFetchAll:(Class)class error:(NSError **)errorPtr changes:(BOOL *)changesPtr

@@ -338,7 +338,12 @@ static NSString *currentEnvironment = nil;
 	
 	NSLog(@"IN<=== Code %d;",(int)code);
 	
-	id jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
+	id jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments | NSJSONReadingMutableContainers error:nil];
+	
+	//right now there's a bug with NSJSONReadingMutableContainers. it simply... doesn't work???
+	if ([jsonResponse isKindOfClass:[NSArray class]] && ![jsonResponse isKindOfClass:[NSMutableArray class]])
+		jsonResponse = [NSMutableArray arrayWithArray:jsonResponse];
+	
 	if (!jsonResponse)
 		jsonResponse = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 	

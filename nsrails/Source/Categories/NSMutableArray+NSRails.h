@@ -60,4 +60,12 @@
  */
 - (void) remoteFetchAll:(Class)class async:(NSRFetchCompletionBlock)completionBlock;
 
+
+/**
+ Replaces each dictionary in this array with an instance of the given class, setting respective properties to those defined in that dictionary (using the class's NSRMap).
+ 
+ This method can be useful when interpreting a retrieved array (representation of your server's JSON out) from a remoteGET method or similar.
+ */
+- (void) translateRemoteDictionariesIntoInstancesOfClass:(Class)class;
+
 @end

@@ -1040,35 +1040,17 @@ NSRMap(*);
 
 #pragma mark Get all objects (class-level)
 
-//helper method for both sync+async for remoteAll
-+ (NSArray *) objectsWithRemoteArray:(NSArray *)jsonArray
-{
-	if (![jsonArray isKindOfClass:[NSArray class]])
-	{
-		[NSException raise:NSRInternalError format:@"getAll method (index) for %@ controller (from %@ class) retuned this JSON: `%@`, which is not an array - check your server output.", [self masterPluralName], self.class, jsonArray];	
-	}
-	
-	NSMutableArray *objects = [NSMutableArray array];
-	
-	//iterate through every object returned by Rails (as dicts)
-	for (NSDictionary *dict in jsonArray)
-	{
-		NSRRemoteObject *obj = [[self class] findOrInsertObjectUsingRemoteDictionary:dict];	
-		
-		[objects addObject:obj];
-	}
-	
-	return objects;
-}
-
 + (NSArray *) remoteAll:(NSError **)error
 {
 	//make a class GET call (so just the controller - myapp.com/users)
 	id json = [self remoteGET:nil error:error];
+	NSLog(@"got back %@",[json class]);
 	if (!json)
 		return nil;
 
-	return [self objectsWithRemoteArray:json];
+	[json translateRemoteDictionariesIntoInstancesOfClass:[self class]];
+
+	return json;
 }
 
 + (void) remoteAllAsync:(NSRFetchAllCompletionBlock)completionBlock
@@ -1082,9 +1064,9 @@ NSRMap(*);
 		 }
 		 else
 		 {
-			 NSArray *array = [self objectsWithRemoteArray:result];
+			 [result translateRemoteDictionariesIntoInstancesOfClass:[self class]];
 			 
-			 completionBlock(array,error);
+			 completionBlock(result,error);
 		 }
 	 }];
 }

@@ -279,6 +279,47 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 
 @implementation TNSRRemoteObject
 
+- (void) test_array_category
+{
+	NSMutableArray *a = [[NSMutableArray alloc] init];
+	
+	STAssertThrows([a translateRemoteDictionariesIntoInstancesOfClass:nil], @"Should throw exception if no class given");
+	STAssertThrows([a translateRemoteDictionariesIntoInstancesOfClass:[NSString class]], @"Should throw exception if bad given");
+	
+	[a translateRemoteDictionariesIntoInstancesOfClass:[NoSyncStringTester class]];
+	
+	STAssertTrue(a.count == 0, @"should still have 0 elements after empty array");
+	
+	[a addObject:NSRDictionary(NSRNumber(5),@"id",@"hi",@"property1")];
+	[a addObject:NSRDictionary(NSRNumber(6),@"id",@"hi",@"3f2f3f")];
+	[a addObject:NSRDictionary(NSRNumber(7),@"remoteID")];
+	
+	for (int i = 0; i < 2; i++)
+	{
+		[a translateRemoteDictionariesIntoInstancesOfClass:[NoSyncStringTester class]];
+
+		STAssertTrue(a.count == (i == 0 ? 3 : 4), @"should still have X elements after translation");
+		
+		STAssertTrue([[a objectAtIndex:0] isKindOfClass:[NoSyncStringTester class]], @"should be NoSyncStringTester after translation");
+		STAssertEqualObjects([[a objectAtIndex:0] remoteID],NSRNumber(5), @"should have appropriate remoteID");
+		STAssertEqualObjects([[a objectAtIndex:0] property1],@"hi", @"should have appropriate property1");
+
+		STAssertTrue([[a objectAtIndex:1] isKindOfClass:[NoSyncStringTester class]], @"should be NoSyncStringTester after translation");
+		STAssertEqualObjects([[a objectAtIndex:1] remoteID],NSRNumber(6), @"should have appropriate remoteID");
+		STAssertNil([[a objectAtIndex:1] property1],@"should have appropriate property1");
+
+		STAssertNil([[a objectAtIndex:2] remoteID],@"should have nil remoteID (no id key)");
+		STAssertNil([[a objectAtIndex:2] property1],@"should have appropriate property1");
+	
+		if (i == 1)
+		{
+			STAssertTrue([[a objectAtIndex:3] isKindOfClass:[NSString class]], @"should be NSString after translation");
+		}
+		
+		[a addObject:@"str"];
+	}	
+}
+
 - (void) test_NSRMap
 {
 	NSRAssertEqualSyncStrings([Empty masterNSRMap], @"remoteID=id", @"failed default (no NSRMap) being * AND empty");
