@@ -87,28 +87,46 @@
 	 }
  
  
- ## CoreData
+ <a name="coredata"></a>
 
- By default, NSRRemoteObject inherits from NSObject. Because your managed, NSRails-enabled class need to inherit from NSManagedObject in order to function within CoreData, and because Objective-C does not allow multiple inheritance, NSRRemoteObject will modify its superclass to NSManagedObject during compiletime if `NSR_USE_COREDATA` is defined.
+ ## CoreData
  
- **So, if you wish to use NSRails with CoreData, go into `NSRails.h` and uncomment this line:**
+ ### Setting up
  
-	//NSRails.h
+ **You can either:**
  
-	#define NSR_USE_COREDATA
+ - Go into **`NSRails.h`** and uncomment this line:
  
- If you don't wish to mess with NSRails source, you can also add `NSR_USE_COREDATA` to "Preprocessor Macros Not Used in Precompiled Headers" in your target's build settings. [Screenshot here](http://i.imgur.com/U3AcQ.png).
+		#define NSR_USE_COREDATA
  
- Some things to note when using NSRails with CoreData:
+ - OR, if you don't want to mess with NSRails source, you can also add **`NSR_USE_COREDATA`** to "Preprocessor Macros Not Used in Precompiled Headers" in your target's build settings:
+ 
+
+ <div style="text-align:center"><a href="cd-flag.png"><img src="cd-flag.png" width=350></img></a></div>
+ 
+ **Why is this necessary?**
+ 
+ - By default, NSRRemoteObject inherits from NSObject. Because your managed, NSRails-enabled class need to inherit from NSManagedObject in order to function within CoreData, and because Objective-C does not allow multiple inheritance, NSRRemoteObject will modify its superclass to NSManagedObject during compiletime if `NSR_USE_COREDATA` is defined.
+ 
+ 
+ ### Some things to note when using NSRails with CoreData:
  
  - You must set your managed object context to your config's managedObjectContext property so that NSRails can automatically insert or search for CoreData objects when operations require it:
 	
 		[[NSRConfig defaultConfig] setManagedObjectContext:<#your MOC#>];
  
- - When defining the data model in your *.xcdatamodeld file, each entity that subclasses NSRRemoteObject **must** declare a `remoteID` attribute (Integer 16 and indexed). `remoteID` is used as a "primary key" that NSRails will use to find other instances, etc. Also ensure that you're using only subclasses (ie, set the Class of any entities to your desired subclass). Using generic NSManagedObjects is not supported.
+ - CRUD operations in NSRails will insert into, delete into, or simply save the managed object context accordingly. For more details, see the descriptions of each CRUD method, under their "CoreData" headers.
  
- - CRUD operations in NSRails will insert into, delete into, or simply save the managed object context accordingly. For more details, see the descriptions of each CRUD method, under the "CoreData" header.
- */
+ - `remoteID` is used as a "primary key" that NSRails will use to find other instances, etc. This means that `remoteID` has to be defined in your *.xcdatamodeld data model file. 
+ 
+	- You can either create an abstract entity named NSRRemoteObject that defines a `remoteID` attribute and acts as a parent to your other entities (preferred), **OR** declare `remoteID` for each entity that subclasses NSRRemoteObject:
+ 
+	<div style="text-align:center; max-height:100%; height:250px; vertical-align:middle;"><a href="cd-abstract.png"><img src="cd-abstract.png" height=250></img></a> **OR** <a href="cd-no-abstract.png"><img src="cd-no-abstract.png" height=220></img></a></div>
+ 
+	- `remoteID` should be an Integer (16 is fine) and indexed.
+
+	- Also ensure that you're using only subclasses (ie, set the Class of any entities to your desired subclass). Using generic NSManagedObjects or even NSRRemoteObjects is not supported.
+  */
 
 #ifdef NSR_USE_COREDATA
 #define _NSR_SUPERCLASS		NSManagedObject

@@ -351,28 +351,56 @@ NSRUseConfig(@"http://myotherserver.com");
  }
 </code></pre>
 
+<p><a name="coredata"></a></p>
+
 <h2>CoreData</h2>
 
-<p>By default, NSRRemoteObject inherits from NSObject. Because your managed, NSRails-enabled class need to inherit from NSManagedObject in order to function within CoreData, and because Objective-C does not allow multiple inheritance, NSRRemoteObject will modify its superclass to NSManagedObject during compiletime if <code>NSR_USE_COREDATA</code> is defined.</p>
 
-<p><strong>So, if you wish to use NSRails with CoreData, go into <code>NSRails.h</code> and uncomment this line:</strong></p>
+<h3>Setting up</h3>
 
-<pre><code>//NSRails.h
+<p><strong>You can either:</strong></p>
 
-#define NSR_USE_COREDATA
-</code></pre>
+<ul>
+<li><p>Go into <strong><code>NSRails.h</code></strong> and uncomment this line:</p>
 
-<p>If you don&rsquo;t wish to mess with NSRails source, you can also add <code>NSR_USE_COREDATA</code> to &ldquo;Preprocessor Macros Not Used in Precompiled Headers&rdquo; in your target&rsquo;s build settings. <a href="http://i.imgur.com/U3AcQ.png">Screenshot here</a>.</p>
+<pre><code>  #define NSR_USE_COREDATA
+</code></pre></li>
+<li><p>OR, if you don&rsquo;t want to mess with NSRails source, you can also add <strong><code>NSR_USE_COREDATA</code></strong> to &ldquo;Preprocessor Macros Not Used in Precompiled Headers&rdquo; in your target&rsquo;s build settings:</p></li>
+</ul>
 
-<p>Some things to note when using NSRails with CoreData:</p>
+
+<div style="text-align:center"><a href="cd-flag.png"><img src="cd-flag.png" width=350></img></a></div>
+
+
+<p><strong>Why is this necessary?</strong></p>
+
+<ul>
+<li>By default, NSRRemoteObject inherits from NSObject. Because your managed, NSRails-enabled class need to inherit from NSManagedObject in order to function within CoreData, and because Objective-C does not allow multiple inheritance, NSRRemoteObject will modify its superclass to NSManagedObject during compiletime if <code>NSR_USE_COREDATA</code> is defined.</li>
+</ul>
+
+
+<h3>Some things to note when using NSRails with CoreData:</h3>
 
 <ul>
 <li><p>You must set your managed object context to your config&rsquo;s managedObjectContext property so that NSRails can automatically insert or search for CoreData objects when operations require it:</p>
 
 <pre><code>  [[NSRConfig defaultConfig] setManagedObjectContext:&lt;#your MOC#&gt;];
 </code></pre></li>
-<li><p>When defining the data model in your *.xcdatamodeld file, each entity that subclasses NSRRemoteObject <strong>must</strong> declare a <a href="#//api/name/remoteID"><code>remoteID</code></a> attribute (Integer 16 and indexed). <a href="#//api/name/remoteID"><code>remoteID</code></a> is used as a &ldquo;primary key&rdquo; that NSRails will use to find other instances, etc. Also ensure that you&rsquo;re using only subclasses (ie, set the Class of any entities to your desired subclass). Using generic NSManagedObjects is not supported.</p></li>
-<li><p>CRUD operations in NSRails will insert into, delete into, or simply save the managed object context accordingly. For more details, see the descriptions of each CRUD method, under the &ldquo;CoreData&rdquo; header.</p></li>
+<li><p>CRUD operations in NSRails will insert into, delete into, or simply save the managed object context accordingly. For more details, see the descriptions of each CRUD method, under their &ldquo;CoreData&rdquo; headers.</p></li>
+<li><p><code>remoteID</code> is used as a &ldquo;primary key&rdquo; that NSRails will use to find other instances, etc. This means that <code>remoteID</code> has to be defined in your *.xcdatamodeld data model file.</p>
+
+<ul>
+<li>You can either create an abstract entity named NSRRemoteObject that defines a <a href="#//api/name/remoteID"><code>remoteID</code></a> attribute and acts as a parent to your other entities (preferred), <strong>OR</strong> declare <a href="#//api/name/remoteID"><code>remoteID</code></a> for each entity that subclasses NSRRemoteObject:</li>
+</ul>
+
+
+<p>  <div style="text-align:center; max-height:100%; height:250px; vertical-align:middle;"><a href="cd-abstract.png"><img src="cd-abstract.png" height=250></img></a> <strong>OR</strong> <a href="cd-no-abstract.png"><img src="cd-no-abstract.png" height=220></img></a></div></p>
+
+<ul>
+<li><p><a href="#//api/name/remoteID"><code>remoteID</code></a> should be an Integer (16 is fine) and indexed.</p></li>
+<li><p>Also ensure that you&rsquo;re using only subclasses (ie, set the Class of any entities to your desired subclass). Using generic NSManagedObjects or even NSRRemoteObjects is not supported.</p></li>
+</ul>
+</li>
 </ul>
 
 					</div>
