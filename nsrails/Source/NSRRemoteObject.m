@@ -52,7 +52,11 @@
 + (NSRPropertyCollection *) propertyCollection;
 - (NSRPropertyCollection *) propertyCollection;
 
+- (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict applyToRemoteAttributes:(BOOL)remote;
+- (void) assertCanSendInstanceRequest;
+
 - (NSManagedObjectContext *) managedObjectContext;
++ (NSManagedObjectContext *) getGlobalManagedObjectContextFromCmd:(SEL)cmd;
 
 @end
 
@@ -769,7 +773,7 @@ NSRMap(*);
 
 - (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod
 {
-	[self testIfCanSendInstanceRequest];
+	[self assertCanSendInstanceRequest];
 
 	return [[self class] routeForInstanceMethod:customRESTMethod withID:self.remoteID.integerValue];
 }
@@ -777,7 +781,7 @@ NSRMap(*);
 
 #pragma mark Performing actions on instances
 
-- (void) testIfCanSendInstanceRequest
+- (void) assertCanSendInstanceRequest
 {
 	if (!self.remoteID)
 	{
@@ -802,14 +806,14 @@ NSRMap(*);
 - (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod error:(NSError **)error
 {
 	//done again so it can be tested before converting to JSON
-	[self testIfCanSendInstanceRequest];
+	[self assertCanSendInstanceRequest];
 	
 	return [self remoteRequest:httpVerb method:customRESTMethod body:[self remoteDictionaryRepresentationWrapped:YES] error:error];
 }
 
 - (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock
 {
-	[self testIfCanSendInstanceRequest];
+	[self assertCanSendInstanceRequest];
 	
 	[self remoteRequest:httpVerb method:customRESTMethod body:[self remoteDictionaryRepresentationWrapped:YES] async:completionBlock];
 }
@@ -898,12 +902,11 @@ NSRMap(*);
 
 - (BOOL) remoteUpdate:(NSError **)error
 {
-	BOOL didUpdate = !![self remoteRequest:@"PUT" method:nil error:error];
-	if (didUpdate)
-	{
-		[self saveContext];
-	}
-	return didUpdate;
+	if (![self remoteRequest:@"PUT" method:nil error:error])
+		return NO;
+
+	[self saveContext];
+	return YES;
 }
 
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock
@@ -923,13 +926,12 @@ NSRMap(*);
 
 - (BOOL) remoteDestroy:(NSError **)error
 {
-	BOOL didDestroy = !![self remoteRequest:@"DELETE" method:nil body:nil error:error];
-	if (didDestroy)
-	{
-		[self.managedObjectContext deleteObject:CD_SELF];
-		[self saveContext];
-	}
-	return didDestroy;
+	if (![self remoteRequest:@"DELETE" method:nil body:nil error:error])
+		return NO;
+
+	[self.managedObjectContext deleteObject:CD_SELF];
+	[self saveContext];
+	return YES;
 }
 
 - (void) remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock
@@ -1112,14 +1114,19 @@ NSRMap(*);
 + (id) findOrInsertObjectUsingRemoteDictionary:(NSDictionary *)dict
 {
 	NSRRemoteObject *obj = nil;
-	if ([[self getRelevantConfig] managedObjectContext])
-		obj = [[self class] findObjectWithRemoteID:[dict objectForKey:@"id"]];
+	
+#ifdef NSR_USE_COREDATA
+	NSNumber *objID = [dict objectForKey:@"id"];
+	if (!objID)
+		return nil;
+		
+	obj = [[self class] findObjectWithRemoteID:objID];
 	
 	if (obj)
-	{
 		[obj setPropertiesUsingRemoteDictionary:dict];
-	}
-	else
+#endif
+	
+	if (!obj)
 	{
 		obj = [[[self class] alloc] initWithRemoteDictionary:dict];
 	}
@@ -1128,9 +1135,14 @@ NSRMap(*);
 
 + (id) findObjectWithRemoteID:(NSNumber *)rID
 {
-	NSManagedObjectContext *ctx = [[self getRelevantConfig] managedObjectContext];
+	if ([self class] == [NSRRemoteObject class])
+	{
+		[NSException raise:NSRCoreDataException format:@"Attempt to call %@ on NSRRemoteObject. Call this on your subclass!",NSStringFromSelector(_cmd)];
+	}
 	
-	return [self findFirstObjectByAttribute:@"remoteID" withValue:rID inContext:ctx];
+	return [self findFirstObjectByAttribute:@"remoteID" 
+								  withValue:rID
+								  inContext:[self getGlobalManagedObjectContextFromCmd:_cmd]];
 }
 
 + (id) findFirstObjectByAttribute:(NSString *)attrName withValue:(id)value inContext:(NSManagedObjectContext *)context
@@ -1151,32 +1163,72 @@ NSRMap(*);
 	return nil;
 }
 
++ (NSManagedObjectContext *) getGlobalManagedObjectContextFromCmd:(SEL)cmd
+{
+	NSManagedObjectContext *ctx = [self.class getRelevantConfig].managedObjectContext;
+	if (!ctx)
+	{
+		[NSException raise:NSRCoreDataException format:@"-[%@ %@] called when the current config's managedObjectContext is nil. A vaild managedObjectContext is necessary when using CoreData. Set your managed object context like so: [[NSRConfig defaultConfig] setManagedObjectContext:<#your moc#>].", self.class, NSStringFromSelector(cmd)];
+	}
+	return ctx;
+}
+
 - (id) initInsertedIntoContext:(NSManagedObjectContext *)context
 {
-	@try 
+	if ([self class] == [NSRRemoteObject class])
 	{
-		self = [NSEntityDescription insertNewObjectForEntityForName:[self.class description]
-											 inManagedObjectContext:context];
-		[self saveContext];
+		[NSException raise:NSRCoreDataException format:@"Attempt to call %@ on NSRRemoteObject. Call this on your subclass!",NSStringFromSelector(_cmd)];
 	}
-	@catch (NSException *exception) 
+	else if (![self isKindOfClass:[NSManagedObject class]])
 	{
-		self = nil;
 		[NSException raise:NSRCoreDataException format:@"Trying to use NSRails with CoreData? Go in NSRails.h and uncomment `#define NSR_CORE_DATA`. You can also add NSR_USE_COREDATA to \"Preprocessor Macros Not Used in Precompiled Headers\" in your target's build settings."];
 	}
+	
+	self = [NSEntityDescription insertNewObjectForEntityForName:[self.class description]
+										 inManagedObjectContext:context];
+	[self saveContext];
+	
 	return self;
 }
 
 - (id) initInserted
 {
-	NSManagedObjectContext *ctx = [self.class getRelevantConfig].managedObjectContext;
-	if (!ctx)
-	{
-		[NSException raise:NSRCoreDataException format:@"-[%@ initInserted] called when the current config's managedObjectContext is nil. A vaild managedObjectContext is necessary when using CoreData. Set your managed object context like so: [[NSRConfig defaultConfig] setManagedObjectContext:<#your moc#>].", self.class];
-	}
-	self = [self initInsertedIntoContext:ctx];
+	self = [self initInsertedIntoContext:[[self class] getGlobalManagedObjectContextFromCmd:_cmd]];
 	
 	return self;
+}
+
+- (BOOL) validateRemoteID:(id *)value error:(NSError **)error 
+{
+	if ([*value intValue] == 0)
+		return YES;
+	
+	NSString *str = NSStringFromClass([self class]);
+	NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:str];
+	fetch.includesPropertyValues = NO;
+	fetch.fetchLimit = 1;
+	
+	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(remoteID == %@) && (self != %@)", *value, self];
+	fetch.predicate = predicate;
+	
+	NSArray *results = [self.managedObjectContext executeFetchRequest:fetch error:NULL];
+	
+	if (results.count > 0)
+	{
+		NSString *reason = [NSString stringWithFormat:@"%@ with remoteID %@ already exists",self.class,*value];
+		
+		if (error)
+			*error = [NSError errorWithDomain:NSRCoreDataException code:0 userInfo:[NSDictionary dictionaryWithObject:reason forKey:NSLocalizedDescriptionKey]];
+		
+		//Should this even throw an exception?
+		[NSException raise:NSRCoreDataException format:reason];
+		
+		return NO;
+	}
+	else
+	{
+		return YES;
+	}
 }
 
 #pragma mark - NSCoding

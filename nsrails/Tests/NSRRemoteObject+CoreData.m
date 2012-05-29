@@ -53,6 +53,26 @@ NSRMap(*, post -b);
 @synthesize managedObjectModel = __managedObjectModel;
 @synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
 
+- (void) test_exceptions
+{
+	STAssertThrows([[NSRRemoteObject alloc] initInserted], @"");
+
+	[[NSRConfig defaultConfig] setManagedObjectContext:nil];
+	
+	STAssertThrows([[Post alloc] initInserted], @"");
+	STAssertThrows([[NSRRemoteObject alloc] initInserted], @"");
+	STAssertThrows([[Post alloc] initWithCustomMap:nil customConfig:nil], @"");
+	STAssertThrows([[Post alloc] initWithCustomMap:nil customConfig:[[NSRConfig alloc] initWithAppURL:@"hufihiufh"]], @"");
+	
+	Post *p = [[Post alloc] initInsertedIntoContext:__managedObjectContext];
+	p.remoteID = NSRNumber(15);
+	[p saveContext];
+	
+	Post *p2 = [[Post alloc] initInsertedIntoContext:__managedObjectContext];
+	p2.remoteID = NSRNumber(15);
+	STAssertThrows([p2 saveContext],@"");	
+}
+
 - (void) test_crud
 {
 	STAssertTrue([NSRRemoteObject isSubclassOfClass:[NSManagedObject class]], @"");
@@ -108,34 +128,35 @@ NSRMap(*, post -b);
 
 - (void) test_finds
 {
+	STAssertThrows([NSRRemoteObject findObjectWithRemoteID:NSRNumber(12)], @"should crash");
+	
 	STAssertNil([Post findObjectWithRemoteID:NSRNumber(12)], @"should be nothing with rID 12");
 
 	Post *p = [Post findOrInsertObjectUsingRemoteDictionary:NSRDictionary(NSRNumber(12),@"id")];
 	
 	STAssertNotNil(p, @"");
 	STAssertEqualObjects(p.remoteID, NSRNumber(12), @"");
-	//STAssertFalse(p.hasChanges, @"");
+	STAssertFalse(p.hasChanges, @"");
 
 	Post *p2 = [Post findObjectWithRemoteID:NSRNumber(12)];
 	STAssertNotNil(p2,@"");
 	STAssertTrue(p2 == p, @"");
 	STAssertEqualObjects(p2.remoteID, NSRNumber(12), @"");
-	//STAssertFalse(p2.hasChanges, @"");
+	STAssertFalse(p2.hasChanges, @"");
 
 	Post *p3 = [Post findOrInsertObjectUsingRemoteDictionary:NSRDictionary(NSRNumber(12),@"id",@"hi",@"content")];
 	
 	STAssertNotNil(p3,@"");
 	STAssertTrue(p3 == p2,@"");
 	STAssertEqualObjects(p3.content, @"hi", @"");
-	//STAssertFalse(p3.hasChanges, @"");
+	STAssertFalse(p3.hasChanges, @"");
+	
+	STAssertNil([Post findOrInsertObjectUsingRemoteDictionary:NSRDictionary(@"hi",@"content")], @"should be nil if no rID");
 }
 
 - (void) setUp
 {
-	if (![[NSRConfig defaultConfig] managedObjectContext])
-	{
-		[[NSRConfig defaultConfig] setManagedObjectContext:[self managedObjectContext]];
-	}
+	[[NSRConfig defaultConfig] setManagedObjectContext:[self managedObjectContext]];
 }
 
 + (void)setUp
