@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1171" systemVersion="11D50" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <entity name="Post" representedClassName="Post" syncable="YES">
+    <entity name="NSRRemoteObject" representedClassName="NSRRemoteObject" isAbstract="YES" syncable="YES">
+        <attribute name="remoteID" optional="YES" attributeType="Integer 16" defaultValueString="0" indexed="YES" syncable="YES"/>
+    </entity>
+    <entity name="Post" representedClassName="Post" parentEntity="NSRRemoteObject" syncable="YES">
         <attribute name="author" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="remoteID" optional="YES" attributeType="Integer 32" defaultValueString="0" indexed="YES" syncable="YES"/>
         <relationship name="responses" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Response" inverseName="post" inverseEntity="Response" syncable="YES"/>
     </entity>
-    <entity name="Response" representedClassName="Response" syncable="YES">
+    <entity name="Response" representedClassName="Response" parentEntity="NSRRemoteObject" syncable="YES">
         <attribute name="author" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="remoteID" optional="YES" attributeType="Integer 32" defaultValueString="0" indexed="YES" syncable="YES"/>
         <relationship name="post" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Post" inverseName="responses" inverseEntity="Post" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Post" positionX="108" positionY="-36" width="128" height="105"/>
+        <element name="Post" positionX="-216" positionY="27" width="128" height="90"/>
         <element name="Response" positionX="115" positionY="96" width="128" height="105"/>
+        <element name="NSRRemoteObject" positionX="169" positionY="-207" width="128" height="60"/>
     </elements>
 </model>
