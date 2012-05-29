@@ -534,7 +534,10 @@ NSRMap(*);
 							//array of NSRRemoteObjects is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
 							
 							id previousArray = ([previousVal isKindOfClass:[NSSet class]] ? 
-												[previousVal allObjects] : previousVal);
+												[previousVal allObjects] :
+												[previousVal isKindOfClass:[NSOrderedSet class]] ?
+												[previousVal array] :
+												previousVal);
 							
 							for (id railsElement in railsObject)
 							{
@@ -569,7 +572,12 @@ NSRMap(*);
 							}
 							
 #ifdef NSR_USE_COREDATA
-							newArray = [NSMutableSet setWithArray:newArray];
+							BOOL ordered = [[[self.entity propertiesByName] objectForKey:property.name] isOrdered];
+							
+							if (ordered)
+								newArray = [NSMutableOrderedSet orderedSetWithArray:newArray];
+							else
+								newArray = [NSMutableSet setWithArray:newArray];
 #endif
 
 						}
