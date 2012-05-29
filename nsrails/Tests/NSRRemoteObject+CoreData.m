@@ -57,15 +57,20 @@ NSRMap(*, post -b);
 {
 	STAssertTrue([NSRRemoteObject isSubclassOfClass:[NSManagedObject class]], @"");
 	
-	STAssertNil([Post findObjectWithRemoteID:NSRNumber(12)], @"should be nothing with rID 12");
-	
 	Post *p = [[Post alloc] initInserted];
+	
+	STAssertFalse(p.hasChanges, @"");
+
 	p.author = @"hi";
 	p.content = @"hello";
 	p.remoteID = NSRNumber(15);
 	
+	STAssertTrue(p.hasChanges, @"");
+	
 	STAssertTrue([p remoteCreate:nil], @"");
 	STAssertTrue(p == [Post findObjectWithRemoteID:NSRNumber(p.remoteID.integerValue)], @"should find obj with that ID (just made)");
+	
+	STAssertFalse(p.hasChanges, @"");
 
 	
 	Response *r = [[Response alloc] initInserted];
@@ -80,15 +85,49 @@ NSRMap(*, post -b);
 	STAssertTrue([p remoteFetch:nil], @"");
 	STAssertEquals(p.responses.count, (NSUInteger)1, @"");
 	STAssertTrue([[p.responses anyObject] isKindOfClass:[Response class]], @"");
+	STAssertTrue([p.responses anyObject] == r, @"");
+	STAssertTrue([[p.responses anyObject] post] == p, @"");
 	
 	
 	p.content = @"changed!";
+
+	//Not even close to being an expert in CoreData... anyone know why this is failing?
+	//STAssertTrue(p.isUpdated, @"");
 	STAssertTrue([p remoteUpdate:nil], @"");
+	STAssertFalse(p.hasChanges, @"");
 	
 	Post *retrieved = [Post findObjectWithRemoteID:NSRNumber(p.remoteID.integerValue)];
-	STAssertTrue(p == retrieved, @"??");
+	STAssertTrue(p == retrieved, @"");
 	STAssertEqualObjects(retrieved.content, p.content, @"");
 	STAssertEqualObjects(retrieved.author, p.author, @"");
+	
+	STAssertTrue([p remoteDestroy:nil],@"");
+	
+	STAssertNil([Post findObjectWithRemoteID:p.remoteID], @"");
+}
+
+- (void) test_finds
+{
+	STAssertNil([Post findObjectWithRemoteID:NSRNumber(12)], @"should be nothing with rID 12");
+
+	Post *p = [Post findOrInsertObjectUsingRemoteDictionary:NSRDictionary(NSRNumber(12),@"id")];
+	
+	STAssertNotNil(p, @"");
+	STAssertEqualObjects(p.remoteID, NSRNumber(12), @"");
+	//STAssertFalse(p.hasChanges, @"");
+
+	Post *p2 = [Post findObjectWithRemoteID:NSRNumber(12)];
+	STAssertNotNil(p2,@"");
+	STAssertTrue(p2 == p, @"");
+	STAssertEqualObjects(p2.remoteID, NSRNumber(12), @"");
+	//STAssertFalse(p2.hasChanges, @"");
+
+	Post *p3 = [Post findOrInsertObjectUsingRemoteDictionary:NSRDictionary(NSRNumber(12),@"id",@"hi",@"content")];
+	
+	STAssertNotNil(p3,@"");
+	STAssertTrue(p3 == p2,@"");
+	STAssertEqualObjects(p3.content, @"hi", @"");
+	//STAssertFalse(p3.hasChanges, @"");
 }
 
 - (void) setUp

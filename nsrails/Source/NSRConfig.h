@@ -58,6 +58,7 @@ extern NSString * const NSRJSONParsingException;
 extern NSString * const NSRInternalError;
 extern NSString * const NSRMissingURLException;
 extern NSString * const NSRNullRemoteIDException;
+extern NSString * const NSRCoreDataException;
 
 ////////////////////////////////
 

@@ -85,7 +85,6 @@
 @interface NSObject (NSRCoreData)
 
 - (id) managedObjectContext;
-- (id) initWithEntity:(id)e insertIntoManagedObjectContext:(id)ctx;
 
 @end
 
@@ -273,18 +272,17 @@ NSRMap(*);
 		relevantConfig = config;
 	else
 		relevantConfig = [[self class] getRelevantConfig];
-	
-	if (relevantConfig.managedObjectContext)
+
+#ifdef NSR_USE_COREDATA
+	NSManagedObjectContext *moc = relevantConfig.managedObjectContext;
+	if (!moc && config)
 	{
-		NSEntityDescription *desc = [NSEntityDescription entityForName:[[self class] description] 
-												inManagedObjectContext:relevantConfig.managedObjectContext];
-		
-		self = [CD_SELF initWithEntity:desc insertIntoManagedObjectContext:relevantConfig.managedObjectContext];
+		[NSException raise:NSRCoreDataException format:@"Custom config provided to -[%@ initWithCustomMap:customConfig:] doesn't have a managedObjectContext set. This is necessary when using CoreData.",self.class];
 	}
-	else
-	{
-		self = [super init];
-	}
+	self = [self initInsertedIntoContext:moc];
+#else
+	self = [super init];
+#endif
 	
 	if (self)
 	{
@@ -440,14 +438,9 @@ NSRMap(*);
 
 - (id) initWithRemoteDictionary:(NSDictionary *)railsDict
 {
-	NSManagedObjectContext *ctx = [[self class] getRelevantConfig].managedObjectContext;
-	
-	if (ctx)
+	if ([[self class] getRelevantConfig].managedObjectContext)
 	{
-		NSEntityDescription *desc = [NSEntityDescription entityForName:[[self class] description] 
-												inManagedObjectContext:ctx];
-		
-		self = [CD_SELF initWithEntity:desc insertIntoManagedObjectContext:ctx];
+		self = [self initInserted];
 		
 		//don't need to save context because the setPropertiesUsingRemoteDictionary: will do it anyway
 	}
@@ -906,7 +899,7 @@ NSRMap(*);
 - (BOOL) remoteUpdate:(NSError **)error
 {
 	BOOL didUpdate = !![self remoteRequest:@"PUT" method:nil error:error];
-	if (didUpdate && self.managedObjectContext)
+	if (didUpdate)
 	{
 		[self saveContext];
 	}
@@ -918,7 +911,7 @@ NSRMap(*);
 	[self remoteRequest:@"PUT" method:nil async:
 	 ^(id result, NSError *error) 
 	 {
-		 if (result && self.managedObjectContext)
+		 if (result)
 		 {
 			 [self saveContext];
 		 }
@@ -931,7 +924,7 @@ NSRMap(*);
 - (BOOL) remoteDestroy:(NSError **)error
 {
 	BOOL didDestroy = !![self remoteRequest:@"DELETE" method:nil body:nil error:error];
-	if (didDestroy && self.managedObjectContext)
+	if (didDestroy)
 	{
 		[self.managedObjectContext deleteObject:CD_SELF];
 		[self saveContext];
@@ -944,9 +937,10 @@ NSRMap(*);
 	[self remoteRequest:@"DELETE" method:nil body:nil async:
 	 ^(id result, NSError *error) 
 	{
-		if (result && self.managedObjectContext)
+		if (result)
 		{
 			[self.managedObjectContext deleteObject:CD_SELF];
+			[self saveContext];
 		}
 		completionBlock(error);
 	}];
@@ -995,7 +989,7 @@ NSRMap(*);
 {
 	if (!mID)
 	{
-		[NSException raise:NSInvalidArgumentException format:@"Attempt to call +[%@ %@] with a null remoteID.", self.class, NSStringFromSelector(sel)];
+		[NSException raise:NSInvalidArgumentException format:@"Attempt to call +[%@ %@] with a nil remoteID.", self.class, NSStringFromSelector(sel)];
 	}
 }
 
@@ -1100,15 +1094,19 @@ NSRMap(*);
 {
 	NSError *error = nil;
 	
-	if (self.managedObjectContext) {
-		if (![self.managedObjectContext save:&error]) {
-			NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+	if (self.managedObjectContext) 
+	{
+		if (![self.managedObjectContext save:&error])
+		{
+			NSLog(@"NSR Warning: Failed to save CoreData context with error %@", error);
             abort();
-			
-			return NO;
-		} 
+		}
+		else
+		{
+			return YES;
+		}
 	}
-	return YES;
+	return NO;
 }
 
 + (id) findOrInsertObjectUsingRemoteDictionary:(NSDictionary *)dict
@@ -1155,19 +1153,30 @@ NSRMap(*);
 
 - (id) initInsertedIntoContext:(NSManagedObjectContext *)context
 {
-	self = [NSEntityDescription insertNewObjectForEntityForName:[self.class description]
-										 inManagedObjectContext:context];
-	[self saveContext];
+	@try 
+	{
+		self = [NSEntityDescription insertNewObjectForEntityForName:[self.class description]
+											 inManagedObjectContext:context];
+		[self saveContext];
+	}
+	@catch (NSException *exception) 
+	{
+		self = nil;
+		[NSException raise:NSRCoreDataException format:@"Trying to use NSRails with CoreData? Go in NSRails.h and uncomment `#define NSR_CORE_DATA`. You can also add NSR_USE_COREDATA to \"Preprocessor Macros Not Used in Precompiled Headers\" in your target's build settings."];
+	}
 	return self;
 }
 
 - (id) initInserted
 {
 	NSManagedObjectContext *ctx = [self.class getRelevantConfig].managedObjectContext;
+	if (!ctx)
+	{
+		[NSException raise:NSRCoreDataException format:@"-[%@ initInserted] called when the current config's managedObjectContext is nil. A vaild managedObjectContext is necessary when using CoreData. Set your managed object context like so: [[NSRConfig defaultConfig] setManagedObjectContext:<#your moc#>].", self.class];
+	}
 	self = [self initInsertedIntoContext:ctx];
 	
 	return self;
-	
 }
 
 #pragma mark - NSCoding

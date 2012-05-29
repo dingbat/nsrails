@@ -73,6 +73,7 @@ NSString * const NSRJSONParsingException			= @"NSRJSONParsingException";
 NSString * const NSRInternalError					= @"NSRInternalError";
 NSString * const NSRMissingURLException				= @"NSRMissingURLException";
 NSString * const NSRNullRemoteIDException			= @"NSRNullRemoteIDException";
+NSString * const NSRCoreDataException				= @"NSRCoreDataException";
 
 
 #if NSRLog > 0

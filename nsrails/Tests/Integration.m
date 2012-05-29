@@ -807,7 +807,9 @@ static BOOL noServer = NO;
 	BOOL changes = NO;
 	
 	STAssertThrowsSpecificNamed([array remoteFetchAll:[NSString class] error:&e changes:&changes], NSException, NSInvalidArgumentException, @"Should crash if class is not NSRailsModel subclass");
-	
+
+	STAssertThrowsSpecificNamed([array remoteFetchAll:nil error:&e changes:&changes], NSException, NSInvalidArgumentException, @"Should crash if class is not NSRailsModel subclass");
+
 	NSRAssertNoServer(noServer);
 	
 	STAssertFalse([array remoteFetchAll:[Faker class] error:&e changes:&changes],@"");
@@ -919,7 +921,7 @@ static BOOL noServer = NO;
 	STAssertTrue([thePostRetrieved remoteUpdate:&e], @"");
 	STAssertNil(e,@"Should be no error updating post (e=%@)",e);
 	
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		e = nil;
 		
@@ -933,11 +935,11 @@ static BOOL noServer = NO;
 		//behavior should be identical to if it was empty to begin with
 		if (i == 0)
 			[array removeAllObjects];
-		
-		//behavior should be identical to if it had an extraneous element (should delete it)
-		if (i == 1)
-			[array addObject:@"please remove me"];
 	}
+	
+	[array addObject:@"please remove me"];
+
+	STAssertThrows([array remoteFetchAll:[Post class] error:nil changes:NULL],@"Should throw an exception if non-NSRRO object is entered (KVC)");
 }
 
 
