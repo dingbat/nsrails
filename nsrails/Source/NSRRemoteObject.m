@@ -37,10 +37,10 @@
 #import "NSObject+Properties.h"
 
 /* 
-    If this file is too intimidating, 
+ If this file is too intimidating, 
  remember that you can navigate it
  quickly in Xcode using #pragma marks.
-								    	*/
+ */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -125,7 +125,7 @@ NSRMap(*);
 	if ([syncStr rangeOfString:@"*"].location != NSNotFound)
 	{
 		syncStr = [syncStr stringByReplacingOccurrencesOfString:@"*" withString:@""];
-
+		
 		//expand the star to everything in the class
 		NSString *expanded = [self.allProperties componentsJoinedByString:@", "];
 		if (expanded)
@@ -138,7 +138,7 @@ NSRMap(*);
 	if ([syncStr rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
 	{
 		syncStr = [syncStr stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
-
+		
 		//skip right up the hierarchy to NSRRemoteObject
 		return [syncStr stringByAppendingFormat:@", %@", [NSRRemoteObject masterNSRMapWithOverrideString:nil]];
 	}
@@ -179,7 +179,7 @@ NSRMap(*);
 	NSString *defined = [self NSRUsePluralName];
 	if (defined)
 		return defined;
-
+	
 	//otherwise, pluralize ModelName
 	return [[self masterModelName] pluralize];
 }
@@ -193,7 +193,7 @@ NSRMap(*);
     dispatch_once(&onceToken, ^{
 		propertyCollections = [[NSMutableDictionary alloc] init];
     });
-		
+	
 	NSString *class = NSStringFromClass(self);
 	NSRPropertyCollection *collection = [propertyCollections objectForKey:class];
 	if (!collection)
@@ -251,13 +251,13 @@ NSRMap(*);
 
 - (id) initWithCustomMap:(NSString *)str customConfig:(NSRConfig *)config
 {
+#ifdef NSR_USE_COREDATA
 	NSRConfig *relevantConfig;
 	if (config)
 		relevantConfig = config;
 	else
 		relevantConfig = [[self class] getRelevantConfig];
-
-#ifdef NSR_USE_COREDATA
+	
 	NSManagedObjectContext *moc = relevantConfig.managedObjectContext;
 	if (!moc && config)
 	{
@@ -345,14 +345,14 @@ NSRMap(*);
 	}
 	
 	SEL getter = [self.class getterForProperty:prop.name];
-
+	
 	if (encoder)
 	{
 		id obj = [self respondsToSelector:getter] ? [self performSelector:getter] : nil;
 		
 		//perform selector with the object itself in case it takes it
 		id representation = [self performSelector:encoder withObject:obj];
-
+		
 		//send back an NSNull object instead of nil since we'll be encoding it into JSON, where that's relevant
 		if (!representation)
 		{
@@ -413,7 +413,7 @@ NSRMap(*);
 			
 			return [val dictionaryOfRemotePropertiesFromNesting:YES];
 		}
-				
+		
 		//otherwise, just return the value from the get method
 		return val;
 	}
@@ -431,7 +431,7 @@ NSRMap(*);
 	{
 		self = [super init];
 	}
-
+	
 	
 	if (self)
 	{
@@ -501,13 +501,13 @@ NSRMap(*);
 					{
 						if (![railsObject isKindOfClass:[NSArray class]])
 							[NSException raise:NSRInternalError format:@"Attempt to set property '%@' in class '%@' (declared as array) to a non-array non-null value ('%@').", property, self.class, railsObject];
-
+						
 						BOOL checkForChange = !changes && ([railsObject count] == [previousVal count]);
 						if (!checkForChange)
 							changes = YES;
-
+						
 						id newArray = [[NSMutableArray alloc] init];
-
+						
 						if (property.nestedClass)
 						{							
 							//array of NSRRemoteObjects is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
@@ -545,7 +545,7 @@ NSRMap(*);
 									if (neededChange)
 										changes = YES;
 								}
-
+								
 								
 								[newArray addObject:decodedElement];
 							}
@@ -558,7 +558,7 @@ NSRMap(*);
 							else
 								newArray = [NSMutableSet setWithArray:newArray];
 #endif
-
+							
 						}
 						else if (property.isDate)
 						{
@@ -630,7 +630,7 @@ NSRMap(*);
 					changes = YES;
 				}	
 			}
-
+			
 			[self performSelector:setter withObject:decodedObj];
 		}
 	}
@@ -685,11 +685,11 @@ NSRMap(*);
 		}
 		
 		id remoteRep = [self remoteRepresentationOfObjectForProperty:objcProperty];
-
+		
 		//don't include id if it's null OR if it's the main object (nested guys need their IDs)
 		if ([railsEquivalent isEqualToString:@"id"] && (!remoteRep || !nesting))
 			continue;
-
+		
 		if (!remoteRep)
 		{
 			if (objcProperty.isArray)
@@ -717,7 +717,7 @@ NSRMap(*);
 		
 		[dict setObject:remoteRep forKey:railsEquivalent];
 	}
-
+	
 	if (remoteDestroyOnNesting)
 	{
 		[dict setObject:[NSNumber numberWithBool:remoteDestroyOnNesting] forKey:@"_destroy"];
@@ -750,19 +750,14 @@ NSRMap(*);
 	return (route ? route : @"");
 }
 
-+ (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod withID:(NSInteger)rID
-{
-	//make request on an instance, so make route "id", or "id/route" if there's an additional route included (1/edit)
-	NSString *idAndMethod = [NSString stringWithFormat:@"%d%@",rID,(customRESTMethod ? [@"/" stringByAppendingString:customRESTMethod] : @"")];
-	
-	return [self routeForControllerMethod:idAndMethod];
-}
-
 - (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod
 {
 	[self assertCanSendInstanceRequest];
-
-	return [[self class] routeForInstanceMethod:customRESTMethod withID:self.remoteID.integerValue];
+	
+	//make request on an instance, so make route "id", or "id/route" if there's an additional route included (1/edit)
+	NSString *idAndMethod = [NSString stringWithFormat:@"%@%@",self.remoteID,(customRESTMethod ? [@"/" stringByAppendingString:customRESTMethod] : @"")];
+	
+	return [[self class] routeForControllerMethod:idAndMethod];
 }
 
 
@@ -891,7 +886,7 @@ NSRMap(*);
 {
 	if (![self remoteRequest:@"PUT" method:nil error:error])
 		return NO;
-
+	
 	[self saveContext];
 	return YES;
 }
@@ -915,7 +910,7 @@ NSRMap(*);
 {
 	if (![self remoteRequest:@"DELETE" method:nil body:nil error:error])
 		return NO;
-
+	
 	[self.managedObjectContext deleteObject:CD_SELF];
 	[self saveContext];
 	return YES;
@@ -925,14 +920,14 @@ NSRMap(*);
 {
 	[self remoteRequest:@"DELETE" method:nil body:nil async:
 	 ^(id result, NSError *error) 
-	{
-		if (result)
-		{
-			[self.managedObjectContext deleteObject:CD_SELF];
-			[self saveContext];
-		}
-		completionBlock(error);
-	}];
+	 {
+		 if (result)
+		 {
+			 [self.managedObjectContext deleteObject:CD_SELF];
+			 [self saveContext];
+		 }
+		 completionBlock(error);
+	 }];
 }
 
 #pragma mark Get latest
@@ -967,7 +962,7 @@ NSRMap(*);
 	 {
 		 BOOL change = NO;
 		 if (result)
-			change = [self setPropertiesUsingRemoteDictionary:result applyToRemoteAttributes:YES];
+			 change = [self setPropertiesUsingRemoteDictionary:result applyToRemoteAttributes:YES];
 		 completionBlock(change, error);
 	 }];
 }
@@ -1003,18 +998,18 @@ NSRMap(*);
 	
 	[[self class] remoteGET:[mID stringValue]
 					  async:
-							 ^(id jsonRep, NSError *error) 
-							 {
-								 if (!jsonRep)
-								 {
-									 completionBlock(nil, error);
-								 }
-								 else
-								 {
-									 id obj = [[self class] findOrInsertObjectUsingRemoteDictionary:jsonRep];
-									 completionBlock(obj, nil);
-								 }
-							 }];
+	 ^(id jsonRep, NSError *error) 
+	 {
+		 if (!jsonRep)
+		 {
+			 completionBlock(nil, error);
+		 }
+		 else
+		 {
+			 id obj = [[self class] findOrInsertObjectUsingRemoteDictionary:jsonRep];
+			 completionBlock(obj, nil);
+		 }
+	 }];
 }
 
 #pragma mark Get all objects (class-level)
@@ -1025,9 +1020,9 @@ NSRMap(*);
 	id json = [self remoteGET:nil error:error];
 	if (!json)
 		return nil;
-
+	
 	[json translateRemoteDictionariesIntoInstancesOfClass:[self class]];
-
+	
 	return json;
 }
 
@@ -1071,7 +1066,7 @@ NSRMap(*);
 			//TODO
 			// maybe notify a client delegate to handle this error?
 			// raise exception?
-
+			
 			NSLog(@"NSR Warning: Failed to save CoreData context with error %@", error);
 			
 			return NO;
@@ -1092,7 +1087,7 @@ NSRMap(*);
 	NSNumber *objID = [dict objectForKey:@"id"];
 	if (!objID)
 		return nil;
-		
+	
 	obj = [[self class] findObjectWithRemoteID:objID];
 	
 	if (obj)
