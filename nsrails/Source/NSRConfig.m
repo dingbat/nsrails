@@ -67,6 +67,14 @@
 
 @end
 
+@interface NSRConfig (private)
+
+- (NSURLRequest *) HTTPRequestForRequestType:(NSString *)type requestBody:(id)body url:(NSString *)url;
+- (id) receiveResponse:(NSHTTPURLResponse *)response data:(NSData *)data error:(NSError **)error;
+- (id) responseForRequestType:(NSString *)type requestBody:(id)body url:(NSString *)url sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock;
+
+@end
+
 
 //Environments
 NSString * const NSRConfigEnvironmentDevelopment		= @"NSRConfigEnvironmentDevelopment";

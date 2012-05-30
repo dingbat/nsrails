@@ -48,15 +48,31 @@
 
 + (NSRConfig *) getRelevantConfig;
 - (NSRConfig *) getRelevantConfig;
++ (NSRConfig *) getRelevantConfigFromPropertyCollection:(NSRPropertyCollection *)propertyCollection;
 
 + (NSRPropertyCollection *) propertyCollection;
 - (NSRPropertyCollection *) propertyCollection;
 
-- (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict applyToRemoteAttributes:(BOOL)remote;
+- (NSRRemoteObject *) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict;
+- (id) remoteRepresentationOfObjectForProperty:(NSRProperty *)prop;
+
++ (NSString *) routeForControllerMethod:(NSString *)customRESTMethod;
+- (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod;
 - (void) assertCanSendInstanceRequest;
+
++ (NSString *) masterNSRMapWithOverrideString:(NSString *)override;
++ (NSString *) masterNSRMap;
++ (NSString *) masterModelName;
++ (NSString *) masterPluralName;
+
+- (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict applyToRemoteAttributes:(BOOL)remote;
+
+- (NSDictionary *) dictionaryOfRemotePropertiesFromNesting:(BOOL)nesting;
 
 - (NSManagedObjectContext *) managedObjectContext;
 + (NSManagedObjectContext *) getGlobalManagedObjectContextFromCmd:(SEL)cmd;
+
++ (id) findFirstObjectByAttribute:(NSString *)attrName withValue:(id)value inContext:(NSManagedObjectContext *)context;
 
 @end
 
