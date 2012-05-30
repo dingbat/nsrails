@@ -10,12 +10,18 @@ Getting started
 
 * Add a `vendor` directory on the main level of your RubyMotion app if you don't have one already
 * Copy the `nsrails` directory ([the main Xcode project](https://github.com/dingbat/nsrails/tree/master/nsrails)) into `vendor`. (You can delete `Tests/`, but keep `Source/` and the Xcode project file)
-* Modify your Rakefile to include NSRails:
+* Modify your Rakefile to include NSRails and the CoreData framework:
 
   ```ruby
   Motion::Project::App.setup do |app|
+      # Add CoreData as a linked framework (required even if CoreData isn't used)
+      app.frameworks << "CoreData"
+
       # Add this line:
       app.vendor_project('vendor/nsrails', :xcode, :target => 'NSRails', :headers_dir => 'Source')
+      # OR this line, if you wish to use NSRails with CoreData
+      #app.vendor_project('vendor/nsrails', :xcode, :target => 'NSRailsCD', :headers_dir => 'Source')
+      
       ...
   ```
 

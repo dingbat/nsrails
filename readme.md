@@ -37,7 +37,7 @@ Getting started
 
 ### Objective-C
 
-1. Drop the `Source` folder into your Xcode project.
+1. Drop the `Source` folder into your Xcode project. You'll also need the CoreData framework included.
   * If you're using Git, you should add NSRails as a submodule to your project so you can `git pull` and always be up to date:
    
       ```
@@ -122,6 +122,7 @@ Dependencies
 --------
 
 * **iOS 5.0+**
+* **CoreData** framework linked
 * **Automatic Reference Counting (ARC)**
   * If your project isn't using ARC, you'll need to selectively specify it for NSRails. Go to your active target, select the "Build Phases" tab, and in the "Compile Sources" section, set `-fobjc-arc` as a compiler flag for each NSRails source file.
 
