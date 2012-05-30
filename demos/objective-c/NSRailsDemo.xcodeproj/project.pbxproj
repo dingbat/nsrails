@@ -23,6 +23,7 @@
 		5975A56B1563686F0088E453 /* Response.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A5641563686F0088E453 /* Response.m */; };
 		5975A6D0156374430088E453 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A6BC156374420088E453 /* NSRConfig.m */; };
 		5975A6D1156374430088E453 /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5975A6BE156374420088E453 /* NSRPropertyCollection.m */; };
+		5993AFC91575D52200DA25F4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5993AFC81575D52200DA25F4 /* CoreData.framework */; };
 		599568D0156E91450061EA91 /* NSRRemoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 599568CF156E91450061EA91 /* NSRRemoteObject.m */; };
 		59B4B5CE15681CD70005A505 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 59B4B5CB15681CD70005A505 /* main.m */; };
 /* End PBXBuildFile section */
@@ -58,6 +59,7 @@
 		5975A6BC156374420088E453 /* NSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConfig.m; sourceTree = "<group>"; };
 		5975A6BD156374420088E453 /* NSRPropertyCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRPropertyCollection.h; sourceTree = "<group>"; };
 		5975A6BE156374420088E453 /* NSRPropertyCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRPropertyCollection.m; sourceTree = "<group>"; };
+		5993AFC81575D52200DA25F4 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		599568CE156E91450061EA91 /* NSRRemoteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRRemoteObject.h; sourceTree = "<group>"; };
 		599568CF156E91450061EA91 /* NSRRemoteObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRemoteObject.m; sourceTree = "<group>"; };
 		59B4B5CB15681CD70005A505 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -71,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5993AFC91575D52200DA25F4 /* CoreData.framework in Frameworks */,
 				5975A4A3156364200088E453 /* UIKit.framework in Frameworks */,
 				5975A4A5156364200088E453 /* Foundation.framework in Frameworks */,
 				5975A4A7156364200088E453 /* CoreGraphics.framework in Frameworks */,
@@ -117,6 +120,7 @@
 		5975A4A1156364200088E453 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5993AFC81575D52200DA25F4 /* CoreData.framework */,
 				5975A4A2156364200088E453 /* UIKit.framework */,
 				5975A4A4156364200088E453 /* Foundation.framework */,
 				5975A4A6156364200088E453 /* CoreGraphics.framework */,
