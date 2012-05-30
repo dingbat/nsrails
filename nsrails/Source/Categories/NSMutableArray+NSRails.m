@@ -33,17 +33,17 @@
 
 @implementation NSMutableArray (NSRFetch)
 
-- (void) assertValidSubclass:(Class)class
+- (void) assertValidSubclass:(Class)class cmd:(SEL)cmd
 {
 	if (![class isSubclassOfClass:[NSRRemoteObject class]])
 	{
-		[NSException raise:NSInvalidArgumentException format:@"Class passed into remoteFetchAll:error:changes: (%@) is not a subclass of NSRRemoteObject.",class];
+		[NSException raise:NSInvalidArgumentException format:@"Class passed into -[NSMutableArray %@] (%@) is not a subclass of NSRRemoteObject.",NSStringFromSelector(cmd), class];
 	}
 }
 
 - (void) translateRemoteDictionariesIntoInstancesOfClass:(Class)class
 {
-	[self assertValidSubclass:class];
+	[self assertValidSubclass:class cmd:_cmd];
 	
 	for (int i = 0; i < self.count; i++)
 	{
@@ -100,7 +100,7 @@
 
 - (BOOL) remoteFetchAll:(Class)class error:(NSError **)errorPtr changes:(BOOL *)changesPtr
 {
-	[self assertValidSubclass:class];
+	[self assertValidSubclass:class cmd:_cmd];
 	
 	NSArray *array = [class remoteGET:nil error:errorPtr];
 	
@@ -121,7 +121,7 @@
 
 - (void) remoteFetchAll:(Class)class async:(NSRFetchCompletionBlock)block
 {
-	[self assertValidSubclass:class];
+	[self assertValidSubclass:class cmd:_cmd];
 	
 	[class remoteGET:nil async:^(id jsonRep, NSError *error) 
 	{
