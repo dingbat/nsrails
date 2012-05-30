@@ -46,6 +46,8 @@
 	
 	<option value="//api/name/remoteFetchAll:error:changes:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteFetchAll:error:changes:</option>
 	
+	<option value="//api/name/translateRemoteDictionariesIntoInstancesOfClass:">&nbsp;&nbsp;&nbsp;&nbsp;- translateRemoteDictionariesIntoInstancesOfClass:</option>
+	
 	
 	
 </select>
@@ -75,6 +77,8 @@
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteFetchAll:async:">remoteFetchAll:async:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteFetchAll:error:changes:">remoteFetchAll:error:changes:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/translateRemoteDictionariesIntoInstancesOfClass:">translateRemoteDictionariesIntoInstancesOfClass:</a></span></li>
 	
 </ul></li>
 
@@ -129,6 +133,13 @@
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteFetchAll:async:">&ndash;&nbsp;remoteFetchAll:async:</a></code>
 		<span class="tooltip"><p>Updates elements in this array using index of remote objects.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/translateRemoteDictionariesIntoInstancesOfClass:">&ndash;&nbsp;translateRemoteDictionariesIntoInstancesOfClass:</a></code>
+		<span class="tooltip"><p>Replaces each dictionary in this array with an instance of the given class, setting respective properties to those defined in that dictionary (using the class&rsquo;s NSRMap).</p></span>
 	</span>
 	
 	
@@ -255,6 +266,55 @@
 		<p>Makes a GET request to <code>/objects</code> (where <code>objects</code> is the pluralization of <em>class</em>&rsquo;s model name.)</p>
 
 <p>Request done synchronously. See <a href="#//api/name/remoteFetchAll:async:">remoteFetchAll:async:</a> for asynchronous operation.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSMutableArray+NSRails.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/translateRemoteDictionariesIntoInstancesOfClass:" title="translateRemoteDictionariesIntoInstancesOfClass:"></a>
+	<h3 class="subsubtitle method-title">translateRemoteDictionariesIntoInstancesOfClass:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Replaces each dictionary in this array with an instance of the given class, setting respective properties to those defined in that dictionary (using the class&rsquo;s NSRMap).</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)translateRemoteDictionariesIntoInstancesOfClass:(Class)<em>class</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>class</em></dt>
+			<dd><p>Class with which to build instances to replace this array&rsquo;s dictionaries. Raises an exception if this class does not subclass <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This method can be useful when interpreting a retrieved array (representation of your server&rsquo;s JSON out) from a remoteGET method or similar.</p>
 	</div>
 	
 	
