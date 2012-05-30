@@ -1044,7 +1044,6 @@ NSRMap(*);
 {
 	//make a class GET call (so just the controller - myapp.com/users)
 	id json = [self remoteGET:nil error:error];
-	NSLog(@"got back %@",[json class]);
 	if (!json)
 		return nil;
 
