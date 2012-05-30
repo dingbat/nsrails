@@ -33,7 +33,8 @@
 //There's not much to do here.
 
 #import <Foundation/Foundation.h>
-#import "NSRails.h"
+
+@class NSRConfig;
 
 @interface NSRProperty : NSObject <NSCoding>
 
@@ -60,7 +61,7 @@
 
 - (NSArray *) objcPropertiesForRemoteEquivalent:(NSString *)remoteProperty autoinflect:(BOOL)autoinflect;
 
-- (id) initWithClass:(Class)c syncString:(NSString *)str customConfig:(NSRConfig *)config;
+- (id) initWithClass:(Class)c syncString:(NSString *)str;
 
 @end
 

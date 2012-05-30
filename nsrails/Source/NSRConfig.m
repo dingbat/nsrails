@@ -31,6 +31,7 @@
 #import "NSRails.h"
 #import "NSRConfig.h"
 
+#import "NSRPropertyCollection.h"
 #import "NSData+Additions.h"
 
 //NSRConfigStackElement implementation
@@ -56,6 +57,13 @@
 	element.config = c;
 	return element;
 }
+
+@end
+
+
+@interface NSRRemoteObject (internal)
+
++ (NSRPropertyCollection *) propertyCollection;
 
 @end
 
@@ -109,7 +117,7 @@ static NSString *currentEnvironment = nil;
 	if (!config)
 	{
 		config = [[NSRConfig alloc] init];
-		[self setConfig:config asDefaultForEnvironment:environment];
+		[config useAsDefaultForEnvironment:environment];
 	}
 	return config;
 }
@@ -119,20 +127,24 @@ static NSString *currentEnvironment = nil;
 	return [self configForEnvironment:[self currentEnvironment]];
 }
 
-+ (void) setConfig:(NSRConfig *)config asDefaultForEnvironment:(NSString *)environment
+- (void) useAsDefaultForEnvironment:(NSString *)environment
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 		configEnvironments = [[NSMutableDictionary alloc] init];
 	});
 	
-	if (config)
-		[configEnvironments setObject:config forKey:environment];
+	[configEnvironments setObject:self forKey:environment];
 }
 
-+ (void) setConfigAsDefault:(NSRConfig *)config
+- (void) useAsDefault
 {
-	[self setConfig:config asDefaultForEnvironment:[self currentEnvironment]];
+	[self useAsDefaultForEnvironment:[[self class] currentEnvironment]];
+}
+
+- (void) useForClass:(Class)class
+{
+	[[class propertyCollection] setCustomConfig:self];
 }
 
 + (void) setCurrentEnvironment:(NSString *)environment

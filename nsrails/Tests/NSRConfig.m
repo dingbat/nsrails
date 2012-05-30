@@ -101,13 +101,13 @@
 	NSRAssertRelevantConfigURL(@"TestURL", @"Default URL should be one set for test");
 	
 	NSRConfig *newProd = [[NSRConfig alloc] initWithAppURL:@"NewProdURL"];
-	[NSRConfig setConfig:newProd asDefaultForEnvironment:NSRConfigEnvironmentProduction];
+	[newProd useAsDefaultForEnvironment:NSRConfigEnvironmentProduction];
 	STAssertEqualObjects([NSRConfig currentEnvironment], @"test", @"Environment should still be test");
 	NSRAssertRelevantConfigURL(@"TestURL", @"Default URL should be one set for test");
 	NSRAssertEqualConfigs([NSRConfig configForEnvironment:NSRConfigEnvironmentProduction], @"NewProdURL", @"Production environment config should change after overwriting its default", nil);
 	
 	//set it default for current env too (test)
-	[NSRConfig setConfigAsDefault:newProd];
+	[newProd useAsDefault];
 	NSRAssertRelevantConfigURL(@"NewProdURL", @"Default URL should be the new one set for prod");
 	
 	[NSRConfig setCurrentEnvironment:NSRConfigEnvironmentDevelopment];
@@ -172,6 +172,23 @@
 			  STAssertFalse([NSThread isMainThread], @"With PCBOMT disabled, should run block in same thread");		 
 		  }];
 	 }];
+}
+
+- (void) test_class_attachment
+{
+	NSRAssertEqualConfigs([[SomeClass propertyCollection] customConfig], nil, @"", nil);
+	
+	[[NSRConfig defaultConfig] setAppURL:@"def"];
+	NSRAssertRelevantConfigURL(@"def", nil);
+	
+	NSRAssertEqualConfigs([[SomeClass propertyCollection] customConfig], nil, @"def", nil);
+
+	[[[NSRConfig alloc] initWithAppURL:@"something"] useForClass:[SomeClass class]];
+	NSRAssertRelevantConfigURL(@"def", nil);
+	
+	NSRAssertEqualConfigs([[SomeClass propertyCollection] customConfig], @"something", @"def", nil);
+
+	NSRAssertRelevantConfigURL(@"def", nil);
 }
 
 - (void) test_error_detection

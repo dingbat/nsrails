@@ -28,6 +28,8 @@
  
  */
 
+#import "NSRails.h"
+
 #import "NSRPropertyCollection.h"
 #import "NSObject+Properties.h"
 #import "NSString+Inflection.h"
@@ -110,12 +112,10 @@
 	prop.sendable = YES;
 }
 
-- (id) initWithClass:(Class)class syncString:(NSString *)syncString customConfig:(NSRConfig *)config
+- (id) initWithClass:(Class)class syncString:(NSString *)syncString
 {
 	if ((self = [super init]))
 	{
-		customConfig = config;
-				
 		//initialize property categories
 		properties = [[NSMutableDictionary alloc] init];
 		

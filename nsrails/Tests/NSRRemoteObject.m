@@ -209,7 +209,6 @@ NSRMap(lotsOfDates:NSDate, lotsOfStrings);
 @end
 
 @implementation CustomGuy
-NSRUseConfig(@"url", @"user", @"pass");
 NSRMap(something);
 @end
 
@@ -909,7 +908,16 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertEqualObjects(eCustomSyncConfigRetrieve.propertyCollection.customConfig.appURL, @"URL", @"Config should carry over");
 
 	
+	// This following test actually isn't great cause the class-level propertyCollection will persist regardless of the archive, and **this isn't supported anyway* lol. Leaving it for some reason, maybe cause I don't like to feel my time was wasted?
+	
 	CustomGuy *guy = [[CustomGuy alloc] init];
+	
+	NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"url"];
+	c.appUsername = @"user";
+	c.appPassword = @"pass";
+	
+	[c useForClass:[CustomGuy class]];
+	
 	s = [NSKeyedArchiver archiveRootObject:guy toFile:file];
 	
 	STAssertTrue(s, @"Archiving should've worked (serialize)");

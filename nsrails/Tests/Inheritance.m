@@ -16,7 +16,6 @@
 @synthesize parentAttr, parentAttr2;
 NSRMap (*, parentAttr2 -x)
 NSRUseModelName(@"parent", @"parentS")
-NSRUseConfig(@"parent")
 @end
 
 	@interface Child : Parent
@@ -26,7 +25,7 @@ NSRUseConfig(@"parent")
 	@implementation Child
 	@synthesize childAttr1, childAttr2;
 	NSRMap (childAttr1, parentAttr2) //absent NSRNoCarryFromSuper -> will inherit from parent
-	//absent model name, config -> will inherit "parent"
+	//absent model name -> will inherit "parent"
 	@end
 
 		@interface Grandchild : Child
@@ -35,7 +34,7 @@ NSRUseConfig(@"parent")
 		@implementation Grandchild
 		@synthesize gchildAttr;
 		NSRMap(*, parentAttr2 -x) //absent NSRNoCarryFromSuper -> will inherit from parent, but ignored parentAttr2 as test
-		//absent model name, config -> will inherit "parent"
+		//absent model name -> will inherit "parent"
 		@end
 
 		@interface RebelliousGrandchild : Child
@@ -45,7 +44,6 @@ NSRUseConfig(@"parent")
 		@synthesize r_gchildAttr;
 		NSRMap(NSRNoCarryFromSuper *) //NSRNoCarryFromSuper present -> won't inherit anything
 		NSRUseModelName(@"r_gchild") //will override Parent's modelname -> will use "r_grandchild"
-		NSRUseConfig(@"r_gchild") //will override Parent's config -> will use "http://r_grandchild"
 		@end
 
 	@interface RebelliousChild : Parent
@@ -55,7 +53,6 @@ NSRUseConfig(@"parent")
 	@synthesize r_childAttr;
 	NSRMap(* NSRNoCarryFromSuper) //NSRNoCarryFromSuper present -> won't inherit anything
 	NSRUseDefaultModelName //will override Parent's modelname in favor of default behavior
-	NSRUseDefaultConfig //will override Parent's config in favor of default behavior (defaultConfig)
 	@end
 
 		@interface GrandchildOfRebellious : RebelliousChild
@@ -64,7 +61,7 @@ NSRUseConfig(@"parent")
 		@implementation GrandchildOfRebellious
 		@synthesize gchild_rAttr;
 		NSRMap(*) //absent NSRNoCarryFromSuper -> will inherit from r.child, BUT inheritance will stop @ R.Child 
-		//absent model name + config BUT will inherit his parent's NSRUseDefault..., meaning default behavior will occur
+		//absent model name BUT will inherit his parent's NSRUseDefault..., meaning default behavior will occur
 		@end
 
 		@interface RebelliousGrandchildOfRebellious : RebelliousChild
@@ -74,7 +71,6 @@ NSRUseConfig(@"parent")
 		@synthesize r_gchild_rAttr;
 		NSRMap(NSRNoCarryFromSuper, *) //NSRNoCarryFromSuper present -> won't inherit anything
 		NSRUseModelName(@"r_gchild_r", @"r_gchild_rS") //will override R.Child's modelname -> will use "r_r_gchild"
-		NSRUseConfig(@"r_gchild_r") //will override R.Child's config -> will use "http://r_r_gchild"
 		@end
 
 
@@ -128,35 +124,6 @@ NSRUseConfig(@"parent")
 	//is rebellious (defines NSRUseModelName as "r_gchild_r"), so it'll use that name
 	NSRAssertClassModelName(@"r_gchild_r", [RebelliousGrandchildOfRebellious class]);
 	NSRAssertClassPluralName(@"r_gchild_rS", [RebelliousGrandchildOfRebellious class]); //explicitly set
-}
-
-- (void) test_config_inheritance
-{
-	[[NSRConfig defaultConfig] setAppURL:@"Default"];
-	
-	//was explicitly set to "parent"
-	NSRAssertClassAndInstanceConfig([Parent class], @"parent");
-	
-	//complacent child
-	//is complacent (doesn't explicitly set NSRUseConfig or NSRUseDefaultConfig), so will inherit the "parent" from Parent
-	NSRAssertClassAndInstanceConfig([Child class], @"parent");
-	
-	//is complacent (doesn't explicitly set NSRUseConfig or NSRUseDefaultConfig), so will inherit the "parent" from Child
-	NSRAssertClassAndInstanceConfig([Grandchild class], @"parent");
-	
-	//is not complacent (defines NSRUseConfig), as set to "r_grandchild"
-	NSRAssertClassAndInstanceConfig([RebelliousGrandchild class], @"r_gchild");
-	
-	
-	//rebellious child
-	//is rebellious (explicitly defines NSRUseDefaultConfig for itself, so should be defaultConfig returned)
-	NSRAssertClassAndInstanceConfig([RebelliousChild class], @"Default");
-	
-	//is complacent (doesn't explicitly set), BUT will inherit default behavior from R.Child, so default behavior
-	NSRAssertClassAndInstanceConfig([GrandchildOfRebellious class], @"Default");
-	
-	//is rebellious (defines NSRUseConfig as "r_gchild_r"), so it'll use that name
-	NSRAssertClassAndInstanceConfig([RebelliousGrandchildOfRebellious class], @"r_gchild_r");
 }
 
 - (void) test_property_inheritance

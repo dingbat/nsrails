@@ -79,20 +79,3 @@
 + (NSString*) NSRUsePluralName { return plural; }
 
 
-
-/// =============================================================================================
-/// NSRUseConfig
-/// =============================================================================================
-
-//works the same way as NSRUseModelName
-
-#define NSRUseConfig(...) _CAT(_NSR_Config,_N_ARGS(__VA_ARGS__))(__VA_ARGS__)
-
-#define NSRUseDefaultConfig	_NSR_Config3(nil, nil, nil)
-
-#define _NSR_Config1(url)	_NSR_Config3(url, nil, nil)
-
-#define _NSR_Config3(url,user,pass)  \
-+ (NSString *) NSRUseConfigURL { return url; } \
-+ (NSString *) NSRUseConfigUsername { return user; } \
-+ (NSString *) NSRUseConfigPassword { return pass; }

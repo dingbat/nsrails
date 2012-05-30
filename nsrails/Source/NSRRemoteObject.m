@@ -107,9 +107,8 @@ _NSR_REMOTEID_SYNTH remoteID;
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 
 
-// Use default config + model name by default
+// Use default model name by default (default return nil)
 NSRUseDefaultModelName;
-NSRUseDefaultConfig;
 
 // If NSRMap isn't overriden (ie, if NSRMap() macro is not declared in subclass), default to *
 NSRMap(*);
@@ -151,23 +150,6 @@ NSRMap(*);
 + (NSString *) masterNSRMap
 {
 	return [self masterNSRMapWithOverrideString:nil];
-}
-
-+ (NSRConfig *) masterClassConfig
-{
-	//check for a custom config for the class
-	
-	NSString *url = [self NSRUseConfigURL];
-	if (url)
-	{
-		NSRConfig *custom = [[NSRConfig alloc] initWithAppURL:url];
-		custom.appUsername = [self NSRUseConfigUsername];
-		custom.appPassword = [self NSRUseConfigPassword];
-		
-		return custom;
-	}
-	
-	return nil;
 }
 
 + (NSString *) masterModelName
@@ -216,9 +198,7 @@ NSRMap(*);
 	NSRPropertyCollection *collection = [propertyCollections objectForKey:class];
 	if (!collection)
 	{
-		collection = [[NSRPropertyCollection alloc] initWithClass:self 
-													   syncString:[self masterNSRMap] 
-													 customConfig:[self masterClassConfig]];
+		collection = [[NSRPropertyCollection alloc] initWithClass:self syncString:[self masterNSRMap]];
 		
 		[propertyCollections setObject:collection forKey:class];
 	}
@@ -293,9 +273,8 @@ NSRMap(*);
 		//apply inheritance rules etc to the given string
 		str = [[self class] masterNSRMapWithOverrideString:str];
 		
-		customProperties = [[NSRPropertyCollection alloc] initWithClass:[self class] 
-															 syncString:str 
-														   customConfig:config];
+		customProperties = [[NSRPropertyCollection alloc] initWithClass:[self class] syncString:str];
+		customProperties.customConfig = config;
 	}
 	return self;
 }

@@ -50,7 +50,7 @@
 @implementation TNSRPropertyCollection
 
 #define NSRInitTestClass(customProperties)\
-[[NSRPropertyCollection alloc] initWithClass:[TestClass class] syncString:customProperties customConfig:nil]
+[[NSRPropertyCollection alloc] initWithClass:[TestClass class] syncString:customProperties]
 
 #define NSRThrowsSyncException(exp, desc) \
 STAssertThrowsSpecificNamed(exp, NSException, NSRMapException, desc)
@@ -92,8 +92,7 @@ STAssertThrowsSpecificNamed(exp, NSException, NSRMapException, desc)
 - (void) test_property_detection
 {
 	NSRPropertyCollection *pc = [[NSRPropertyCollection alloc] initWithClass:[FlagTestClass class]
-																  syncString:@"nothing, local -x, nonexistent" 
-																customConfig:nil];
+																  syncString:@"nothing, local -x, nonexistent"];
 	
 	NSRAssertEqualArraysNoOrder(pc.properties.allKeys, NSRArray(@"nothing", @"nonexistent"));
 	
@@ -103,8 +102,7 @@ STAssertThrowsSpecificNamed(exp, NSException, NSRMapException, desc)
 - (void) test_encode_decode
 {
 	NSRPropertyCollection *pc = [[NSRPropertyCollection alloc] initWithClass:[FlagTestClass class]
-																  syncString:@"decode -d, encode -e, encodedecode -ed" 
-																customConfig:nil];
+																  syncString:@"decode -d, encode -e, encodedecode -ed"];
 	
 	NSRProperty *decode = [pc.properties objectForKey:@"decode"];
 	STAssertTrue(decode.decodable, @"decode should be marked decodable");
@@ -120,8 +118,7 @@ STAssertThrowsSpecificNamed(exp, NSException, NSRMapException, desc)
 - (void) test_send_receive
 {
 	NSRPropertyCollection *pc = [[NSRPropertyCollection alloc] initWithClass:[FlagTestClass class]
-																  syncString:@"sendretrieve -rs, nothing, retrieve -r, send -s" 
-																customConfig:nil];
+																  syncString:@"sendretrieve -rs, nothing, retrieve -r, send -s"];
 
 	NSRProperty *sendretrieve = [pc.properties objectForKey:@"sendretrieve"];
 	STAssertTrue(sendretrieve.retrievable, @"sendretrieve should be marked retrievable");
@@ -148,8 +145,7 @@ STAssertThrowsSpecificNamed(exp, NSException, NSRMapException, desc)
 - (void) test_equivalents
 {
 	NSRPropertyCollection *pc = [[NSRPropertyCollection alloc] initWithClass:[FlagTestClass class]
-																  syncString:@"objc=rails_prop -r, objcTWO=rails_prop, pleaseInflect" 
-																customConfig:nil];
+																  syncString:@"objc=rails_prop -r, objcTWO=rails_prop, pleaseInflect"];
 
 	STAssertEqualObjects([[pc.properties objectForKey:@"objc"] remoteEquivalent], @"rails_prop", @"Prop should pick up =");
 	STAssertEqualObjects([[pc.properties objectForKey:@"objcTWO"] remoteEquivalent], @"rails_prop", @"Prop should pick up =");
@@ -171,8 +167,7 @@ STAssertThrowsSpecificNamed(exp, NSException, NSRMapException, desc)
 - (void) test_dates
 {
 	NSRPropertyCollection *pc = [[NSRPropertyCollection alloc] initWithClass:[FlagTestClass class]
-																  syncString:@"date, fakeDate:NSDate, dateArray:NSDate, dateArrayExplicit:NSDate -m" 
-																customConfig:nil];
+																  syncString:@"date, fakeDate:NSDate, dateArray:NSDate, dateArrayExplicit:NSDate -m"];
 	NSRProperty *date = [pc.properties objectForKey:@"date"];
 	STAssertFalse(date.isHasMany, @"date shouldn't be seen as array");
 	STAssertFalse(date.isBelongsTo, @"date shouldn't be seen as belongs-to");
@@ -205,8 +200,7 @@ STAssertThrowsSpecificNamed(exp, NSException, NSRMapException, desc)
 - (void) test_nesting_flags
 {
 	NSRPropertyCollection *pc = [[NSRPropertyCollection alloc] initWithClass:[FlagTestClass class]
-																  syncString:@"nestedNothing, nestedExplicit:TestClass, nestedArrayNothing, nestedArrayM -m, nestedArrayExplicit:TestClass, nestedArrayExplicitM:TestClass -m"
-																customConfig:nil];
+																  syncString:@"nestedNothing, nestedExplicit:TestClass, nestedArrayNothing, nestedArrayM -m, nestedArrayExplicit:TestClass, nestedArrayExplicitM:TestClass -m"];
 	
 	
 

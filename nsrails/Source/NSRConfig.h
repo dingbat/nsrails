@@ -377,7 +377,7 @@ extern NSString * const NSRCoreDataException;
  
  Can be useful if the receiver is a custom `NSRConfig` subclass which you'd like to use for the entirety of your app.
   */
-+ (void) useAsDefault;
+- (void) useAsDefault;
 
 /**
  Specifies for all NSRails actions in a given environment to use the receiver.
@@ -386,7 +386,7 @@ extern NSString * const NSRCoreDataException;
  
  @param environment Environment identifier. Can be your own custom string or the constants NSRConfigEnvironmentDevelopment or NSRConfigEnvironmentProduction.
  */
-+ (void) useAsDefaultForEnvironment:(NSString *)environment;
+- (void) useAsDefaultForEnvironment:(NSString *)environment;
 
 
 /// =============================================================================================
