@@ -60,7 +60,12 @@ Works in a very similar way to remoteFetch: in NSRRemoteObject.</Abstract>
 			<DeclaredIn>NSMutableArray+NSRails.h</DeclaredIn>			
 			
 			<Declaration>- (void)translateRemoteDictionariesIntoInstancesOfClass:(Class)class</Declaration>
-			
+			<Parameters>
+				<Parameter>
+					<Name>class</Name>
+					<Abstract type="html">Class with which to build instances to replace this array&apos;s dictionaries. Raises an exception if this class does not subclass NSRRemoteObject.</Abstract>
+				</Parameter>
+			</Parameters>
 			
 			<Anchor>//api/name/translateRemoteDictionariesIntoInstancesOfClass:</Anchor>
 		</Token>

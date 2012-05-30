@@ -400,22 +400,22 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRConfig/useAsDefault</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/useAsDefault</TokenIdentifier>
 			<Abstract type="html">Specifies for all NSRails actions in the current environment to use the receiver.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
-			<Declaration>+ (void)useAsDefault</Declaration>
+			<Declaration>- (void)useAsDefault</Declaration>
 			
 			
 			<Anchor>//api/name/useAsDefault</Anchor>
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRConfig/useAsDefaultForEnvironment:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/useAsDefaultForEnvironment:</TokenIdentifier>
 			<Abstract type="html">Specifies for all NSRails actions in a given environment to use the receiver.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
-			<Declaration>+ (void)useAsDefaultForEnvironment:(NSString *)environment</Declaration>
+			<Declaration>- (void)useAsDefaultForEnvironment:(NSString *)environment</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>environment</Name>

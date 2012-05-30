@@ -77,10 +77,6 @@
 	
 	<option value="//api/name/setCurrentEnvironment:">&nbsp;&nbsp;&nbsp;&nbsp;+ setCurrentEnvironment:</option>
 	
-	<option value="//api/name/useAsDefault">&nbsp;&nbsp;&nbsp;&nbsp;+ useAsDefault</option>
-	
-	<option value="//api/name/useAsDefaultForEnvironment:">&nbsp;&nbsp;&nbsp;&nbsp;+ useAsDefaultForEnvironment:</option>
-	
 	
 	
 	
@@ -101,6 +97,10 @@
 	<option value="//api/name/stringFromDate:">&nbsp;&nbsp;&nbsp;&nbsp;- stringFromDate:</option>
 	
 	<option value="//api/name/use">&nbsp;&nbsp;&nbsp;&nbsp;- use</option>
+	
+	<option value="//api/name/useAsDefault">&nbsp;&nbsp;&nbsp;&nbsp;- useAsDefault</option>
+	
+	<option value="//api/name/useAsDefaultForEnvironment:">&nbsp;&nbsp;&nbsp;&nbsp;- useAsDefaultForEnvironment:</option>
 	
 	<option value="//api/name/useForClass:">&nbsp;&nbsp;&nbsp;&nbsp;- useForClass:</option>
 	
@@ -184,10 +184,6 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setCurrentEnvironment:">setCurrentEnvironment:</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/useAsDefault">useAsDefault</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/useAsDefaultForEnvironment:">useAsDefaultForEnvironment:</a></span></li>
-	
 </ul></li>
 
 
@@ -209,6 +205,10 @@
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/stringFromDate:">stringFromDate:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/use">use</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/useAsDefault">useAsDefault</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/useAsDefaultForEnvironment:">useAsDefaultForEnvironment:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/useForClass:">useForClass:</a></span></li>
 	
@@ -260,18 +260,18 @@
 
 <p>This should meet the needs of the vast majority of Rails apps. Somewhere in your app setup, set your server URL (and optionally a username and password) using the <a href="#//api/name/defaultConfig"><code>defaultConfig</code></a> singleton:</p>
 
-<pre><code> //AppDelegate.m
+<pre><code>//AppDelegate.m
 
- #import "NSRConfig.h"
+#import "NSRConfig.h"
 
- - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
- {
-     [[NSRConfig defaultConfig] setAppURL:@"http://myapp.com"];
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+ [[NSRConfig defaultConfig] setAppURL:@"http://myapp.com"];
 
-     //Similarly, if using HTTP Authentication, you can set your app's username and password like this:
-     //[[NSRConfig defaultConfig] setAppUsername:@"username"];
-     //[[NSRConfig defaultConfig] setAppPassword:@"password"];
- }
+ //Similarly, if using HTTP Authentication, you can set your app's username and password like this:
+ //[[NSRConfig defaultConfig] setAppUsername:@"username"];
+ //[[NSRConfig defaultConfig] setAppPassword:@"password"];
+}
 </code></pre>
 
 <h2>Config environments</h2>
@@ -298,8 +298,9 @@ prodConfig.appPassword = @"password";
 <ul>
 <li><p>If you simply need to direct different objects to different URLs, <a href="#//api/name/use">use</a> the <a href="#//api/name/useForClass:">useForClass:</a> method. Base URLs, autoinflection, date formats, and any other NSRConfig configurations will be used for NSRails actions called on this class or its instances:</p>
 
-<p>   NSRConfig *peopleServer = [[NSRConfig alloc] initWithAppURL:@&ldquo;<a href="http://secondrailsapp.com">http://secondrailsapp.com</a>&rdquo;];
-   [peopleServer useForClass:[Person class]];</p></li>
+<pre><code>  NSRConfig *peopleServer = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com"];
+  [peopleServer useForClass:[Person class]];
+</code></pre></li>
 <li><p>If specific actions must be called using a separate config, an <code>NSRConfig</code> instance can be used to define a context block in which to call those config-specific methods:</p>
 
 <pre><code>  NSRConfig *myConfig = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com/"];
@@ -323,7 +324,7 @@ prodConfig.appPassword = @"password";
   ];
 </code></pre>
 
-<p>  In these examples, everything within the blocks will be called using the config context specified, regardless of @defaultConfig@ or any class-specific config (as defined like in the <em>Classes</em> section above).</p>
+<p>  In these examples, everything within the blocks will be called using the config context specified, regardless of <a href="#//api/name/defaultConfig"><code>defaultConfig</code></a> or any class-specific config (they take highest precedence).</p>
 
 <p>  You can nest several config contexts within each other.</p></li>
 </ul>
@@ -334,7 +335,7 @@ prodConfig.appPassword = @"password";
 <p>When an NSRails method is called, NSRails uses the following hierarchy to find an NSRConfig to use:</p>
 
 <ul>
-<li><strong>&ldquo;Override&rdquo; config:</strong> If an <a href="#//api/name/use">[NSRConfig use]</a> was called (explicitly or implicity via a block). If they are nested, whichever one is on top of the stack (latest one).</li>
+<li><strong>&ldquo;Override&rdquo; config:</strong> If <a href="#//api/name/use">use</a> was called (explicitly or implicity via a block). If they are nested, whichever one is on top of the stack (latest one).</li>
 <li><strong>Instance-specific config</strong>: If the method is an instance method and the instance was initialized with initWithCustomMap:customConfig:, will <a href="#//api/name/use">use</a> that config.</li>
 <li><strong>Class-specific config</strong>: If the receiving class of the method (class or instance) defines a custom class with <a href="#//api/name/useForClass:">useForClass:</a>.</li>
 <li><strong>Default config</strong>: (Most frequent case.) Uses the config set to default of the current environment. (Current environment is <code>NSRConfigEnvironmentDevelopment</code> by default.</li>
@@ -356,8 +357,8 @@ prodConfig.appPassword = @"password";
 <li><p>You can set your new <code>NSRConfig</code> subclass to be the default config like so (this would be instead of the first code example of course):</p>
 
 <pre><code>  CustomConfig *myConfig = [[CustomConfig alloc] initWithAppURL:@"https://localhost:3000"];
-
   //set custom myConfig properties...
+
   [myConfig useAsDefault];
 
   //or, to a specific environment:
@@ -548,14 +549,14 @@ prodConfig.appPassword = @"password";
 	
 </li><li>
 	<span class="tooltip">
-		<code><a href="#//api/name/useAsDefault">+&nbsp;useAsDefault</a></code>
+		<code><a href="#//api/name/useAsDefault">&ndash;&nbsp;useAsDefault</a></code>
 		<span class="tooltip"><p>Specifies for all NSRails actions in the current environment to <a href="#//api/name/use">use</a> the receiver.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
-		<code><a href="#//api/name/useAsDefaultForEnvironment:">+&nbsp;useAsDefaultForEnvironment:</a></code>
+		<code><a href="#//api/name/useAsDefaultForEnvironment:">&ndash;&nbsp;useAsDefaultForEnvironment:</a></code>
 		<span class="tooltip"><p>Specifies for all NSRails actions in a given environment to <a href="#//api/name/use">use</a> the receiver.</p></span>
 	</span>
 	
@@ -1316,96 +1317,6 @@ prodConfig.appPassword = @"password";
 	
 </div>
 						
-						<div class="section-method">
-	<a name="//api/name/useAsDefault" title="useAsDefault"></a>
-	<h3 class="subsubtitle method-title">useAsDefault</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Specifies for all NSRails actions in the current environment to <a href="#//api/name/use">use</a> the receiver.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>+ (void)useAsDefault</code></div>
-	
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Lowest config precedence.</p>
-
-<p>Can be useful if the receiver is a custom <code>NSRConfig</code> subclass which you&rsquo;d like to <a href="#//api/name/use">use</a> for the entirety of your app.</p>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRConfig.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/useAsDefaultForEnvironment:" title="useAsDefaultForEnvironment:"></a>
-	<h3 class="subsubtitle method-title">useAsDefaultForEnvironment:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Specifies for all NSRails actions in a given environment to <a href="#//api/name/use">use</a> the receiver.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>+ (void)useAsDefaultForEnvironment:(NSString *)<em>environment</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>environment</em></dt>
-			<dd><p>Environment identifier. Can be your own custom string or the constants NSRConfigEnvironmentDevelopment or NSRConfigEnvironmentProduction.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Lowest config precedence.</p>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRConfig.h</code><br />
-	</div>				
-	
-	
-</div>
-						
 					</div>
 					
 					
@@ -1868,6 +1779,96 @@ prodConfig.appPassword = @"password";
 			
 		</ul>
 	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRConfig.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/useAsDefault" title="useAsDefault"></a>
+	<h3 class="subsubtitle method-title">useAsDefault</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Specifies for all NSRails actions in the current environment to <a href="#//api/name/use">use</a> the receiver.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)useAsDefault</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Lowest config precedence.</p>
+
+<p>Can be useful if the receiver is a custom <code>NSRConfig</code> subclass which you&rsquo;d like to <a href="#//api/name/use">use</a> for the entirety of your app.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRConfig.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/useAsDefaultForEnvironment:" title="useAsDefaultForEnvironment:"></a>
+	<h3 class="subsubtitle method-title">useAsDefaultForEnvironment:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Specifies for all NSRails actions in a given environment to <a href="#//api/name/use">use</a> the receiver.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)useAsDefaultForEnvironment:(NSString *)<em>environment</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>environment</em></dt>
+			<dd><p>Environment identifier. Can be your own custom string or the constants NSRConfigEnvironmentDevelopment or NSRConfigEnvironmentProduction.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Lowest config precedence.</p>
+	</div>
+	
+	
+	
+	
 	
 	
 	
