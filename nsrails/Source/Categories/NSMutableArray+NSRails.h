@@ -65,6 +65,8 @@
  Replaces each dictionary in this array with an instance of the given class, setting respective properties to those defined in that dictionary (using the class's NSRMap).
  
  This method can be useful when interpreting a retrieved array (representation of your server's JSON out) from a remoteGET method or similar.
+ 
+ @param class Class with which to build instances to replace this array's dictionaries. Raises an exception if this class does not subclass NSRRemoteObject.
  */
 - (void) translateRemoteDictionariesIntoInstancesOfClass:(Class)class;
 

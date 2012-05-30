@@ -85,11 +85,17 @@ NSString * const NSRCoreDataException				= @"NSRCoreDataException";
 
 
 #if NSRLog > 0
-#define NSRLogError(x)	NSLog(@"%@",x);
-#else
-#define NSRLogError(x)
-#endif
 
+#define NSRLogTagged(tag, ...)			\
+	NSLog(@"[NSRails][%@] %@", tag, [NSString stringWithFormat:__VA_ARGS__])
+
+#define NSRLogInOut(inout, json, ...)	\
+	NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 1) ? (json ? json : @"") : @"")
+
+#else
+#define NSRLogTagged(...)
+#define NSRLogInOut(...)
+#endif
 
 @implementation NSRConfig
 @synthesize appURL, appUsername, appPassword;
@@ -275,14 +281,8 @@ static NSString *currentEnvironment = nil;
 	
 	NSString *url = [NSString stringWithFormat:@"%@/%@",appURL,route ? route : @""];
 	
-#if NSRLog > 0
-	NSLog(@" ");
-	NSLog(@"%@ to %@",httpVerb,url);
-#if NSRLog > 1
-	NSLog(@"OUT===> %@",body);
-#endif
-#endif
-	
+	NSRLogInOut(@"OUT", body, @"===> %@ to %@", httpVerb, url);
+
 	//If you want to override handling the connection, override the following method	
 	NSDictionary *result = [self responseForRequestType:httpVerb requestBody:body url:url sync:error orAsync:blockPlusNetworkActivity];	
 	return result;
@@ -334,9 +334,7 @@ static NSString *currentEnvironment = nil;
 		NSError *error = [NSError errorWithDomain:NSRRemoteErrorDomain
 											 code:statusCode
 										 userInfo:inf];
-		
-		NSRLogError(error);
-		
+				
 		return error;
 	}
 	
@@ -347,8 +345,6 @@ static NSString *currentEnvironment = nil;
 - (id) receiveResponse:(NSHTTPURLResponse *)response data:(NSData *)data error:(NSError **)error
 {
 	NSInteger code = [(NSHTTPURLResponse *)response statusCode];
-	
-	NSLog(@"IN<=== Code %d;",(int)code);
 	
 	id jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments | NSJSONReadingMutableContainers error:nil];
 	
@@ -361,18 +357,17 @@ static NSString *currentEnvironment = nil;
 	
 	//see if there's an error from this response using this helper method
 	NSError *railsError = [self errorForResponse:jsonResponse statusCode:code];
+
+	NSRLogInOut(@"IN", railsError ? @"" : jsonResponse, @"<=== Code %d; %@", (int)code, railsError ? railsError : @"");
+
 	if (railsError)
 	{
+
 		if (error)
 			*error = railsError;
 		
 		return nil;
 	}
-
-	
-#if NSRLog > 1
-	NSLog(@"  <=== %@",jsonResponse);
-#endif
 	
 	return jsonResponse;
 }
@@ -394,7 +389,7 @@ static NSString *currentEnvironment = nil;
 			 //if there's an error from the request there must have been an issue connecting to the server.
 			 if (appleError)
 			 {
-				 NSRLogError(appleError);
+				 NSRLogTagged(@"connection", @"%@", appleError);
 				 
 				 dispatch_sync(queue, ^{ completionBlock(nil, appleError); } );
 			 }
@@ -418,7 +413,7 @@ static NSString *currentEnvironment = nil;
 		//if there's an error here there must have been an issue connecting to the server.
 		if (appleError)
 		{
-			NSRLogError(appleError);
+			NSRLogTagged(@"connection", @"%@", appleError);
 			
 			if (error)
 				*error = appleError;
