@@ -3,7 +3,7 @@
 //  NSRails
 //
 //  Created by Dan Hassin on 5/27/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
 #import <SenTestingKit/SenTestingKit.h>
@@ -38,7 +38,6 @@ NSRMap(*, post -b);
 
 @end
 
-
 @interface NSRRemoteObject_CoreData : SenTestCase
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
@@ -52,6 +51,13 @@ NSRMap(*, post -b);
 @synthesize managedObjectContext = __managedObjectContext;
 @synthesize managedObjectModel = __managedObjectModel;
 @synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
+
+- (void) test_coredata_enabled
+{
+	STAssertTrue([NSRRemoteObject isSubclassOfClass:[NSManagedObject class]], @"");
+}
+
+#ifdef NSR_USE_COREDATA
 
 - (void) test_exceptions
 {
@@ -75,8 +81,6 @@ NSRMap(*, post -b);
 
 - (void) test_crud
 {
-	STAssertTrue([NSRRemoteObject isSubclassOfClass:[NSManagedObject class]], @"");
-	
 	Post *p = [[Post alloc] initInserted];
 	
 	STAssertFalse(p.hasChanges, @"");
@@ -111,7 +115,8 @@ NSRMap(*, post -b);
 	
 	p.content = @"changed!";
 
-	//Not even close to being an expert in CoreData... anyone know why this is failing?
+	//TODO
+	//Not even close to being an expert with CoreData... anyone know why this is failing?
 	//STAssertTrue(p.isUpdated, @"");
 	STAssertTrue([p remoteUpdate:nil], @"");
 	STAssertFalse(p.hasChanges, @"");
@@ -153,6 +158,8 @@ NSRMap(*, post -b);
 	
 	STAssertNil([Post findOrInsertObjectUsingRemoteDictionary:NSRDictionary(@"hi",@"content")], @"should be nil if no rID");
 }
+
+#endif
 
 - (void) setUp
 {

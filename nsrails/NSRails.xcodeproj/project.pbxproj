@@ -16,20 +16,6 @@
 		594764F91569F63200C07A62 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592585C21569F067009AD599 /* SenTestingKit.framework */; };
 		594764FA1569F63200C07A62 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59C464D1155C59DF00920FD5 /* Cocoa.framework */; };
 		594764FD1569F63200C07A62 /* NSRailsMac.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 594764EB1569F63200C07A62 /* NSRailsMac.dylib */; };
-		594765751569F65C00C07A62 /* NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 594765301569F65C00C07A62 /* NSRails.h */; };
-		594765761569F65C00C07A62 /* NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 594765301569F65C00C07A62 /* NSRails.h */; };
-		594765771569F65C00C07A62 /* NSRRemoteObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 594765311569F65C00C07A62 /* NSRRemoteObject.h */; };
-		594765781569F65C00C07A62 /* NSRRemoteObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 594765311569F65C00C07A62 /* NSRRemoteObject.h */; };
-		594765791569F65C00C07A62 /* NSRRemoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765321569F65C00C07A62 /* NSRRemoteObject.m */; };
-		5947657A1569F65C00C07A62 /* NSRRemoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765321569F65C00C07A62 /* NSRRemoteObject.m */; };
-		5947657B1569F65C00C07A62 /* NSRConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 594765331569F65C00C07A62 /* NSRConfig.h */; };
-		5947657C1569F65C00C07A62 /* NSRConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 594765331569F65C00C07A62 /* NSRConfig.h */; };
-		5947657D1569F65C00C07A62 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765341569F65C00C07A62 /* NSRConfig.m */; };
-		5947657E1569F65C00C07A62 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765341569F65C00C07A62 /* NSRConfig.m */; };
-		5947657F1569F65C00C07A62 /* NSRPropertyCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 594765351569F65C00C07A62 /* NSRPropertyCollection.h */; };
-		594765801569F65C00C07A62 /* NSRPropertyCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 594765351569F65C00C07A62 /* NSRPropertyCollection.h */; };
-		594765811569F65C00C07A62 /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765361569F65C00C07A62 /* NSRPropertyCollection.m */; };
-		594765821569F65C00C07A62 /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765361569F65C00C07A62 /* NSRPropertyCollection.m */; };
 		594765921569F67600C07A62 /* 404-2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 594765851569F67600C07A62 /* 404-2.txt */; };
 		594765931569F67600C07A62 /* 404-2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 594765851569F67600C07A62 /* 404-2.txt */; };
 		594765941569F67600C07A62 /* 404.txt in Resources */ = {isa = PBXBuildFile; fileRef = 594765861569F67600C07A62 /* 404.txt */; };
@@ -50,33 +36,65 @@
 		594765BF1569F9E100C07A62 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B41569F9E100C07A62 /* NSRConfig.m */; };
 		594765C01569F9E100C07A62 /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B51569F9E100C07A62 /* NSRPropertyCollection.m */; };
 		594765C11569F9E100C07A62 /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B51569F9E100C07A62 /* NSRPropertyCollection.m */; };
-		59569568156EB7540033F762 /* NSMutableArray+NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 59569566156EB7540033F762 /* NSMutableArray+NSRails.h */; };
-		59569569156EB7540033F762 /* NSMutableArray+NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 59569566156EB7540033F762 /* NSMutableArray+NSRails.h */; };
-		5956956A156EB7540033F762 /* NSMutableArray+NSRails.m in Sources */ = {isa = PBXBuildFile; fileRef = 59569567156EB7540033F762 /* NSMutableArray+NSRails.m */; };
-		5956956B156EB7540033F762 /* NSMutableArray+NSRails.m in Sources */ = {isa = PBXBuildFile; fileRef = 59569567156EB7540033F762 /* NSMutableArray+NSRails.m */; };
-		597DED35156AE174005CB6F9 /* NSData+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 597DED2F156AE174005CB6F9 /* NSData+Additions.h */; };
-		597DED36156AE174005CB6F9 /* NSData+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 597DED2F156AE174005CB6F9 /* NSData+Additions.h */; };
-		597DED37156AE174005CB6F9 /* NSData+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 597DED30156AE174005CB6F9 /* NSData+Additions.m */; };
-		597DED38156AE174005CB6F9 /* NSData+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 597DED30156AE174005CB6F9 /* NSData+Additions.m */; };
-		597DED39156AE174005CB6F9 /* NSObject+Properties.h in Headers */ = {isa = PBXBuildFile; fileRef = 597DED31156AE174005CB6F9 /* NSObject+Properties.h */; };
-		597DED3A156AE174005CB6F9 /* NSObject+Properties.h in Headers */ = {isa = PBXBuildFile; fileRef = 597DED31156AE174005CB6F9 /* NSObject+Properties.h */; };
-		597DED3B156AE174005CB6F9 /* NSObject+Properties.m in Sources */ = {isa = PBXBuildFile; fileRef = 597DED32156AE174005CB6F9 /* NSObject+Properties.m */; };
-		597DED3C156AE174005CB6F9 /* NSObject+Properties.m in Sources */ = {isa = PBXBuildFile; fileRef = 597DED32156AE174005CB6F9 /* NSObject+Properties.m */; };
-		597DED3D156AE174005CB6F9 /* NSString+Inflection.h in Headers */ = {isa = PBXBuildFile; fileRef = 597DED33156AE174005CB6F9 /* NSString+Inflection.h */; };
-		597DED3E156AE174005CB6F9 /* NSString+Inflection.h in Headers */ = {isa = PBXBuildFile; fileRef = 597DED33156AE174005CB6F9 /* NSString+Inflection.h */; };
-		597DED3F156AE174005CB6F9 /* NSString+Inflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 597DED34156AE174005CB6F9 /* NSString+Inflection.m */; };
-		597DED40156AE174005CB6F9 /* NSString+Inflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 597DED34156AE174005CB6F9 /* NSString+Inflection.m */; };
+		5993AF521575CD3000DA25F4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17A8155C74200092B048 /* Foundation.framework */; };
+		5993AF5F1575CD3100DA25F4 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592585C21569F067009AD599 /* SenTestingKit.framework */; };
+		5993AF601575CD3100DA25F4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17AA155C74890092B048 /* UIKit.framework */; };
+		5993AF611575CD3100DA25F4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17A8155C74200092B048 /* Foundation.framework */; };
+		5993AF641575CD3100DA25F4 /* libNSRailsCD.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5993AF511575CD3000DA25F4 /* libNSRailsCD.a */; };
+		5993AF861575CD6E00DA25F4 /* NSData+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF761575CD6E00DA25F4 /* NSData+Additions.h */; };
+		5993AF871575CD6E00DA25F4 /* NSData+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF761575CD6E00DA25F4 /* NSData+Additions.h */; };
+		5993AF881575CD6E00DA25F4 /* NSData+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF761575CD6E00DA25F4 /* NSData+Additions.h */; };
+		5993AF891575CD6E00DA25F4 /* NSData+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF771575CD6E00DA25F4 /* NSData+Additions.m */; };
+		5993AF8A1575CD6E00DA25F4 /* NSData+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF771575CD6E00DA25F4 /* NSData+Additions.m */; };
+		5993AF8B1575CD6E00DA25F4 /* NSData+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF771575CD6E00DA25F4 /* NSData+Additions.m */; };
+		5993AF8C1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF781575CD6E00DA25F4 /* NSMutableArray+NSRails.h */; };
+		5993AF8D1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF781575CD6E00DA25F4 /* NSMutableArray+NSRails.h */; };
+		5993AF8E1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF781575CD6E00DA25F4 /* NSMutableArray+NSRails.h */; };
+		5993AF8F1575CD6E00DA25F4 /* NSMutableArray+NSRails.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF791575CD6E00DA25F4 /* NSMutableArray+NSRails.m */; };
+		5993AF901575CD6E00DA25F4 /* NSMutableArray+NSRails.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF791575CD6E00DA25F4 /* NSMutableArray+NSRails.m */; };
+		5993AF911575CD6E00DA25F4 /* NSMutableArray+NSRails.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF791575CD6E00DA25F4 /* NSMutableArray+NSRails.m */; };
+		5993AF921575CD6E00DA25F4 /* NSObject+Properties.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7A1575CD6E00DA25F4 /* NSObject+Properties.h */; };
+		5993AF931575CD6E00DA25F4 /* NSObject+Properties.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7A1575CD6E00DA25F4 /* NSObject+Properties.h */; };
+		5993AF941575CD6E00DA25F4 /* NSObject+Properties.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7A1575CD6E00DA25F4 /* NSObject+Properties.h */; };
+		5993AF951575CD6E00DA25F4 /* NSObject+Properties.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF7B1575CD6E00DA25F4 /* NSObject+Properties.m */; };
+		5993AF961575CD6E00DA25F4 /* NSObject+Properties.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF7B1575CD6E00DA25F4 /* NSObject+Properties.m */; };
+		5993AF971575CD6E00DA25F4 /* NSObject+Properties.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF7B1575CD6E00DA25F4 /* NSObject+Properties.m */; };
+		5993AF981575CD6E00DA25F4 /* NSString+Inflection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7C1575CD6E00DA25F4 /* NSString+Inflection.h */; };
+		5993AF991575CD6E00DA25F4 /* NSString+Inflection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7C1575CD6E00DA25F4 /* NSString+Inflection.h */; };
+		5993AF9A1575CD6E00DA25F4 /* NSString+Inflection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7C1575CD6E00DA25F4 /* NSString+Inflection.h */; };
+		5993AF9B1575CD6E00DA25F4 /* NSString+Inflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF7D1575CD6E00DA25F4 /* NSString+Inflection.m */; };
+		5993AF9C1575CD6E00DA25F4 /* NSString+Inflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF7D1575CD6E00DA25F4 /* NSString+Inflection.m */; };
+		5993AF9D1575CD6E00DA25F4 /* NSString+Inflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF7D1575CD6E00DA25F4 /* NSString+Inflection.m */; };
+		5993AF9E1575CD6E00DA25F4 /* NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7E1575CD6E00DA25F4 /* NSRails.h */; };
+		5993AF9F1575CD6E00DA25F4 /* NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7E1575CD6E00DA25F4 /* NSRails.h */; };
+		5993AFA01575CD6E00DA25F4 /* NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7E1575CD6E00DA25F4 /* NSRails.h */; };
+		5993AFA11575CD6E00DA25F4 /* NSRConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7F1575CD6E00DA25F4 /* NSRConfig.h */; };
+		5993AFA21575CD6E00DA25F4 /* NSRConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7F1575CD6E00DA25F4 /* NSRConfig.h */; };
+		5993AFA31575CD6E00DA25F4 /* NSRConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7F1575CD6E00DA25F4 /* NSRConfig.h */; };
+		5993AFA41575CD6E00DA25F4 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF801575CD6E00DA25F4 /* NSRConfig.m */; };
+		5993AFA51575CD6E00DA25F4 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF801575CD6E00DA25F4 /* NSRConfig.m */; };
+		5993AFA61575CD6E00DA25F4 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF801575CD6E00DA25F4 /* NSRConfig.m */; };
+		5993AFA71575CD6E00DA25F4 /* NSRMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF811575CD6E00DA25F4 /* NSRMacros.h */; };
+		5993AFA81575CD6E00DA25F4 /* NSRMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF811575CD6E00DA25F4 /* NSRMacros.h */; };
+		5993AFA91575CD6E00DA25F4 /* NSRMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF811575CD6E00DA25F4 /* NSRMacros.h */; };
+		5993AFAA1575CD6E00DA25F4 /* NSRPropertyCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF821575CD6E00DA25F4 /* NSRPropertyCollection.h */; };
+		5993AFAB1575CD6E00DA25F4 /* NSRPropertyCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF821575CD6E00DA25F4 /* NSRPropertyCollection.h */; };
+		5993AFAC1575CD6E00DA25F4 /* NSRPropertyCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF821575CD6E00DA25F4 /* NSRPropertyCollection.h */; };
+		5993AFAD1575CD6E00DA25F4 /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF831575CD6E00DA25F4 /* NSRPropertyCollection.m */; };
+		5993AFAE1575CD6E00DA25F4 /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF831575CD6E00DA25F4 /* NSRPropertyCollection.m */; };
+		5993AFAF1575CD6E00DA25F4 /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF831575CD6E00DA25F4 /* NSRPropertyCollection.m */; };
+		5993AFB01575CD6E00DA25F4 /* NSRRemoteObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF841575CD6E00DA25F4 /* NSRRemoteObject.h */; };
+		5993AFB11575CD6E00DA25F4 /* NSRRemoteObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF841575CD6E00DA25F4 /* NSRRemoteObject.h */; };
+		5993AFB21575CD6E00DA25F4 /* NSRRemoteObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF841575CD6E00DA25F4 /* NSRRemoteObject.h */; };
+		5993AFB31575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF851575CD6E00DA25F4 /* NSRRemoteObject.m */; };
+		5993AFB41575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF851575CD6E00DA25F4 /* NSRRemoteObject.m */; };
+		5993AFB51575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF851575CD6E00DA25F4 /* NSRRemoteObject.m */; };
+		5993AFB61575CD9C00DA25F4 /* Test.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 59EC6A661572A24900AA6D79 /* Test.xcdatamodeld */; };
+		5993AFB71575CD9E00DA25F4 /* NSRRemoteObject+CoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = 59EC6A4715729FE600AA6D79 /* NSRRemoteObject+CoreData.m */; };
+		5993AFB81575CDB400DA25F4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59CF24641571901B00476966 /* CoreData.framework */; };
+		5993AFB91575CDBD00DA25F4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59CF24641571901B00476966 /* CoreData.framework */; };
 		59CF24651571901B00476966 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59CF24641571901B00476966 /* CoreData.framework */; };
 		59CF246F1571917500476966 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59CF246E1571917500476966 /* CoreData.framework */; };
-		59EC6A7E1572A93A00AA6D79 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59CF24641571901B00476966 /* CoreData.framework */; };
-		59EC6A7F1572A93A00AA6D79 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592585C21569F067009AD599 /* SenTestingKit.framework */; };
-		59EC6A801572A93A00AA6D79 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17AA155C74890092B048 /* UIKit.framework */; };
-		59EC6A811572A93A00AA6D79 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17A8155C74200092B048 /* Foundation.framework */; };
-		59EC6A821572A93A00AA6D79 /* libNSRails.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5947645A1569F24400C07A62 /* libNSRails.a */; };
-		59EC6A8C1572A94E00AA6D79 /* NSRRemoteObject+CoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = 59EC6A4715729FE600AA6D79 /* NSRRemoteObject+CoreData.m */; };
-		59EC6A8D1572A95900AA6D79 /* Test.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 59EC6A661572A24900AA6D79 /* Test.xcdatamodeld */; };
-		59F234CA1575AB6B00F61A10 /* NSRMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 59F234C91575AB6B00F61A10 /* NSRMacros.h */; };
-		59F234CB1575AB6B00F61A10 /* NSRMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 59F234C91575AB6B00F61A10 /* NSRMacros.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,12 +112,12 @@
 			remoteGlobalIDString = 594764EA1569F63200C07A62;
 			remoteInfo = NSRailsMac;
 		};
-		59EC6A741572A93A00AA6D79 /* PBXContainerItemProxy */ = {
+		5993AF621575CD3100DA25F4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 59C4648D155C580D00920FD5 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 594764591569F24400C07A62;
-			remoteInfo = NSRails;
+			remoteGlobalIDString = 5993AF501575CD3000DA25F4;
+			remoteInfo = NSRailsCD;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -112,13 +130,6 @@
 		594764671569F24400C07A62 /* NSRailsTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NSRailsTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		594764EB1569F63200C07A62 /* NSRailsMac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = NSRailsMac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		594764F81569F63200C07A62 /* NSRailsMacTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NSRailsMacTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		594765301569F65C00C07A62 /* NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRails.h; sourceTree = "<group>"; };
-		594765311569F65C00C07A62 /* NSRRemoteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = NSRRemoteObject.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		594765321569F65C00C07A62 /* NSRRemoteObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRemoteObject.m; sourceTree = "<group>"; };
-		594765331569F65C00C07A62 /* NSRConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRConfig.h; sourceTree = "<group>"; };
-		594765341569F65C00C07A62 /* NSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConfig.m; sourceTree = "<group>"; };
-		594765351569F65C00C07A62 /* NSRPropertyCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRPropertyCollection.h; sourceTree = "<group>"; };
-		594765361569F65C00C07A62 /* NSRPropertyCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRPropertyCollection.m; sourceTree = "<group>"; };
 		594765851569F67600C07A62 /* 404-2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 0; path = "404-2.txt"; sourceTree = "<group>"; };
 		594765861569F67600C07A62 /* 404.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 404.txt; sourceTree = "<group>"; };
 		594765871569F67600C07A62 /* 500.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 500.txt; sourceTree = "<group>"; };
@@ -131,14 +142,24 @@
 		594765B31569F9E100C07A62 /* NSRAsserts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRAsserts.h; sourceTree = "<group>"; };
 		594765B41569F9E100C07A62 /* NSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = NSRConfig.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		594765B51569F9E100C07A62 /* NSRPropertyCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRPropertyCollection.m; sourceTree = "<group>"; };
-		59569566156EB7540033F762 /* NSMutableArray+NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+NSRails.h"; sourceTree = "<group>"; };
-		59569567156EB7540033F762 /* NSMutableArray+NSRails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+NSRails.m"; sourceTree = "<group>"; };
-		597DED2F156AE174005CB6F9 /* NSData+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Additions.h"; sourceTree = "<group>"; };
-		597DED30156AE174005CB6F9 /* NSData+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Additions.m"; sourceTree = "<group>"; };
-		597DED31156AE174005CB6F9 /* NSObject+Properties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Properties.h"; sourceTree = "<group>"; };
-		597DED32156AE174005CB6F9 /* NSObject+Properties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Properties.m"; sourceTree = "<group>"; };
-		597DED33156AE174005CB6F9 /* NSString+Inflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Inflection.h"; sourceTree = "<group>"; };
-		597DED34156AE174005CB6F9 /* NSString+Inflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Inflection.m"; sourceTree = "<group>"; };
+		5993AF511575CD3000DA25F4 /* libNSRailsCD.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNSRailsCD.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5993AF5E1575CD3100DA25F4 /* NSRailsCDTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NSRailsCDTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5993AF761575CD6E00DA25F4 /* NSData+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Additions.h"; sourceTree = "<group>"; };
+		5993AF771575CD6E00DA25F4 /* NSData+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Additions.m"; sourceTree = "<group>"; };
+		5993AF781575CD6E00DA25F4 /* NSMutableArray+NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+NSRails.h"; sourceTree = "<group>"; };
+		5993AF791575CD6E00DA25F4 /* NSMutableArray+NSRails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+NSRails.m"; sourceTree = "<group>"; };
+		5993AF7A1575CD6E00DA25F4 /* NSObject+Properties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Properties.h"; sourceTree = "<group>"; };
+		5993AF7B1575CD6E00DA25F4 /* NSObject+Properties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Properties.m"; sourceTree = "<group>"; };
+		5993AF7C1575CD6E00DA25F4 /* NSString+Inflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Inflection.h"; sourceTree = "<group>"; };
+		5993AF7D1575CD6E00DA25F4 /* NSString+Inflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Inflection.m"; sourceTree = "<group>"; };
+		5993AF7E1575CD6E00DA25F4 /* NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRails.h; sourceTree = "<group>"; };
+		5993AF7F1575CD6E00DA25F4 /* NSRConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRConfig.h; sourceTree = "<group>"; };
+		5993AF801575CD6E00DA25F4 /* NSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConfig.m; sourceTree = "<group>"; };
+		5993AF811575CD6E00DA25F4 /* NSRMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRMacros.h; sourceTree = "<group>"; };
+		5993AF821575CD6E00DA25F4 /* NSRPropertyCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRPropertyCollection.h; sourceTree = "<group>"; };
+		5993AF831575CD6E00DA25F4 /* NSRPropertyCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRPropertyCollection.m; sourceTree = "<group>"; };
+		5993AF841575CD6E00DA25F4 /* NSRRemoteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRRemoteObject.h; sourceTree = "<group>"; };
+		5993AF851575CD6E00DA25F4 /* NSRRemoteObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRemoteObject.m; sourceTree = "<group>"; };
 		59C464D1155C59DF00920FD5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		59CF24641571901B00476966 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk/System/Library/Frameworks/CoreData.framework; sourceTree = DEVELOPER_DIR; };
 		59CF246E1571917500476966 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/CoreData.framework; sourceTree = DEVELOPER_DIR; };
@@ -147,8 +168,6 @@
 		59DD17AE155C74BE0092B048 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		59EC6A4715729FE600AA6D79 /* NSRRemoteObject+CoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSRRemoteObject+CoreData.m"; sourceTree = "<group>"; };
 		59EC6A671572A24A00AA6D79 /* Test.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Test.xcdatamodel; sourceTree = "<group>"; };
-		59EC6A8B1572A93A00AA6D79 /* NSRailsTests copy.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NSRailsTests copy.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		59F234C91575AB6B00F61A10 /* NSRMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRMacros.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,15 +210,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		59EC6A7D1572A93A00AA6D79 /* Frameworks */ = {
+		5993AF4E1575CD3000DA25F4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59EC6A7E1572A93A00AA6D79 /* CoreData.framework in Frameworks */,
-				59EC6A7F1572A93A00AA6D79 /* SenTestingKit.framework in Frameworks */,
-				59EC6A801572A93A00AA6D79 /* UIKit.framework in Frameworks */,
-				59EC6A811572A93A00AA6D79 /* Foundation.framework in Frameworks */,
-				59EC6A821572A93A00AA6D79 /* libNSRails.a in Frameworks */,
+				5993AFB81575CDB400DA25F4 /* CoreData.framework in Frameworks */,
+				5993AF521575CD3000DA25F4 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5993AF5A1575CD3100DA25F4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5993AFB91575CDBD00DA25F4 /* CoreData.framework in Frameworks */,
+				5993AF5F1575CD3100DA25F4 /* SenTestingKit.framework in Frameworks */,
+				5993AF601575CD3100DA25F4 /* UIKit.framework in Frameworks */,
+				5993AF611575CD3100DA25F4 /* Foundation.framework in Frameworks */,
+				5993AF641575CD3100DA25F4 /* libNSRailsCD.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -214,22 +242,6 @@
 				592585DC1569F079009AD599 /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
-			sourceTree = "<group>";
-		};
-		5947650D1569F65C00C07A62 /* Source */ = {
-			isa = PBXGroup;
-			children = (
-				597DED2E156AE174005CB6F9 /* Categories */,
-				594765301569F65C00C07A62 /* NSRails.h */,
-				594765311569F65C00C07A62 /* NSRRemoteObject.h */,
-				594765321569F65C00C07A62 /* NSRRemoteObject.m */,
-				594765331569F65C00C07A62 /* NSRConfig.h */,
-				594765341569F65C00C07A62 /* NSRConfig.m */,
-				594765351569F65C00C07A62 /* NSRPropertyCollection.h */,
-				594765361569F65C00C07A62 /* NSRPropertyCollection.m */,
-				59F234C91575AB6B00F61A10 /* NSRMacros.h */,
-			);
-			path = Source;
 			sourceTree = "<group>";
 		};
 		594765831569F67600C07A62 /* Tests */ = {
@@ -261,17 +273,33 @@
 			path = Mocks;
 			sourceTree = "<group>";
 		};
-		597DED2E156AE174005CB6F9 /* Categories */ = {
+		5993AF741575CD6E00DA25F4 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				59569566156EB7540033F762 /* NSMutableArray+NSRails.h */,
-				59569567156EB7540033F762 /* NSMutableArray+NSRails.m */,
-				597DED2F156AE174005CB6F9 /* NSData+Additions.h */,
-				597DED30156AE174005CB6F9 /* NSData+Additions.m */,
-				597DED31156AE174005CB6F9 /* NSObject+Properties.h */,
-				597DED32156AE174005CB6F9 /* NSObject+Properties.m */,
-				597DED33156AE174005CB6F9 /* NSString+Inflection.h */,
-				597DED34156AE174005CB6F9 /* NSString+Inflection.m */,
+				5993AF751575CD6E00DA25F4 /* Categories */,
+				5993AF7E1575CD6E00DA25F4 /* NSRails.h */,
+				5993AF7F1575CD6E00DA25F4 /* NSRConfig.h */,
+				5993AF801575CD6E00DA25F4 /* NSRConfig.m */,
+				5993AF811575CD6E00DA25F4 /* NSRMacros.h */,
+				5993AF821575CD6E00DA25F4 /* NSRPropertyCollection.h */,
+				5993AF831575CD6E00DA25F4 /* NSRPropertyCollection.m */,
+				5993AF841575CD6E00DA25F4 /* NSRRemoteObject.h */,
+				5993AF851575CD6E00DA25F4 /* NSRRemoteObject.m */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		5993AF751575CD6E00DA25F4 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				5993AF761575CD6E00DA25F4 /* NSData+Additions.h */,
+				5993AF771575CD6E00DA25F4 /* NSData+Additions.m */,
+				5993AF781575CD6E00DA25F4 /* NSMutableArray+NSRails.h */,
+				5993AF791575CD6E00DA25F4 /* NSMutableArray+NSRails.m */,
+				5993AF7A1575CD6E00DA25F4 /* NSObject+Properties.h */,
+				5993AF7B1575CD6E00DA25F4 /* NSObject+Properties.m */,
+				5993AF7C1575CD6E00DA25F4 /* NSString+Inflection.h */,
+				5993AF7D1575CD6E00DA25F4 /* NSString+Inflection.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -279,7 +307,7 @@
 		59C4648B155C580D00920FD5 = {
 			isa = PBXGroup;
 			children = (
-				5947650D1569F65C00C07A62 /* Source */,
+				5993AF741575CD6E00DA25F4 /* Source */,
 				594765831569F67600C07A62 /* Tests */,
 				59C4649B155C583900920FD5 /* Frameworks */,
 				59C46499155C583900920FD5 /* Products */,
@@ -293,7 +321,8 @@
 				594764671569F24400C07A62 /* NSRailsTests.octest */,
 				594764EB1569F63200C07A62 /* NSRailsMac.dylib */,
 				594764F81569F63200C07A62 /* NSRailsMacTests.octest */,
-				59EC6A8B1572A93A00AA6D79 /* NSRailsTests copy.octest */,
+				5993AF511575CD3000DA25F4 /* libNSRailsCD.a */,
+				5993AF5E1575CD3100DA25F4 /* NSRailsCDTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -320,15 +349,15 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				594765751569F65C00C07A62 /* NSRails.h in Headers */,
-				594765771569F65C00C07A62 /* NSRRemoteObject.h in Headers */,
-				5947657B1569F65C00C07A62 /* NSRConfig.h in Headers */,
-				5947657F1569F65C00C07A62 /* NSRPropertyCollection.h in Headers */,
-				597DED35156AE174005CB6F9 /* NSData+Additions.h in Headers */,
-				597DED39156AE174005CB6F9 /* NSObject+Properties.h in Headers */,
-				597DED3D156AE174005CB6F9 /* NSString+Inflection.h in Headers */,
-				59569568156EB7540033F762 /* NSMutableArray+NSRails.h in Headers */,
-				59F234CA1575AB6B00F61A10 /* NSRMacros.h in Headers */,
+				5993AF861575CD6E00DA25F4 /* NSData+Additions.h in Headers */,
+				5993AF8C1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */,
+				5993AF921575CD6E00DA25F4 /* NSObject+Properties.h in Headers */,
+				5993AF981575CD6E00DA25F4 /* NSString+Inflection.h in Headers */,
+				5993AF9E1575CD6E00DA25F4 /* NSRails.h in Headers */,
+				5993AFA11575CD6E00DA25F4 /* NSRConfig.h in Headers */,
+				5993AFA71575CD6E00DA25F4 /* NSRMacros.h in Headers */,
+				5993AFAA1575CD6E00DA25F4 /* NSRPropertyCollection.h in Headers */,
+				5993AFB01575CD6E00DA25F4 /* NSRRemoteObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,15 +365,31 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				594765761569F65C00C07A62 /* NSRails.h in Headers */,
-				594765781569F65C00C07A62 /* NSRRemoteObject.h in Headers */,
-				5947657C1569F65C00C07A62 /* NSRConfig.h in Headers */,
-				594765801569F65C00C07A62 /* NSRPropertyCollection.h in Headers */,
-				597DED36156AE174005CB6F9 /* NSData+Additions.h in Headers */,
-				597DED3A156AE174005CB6F9 /* NSObject+Properties.h in Headers */,
-				597DED3E156AE174005CB6F9 /* NSString+Inflection.h in Headers */,
-				59569569156EB7540033F762 /* NSMutableArray+NSRails.h in Headers */,
-				59F234CB1575AB6B00F61A10 /* NSRMacros.h in Headers */,
+				5993AF871575CD6E00DA25F4 /* NSData+Additions.h in Headers */,
+				5993AF8D1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */,
+				5993AF931575CD6E00DA25F4 /* NSObject+Properties.h in Headers */,
+				5993AF991575CD6E00DA25F4 /* NSString+Inflection.h in Headers */,
+				5993AF9F1575CD6E00DA25F4 /* NSRails.h in Headers */,
+				5993AFA21575CD6E00DA25F4 /* NSRConfig.h in Headers */,
+				5993AFA81575CD6E00DA25F4 /* NSRMacros.h in Headers */,
+				5993AFAB1575CD6E00DA25F4 /* NSRPropertyCollection.h in Headers */,
+				5993AFB11575CD6E00DA25F4 /* NSRRemoteObject.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5993AF4F1575CD3000DA25F4 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5993AF881575CD6E00DA25F4 /* NSData+Additions.h in Headers */,
+				5993AF8E1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */,
+				5993AF941575CD6E00DA25F4 /* NSObject+Properties.h in Headers */,
+				5993AF9A1575CD6E00DA25F4 /* NSString+Inflection.h in Headers */,
+				5993AFA01575CD6E00DA25F4 /* NSRails.h in Headers */,
+				5993AFA31575CD6E00DA25F4 /* NSRConfig.h in Headers */,
+				5993AFA91575CD6E00DA25F4 /* NSRMacros.h in Headers */,
+				5993AFAC1575CD6E00DA25F4 /* NSRPropertyCollection.h in Headers */,
+				5993AFB21575CD6E00DA25F4 /* NSRRemoteObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -423,23 +468,40 @@
 			productReference = 594764F81569F63200C07A62 /* NSRailsMacTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
-		59EC6A721572A93A00AA6D79 /* NSRailsTests CD */ = {
+		5993AF501575CD3000DA25F4 /* NSRailsCD */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 59EC6A881572A93A00AA6D79 /* Build configuration list for PBXNativeTarget "NSRailsTests CD" */;
+			buildConfigurationList = 5993AF6E1575CD3100DA25F4 /* Build configuration list for PBXNativeTarget "NSRailsCD" */;
 			buildPhases = (
-				59EC6A751572A93A00AA6D79 /* Sources */,
-				59EC6A7D1572A93A00AA6D79 /* Frameworks */,
-				59EC6A831572A93A00AA6D79 /* Resources */,
-				59EC6A871572A93A00AA6D79 /* ShellScript */,
+				5993AF4D1575CD3000DA25F4 /* Sources */,
+				5993AF4E1575CD3000DA25F4 /* Frameworks */,
+				5993AF4F1575CD3000DA25F4 /* Headers */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				59EC6A731572A93A00AA6D79 /* PBXTargetDependency */,
 			);
-			name = "NSRailsTests CD";
-			productName = NSRailsTests;
-			productReference = 59EC6A8B1572A93A00AA6D79 /* NSRailsTests copy.octest */;
+			name = NSRailsCD;
+			productName = NSRailsCD;
+			productReference = 5993AF511575CD3000DA25F4 /* libNSRailsCD.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		5993AF5D1575CD3100DA25F4 /* NSRailsCDTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5993AF711575CD3100DA25F4 /* Build configuration list for PBXNativeTarget "NSRailsCDTests" */;
+			buildPhases = (
+				5993AF591575CD3100DA25F4 /* Sources */,
+				5993AF5A1575CD3100DA25F4 /* Frameworks */,
+				5993AF5B1575CD3100DA25F4 /* Resources */,
+				5993AF5C1575CD3100DA25F4 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5993AF631575CD3100DA25F4 /* PBXTargetDependency */,
+			);
+			name = NSRailsCDTests;
+			productName = NSRailsCDTests;
+			productReference = 5993AF5E1575CD3100DA25F4 /* NSRailsCDTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -464,9 +526,10 @@
 			targets = (
 				594764591569F24400C07A62 /* NSRails */,
 				594764661569F24400C07A62 /* NSRailsTests */,
-				59EC6A721572A93A00AA6D79 /* NSRailsTests CD */,
 				594764EA1569F63200C07A62 /* NSRailsMac */,
 				594764F71569F63200C07A62 /* NSRailsMacTests */,
+				5993AF501575CD3000DA25F4 /* NSRailsCD */,
+				5993AF5D1575CD3100DA25F4 /* NSRailsCDTests */,
 			);
 		};
 /* End PBXProject section */
@@ -492,11 +555,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		59EC6A831572A93A00AA6D79 /* Resources */ = {
+		5993AF5B1575CD3100DA25F4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59EC6A8D1572A95900AA6D79 /* Test.xcdatamodeld in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -529,7 +591,7 @@
 			shellPath = /bin/sh;
 			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
-		59EC6A871572A93A00AA6D79 /* ShellScript */ = {
+		5993AF5C1575CD3100DA25F4 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -549,13 +611,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				594765791569F65C00C07A62 /* NSRRemoteObject.m in Sources */,
-				5947657D1569F65C00C07A62 /* NSRConfig.m in Sources */,
-				594765811569F65C00C07A62 /* NSRPropertyCollection.m in Sources */,
-				597DED37156AE174005CB6F9 /* NSData+Additions.m in Sources */,
-				597DED3B156AE174005CB6F9 /* NSObject+Properties.m in Sources */,
-				597DED3F156AE174005CB6F9 /* NSString+Inflection.m in Sources */,
-				5956956A156EB7540033F762 /* NSMutableArray+NSRails.m in Sources */,
+				5993AF891575CD6E00DA25F4 /* NSData+Additions.m in Sources */,
+				5993AF8F1575CD6E00DA25F4 /* NSMutableArray+NSRails.m in Sources */,
+				5993AF951575CD6E00DA25F4 /* NSObject+Properties.m in Sources */,
+				5993AF9B1575CD6E00DA25F4 /* NSString+Inflection.m in Sources */,
+				5993AFA41575CD6E00DA25F4 /* NSRConfig.m in Sources */,
+				5993AFAD1575CD6E00DA25F4 /* NSRPropertyCollection.m in Sources */,
+				5993AFB31575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -577,13 +639,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5947657A1569F65C00C07A62 /* NSRRemoteObject.m in Sources */,
-				5947657E1569F65C00C07A62 /* NSRConfig.m in Sources */,
-				594765821569F65C00C07A62 /* NSRPropertyCollection.m in Sources */,
-				597DED38156AE174005CB6F9 /* NSData+Additions.m in Sources */,
-				597DED3C156AE174005CB6F9 /* NSObject+Properties.m in Sources */,
-				597DED40156AE174005CB6F9 /* NSString+Inflection.m in Sources */,
-				5956956B156EB7540033F762 /* NSMutableArray+NSRails.m in Sources */,
+				5993AF8A1575CD6E00DA25F4 /* NSData+Additions.m in Sources */,
+				5993AF901575CD6E00DA25F4 /* NSMutableArray+NSRails.m in Sources */,
+				5993AF961575CD6E00DA25F4 /* NSObject+Properties.m in Sources */,
+				5993AF9C1575CD6E00DA25F4 /* NSString+Inflection.m in Sources */,
+				5993AFA51575CD6E00DA25F4 /* NSRConfig.m in Sources */,
+				5993AFAE1575CD6E00DA25F4 /* NSRPropertyCollection.m in Sources */,
+				5993AFB41575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -601,11 +663,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		59EC6A751572A93A00AA6D79 /* Sources */ = {
+		5993AF4D1575CD3000DA25F4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59EC6A8C1572A94E00AA6D79 /* NSRRemoteObject+CoreData.m in Sources */,
+				5993AF8B1575CD6E00DA25F4 /* NSData+Additions.m in Sources */,
+				5993AF911575CD6E00DA25F4 /* NSMutableArray+NSRails.m in Sources */,
+				5993AF971575CD6E00DA25F4 /* NSObject+Properties.m in Sources */,
+				5993AF9D1575CD6E00DA25F4 /* NSString+Inflection.m in Sources */,
+				5993AFA61575CD6E00DA25F4 /* NSRConfig.m in Sources */,
+				5993AFAF1575CD6E00DA25F4 /* NSRPropertyCollection.m in Sources */,
+				5993AFB51575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5993AF591575CD3100DA25F4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5993AFB61575CD9C00DA25F4 /* Test.xcdatamodeld in Sources */,
+				5993AFB71575CD9E00DA25F4 /* NSRRemoteObject+CoreData.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -622,10 +699,10 @@
 			target = 594764EA1569F63200C07A62 /* NSRailsMac */;
 			targetProxy = 594764FB1569F63200C07A62 /* PBXContainerItemProxy */;
 		};
-		59EC6A731572A93A00AA6D79 /* PBXTargetDependency */ = {
+		5993AF631575CD3100DA25F4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 594764591569F24400C07A62 /* NSRails */;
-			targetProxy = 59EC6A741572A93A00AA6D79 /* PBXContainerItemProxy */;
+			target = 5993AF501575CD3000DA25F4 /* NSRailsCD */;
+			targetProxy = 5993AF621575CD3100DA25F4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -856,19 +933,61 @@
 			};
 			name = Release;
 		};
-		59C46492155C580D00920FD5 /* Debug */ = {
+		5993AF6F1575CD3100DA25F4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DSTROOT = /tmp/NSRailsCD.dst;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = NSR_USE_COREDATA;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
-		59C46493155C580D00920FD5 /* Release */ = {
+		5993AF701575CD3100DA25F4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DSTROOT = /tmp/NSRailsCD.dst;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = NSR_USE_COREDATA;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		59EC6A891572A93A00AA6D79 /* Debug */ = {
+		5993AF721575CD3100DA25F4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -887,22 +1006,22 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = NSR_USE_COREDATA;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "NSRailsTests copy";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
 		};
-		59EC6A8A1572A93A00AA6D79 /* Release */ = {
+		5993AF731575CD3100DA25F4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -915,18 +1034,30 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = NSR_USE_COREDATA;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "NSRailsTests copy";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+		59C46492155C580D00920FD5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		59C46493155C580D00920FD5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
 			};
 			name = Release;
 		};
@@ -969,20 +1100,27 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		5993AF6E1575CD3100DA25F4 /* Build configuration list for PBXNativeTarget "NSRailsCD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5993AF6F1575CD3100DA25F4 /* Debug */,
+				5993AF701575CD3100DA25F4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		5993AF711575CD3100DA25F4 /* Build configuration list for PBXNativeTarget "NSRailsCDTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5993AF721575CD3100DA25F4 /* Debug */,
+				5993AF731575CD3100DA25F4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		59C46490155C580D00920FD5 /* Build configuration list for PBXProject "NSRails" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				59C46492155C580D00920FD5 /* Debug */,
 				59C46493155C580D00920FD5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		59EC6A881572A93A00AA6D79 /* Build configuration list for PBXNativeTarget "NSRailsTests CD" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				59EC6A891572A93A00AA6D79 /* Debug */,
-				59EC6A8A1572A93A00AA6D79 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
