@@ -63,6 +63,7 @@
 		59B4B5CB15681CD70005A505 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		59B4B5CC15681CD70005A505 /* NSRailsDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "NSRailsDemo-Info.plist"; sourceTree = "<group>"; };
 		59B4B5CD15681CD70005A505 /* NSRailsDemo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSRailsDemo-Prefix.pch"; sourceTree = "<group>"; };
+		59F234D31575B01A00F61A10 /* NSRMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRMacros.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,6 +167,7 @@
 			children = (
 				596C984D156B136800CA4BA0 /* Categories */,
 				5975A6B8156374420088E453 /* NSRails.h */,
+				59F234D31575B01A00F61A10 /* NSRMacros.h */,
 				5975A6BB156374420088E453 /* NSRConfig.h */,
 				5975A6BC156374420088E453 /* NSRConfig.m */,
 				599568CE156E91450061EA91 /* NSRRemoteObject.h */,

@@ -75,6 +75,8 @@
 		59EC6A821572A93A00AA6D79 /* libNSRails.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5947645A1569F24400C07A62 /* libNSRails.a */; };
 		59EC6A8C1572A94E00AA6D79 /* NSRRemoteObject+CoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = 59EC6A4715729FE600AA6D79 /* NSRRemoteObject+CoreData.m */; };
 		59EC6A8D1572A95900AA6D79 /* Test.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 59EC6A661572A24900AA6D79 /* Test.xcdatamodeld */; };
+		59F234CA1575AB6B00F61A10 /* NSRMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 59F234C91575AB6B00F61A10 /* NSRMacros.h */; };
+		59F234CB1575AB6B00F61A10 /* NSRMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 59F234C91575AB6B00F61A10 /* NSRMacros.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -146,6 +148,7 @@
 		59EC6A4715729FE600AA6D79 /* NSRRemoteObject+CoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSRRemoteObject+CoreData.m"; sourceTree = "<group>"; };
 		59EC6A671572A24A00AA6D79 /* Test.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Test.xcdatamodel; sourceTree = "<group>"; };
 		59EC6A8B1572A93A00AA6D79 /* NSRailsTests copy.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "NSRailsTests copy.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		59F234C91575AB6B00F61A10 /* NSRMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRMacros.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -224,6 +227,7 @@
 				594765341569F65C00C07A62 /* NSRConfig.m */,
 				594765351569F65C00C07A62 /* NSRPropertyCollection.h */,
 				594765361569F65C00C07A62 /* NSRPropertyCollection.m */,
+				59F234C91575AB6B00F61A10 /* NSRMacros.h */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -324,6 +328,7 @@
 				597DED39156AE174005CB6F9 /* NSObject+Properties.h in Headers */,
 				597DED3D156AE174005CB6F9 /* NSString+Inflection.h in Headers */,
 				59569568156EB7540033F762 /* NSMutableArray+NSRails.h in Headers */,
+				59F234CA1575AB6B00F61A10 /* NSRMacros.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -339,6 +344,7 @@
 				597DED3A156AE174005CB6F9 /* NSObject+Properties.h in Headers */,
 				597DED3E156AE174005CB6F9 /* NSString+Inflection.h in Headers */,
 				59569569156EB7540033F762 /* NSMutableArray+NSRails.h in Headers */,
+				59F234CB1575AB6B00F61A10 /* NSRMacros.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
