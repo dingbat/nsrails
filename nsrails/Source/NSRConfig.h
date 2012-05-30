@@ -70,42 +70,45 @@ extern NSString * const NSRCoreDataException;
  
  This should meet the needs of the vast majority of Rails apps. Somewhere in your app setup, set your server URL (and optionally a username and password) using the `defaultConfig` singleton:
 
-	 //AppDelegate.m
+	//AppDelegate.m
+
+	#import "NSRConfig.h"
+
+	- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+	{
+	 [[NSRConfig defaultConfig] setAppURL:@"http://myapp.com"];
 	 
-	 #import "NSRConfig.h"
-	 
-	 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-	 {
-		 [[NSRConfig defaultConfig] setAppURL:@"http://myapp.com"];
-		 
-		 //Similarly, if using HTTP Authentication, you can set your app's username and password like this:
-		 //[[NSRConfig defaultConfig] setAppUsername:@"username"];
-		 //[[NSRConfig defaultConfig] setAppPassword:@"password"];
-		 ...
-	 }
+	 //Similarly, if using HTTP Authentication, you can set your app's username and password like this:
+	 //[[NSRConfig defaultConfig] setAppUsername:@"username"];
+	 //[[NSRConfig defaultConfig] setAppPassword:@"password"];
+	 ...
+	}
  
  ## Config environments
  
  `NSRConfig` supports several environments if you have a test and production server and don't want to switch between the two all the time. The constants `NSRConfigEnvironmentDevelopment` and `NSRConfigEnvironmentProduction` can be used, but any string will do.
  
-	 // Environment is set to Development by default, so [NSRConfig defaultConfig] can be used here too
-	 NSRConfig *devConfig = [NSRConfig configForEnvironment:NSRConfigEnvironmentDevelopment];
-	 devConfig.appURL = @"http://localhost:3000";
+	NSRConfig *devConfig = [[NSRConfig alloc] initWithAppURL:@"http://localhost:3000"];
+	[devConfig useAsDefaultForEnvironment:NSRConfigEnvironmentDevelopment];
+	
+	NSRConfig *prodConfig = [[NSRConfig alloc] initWithAppURL:@"http://myapp.com"];
+	prodConfig.appUsername = @"username";
+	prodConfig.appPassword = @"password";
+	[prodConfig useAsDefaultForEnvironment:NSRConfigEnvironmentProduction];
 	 
-	 NSRConfig *prodConfig = [NSRConfig configForEnvironment:NSRConfigEnvironmentProduction];
-	 prodConfig.appURL = @"http://myapp.com";
-	 prodConfig.appUsername = @"username";
-	 prodConfig.appPassword = @"password";
-	 
-	 // Now set your environment for the rest of the app...
-	 [NSRConfig setCurrentEnvironment:NSRConfigEnvironmentDevelopment];
-	 // And the relevant config will be used in future calls to "defaultConfig" or in any "remote<X>" methods.
+	// Now set your environment for the rest of the app... (set to Development by default so this isn't even necessary)
+	[NSRConfig setCurrentEnvironment:NSRConfigEnvironmentDevelopment];
+	// And the relevant config will be used in future calls to "defaultConfig" or in any "remote<X>" methods.
  
  The environment in which a config exists (production, development, or your own) has no bearing on its behavior in sending/receiving from your server.
  
  ## Using several configs in one project
  
- - If you simply need to direct different models to different URLs, you can use the [NSRUseConfig](https://github.com/dingbat/nsrails/wiki/Macros) macro.
+ - If you simply need to direct different objects to different URLs, use the useForClass: method. Base URLs, autoinflection, date formats, and any other NSRConfig configurations will be used for NSRails actions called on this class or its instances:
+ 
+		NSRConfig *peopleServer = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com"];
+		[peopleServer useForClass:[Person class]];
+
  - If specific actions must be called using a separate config, an `NSRConfig` instance can be used to define a context block in which to call those config-specific methods:
 		
 		NSRConfig *myConfig = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com/"];
@@ -127,10 +130,19 @@ extern NSString * const NSRCoreDataException;
 			}
 		];
  
-	In these examples, everything within the blocks will be called using the config context specified, regardless of @defaultConfig@ or any class-specific config (as defined like in the *Classes* section above).
+	In these examples, everything within the blocks will be called using the config context specified, regardless of `defaultConfig` or any class-specific config (they take highest precedence).
  
 	You can nest several config contexts within each other.
-
+ 
+ ## Config precedence
+ 
+ When an NSRails method is called, NSRails uses the following hierarchy to find an NSRConfig to use:
+ 
+ - **"Override" config:** If use was called (explicitly or implicity via a block). If they are nested, whichever one is on top of the stack (latest one).
+ - **Instance-specific config**: If the method is an instance method and the instance was initialized with initWithCustomMap:customConfig:, will use that config.
+ - **Class-specific config**: If the receiving class of the method (class or instance) defines a custom class with useForClass:.
+ - **Default config**: (Most frequent case.) Uses the config set to default of the current environment. (Current environment is `NSRConfigEnvironmentDevelopment` by default.
+ 
 
  ## Subclassing NSRConfig
  
@@ -143,13 +155,13 @@ extern NSString * const NSRCoreDataException;
  
  - You can set your new `NSRConfig` subclass to be the default config like so (this would be instead of the first code example of course):
  
-		CustomConfig *myConfig = [[CustomConfig alloc] initWithAppURL:@"http://localhost:3000"];
- 
+		CustomConfig *myConfig = [[CustomConfig alloc] initWithAppURL:@"https://localhost:3000"];
 		//set custom myConfig properties...
-		[NSRConfig setAsDefaultConfig:myConfig];
+ 
+		[myConfig useAsDefault];
  
 		//or, to a specific environment:
-		[NSRConfig setAsDefaultConfig:myConfig forEnvironment:NSRConfigEnvironmentProduction];
+		[myConfig useAsDefaultForEnvironment:NSRConfigEnvironmentProduction];
  
 	Or, if only a _certain_ action requires it, you can use your new instance for a block of code just as you would in the section above.
  */
@@ -289,38 +301,18 @@ extern NSString * const NSRCoreDataException;
 + (NSRConfig *) defaultConfig;
 
 /// =============================================================================================
-/// @name Using custom configs as default
+/// @name Managing the global environment
 /// =============================================================================================
 
 /**
- Sets the current default configuration to a custom-made config.
+ Returns the default configuration for a given environment.
  
- Can be useful if `NSRConfig` is subclassed with a custom implementation which you'd like to use for the entirety of your app.
- 
- @param config Config to be set as default for the current environment.
- */
-+ (void) setConfigAsDefault:(NSRConfig *)config;
-
-/**
- Sets a custom-made config to be the default for a given environment.
-  
- @param config Config to be set as default for *environment*.
- @param environment Environment identifier. Can be your own custom string or the constants NSRConfigEnvironmentDevelopment or NSRConfigEnvironmentProduction.
- */
-+ (void) setConfig:(NSRConfig *)config asDefaultForEnvironment:(NSString *)environment;
-
-/**
- Returns the default configuration for a given environment
+ Creates and sets one if one for the given environment hasn't been set yet.
  
  @param environment Environment identifier.
  @return Configuration set for *environment*.
  */
 + (NSRConfig *) configForEnvironment: (NSString *)environment;
-
-/// =============================================================================================
-/// @name Managing the global environment
-/// =============================================================================================
-
 
 /**
  Sets the global environment for `NSRConfig`.
@@ -337,18 +329,22 @@ extern NSString * const NSRCoreDataException;
 + (NSString *) currentEnvironment;
 
 /// =============================================================================================
-/// @name Using a specific config as default for a block of code
+/// @name Using configs in specific locations
 /// =============================================================================================
 
 /**
  Begins a context block of code to use the receiver as the default config.
  
+ Highest config precedence.
+
  @see end.
  */
 - (void) use;
 
 /**
  Ends a context block of code to use the receiver as the default config.
+ 
+ Highest config precedence.
  
  @see use.
  */
@@ -362,6 +358,36 @@ extern NSString * const NSRCoreDataException;
  @see end.
  */
 - (void) useIn:(void(^)(void))block;
+
+/**
+ Specifies for all NSRails actions (instance and class methods) in a given class to use the receiver.
+ 
+ Has precedence over a `defaultConfig`, but is trumped by a config specified for a block (with use and end, or useIn:). (This is the same precedence as instances which declare custom configs.)
+ 
+ This should be used somewhere in your app setup, before any NSRails actions. 
+ 
+ @param class Class to use this config.
+ */
+- (void) useForClass:(Class)class;
+
+/**
+ Specifies for all NSRails actions in the current environment to use the receiver.
+ 
+ Lowest config precedence.
+ 
+ Can be useful if the receiver is a custom `NSRConfig` subclass which you'd like to use for the entirety of your app.
+  */
++ (void) useAsDefault;
+
+/**
+ Specifies for all NSRails actions in a given environment to use the receiver.
+ 
+ Lowest config precedence.
+ 
+ @param environment Environment identifier. Can be your own custom string or the constants NSRConfigEnvironmentDevelopment or NSRConfigEnvironmentProduction.
+ */
++ (void) useAsDefaultForEnvironment:(NSString *)environment;
+
 
 /// =============================================================================================
 /// @name Date conversions
@@ -386,6 +412,7 @@ extern NSString * const NSRCoreDataException;
  @see stringFromDate:.
  */
 - (NSDate *) dateFromString:(NSString *)string;
+
 
 /// =============================================================================================
 /// @name Initializing a config

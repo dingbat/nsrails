@@ -75,11 +75,11 @@
 	
 	<option value="//api/name/defaultConfig">&nbsp;&nbsp;&nbsp;&nbsp;+ defaultConfig</option>
 	
-	<option value="//api/name/setConfig:asDefaultForEnvironment:">&nbsp;&nbsp;&nbsp;&nbsp;+ setConfig:asDefaultForEnvironment:</option>
-	
-	<option value="//api/name/setConfigAsDefault:">&nbsp;&nbsp;&nbsp;&nbsp;+ setConfigAsDefault:</option>
-	
 	<option value="//api/name/setCurrentEnvironment:">&nbsp;&nbsp;&nbsp;&nbsp;+ setCurrentEnvironment:</option>
+	
+	<option value="//api/name/useAsDefault">&nbsp;&nbsp;&nbsp;&nbsp;+ useAsDefault</option>
+	
+	<option value="//api/name/useAsDefaultForEnvironment:">&nbsp;&nbsp;&nbsp;&nbsp;+ useAsDefaultForEnvironment:</option>
 	
 	
 	
@@ -101,6 +101,8 @@
 	<option value="//api/name/stringFromDate:">&nbsp;&nbsp;&nbsp;&nbsp;- stringFromDate:</option>
 	
 	<option value="//api/name/use">&nbsp;&nbsp;&nbsp;&nbsp;- use</option>
+	
+	<option value="//api/name/useForClass:">&nbsp;&nbsp;&nbsp;&nbsp;- useForClass:</option>
 	
 	<option value="//api/name/useIn:">&nbsp;&nbsp;&nbsp;&nbsp;- useIn:</option>
 	
@@ -124,11 +126,9 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Retrieving the default config">Retrieving the default config</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Using custom configs as default">Using custom configs as default</a></span></li>
-	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Managing the global environment">Managing the global environment</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Using a specific config as default for a block of code">Using a specific config as default for a block of code</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Using configs in specific locations">Using configs in specific locations</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Date conversions">Date conversions</a></span></li>
 	
@@ -182,11 +182,11 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/defaultConfig">defaultConfig</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setConfig:asDefaultForEnvironment:">setConfig:asDefaultForEnvironment:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setConfigAsDefault:">setConfigAsDefault:</a></span></li>
-	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setCurrentEnvironment:">setCurrentEnvironment:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/useAsDefault">useAsDefault</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/useAsDefaultForEnvironment:">useAsDefaultForEnvironment:</a></span></li>
 	
 </ul></li>
 
@@ -209,6 +209,8 @@
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/stringFromDate:">stringFromDate:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/use">use</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/useForClass:">useForClass:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/useIn:">useIn:</a></span></li>
 	
@@ -276,18 +278,17 @@
 
 <p><code>NSRConfig</code> supports several environments if you have a test and production server and don&rsquo;t want to switch between the two all the time. The constants <code>NSRConfigEnvironmentDevelopment</code> and <code>NSRConfigEnvironmentProduction</code> can be used, but any string will do.</p>
 
-<pre><code> // Environment is set to Development by default, so [NSRConfig defaultConfig] can be used here too
- NSRConfig *devConfig = [NSRConfig configForEnvironment:NSRConfigEnvironmentDevelopment];
- devConfig.appURL = @"http://localhost:3000";
+<pre><code>NSRConfig *devConfig = [[NSRConfig alloc] initWithAppURL:@"http://localhost:3000"];
+[devConfig useAsDefaultForEnvironment:NSRConfigEnvironmentDevelopment];
 
- NSRConfig *prodConfig = [NSRConfig configForEnvironment:NSRConfigEnvironmentProduction];
- prodConfig.appURL = @"http://myapp.com";
- prodConfig.appUsername = @"username";
- prodConfig.appPassword = @"password";
+NSRConfig *prodConfig = [[NSRConfig alloc] initWithAppURL:@"http://myapp.com"];
+prodConfig.appUsername = @"username";
+prodConfig.appPassword = @"password";
+[prodConfig useAsDefaultForEnvironment:NSRConfigEnvironmentProduction];
 
- // Now set your environment for the rest of the app...
- [NSRConfig setCurrentEnvironment:NSRConfigEnvironmentDevelopment];
- // And the relevant config will be used in future calls to "defaultConfig" or in any "remote&lt;X&gt;" methods.
+// Now set your environment for the rest of the app... (set to Development by default so this isn't even necessary)
+[NSRConfig setCurrentEnvironment:NSRConfigEnvironmentDevelopment];
+// And the relevant config will be used in future calls to "defaultConfig" or in any "remote&lt;X&gt;" methods.
 </code></pre>
 
 <p>The environment in which a config exists (production, development, or your own) has no bearing on its behavior in sending/receiving from your server.</p>
@@ -295,7 +296,10 @@
 <h2>Using several configs in one project</h2>
 
 <ul>
-<li>If you simply need to direct different models to different URLs, you can <a href="#//api/name/use">use</a> the <a href="https://github.com/dingbat/nsrails/wiki/Macros">NSRUseConfig</a> macro.</li>
+<li><p>If you simply need to direct different objects to different URLs, <a href="#//api/name/use">use</a> the <a href="#//api/name/useForClass:">useForClass:</a> method. Base URLs, autoinflection, date formats, and any other NSRConfig configurations will be used for NSRails actions called on this class or its instances:</p>
+
+<p>   NSRConfig *peopleServer = [[NSRConfig alloc] initWithAppURL:@&ldquo;<a href="http://secondrailsapp.com">http://secondrailsapp.com</a>&rdquo;];
+   [peopleServer useForClass:[Person class]];</p></li>
 <li><p>If specific actions must be called using a separate config, an <code>NSRConfig</code> instance can be used to define a context block in which to call those config-specific methods:</p>
 
 <pre><code>  NSRConfig *myConfig = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com/"];
@@ -325,6 +329,18 @@
 </ul>
 
 
+<h2>Config precedence</h2>
+
+<p>When an NSRails method is called, NSRails uses the following hierarchy to find an NSRConfig to use:</p>
+
+<ul>
+<li><strong>&ldquo;Override&rdquo; config:</strong> If an <a href="#//api/name/use">[NSRConfig use]</a> was called (explicitly or implicity via a block). If they are nested, whichever one is on top of the stack (latest one).</li>
+<li><strong>Instance-specific config</strong>: If the method is an instance method and the instance was initialized with initWithCustomMap:customConfig:, will <a href="#//api/name/use">use</a> that config.</li>
+<li><strong>Class-specific config</strong>: If the receiving class of the method (class or instance) defines a custom class with <a href="#//api/name/useForClass:">useForClass:</a>.</li>
+<li><strong>Default config</strong>: (Most frequent case.) Uses the config set to default of the current environment. (Current environment is <code>NSRConfigEnvironmentDevelopment</code> by default.</li>
+</ul>
+
+
 <h2>Subclassing NSRConfig</h2>
 
 <p>Subclassing NSRConfig can be useful if you want to implement a connection method that&rsquo;s not HTTP (for example, HTTPS), or if you&rsquo;re using a non-Rails REST service with different standards. Moreover, it can be used to generate errors specific to your app.</p>
@@ -339,13 +355,13 @@
 </li>
 <li><p>You can set your new <code>NSRConfig</code> subclass to be the default config like so (this would be instead of the first code example of course):</p>
 
-<pre><code>  CustomConfig *myConfig = [[CustomConfig alloc] initWithAppURL:@"http://localhost:3000"];
+<pre><code>  CustomConfig *myConfig = [[CustomConfig alloc] initWithAppURL:@"https://localhost:3000"];
 
   //set custom myConfig properties...
-  [NSRConfig setAsDefaultConfig:myConfig];
+  [myConfig useAsDefault];
 
   //or, to a specific environment:
-  [NSRConfig setAsDefaultConfig:myConfig forEnvironment:NSRConfigEnvironmentProduction];
+  [myConfig useAsDefaultForEnvironment:NSRConfigEnvironmentProduction];
 </code></pre>
 
 <p>  Or, if only a <em>certain</em> action requires it, you can <a href="#//api/name/use">use</a> your new instance for a block of code just as you would in the section above.</p></li>
@@ -469,40 +485,18 @@
 						</ul>
 						
 						
-						<a title="Using custom configs as default" name="task_Using custom configs as default"></a>
-						<h3 class="subsubtitle task-title">Using custom configs as default</h3>
-
-						<ul class="task-list">
-							<li>
-	<span class="tooltip">
-		<code><a href="#//api/name/setConfigAsDefault:">+&nbsp;setConfigAsDefault:</a></code>
-		<span class="tooltip"><p>Sets the current default configuration to a custom-made config.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/setConfig:asDefaultForEnvironment:">+&nbsp;setConfig:asDefaultForEnvironment:</a></code>
-		<span class="tooltip"><p>Sets a custom-made config to be the default for a given environment.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/configForEnvironment:">+&nbsp;configForEnvironment:</a></code>
-		<span class="tooltip"><p>Returns the default configuration for a given environment</p></span>
-	</span>
-	
-	
-</li>
-						</ul>
-						
-						
 						<a title="Managing the global environment" name="task_Managing the global environment"></a>
 						<h3 class="subsubtitle task-title">Managing the global environment</h3>
 
 						<ul class="task-list">
 							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/configForEnvironment:">+&nbsp;configForEnvironment:</a></code>
+		<span class="tooltip"><p>Returns the default configuration for a given environment.</p></span>
+	</span>
+	
+	
+</li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/setCurrentEnvironment:">+&nbsp;setCurrentEnvironment:</a></code>
 		<span class="tooltip"><p>Sets the global environment for <code>NSRConfig</code>.</p></span>
@@ -520,8 +514,8 @@
 						</ul>
 						
 						
-						<a title="Using a specific config as default for a block of code" name="task_Using a specific config as default for a block of code"></a>
-						<h3 class="subsubtitle task-title">Using a specific config as default for a block of code</h3>
+						<a title="Using configs in specific locations" name="task_Using configs in specific locations"></a>
+						<h3 class="subsubtitle task-title">Using configs in specific locations</h3>
 
 						<ul class="task-list">
 							<li>
@@ -542,6 +536,27 @@
 	<span class="tooltip">
 		<code><a href="#//api/name/useIn:">&ndash;&nbsp;useIn:</a></code>
 		<span class="tooltip"><p>Executes a given block with the receiver as the default config in that block.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/useForClass:">&ndash;&nbsp;useForClass:</a></code>
+		<span class="tooltip"><p>Specifies for all NSRails actions (instance and class methods) in a given class to <a href="#//api/name/use">use</a> the receiver.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/useAsDefault">+&nbsp;useAsDefault</a></code>
+		<span class="tooltip"><p>Specifies for all NSRails actions in the current environment to <a href="#//api/name/use">use</a> the receiver.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/useAsDefaultForEnvironment:">+&nbsp;useAsDefaultForEnvironment:</a></code>
+		<span class="tooltip"><p>Specifies for all NSRails actions in a given environment to <a href="#//api/name/use">use</a> the receiver.</p></span>
 	</span>
 	
 	
@@ -1132,7 +1147,7 @@
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Returns the default configuration for a given environment</p>
+		<p>Returns the default configuration for a given environment.</p>
 	</div>		
 	
 	
@@ -1159,6 +1174,11 @@
 	
 	
 	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Creates and sets one if one for the given environment hasn&rsquo;t been set yet.</p>
+	</div>
 	
 	
 	
@@ -1253,104 +1273,6 @@
 </div>
 						
 						<div class="section-method">
-	<a name="//api/name/setConfig:asDefaultForEnvironment:" title="setConfig:asDefaultForEnvironment:"></a>
-	<h3 class="subsubtitle method-title">setConfig:asDefaultForEnvironment:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Sets a custom-made config to be the default for a given environment.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>+ (void)setConfig:(NSRConfig *)<em>config</em> asDefaultForEnvironment:(NSString *)<em>environment</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>config</em></dt>
-			<dd><p>Config to be set as default for <em>environment</em>.</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>environment</em></dt>
-			<dd><p>Environment identifier. Can be your own custom string or the constants NSRConfigEnvironmentDevelopment or NSRConfigEnvironmentProduction.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRConfig.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/setConfigAsDefault:" title="setConfigAsDefault:"></a>
-	<h3 class="subsubtitle method-title">setConfigAsDefault:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Sets the current default configuration to a custom-made config.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>+ (void)setConfigAsDefault:(NSRConfig *)<em>config</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>config</em></dt>
-			<dd><p>Config to be set as default for the current environment.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Can be useful if <code>NSRConfig</code> is subclassed with a custom implementation which you&rsquo;d like to <a href="#//api/name/use">use</a> for the entirety of your app.</p>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRConfig.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
 	<a name="//api/name/setCurrentEnvironment:" title="setCurrentEnvironment:"></a>
 	<h3 class="subsubtitle method-title">setCurrentEnvironment:</h3>
 	
@@ -1379,6 +1301,96 @@
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRConfig.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/useAsDefault" title="useAsDefault"></a>
+	<h3 class="subsubtitle method-title">useAsDefault</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Specifies for all NSRails actions in the current environment to <a href="#//api/name/use">use</a> the receiver.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (void)useAsDefault</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Lowest config precedence.</p>
+
+<p>Can be useful if the receiver is a custom <code>NSRConfig</code> subclass which you&rsquo;d like to <a href="#//api/name/use">use</a> for the entirety of your app.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRConfig.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/useAsDefaultForEnvironment:" title="useAsDefaultForEnvironment:"></a>
+	<h3 class="subsubtitle method-title">useAsDefaultForEnvironment:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Specifies for all NSRails actions in a given environment to <a href="#//api/name/use">use</a> the receiver.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (void)useAsDefaultForEnvironment:(NSString *)<em>environment</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>environment</em></dt>
+			<dd><p>Environment identifier. Can be your own custom string or the constants NSRConfigEnvironmentDevelopment or NSRConfigEnvironmentProduction.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Lowest config precedence.</p>
+	</div>
 	
 	
 	
@@ -1479,6 +1491,11 @@
 	
 	
 	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Highest config precedence.</p>
+	</div>
 	
 	
 	
@@ -1834,6 +1851,11 @@
 	
 	
 	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Highest config precedence.</p>
+	</div>
+	
 	
 	
 	
@@ -1846,6 +1868,57 @@
 			
 		</ul>
 	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRConfig.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/useForClass:" title="useForClass:"></a>
+	<h3 class="subsubtitle method-title">useForClass:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Specifies for all NSRails actions (instance and class methods) in a given class to <a href="#//api/name/use">use</a> the receiver.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)useForClass:(Class)<em>class</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>class</em></dt>
+			<dd><p>Class to <a href="#//api/name/use">use</a> this config.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Has precedence over a <a href="#//api/name/defaultConfig"><code>defaultConfig</code></a>, but is trumped by a config specified for a block (with <a href="#//api/name/use">use</a> and <a href="#//api/name/end">end</a>, or <a href="#//api/name/useIn:">useIn:</a>). (This is the same precedence as instances which declare custom configs.)</p>
+
+<p>This should be used somewhere in your app setup, before any NSRails actions.</p>
+	</div>
+	
+	
+	
+	
 	
 	
 	
