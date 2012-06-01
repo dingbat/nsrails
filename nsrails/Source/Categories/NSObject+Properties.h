@@ -38,9 +38,6 @@
 //returns type of the given property for that instance variable (ie, NSString)
 + (NSString *) typeForProperty:(NSString *)property;
 
-//accepts pointer to a BOOL that will be set on whether or not property is primitive (also includes enums and structs)
-+ (NSString *) typeForProperty:(NSString *)property isPrimitive:(BOOL *)primitive;
-
 //returns SEL for the setter of given property
 + (SEL) setterForProperty:(NSString *)property;
 

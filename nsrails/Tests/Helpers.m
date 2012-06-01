@@ -83,11 +83,11 @@
 
 	STAssertNil([TheManInsideMe typeForProperty:@"unknown"], @"Introspection should not pick up non-existent properties");
 	STAssertNil([TheManInsideMe typeForProperty:@"private"], @"Introspection should not pick up non-property ivars");
-	STAssertEqualObjects([TheManInsideMe typeForProperty:@"parent"], @"NSString", @"Introspection should pick up superclasses' props");
-	STAssertEqualObjects([TheManInsideMe typeForProperty:@"string"], @"NSString", @"");
-	STAssertEqualObjects([TheManInsideMe typeForProperty:@"date"], @"NSDate", @"");
-	STAssertEqualObjects([TheManInsideMe typeForProperty:@"array"], @"NSArray", @"");
-	STAssertEqualObjects([TheManInsideMe typeForProperty:@"anything"], @"id", @"");
+	STAssertEqualObjects([TheManInsideMe typeForProperty:@"parent"], @"@\"NSString\"", @"Introspection should pick up superclasses' props");
+	STAssertEqualObjects([TheManInsideMe typeForProperty:@"string"], @"@\"NSString\"", @"");
+	STAssertEqualObjects([TheManInsideMe typeForProperty:@"date"], @"@\"NSDate\"", @"");
+	STAssertEqualObjects([TheManInsideMe typeForProperty:@"array"], @"@\"NSArray\"", @"");
+	STAssertEqualObjects([TheManInsideMe typeForProperty:@"anything"], @"@", @"");
 	
 	//non-object returns are undefined, but something will be returned
 	STAssertNotNil([TheManInsideMe typeForProperty:@"primitiveInt"],@"");
@@ -95,22 +95,6 @@
 	STAssertNotNil([TheManInsideMe typeForProperty:@"primitiveFloat"],@"");
 	STAssertNotNil([TheManInsideMe typeForProperty:@"encoding"],@"");
 	STAssertNotNil([TheManInsideMe typeForProperty:@"rect"],@"");
-
-	BOOL primitive = YES;
-	[TheManInsideMe typeForProperty:@"string" isPrimitive:&primitive];
-	STAssertFalse(primitive, @"NSString is not primitive");
-
-	[TheManInsideMe typeForProperty:@"anything" isPrimitive:&primitive];
-	STAssertFalse(primitive, @"id is not primitive");
-
-	[TheManInsideMe typeForProperty:@"primitiveInt" isPrimitive:&primitive];
-	STAssertTrue(primitive, @"int is primitive");
-
-	[TheManInsideMe typeForProperty:@"encoding" isPrimitive:&primitive];
-	STAssertTrue(primitive, @"encoding is primitive");
-
-	[TheManInsideMe typeForProperty:@"rect" isPrimitive:&primitive];
-	STAssertTrue(primitive, @"rect is primitive");
 
 	STAssertEqualObjects(NSStringFromSelector([TheManInsideMe setterForProperty:@"string"]), @"setTheString:", @"");	
 	STAssertEqualObjects(NSStringFromSelector([TheManInsideMe setterForProperty:@"date"]), @"setDate:", @"");	

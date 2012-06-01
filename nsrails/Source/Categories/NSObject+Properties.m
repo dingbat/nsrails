@@ -57,85 +57,46 @@
 	return nil;
 }
 
-+ (NSString *) typeForProperty:(NSString *)prop
-{
-	return [self typeForProperty:prop isPrimitive:NULL];
-}
-
-+ (NSString *) typeForProperty:(NSString *)prop isPrimitive:(BOOL *)primitive
-{
-	//all defined here https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html
-	
-	objc_property_t property = class_getProperty(self, [prop UTF8String]);
-	if (!property)
-		return nil;
-
-	NSString *atts = [NSString stringWithCString:property_getAttributes(property) encoding:NSUTF8StringEncoding];
-	//this will return some garbage like "Ti,GgetFoo,SsetFoo:,Vproperty"
-	
-	NSString *type = [[[atts componentsSeparatedByString:@","] objectAtIndex:0] substringFromIndex:1];
-
-	//if first char is not a @, it's not an objc object
-	if ([type rangeOfString:@"@"].location != 0)
-	{
-		if (primitive)
-			*primitive = YES;
-		
-		return type;
-	}
-	
-	if (primitive)
-		*primitive = NO;
-	
-	if ([type isEqualToString:@"@"])
-		return @"id";
-	
-	//type will be like @"NSString", so strip "s and @s
-	return [[type stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
-}
-
-+ (SEL) getProperty:(NSString *)prop attributePrefix:(NSString *)str
++ (NSString *) getAttributeForProperty:(NSString *)prop prefix:(NSString *)attrPrefix
 {
 	objc_property_t property = class_getProperty(self, [prop UTF8String]);
 	if (!property)
 		return nil;
 	
+	// This will return some garbage like "Ti,GgetFoo,SsetFoo:,Vproperty"
+	// See https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html
+	
 	NSString *atts = [NSString stringWithCString:property_getAttributes(property) encoding:NSUTF8StringEncoding];
-	//this will return some garbage like "Ti,GgetFoo,SsetFoo:,Vproperty"
-	//getter is prefixed by a G and setter is prefixed by an S
-	//split it by attribute and return anything matching the prefix specified (would be S or G)
+	
 	for (NSString *att in [atts componentsSeparatedByString:@","])
-	{
-		if (att.length > 0 && [[att substringToIndex:1] isEqualToString:str])
-		{
-			NSString *setter = [att substringFromIndex:1];
-			return NSSelectorFromString(setter);
-		}
-	}
+		if ([att hasPrefix:attrPrefix])
+			return [att substringFromIndex:1];
 	
 	return nil;
 }
 
++ (NSString *) typeForProperty:(NSString *)property
+{
+	return [self getAttributeForProperty:property prefix:@"T"];
+}
+
 + (SEL) getterForProperty:(NSString *)prop
 {
-	SEL s = [self getProperty:prop attributePrefix:@"G"];
-	//if no custom getter specified, return the standard "etc"
+	NSString *s = [self getAttributeForProperty:prop prefix:@"G"];
 	if (!s)
-	{
-		s = NSSelectorFromString(prop);
-	}
-	return s;
+		s = prop;
+	
+	return NSSelectorFromString(s);
 }
 
 + (SEL) setterForProperty:(NSString *)prop
 {
-	SEL s = [self getProperty:prop attributePrefix:@"S"];
-	//if no custom setter specified, return the standard "setEtc:"
+	NSString *s = [self getAttributeForProperty:prop prefix:@"S"];
 	if (!s)
-	{
-		s = NSSelectorFromString([NSString stringWithFormat:@"set%@:",[prop firstLetterCapital]]);
-	}	
-	return s;
+		s = [NSString stringWithFormat:@"set%@:",[prop firstLetterCapital]];
+	
+	return NSSelectorFromString(s);
 }
+
 
 @end
