@@ -42,6 +42,10 @@
  quickly in Xcode using #pragma marks.
  */
 
+//this will suppress the compiler warnings that come with ARC when using performSelector
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @interface NSRRemoteObject (internal)
@@ -114,19 +118,41 @@
 
 @end
 
+@interface NSObject (NSRNoClimb)
+
++ (NSString *) getReturnValueWithoutClimbingHierarchy:(SEL)selector;
+
+@end
+
+@implementation NSObject (NSRNoClimb)
+
+// This is a trick to make sure ONLY THIS class declares `selector`, and no superclasses
+//   It's hard to tell because the method gets transparently forwarded to superclass if not found
+// This method actually compares both class's implementations of the method, and if identical (ie, it inherits), ignore it
++ (NSString *) getReturnValueWithoutClimbingHierarchy:(SEL)selector
+{
+	if ([self respondsToSelector:selector])
+	{
+		IMP mine = [self methodForSelector:selector]; //will find superclass if necessary
+		IMP supe = [self.superclass methodForSelector:selector];
+		
+		if (mine != supe)
+			return [self performSelector:selector];
+	}
+	return nil;
+}
+
+@end
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define CD_SELF	(id)self
+
 
 @implementation NSRRemoteObject
 @synthesize remoteDestroyOnNesting, remoteAttributes;
 _NSR_REMOTEID_SYNTH remoteID;
 
 #pragma mark - Meta-NSR stuff
-
-//this will suppress the compiler warnings that come with ARC when doing performSelector
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 
 //returns the sync string expanded (* => all properties) & inherited (adds NSRMaps from superclasses)
 //override string is in case there's a custom sync string defined
@@ -136,57 +162,40 @@ _NSR_REMOTEID_SYNTH remoteID;
 	if (self == [NSRRemoteObject class])
 		return @"remoteID=id";
 	
-	NSString *syncStr = (override ? override : [self getReturnValueWithoutClimbingHierarchy:@selector(NSRMap)]);
-	if (!syncStr)
-		syncStr = @"*";
+	NSString *mapStr = (override ? override : [self getReturnValueWithoutClimbingHierarchy:@selector(NSRMap)]);
 	
-	if ([syncStr rangeOfString:@"*"].location != NSNotFound)
+	// If no NSRMap declared in that class, default to *
+	if (!mapStr)
+		mapStr = @"*";
+	
+	if ([mapStr rangeOfString:@"*"].location != NSNotFound)
 	{
-		syncStr = [syncStr stringByReplacingOccurrencesOfString:@"*" withString:@""];
+		mapStr = [mapStr stringByReplacingOccurrencesOfString:@"*" withString:@""];
 		
 		//expand the star to everything in the class
 		NSString *expanded = [self.allProperties componentsJoinedByString:@", "];
 		if (expanded)
 		{
 			//properties need to be appended to existing sync string since they can be overridden like with -x (and stripped of *)
-			syncStr = [syncStr stringByAppendingFormat:@", %@", expanded];
+			mapStr = [mapStr stringByAppendingFormat:@", %@", expanded];
 		}
 	}
 	
-	if ([syncStr rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
+	if ([mapStr rangeOfString:_NSRNoCarryFromSuper_STR].location != NSNotFound)
 	{
-		syncStr = [syncStr stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
+		mapStr = [mapStr stringByReplacingOccurrencesOfString:_NSRNoCarryFromSuper_STR withString:@""];
 		
 		//skip right up the hierarchy to NSRRemoteObject
-		return [syncStr stringByAppendingFormat:@", %@", [NSRRemoteObject masterNSRMapWithOverrideString:nil]];
+		return [mapStr stringByAppendingFormat:@", %@", [NSRRemoteObject masterNSRMapWithOverrideString:nil]];
 	}
 	
 	//traverse up the hierarchy (always getting the default NSRMap)
-	return [syncStr stringByAppendingFormat:@", %@", [self.superclass masterNSRMapWithOverrideString:nil]];
+	return [mapStr stringByAppendingFormat:@", %@", [self.superclass masterNSRMapWithOverrideString:nil]];
 }
 
 + (NSString *) masterNSRMap
 {
 	return [self masterNSRMapWithOverrideString:nil];
-}
-
-// This is a trick to make sure ONLY THIS class declares `selector`, and no superclasses
-//   It's hard to tell because the method gets transparently forwarded to superclass if not found
-// This method actually compares both class's implementations of the method, and if identical, ignore it
-+ (NSString *) getReturnValueWithoutClimbingHierarchy:(SEL)selector
-{
-	if ([self respondsToSelector:selector])
-	{
-		BOOL topLevel = ([self superclass] == [NSRRemoteObject class]);
-		IMP mine = [self methodForSelector:selector];
-		IMP sup = [self.superclass methodForSelector:selector];
-		
-		if (topLevel || (mine != sup))
-		{
-			return [self performSelector:selector];
-		}
-	}
-	return nil;
 }
 
 + (NSString *) masterModelName
@@ -946,7 +955,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 	if (![self remoteRequest:@"DELETE" method:nil body:nil error:error])
 		return NO;
 	
-	[self.managedObjectContext deleteObject:CD_SELF];
+	[self.managedObjectContext deleteObject:(id)self];
 	[self saveContext];
 	return YES;
 }
@@ -958,7 +967,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 	 {
 		 if (result)
 		 {
-			 [self.managedObjectContext deleteObject:CD_SELF];
+			 [self.managedObjectContext deleteObject:(id)self];
 			 [self saveContext];
 		 }
 		 completionBlock(error);
