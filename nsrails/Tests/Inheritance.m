@@ -59,7 +59,7 @@ NSRUseModelName(@"parent", @"parentS")
 		@end
 		@implementation GrandchildOfRebellious
 		@synthesize gchild_rAttr;
-		NSRMap(*) //absent NSRNoCarryFromSuper -> will inherit from r.child, BUT inheritance will stop @ R.Child 
+		// * -> //absent NSRNoCarryFromSuper -> will inherit from r.child, BUT inheritance will stop @ R.Child 
 		@end
 
 		@interface RebelliousGrandchildOfRebellious : RebelliousChild

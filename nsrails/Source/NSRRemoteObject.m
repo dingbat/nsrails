@@ -128,9 +128,6 @@ _NSR_REMOTEID_SYNTH remoteID;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 
-// If NSRMap isn't overriden (ie, if NSRMap() macro is not declared in subclass), default to *
-NSRMap(*);
-
 //returns the sync string expanded (* => all properties) & inherited (adds NSRMaps from superclasses)
 //override string is in case there's a custom sync string defined
 + (NSString *) masterNSRMapWithOverrideString:(NSString *)override
@@ -139,7 +136,10 @@ NSRMap(*);
 	if (self == [NSRRemoteObject class])
 		return @"remoteID=id";
 	
-	NSString *syncStr = (override ? override : [self NSRMap]);	
+	NSString *syncStr = (override ? override : [self getReturnValueWithoutClimbingHierarchy:@selector(NSRMap)]);
+	if (!syncStr)
+		syncStr = @"*";
+	
 	if ([syncStr rangeOfString:@"*"].location != NSNotFound)
 	{
 		syncStr = [syncStr stringByReplacingOccurrencesOfString:@"*" withString:@""];
