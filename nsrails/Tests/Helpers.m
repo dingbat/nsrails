@@ -38,6 +38,38 @@
 @dynamic array; //dynamic just for kicks
 @end
 
+
+@interface ASuperclass : NSObject
++ (NSString *) something;
+@end
+
+@implementation ASuperclass
+
++ (NSString *) something
+{
+	return @"super";
+}
+
+@end
+
+@interface AClass : ASuperclass
+@end
+
+@implementation AClass
+@end
+
+@interface ASubclass : AClass
++ (NSString *) something;
+@end
+@implementation ASubclass
+
++ (NSString *) something
+{
+	return @"sub";
+}
+
+@end
+
 #define NSRAssertEqualsUnderscored(string, underscored) STAssertEqualObjects([string underscore], underscored, nil)
 #define NSRAssertEqualsCamelized(string, camelized) STAssertEqualObjects([string camelize], camelized, nil)
 
@@ -103,6 +135,14 @@
 	STAssertEqualObjects(NSStringFromSelector([TheManInsideMe getterForProperty:@"string"]), @"string", @"");	
 	STAssertEqualObjects(NSStringFromSelector([TheManInsideMe getterForProperty:@"date"]), @"getDate", @"");	
 	STAssertEqualObjects(NSStringFromSelector([TheManInsideMe getterForProperty:@"array"]), @"array", @"");	
+}
+
+- (void) test_noclimb
+{
+	SEL sel = @selector(something);
+	STAssertEqualObjects([ASuperclass performSelectorWithoutClimbingHierarchy:sel], @"super",@"");
+	STAssertNil([AClass performSelectorWithoutClimbingHierarchy:sel],@"");
+	STAssertEqualObjects([ASubclass performSelectorWithoutClimbingHierarchy:sel], @"sub",@"");
 }
 
 - (void)setUpClass

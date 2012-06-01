@@ -73,7 +73,7 @@
 + (NSString *) masterModelName;
 + (NSString *) masterPluralName;
 
-+ (NSString *) getReturnValueWithoutClimbingHierarchy:(SEL)selector;
++ (id) performSelectorWithoutClimbingHierarchy:(SEL)selector;
 
 - (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict applyToRemoteAttributes:(BOOL)remote;
 
@@ -120,7 +120,7 @@
 
 @interface NSObject (NSRNoClimb)
 
-+ (NSString *) getReturnValueWithoutClimbingHierarchy:(SEL)selector;
++ (id) performSelectorWithoutClimbingHierarchy:(SEL)selector;
 
 @end
 
@@ -129,7 +129,7 @@
 // This is a trick to make sure ONLY THIS class declares `selector`, and no superclasses
 //   It's hard to tell because the method gets transparently forwarded to superclass if not found
 // This method actually compares both class's implementations of the method, and if identical (ie, it inherits), ignore it
-+ (NSString *) getReturnValueWithoutClimbingHierarchy:(SEL)selector
++ (id) performSelectorWithoutClimbingHierarchy:(SEL)selector
 {
 	if ([self respondsToSelector:selector])
 	{
@@ -162,7 +162,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 	if (self == [NSRRemoteObject class])
 		return @"remoteID=id";
 	
-	NSString *mapStr = (override ? override : [self getReturnValueWithoutClimbingHierarchy:@selector(NSRMap)]);
+	NSString *mapStr = (override ? override : [self performSelectorWithoutClimbingHierarchy:@selector(NSRMap)]);
 	
 	// If no NSRMap declared in that class, default to *
 	if (!mapStr)
@@ -203,7 +203,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 	if (self == [NSRRemoteObject class])
 		return nil;
 	
-	NSString *defined = [self getReturnValueWithoutClimbingHierarchy:@selector(NSRUseModelName)];
+	NSString *defined = [self performSelectorWithoutClimbingHierarchy:@selector(NSRUseModelName)];
 	if (defined) return defined;
 	
 	//otherwise, return name of the class
@@ -221,7 +221,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 + (NSString *) masterPluralName
 {
-	NSString *defined = [self getReturnValueWithoutClimbingHierarchy:@selector(NSRUsePluralName)];
+	NSString *defined = [self performSelectorWithoutClimbingHierarchy:@selector(NSRUsePluralName)];
 	if (defined) return defined;
 	
 	//otherwise, pluralize ModelName

@@ -38,6 +38,12 @@
 
 @end
 
+@interface NSObject (NSRNoClimb)
+
++ (NSString *) performSelectorWithoutClimbingHierarchy:(SEL)selector;
+
+@end
+
 @interface NSRConfig (internal)
 
 + (void) resetConfigs;
