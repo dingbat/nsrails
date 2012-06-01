@@ -42,7 +42,7 @@ NSRUseModelName(@"parent", @"parentS")
 		@end
 		@implementation RebelliousGrandchild
 		@synthesize r_gchildAttr;
-		NSRMap(NSRNoCarryFromSuper *) //NSRNoCarryFromSuper present -> won't inherit anything
+		NSRMapNoInheritance(*) //NSRNoCarryFromSuper present -> won't inherit anything
 		NSRUseModelName(@"r_gchild") //will override Parent's modelname -> will use "r_grandchild"
 		@end
 
@@ -51,7 +51,7 @@ NSRUseModelName(@"parent", @"parentS")
 	@end
 	@implementation RebelliousChild
 	@synthesize r_childAttr;
-	NSRMap(* NSRNoCarryFromSuper) //NSRNoCarryFromSuper present -> won't inherit anything
+	NSRMapNoInheritance(*) //NSRNoCarryFromSuper present -> won't inherit anything
 	NSRUseDefaultModelName //will override Parent's modelname in favor of default behavior
 	@end
 
@@ -69,7 +69,7 @@ NSRUseModelName(@"parent", @"parentS")
 		@end
 		@implementation RebelliousGrandchildOfRebellious
 		@synthesize r_gchild_rAttr;
-		NSRMap(NSRNoCarryFromSuper, *) //NSRNoCarryFromSuper present -> won't inherit anything
+		NSRMapNoInheritance(*) //NSRNoCarryFromSuper present -> won't inherit anything
 		NSRUseModelName(@"r_gchild_r", @"r_gchild_rS") //will override R.Child's modelname -> will use "r_r_gchild"
 		@end
 

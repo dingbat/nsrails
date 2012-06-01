@@ -28,41 +28,38 @@
  
  */
 
+/// Can anyone help? How can I make this its own page in Appledoc?
+
 
 /// =============================================================================================
-/// Helpers
+/// @name NSRMap
 /// =============================================================================================
 
-//clever macro trick to allow "overloading" macro functions thanks to orj's gist: https://gist.github.com/985501
-#define _CAT(a, b) _PRIMITIVE_CAT(a, b)
-#define _PRIMITIVE_CAT(a, b) a##b
-#define _N_ARGS(...) _N_ARGS_1(__VA_ARGS__, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
-#define _N_ARGS_1(...) _N_ARGS_2(__VA_ARGS__)
-#define _N_ARGS_2(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, n, ...) n
-
-
-//adding a # before va_args will simply make its contents a cstring
+//helper for macro -> NSString
+//adding a # before anything will simply make it a cstring
 #define _MAKE_STR(...)	[NSString stringWithCString:(#__VA_ARGS__) encoding:NSUTF8StringEncoding]
-
-
-/// =============================================================================================
-/// NSRMap
-/// =============================================================================================
 
 //define NSRMap to create a method called NSRMap, which returns the entire param list
 #define NSRMap(...) \
 + (NSString*) NSRMap { return _MAKE_STR(__VA_ARGS__); }
 
-//define NSRNoCarryFromSuper as NSRNoCarryFromSuper - not a string, since it's placed directly in the macro
-#define NSRNoCarryFromSuper			NSRNoCarryFromSuper
+#define NSRMapNoInheritance(...)  NSRMap(__VA_ARGS__ NSRNoCarryFromSuper)
 
 //returns the string version of NSRNoCarryFromSuper so we can find it when evaluating NSRMap string
 #define _NSRNoCarryFromSuper_STR	_MAKE_STR(NSRNoCarryFromSuper)
 
 
 /// =============================================================================================
-/// NSRUseModelName
+/// @name NSRUseModelName
 /// =============================================================================================
+
+//helper trick to allow "overloading" macro functions thanks to orj's gist: https://gist.github.com/985501
+//definitely check out how this works - it's cool
+#define _CAT(a, b) _PRIMITIVE_CAT(a, b)
+#define _PRIMITIVE_CAT(a, b) a##b
+#define _N_ARGS(...) _N_ARGS_1(__VA_ARGS__, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#define _N_ARGS_1(...) _N_ARGS_2(__VA_ARGS__)
+#define _N_ARGS_2(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, n, ...) n
 
 //define NSRUseModelName to concat either _NSR_Name1(x) or _NSR_Name2(x,y), depending on the number of args passed in
 #define NSRUseModelName(...) _CAT(_NSR_Name,_N_ARGS(__VA_ARGS__))(__VA_ARGS__)
