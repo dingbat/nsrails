@@ -60,10 +60,16 @@
 - (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod;
 - (void) assertCanSendInstanceRequest;
 
++ (NSString *) NSRMap;
++ (NSString *) NSRUseModelName;
++ (NSString *) NSRUsePluralName;
+
 + (NSString *) masterNSRMapWithOverrideString:(NSString *)override;
 + (NSString *) masterNSRMap;
 + (NSString *) masterModelName;
 + (NSString *) masterPluralName;
+
++ (NSString *) getReturnValueWithoutClimbingHierarchy:(SEL)selector;
 
 - (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict applyToRemoteAttributes:(BOOL)remote;
 
@@ -122,10 +128,6 @@ _NSR_REMOTEID_SYNTH remoteID;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
 
-
-// Use default model name by default (default return nil)
-NSRUseDefaultModelName;
-
 // If NSRMap isn't overriden (ie, if NSRMap() macro is not declared in subclass), default to *
 NSRMap(*);
 
@@ -168,14 +170,32 @@ NSRMap(*);
 	return [self masterNSRMapWithOverrideString:nil];
 }
 
+// This is a trick to make sure ONLY THIS class declares `selector`, and no superclasses
+//   It's hard to tell because the method gets transparently forwarded to superclass if not found
+// This method actually compares both class's implementations of the method, and if identical, ignore it
++ (NSString *) getReturnValueWithoutClimbingHierarchy:(SEL)selector
+{
+	if ([self respondsToSelector:selector])
+	{
+		BOOL topLevel = ([self superclass] == [NSRRemoteObject class]);
+		IMP mine = [self methodForSelector:selector];
+		IMP sup = [self.superclass methodForSelector:selector];
+		
+		if (topLevel || (mine != sup))
+		{
+			return [self performSelector:selector];
+		}
+	}
+	return nil;
+}
+
 + (NSString *) masterModelName
 {
 	if (self == [NSRRemoteObject class])
 		return nil;
 	
-	NSString *defined = [self NSRUseModelName];
-	if (defined)
-		return defined;
+	NSString *defined = [self getReturnValueWithoutClimbingHierarchy:@selector(NSRUseModelName)];
+	if (defined) return defined;
 	
 	//otherwise, return name of the class
 	NSString *class = NSStringFromClass(self);
@@ -192,9 +212,8 @@ NSRMap(*);
 
 + (NSString *) masterPluralName
 {
-	NSString *defined = [self NSRUsePluralName];
-	if (defined)
-		return defined;
+	NSString *defined = [self getReturnValueWithoutClimbingHierarchy:@selector(NSRUsePluralName)];
+	if (defined) return defined;
 	
 	//otherwise, pluralize ModelName
 	return [[self masterModelName] pluralize];

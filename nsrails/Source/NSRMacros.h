@@ -64,15 +64,12 @@
 //define NSRUseModelName to concat either _NSR_Name1(x) or _NSR_Name2(x,y), depending on the number of args passed in
 #define NSRUseModelName(...) _CAT(_NSR_Name,_N_ARGS(__VA_ARGS__))(__VA_ARGS__)
 
-//using default is the same thing as passing nil for both model name + plural name
-#define NSRUseDefaultModelName _NSR_Name2(nil,nil)
-
 //_NSR_Name1 (only with 1 parameter, ie, custom model name but default plurality), creates NSRUseModelName method that returns param, return nil for plural to make it go to default
-#define _NSR_Name1(name)	_NSR_Name2(name, nil)
+#define _NSR_Name1(name)	_NSR_Name2((name), nil)
 
 //_NSR_Name2 (2 parameters, ie, custom model name and custom plurality), creates NSRUseModelName and NSRUsePluralName
 #define _NSR_Name2(name,plural)  \
-+ (NSString*) NSRUseModelName { return name; } \
-+ (NSString*) NSRUsePluralName { return plural; }
++ (NSString*) NSRUseModelName { return (name); } \
++ (NSString*) NSRUsePluralName { return (plural); }
 
 
