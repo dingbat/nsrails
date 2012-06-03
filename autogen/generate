@@ -55,7 +55,7 @@ class Model
         p.nested_class = @@options["prefix"]+p.nested_class if @@options["prefix"]
         
         if p.has_many
-          p.type = @@options["mutable-arrays"] ? "NSMutableArray" : "NSArray"
+          p.type = @@options["mutable-sets"] ? "NSMutableSet" : "NSMutableArray"
         else
           p.type = p.nested_class
         end
@@ -418,17 +418,17 @@ def self.print_help
   puts "   #{this_file[pwd.length+1..this_file.length]} [options] APP_PATH"
   puts ""
   puts "Options for property translation:"
-  puts "   --ruby                         Generate Ruby classes for MacRuby and RubyMotion"
-  puts "   --created-at                   Include the created_at date property (as NSDate)"
-  puts "   --updated-at                   Include the updated_at date property (as NSDate)"
-  puts "   --nesting-retrievable-only     On properties relating another model, include '-r' flag"
-  puts "   --mutable-arrays               Use NSMutableArray instead of NSArray for has_many properties"
+  puts "   --ruby                       Generate Ruby classes for MacRuby and RubyMotion"
+  puts "   --created-at                 Include the created_at date property (as NSDate)"
+  puts "   --updated-at                 Include the updated_at date property (as NSDate)"
+  puts "   --nesting-retrievable-only   Include '-r' for properties relating another model"
+  puts "   --mutable-sets               Use sets instead of arrays for has_many relations"
   puts ""
   puts "Options for file styling: (each expects a string following)"
   puts "   -a, --author                 "
   puts "   -p, --project                "
   puts "   -c, --company                "
-  puts "   -x, --prefix                   Prefix for classes and filenames"
+  puts "   -x, --prefix                 Prefix for classes and filenames"
   puts ""
 end
 
@@ -438,7 +438,7 @@ begin
     print_help
   else
     @@options["project"] ||= @@options["path"].split("/").last
-    @@options["company"] ||= @@options["author"] || "__MyCompanyName__"
+    @@options["company"] ||= @@options["author"] || ENV['USER'] || ENV['USERNAME']
     @@options["author"] ||= "NSRails autogen"
   
     @@output_path = File.expand_path(File.dirname(__FILE__))+"/"+@@options["project"]+".gen"

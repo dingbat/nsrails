@@ -27,8 +27,8 @@ Use the `-h` (`--help`) flag for a list of these options.
     <td>Include <code>created_at</code> and/or <code>updated_at</code> properties. (Excluded by default)</td>
   </tr>
   <tr>
-    <td><pre>--mutable-arrays</pre></td>
-    <td>Use <code>NSMutableArray</code> for properties that are has-many. (<code>NSArray</code> by default)</td>
+    <td><pre>--mutable-sets</pre></td>
+    <td>Use <code>NSMutableSet</code> for properties that are has-many. (Useful when using NSRails with CoreData - <code>NSMutableArray</code> by default)</td>
   </tr>
   <tr>
     <td><pre>--nesting-retrievable-only</pre></td>
