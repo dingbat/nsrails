@@ -271,6 +271,11 @@ extern NSString * const NSRCoreDataException;
 @property (nonatomic, strong) NSString *appPassword;
 
 /**
+ Token for OAuth authentication (if used by server.)
+ */
+@property (nonatomic, strong) NSString *appOAuthToken;
+
+/**
  HTTP method used for updating objects.
  
  Rails is currently at 3.2.3 and using PUT, but 4.0 will use PATCH by default.
