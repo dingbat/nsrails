@@ -21,16 +21,10 @@ class Model
     while line = model_file.gets()
       next if (line.length > 0 && line[0] == "#")
 
-      #either "has_many :property" or "has_many :property, :through => :abc"
-      #too tired to figure this out in regex right now so trying both...
       begin
-        match = line.match(/ :(.*),/).captures[0]
+        match = line.match(/:([^,]*)(,?)/).captures[0].strip
       rescue
-        begin
-          match = line.match(/ :(.*)/).captures[0]
-        rescue
-          next
-        end
+        next
       end
 
       p = Property.new
@@ -40,9 +34,9 @@ class Model
       
       if p.has_many || p.belongs_to || line =~ /has_one/
         if line =~ /:class_name/
-          match = line.match(/:class_name => (.*)/)
+          match = line.match(/:class_name => ([^,]*)(,?)/)
           if match
-            c_name = match.captures[0]
+            c_name = match.captures[0].strip
             c_name.gsub!("'","")
             c_name.gsub!("\"","")
 
