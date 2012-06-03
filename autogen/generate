@@ -312,28 +312,6 @@ end
 class Runner
   STRING_OPTIONS = [["author", "a"], ["company", "c"], ["project", "p"], ["prefix", "x"]]
   
-  def self.print_help
-    this_file = File.expand_path(File.dirname(__FILE__))+"/generate"
-    pwd = Dir.pwd
-
-    puts "Usage:"
-    puts "   #{this_file[pwd.length+1..this_file.length]} APP_PATH [options]"
-    puts ""
-    puts "Options for property translation"
-    puts "   --ruby                         Generate Ruby classes for MacRuby and RubyMotion"
-    puts "   --created-at                   Include the created_at date property (as NSDate)"
-    puts "   --updated-at                   Include the updated_at date property (as NSDate)"
-    puts "   --nesting-retrievable-only     On properties relating another model, include '-r' flag"
-    puts "   --mutable-arrays               Use NSMutableArray instead of NSArray for has_many properties"
-    puts ""
-    puts "Options for file styling - all expect a string following"
-    puts "   -a, --author                 "
-    puts "   -p, --project                "
-    puts "   -c, --company                "
-    puts "   -x, --prefix                   Prefix for classes and filenames"
-    puts ""
-  end
-  
   def self.shortcut(option)
     STRING_OPTIONS.each do |opt|
       return opt[0] if opt.include?(option)
@@ -348,16 +326,12 @@ class Runner
     current_key = nil
     
     options.each_with_index do |arg, idx|
-      if (arg == "--help" || arg == "-h")
-        print_help
-        return nil
-      end
-     
       if current_key
         dict[current_key] = arg
         current_key = nil
       else
-        if idx == options.size-1
+        arg = "--help" if arg == "-h"
+        if (idx == options.size-1) && arg != "--help"
           path = File.expand_path(arg)
           path += "/" if (path[path.length] != "/")
           dict["path"] = path
@@ -374,7 +348,7 @@ class Runner
       end
     end
     
-    raise 'The path to a Rails app must be specified as the last argument to this command.' if !dict["path"]
+    raise 'The path to a Rails app must be specified as the last argument to this command.' if !dict["path"] && !dict["help"]
     
     dict
   end
@@ -408,6 +382,14 @@ class Runner
       return nil
     end
     
+    begin
+      Dir.mkdir(@@output_path)
+      puts "Making directory #{@@options["project"]}.gen/"
+    rescue
+    end
+
+    puts "Writing files to #{@@output_path}"
+    
     g = Generator.new
     g.prefix = @@options["prefix"]
     g.ruby = @@options["ruby"]
@@ -428,23 +410,41 @@ class Runner
   end
 end
 
+def self.print_help
+  this_file = File.expand_path(File.dirname(__FILE__))+"/generate"
+  pwd = Dir.pwd
+
+  puts "Usage:"
+  puts "   #{this_file[pwd.length+1..this_file.length]} [options] APP_PATH"
+  puts ""
+  puts "Options for property translation:"
+  puts "   --ruby                         Generate Ruby classes for MacRuby and RubyMotion"
+  puts "   --created-at                   Include the created_at date property (as NSDate)"
+  puts "   --updated-at                   Include the updated_at date property (as NSDate)"
+  puts "   --nesting-retrievable-only     On properties relating another model, include '-r' flag"
+  puts "   --mutable-arrays               Use NSMutableArray instead of NSArray for has_many properties"
+  puts ""
+  puts "Options for file styling: (each expects a string following)"
+  puts "   -a, --author                 "
+  puts "   -p, --project                "
+  puts "   -c, --company                "
+  puts "   -x, --prefix                   Prefix for classes and filenames"
+  puts ""
+end
+
 begin
   @@options = Runner.parse_options(ARGV)
-  @@options["project"] ||= @@options["path"].split("/").last
-  @@options["company"] ||= @@options["author"] || "__MyCompanyName__"
-  @@options["author"] ||= "NSRails autogen"
+  if (@@options["help"] || @@options["h"])
+    print_help
+  else
+    @@options["project"] ||= @@options["path"].split("/").last
+    @@options["company"] ||= @@options["author"] || "__MyCompanyName__"
+    @@options["author"] ||= "NSRails autogen"
   
-  @@output_path = File.expand_path(File.dirname(__FILE__))+"/"+@@options["project"]+".gen"
+    @@output_path = File.expand_path(File.dirname(__FILE__))+"/"+@@options["project"]+".gen"
   
-  begin
-    Dir.mkdir(@@output_path)
-    puts "Making directory #{@@options["project"]}.gen/"
-  rescue
+    Runner.run if @@options
   end
-  
-  puts "Writing files to #{@@output_path}"
-  
-  Runner.run if @@options
 rescue => e
   puts "Error! #{e}\nUse --help or -h for help."
 end
