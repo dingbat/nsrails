@@ -293,6 +293,15 @@ extern NSString * const NSRCoreDataException;
  */
 @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
 
+/**
+ Default HTTP method used for updating objects.
+ 
+ Rails is currently at 3.2.3 and using PUT, but 4.0 will use PATCH be default.
+ 
+ **Default:** `@"PUT"`
+ */
+@property (nonatomic, strong) NSString *updateMethod;
+
 
 /// =============================================================================================
 /// @name Retrieving the default config

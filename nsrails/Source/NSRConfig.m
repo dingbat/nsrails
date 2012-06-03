@@ -107,7 +107,7 @@ NSString * const NSRCoreDataException				= @"NSRCoreDataException";
 
 @implementation NSRConfig
 @synthesize appURL, appUsername, appPassword, appOAuthToken;
-@synthesize autoinflectsClassNames, autoinflectsPropertyNames, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages, performsCompletionBlocksOnMainThread, managedObjectContext;
+@synthesize autoinflectsClassNames, autoinflectsPropertyNames, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages, performsCompletionBlocksOnMainThread, managedObjectContext, updateMethod;
 @dynamic dateFormat;
 
 #pragma mark -
@@ -194,6 +194,9 @@ static NSString *currentEnvironment = nil;
 		self.succinctErrorMessages = YES;
 		self.timeoutInterval = 60.0f;
 		self.performsCompletionBlocksOnMainThread = YES;
+    
+    //by default, use PUT for updates
+    self.updateMethod = @"PUT";
 		
 		asyncOperationQueue = [[NSOperationQueue alloc] init];
 	}

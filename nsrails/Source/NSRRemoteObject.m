@@ -900,16 +900,25 @@ NSRMap(*);
 
 - (BOOL) remoteUpdate:(NSError **)error
 {
-	if (![self remoteRequest:@"PUT" method:nil error:error])
+	return [self remoteUpdateWithMethod:[self getRelevantConfig].updateMethod error:nil];
+}
+
+- (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock
+{
+	[self remoteUpdateAsyncWithMethod:[self getRelevantConfig].updateMethod completionBlock:completionBlock];
+}
+
+- (BOOL) remoteUpdateWithMethod:(NSString *)method error:(NSError **)error {
+  if (![self remoteRequest:method method:nil error:error])
 		return NO;
 	
 	[self saveContext];
 	return YES;
 }
 
-- (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock
+- (void) remoteUpdateAsyncWithMethod:(NSString *)method completionBlock:(NSRBasicCompletionBlock)completionBlock
 {
-	[self remoteRequest:@"PUT" method:nil async:
+	[self remoteRequest:method method:nil async:
 	 ^(id result, NSError *error) 
 	 {
 		 if (result)

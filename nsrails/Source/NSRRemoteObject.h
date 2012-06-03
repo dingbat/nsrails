@@ -457,7 +457,9 @@
  
  @warning No local properties will be set, as Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.
  */
+
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock;
+- (void) remoteUpdateAsyncWithMethod:(NSString *)method completionBlock:(NSRBasicCompletionBlock)completionBlock;
 
 
 /**
