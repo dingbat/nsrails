@@ -814,31 +814,33 @@ _NSR_REMOTEID_SYNTH remoteID;
 + (NSString *) routeForControllerMethod:(NSString *)method
 {
 	NSString *controller = [self masterPluralName];
-	NSString *route = method;
+	NSString *route = (method ? method : @"");
+	//if !controller, means it was called on NSRRemoteObject (to access a "root method"), so don't modify the route
+	//otherwise, add the controller to the beginning
 	if (controller)
 	{
 		route = [controller stringByAppendingPathComponent:method];
 	}
-	//if !controller, means it was called on NSRRemoteObject (to access a "root method"), so don't modify the route
 
-	return (route ? route : @"");
+	return route;
 }
 
 - (NSString *) routeForInstanceMethod:(NSString *)method
 {
 	[self assertCanSendInstanceRequest];
-
-	//  1/something
+	
+	// 1/something
 	NSString *methodWithID = [[self.remoteID stringValue] stringByAppendingPathComponent:method];
 	
-	//  posts/1/something
+	// posts/1/something
 	NSString *pathWithController = [[self class] routeForControllerMethod:methodWithID];
 	
 	NSRRemoteObject *prefix = [self performSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefix)];
 	if (prefix)
 	{
-		//  other/5/posts/1/something
-		pathWithController = [NSString stringWithFormat:@"%@/%@",[prefix routeForInstanceMethod:nil],pathWithController];
+		// stick everything at the end of an instance method route for `prefix` (recursively)
+		// other/5/posts/1/something
+		pathWithController = [prefix routeForInstanceMethod:pathWithController];
 	}
 
 	return pathWithController;
