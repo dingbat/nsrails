@@ -39,7 +39,7 @@
 @end
 
 
-@interface ASuperclass : NSRRemoteObject
+@interface ASuperclass : NSObject
 + (NSString *) something;
 - (NSString *) something;
 @end

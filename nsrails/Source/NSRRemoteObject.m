@@ -118,7 +118,7 @@
 
 @end
 
-@interface NSRRemoteObject (NSRNoClimb)
+@interface NSObject (NSRNoClimb)
 
 + (id) performSelectorWithoutClimbingHierarchy:(SEL)selector;
 + (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector;
@@ -128,7 +128,7 @@
 
 @end
 
-@implementation NSRRemoteObject (NSRNoClimb)
+@implementation NSObject (NSRNoClimb)
 
 // This is a trick to make sure ONLY THIS class declares `selector`, and no superclasses
 //   It's hard to tell because the method gets transparently forwarded to superclass if not found
