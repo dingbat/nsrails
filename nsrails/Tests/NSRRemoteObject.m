@@ -185,6 +185,27 @@ NSRMap(childProperty1, childProperty2)
 @implementation Empty
 @end
 
+@interface Prefixer : NSRRemoteObject
+@property (nonatomic, strong) Empty *empty;
+@end
+
+@implementation Prefixer
+@synthesize empty;
+NSRUseResourcePrefix(empty);
+
+@end
+
+@interface Prefixer2 : NSRRemoteObject
+@property (nonatomic, strong) Prefixer *thePrefixer;
+@end
+
+@implementation Prefixer2
+@synthesize thePrefixer;
+NSRUseResourcePrefix(thePrefixer);
+NSRUseModelName(@"preman");
+
+@end
+
 @interface DictionaryNester : NSRRemoteObject
 @property (nonatomic, strong) NSArray *dictionaries;
 @end
@@ -337,10 +358,9 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	NSRAssertEqualSyncStrings([SyncStringTester masterNSRMapWithOverrideString:@"NSRNoCarryFromSuper *"], @"property3, property2, property1, remoteID=id", @"should be only my properties if * declared and nothing inherited");
 }
 
-- (void) test_custom_requests
+- (void) test_routes
 {
 	// Root
-	
 	STAssertEqualObjects([NSRRemoteObject routeForControllerMethod:nil], @"", @"Root route failed");	
 	STAssertEqualObjects([NSRRemoteObject routeForControllerMethod:@"action"], @"action", @"Root route failed");	
 	
@@ -349,13 +369,61 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertEqualObjects([Empty routeForControllerMethod:@"action"], @"empties/action", @"Controller route failed");
 	
 	// Instance
-	
 	Empty *smth = [[Empty alloc] init];
 	STAssertThrowsSpecificNamed([smth routeForInstanceMethod:nil], NSException, NSRNullRemoteIDException, @"Should have been an exception getting instance route if nil remoteID");
 	
 	smth.remoteID = [NSNumber numberWithInt:1];
 	STAssertEqualObjects([smth routeForInstanceMethod:nil], @"empties/1", @"Nil instance route failed");
 	STAssertEqualObjects([smth routeForInstanceMethod:@"action"], @"empties/1/action", @"Instance route failed");
+}
+
+- (void) test_routes_with_prefixes
+{
+	// Controller (class)
+	STAssertEqualObjects([Prefixer routeForControllerMethod:nil], @"prefixers", @"Nil controller route failed");	
+	STAssertEqualObjects([Prefixer routeForControllerMethod:@"action"], @"prefixers/action", @"Controller route failed");
+	
+	// Instance
+	Prefixer *smth = [[Prefixer alloc] init];
+	STAssertThrowsSpecificNamed([smth routeForInstanceMethod:nil], NSException, NSRNullRemoteIDException, @"Should have been an exception getting instance route if nil remoteID");
+		
+	smth.remoteID = [NSNumber numberWithInt:1];
+	STAssertThrowsSpecificNamed([smth routeForInstanceMethod:nil], NSException, NSRNullRemoteIDException, @"Should still crash, because 'empty' relation is nil");
+
+	smth.empty = [[Empty alloc] init];
+	STAssertThrowsSpecificNamed([smth routeForInstanceMethod:nil], NSException, NSRNullRemoteIDException, @"Should still crash, because 'empty' relation has a nil remoteID");
+
+	smth.empty.remoteID = [NSNumber numberWithInt:15];
+	
+	STAssertEqualObjects([smth routeForInstanceMethod:nil], @"empties/15/prefixers/1", @"Nil instance route failed");
+	STAssertEqualObjects([smth routeForInstanceMethod:@"action"], @"empties/15/prefixers/1/action", @"Instance route failed");
+	
+	
+	// Now double nested + custom names
+	// Controller (class)
+	STAssertEqualObjects([Prefixer routeForControllerMethod:nil], @"prefixers", @"Nil controller route failed");	
+	STAssertEqualObjects([Prefixer routeForControllerMethod:@"action"], @"prefixers/action", @"Controller route failed");
+	
+	// Instance
+	Prefixer2 *smth2 = [[Prefixer2 alloc] init];
+	STAssertThrowsSpecificNamed([smth2 routeForInstanceMethod:nil], NSException, NSRNullRemoteIDException, @"Should have been an exception getting instance route if nil remoteID");
+	
+	smth2.remoteID = [NSNumber numberWithInt:1];
+	STAssertThrowsSpecificNamed([smth2 routeForInstanceMethod:nil], NSException, NSRNullRemoteIDException, @"Should still crash, because 'empty' relation is nil");
+	
+	smth2.thePrefixer = [[Prefixer alloc] init];
+	STAssertThrowsSpecificNamed([smth2 routeForInstanceMethod:nil], NSException, NSRNullRemoteIDException, @"Should still crash, because 'empty' relation has a nil remoteID");
+	
+	smth2.thePrefixer.remoteID = [NSNumber numberWithInt:15];
+	STAssertThrowsSpecificNamed([smth2 routeForInstanceMethod:nil], NSException, NSRNullRemoteIDException, @"Should STILL crash, because 'thePrefixer' relation has a nil empty");
+	
+	smth2.thePrefixer.empty = [[Empty alloc] init];
+	STAssertThrowsSpecificNamed([smth2 routeForInstanceMethod:nil], NSException, NSRNullRemoteIDException, @"Should STILL crash, because 'thePrefixer' relation's empty has a nil remoteID");
+	
+	smth2.thePrefixer.empty.remoteID = [NSNumber numberWithInt:23];
+	
+	STAssertEqualObjects([smth2 routeForInstanceMethod:nil], @"empties/23/prefixers/15/premans/1", @"Nil instance route failed");
+	STAssertEqualObjects([smth2 routeForInstanceMethod:@"action"], @"empties/23/prefixers/15/premans/1/action", @"Instance route failed");
 }
 
 - (void) test_encode_decode

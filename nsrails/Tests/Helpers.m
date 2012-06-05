@@ -39,13 +39,19 @@
 @end
 
 
-@interface ASuperclass : NSObject
+@interface ASuperclass : NSRRemoteObject
 + (NSString *) something;
+- (NSString *) something;
 @end
 
 @implementation ASuperclass
 
 + (NSString *) something
+{
+	return @"super";
+}
+
+- (NSString *) something
 {
 	return @"super";
 }
@@ -60,10 +66,16 @@
 
 @interface ASubclass : AClass
 + (NSString *) something;
+- (NSString *) something;
 @end
 @implementation ASubclass
 
 + (NSString *) something
+{
+	return @"sub";
+}
+
+- (NSString *) something
 {
 	return @"sub";
 }
@@ -140,9 +152,24 @@
 - (void) test_noclimb
 {
 	SEL sel = @selector(something);
+	
 	STAssertEqualObjects([ASuperclass performSelectorWithoutClimbingHierarchy:sel], @"super",@"");
+	STAssertTrue([ASuperclass respondsToSelectorWithoutClimbingHierarchy:sel], @"");
+
 	STAssertNil([AClass performSelectorWithoutClimbingHierarchy:sel],@"");
+	STAssertFalse([AClass respondsToSelectorWithoutClimbingHierarchy:sel], @"");
+
 	STAssertEqualObjects([ASubclass performSelectorWithoutClimbingHierarchy:sel], @"sub",@"");
+	STAssertTrue([ASubclass respondsToSelectorWithoutClimbingHierarchy:sel], @"");
+
+	STAssertEqualObjects([[[ASuperclass alloc] init] performSelectorWithoutClimbingHierarchy:sel], @"super",@"");
+	STAssertTrue([[[ASuperclass alloc] init] respondsToSelectorWithoutClimbingHierarchy:sel], @"");
+	
+	STAssertNil([[[AClass alloc] init] performSelectorWithoutClimbingHierarchy:sel],@"");
+	STAssertFalse([[[AClass alloc] init] respondsToSelectorWithoutClimbingHierarchy:sel], @"");
+	
+	STAssertEqualObjects([[[ASubclass alloc] init] performSelectorWithoutClimbingHierarchy:sel], @"sub",@"");
+	STAssertTrue([[[ASubclass alloc] init] respondsToSelectorWithoutClimbingHierarchy:sel], @"");
 }
 
 - (void)setUpClass

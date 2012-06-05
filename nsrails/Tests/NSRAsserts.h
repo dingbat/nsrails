@@ -38,9 +38,13 @@
 
 @end
 
-@interface NSObject (NSRNoClimb)
+@interface NSRRemoteObject (NSRNoClimb)
 
 + (NSString *) performSelectorWithoutClimbingHierarchy:(SEL)selector;
++ (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector;
+
+- (NSString *) performSelectorWithoutClimbingHierarchy:(SEL)selector;
+- (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector;
 
 @end
 
