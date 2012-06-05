@@ -37,16 +37,29 @@
 
 //helper for macro -> NSString
 //adding a # before anything will simply make it a cstring
-#define _MAKE_STR(...)	[NSString stringWithCString:(#__VA_ARGS__) encoding:NSUTF8StringEncoding]
+#define _MAKE_STR(...) \
+	[NSString stringWithCString:(#__VA_ARGS__) encoding:NSUTF8StringEncoding]
 
-//define NSRMap to create a method called NSRMap, which returns the entire param list
+//define to create a method called NSRMap, which returns the entire param list
 #define NSRMap(...) \
-+ (NSString*) NSRMap { return _MAKE_STR(__VA_ARGS__); }
+	+ (NSString*) NSRMap { return _MAKE_STR(__VA_ARGS__); }
 
-#define NSRMapNoInheritance(...)  NSRMap(__VA_ARGS__ NSRNoCarryFromSuper)
+//define to use NSRMap, just pass in NSRNoCarryFromSuper as well (will be picked up later)
+#define NSRMapNoInheritance(...) \
+	NSRMap(__VA_ARGS__ NSRNoCarryFromSuper)
 
 //returns the string version of NSRNoCarryFromSuper so we can find it when evaluating NSRMap string
-#define _NSRNoCarryFromSuper_STR	_MAKE_STR(NSRNoCarryFromSuper)
+#define _NSRNoCarryFromSuper_STR \
+	_MAKE_STR(NSRNoCarryFromSuper)
+
+
+/// =============================================================================================
+/// @name NSRUseResourcePrefix
+/// =============================================================================================
+
+//define to return an instance variable whose controller name and ID shall be used as a prefix to path
+#define NSRUseResourcePrefix(member) \
+	- (NSRRemoteObject *) NSRUseResourcePrefix { return member; };
 
 
 /// =============================================================================================
@@ -61,15 +74,17 @@
 #define _N_ARGS_1(...) _N_ARGS_2(__VA_ARGS__)
 #define _N_ARGS_2(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, n, ...) n
 
-//define NSRUseModelName to concat either _NSR_Name1(x) or _NSR_Name2(x,y), depending on the number of args passed in
-#define NSRUseModelName(...) _CAT(_NSR_Name,_N_ARGS(__VA_ARGS__))(__VA_ARGS__)
+//define to concat either _NSR_Name1(x) or _NSR_Name2(x,y), depending on the number of args passed in
+#define NSRUseModelName(...) \
+	_CAT(_NSR_Name,_N_ARGS(__VA_ARGS__))(__VA_ARGS__)
 
 //_NSR_Name1 (only with 1 parameter, ie, custom model name but default plurality), creates NSRUseModelName method that returns param, return nil for plural to make it go to default
-#define _NSR_Name1(name)	_NSR_Name2((name), nil)
+#define _NSR_Name1(name) \
+	_NSR_Name2((name), nil)
 
 //_NSR_Name2 (2 parameters, ie, custom model name and custom plurality), creates NSRUseModelName and NSRUsePluralName
-#define _NSR_Name2(name,plural)  \
-+ (NSString*) NSRUseModelName { return (name); } \
-+ (NSString*) NSRUsePluralName { return (plural); }
+#define _NSR_Name2(name,plural) \
+	+ (NSString*) NSRUseModelName { return (name); } \
+	+ (NSString*) NSRUsePluralName { return (plural); }
 
 

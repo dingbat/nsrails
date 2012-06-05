@@ -118,18 +118,30 @@
 
 @end
 
-@interface NSObject (NSRNoClimb)
+@interface NSRRemoteObject (NSRNoClimb)
 
 + (id) performSelectorWithoutClimbingHierarchy:(SEL)selector;
++ (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector;
+
+- (id) performSelectorWithoutClimbingHierarchy:(SEL)selector;
+- (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector;
 
 @end
 
-@implementation NSObject (NSRNoClimb)
+@implementation NSRRemoteObject (NSRNoClimb)
 
 // This is a trick to make sure ONLY THIS class declares `selector`, and no superclasses
 //   It's hard to tell because the method gets transparently forwarded to superclass if not found
 // This method actually compares both class's implementations of the method, and if identical (ie, it inherits), ignore it
 + (id) performSelectorWithoutClimbingHierarchy:(SEL)selector
+{
+	if ([self respondsToSelectorWithoutClimbingHierarchy:selector])
+		return [self performSelector:selector];
+	
+	return nil;
+}
+
++ (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector
 {
 	if ([self respondsToSelector:selector])
 	{
@@ -137,9 +149,30 @@
 		IMP supe = [self.superclass methodForSelector:selector];
 		
 		if (mine != supe)
-			return [self performSelector:selector];
+			return YES;
 	}
+	return NO;
+}
+
+- (id) performSelectorWithoutClimbingHierarchy:(SEL)selector
+{
+	if ([self respondsToSelectorWithoutClimbingHierarchy:selector])
+		return [self performSelector:selector];
+	
 	return nil;
+}
+
+- (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector
+{
+	if ([self respondsToSelector:selector])
+	{
+		IMP mine = [self.class instanceMethodForSelector:selector]; //will find superclass if necessary
+		IMP supe = [self.superclass instanceMethodForSelector:selector];
+
+		if (mine != supe)
+			return YES;
+	}
+	return NO;
 }
 
 @end
@@ -778,30 +811,37 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 #pragma mark - HTTP Request stuff
 
-+ (NSString *) routeForControllerMethod:(NSString *)customRESTMethod
++ (NSString *) routeForControllerMethod:(NSString *)method
 {
 	NSString *controller = [self masterPluralName];
-	NSString *route = customRESTMethod;
+	NSString *route = method;
 	if (controller)
 	{
-		//this means this method was called on an NSRRemoteObject _subclass_, so appropriately point the method to its controller
-		//eg, ([User makeGET:@"hello"] => myapp.com/users/hello)
-		route = [NSString stringWithFormat:@"%@%@",controller, (customRESTMethod ? [@"/" stringByAppendingString:customRESTMethod] : @"")];
-		
-		//otherwise, if it was called on NSRRemoteObject (to access a "root method"), don't modify the route:
-		//eg, ([NSRRemoteObject makeGET:@"hello"] => myapp.com/hello)
+		route = [controller stringByAppendingPathComponent:method];
 	}
+	//if !controller, means it was called on NSRRemoteObject (to access a "root method"), so don't modify the route
+
 	return (route ? route : @"");
 }
 
-- (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod
+- (NSString *) routeForInstanceMethod:(NSString *)method
 {
 	[self assertCanSendInstanceRequest];
+
+	//  1/something
+	NSString *methodWithID = [[self.remoteID stringValue] stringByAppendingPathComponent:method];
 	
-	//make request on an instance, so make route "id", or "id/route" if there's an additional route included (1/edit)
-	NSString *idAndMethod = [NSString stringWithFormat:@"%@%@",self.remoteID,(customRESTMethod ? [@"/" stringByAppendingString:customRESTMethod] : @"")];
+	//  posts/1/something
+	NSString *pathWithController = [[self class] routeForControllerMethod:methodWithID];
 	
-	return [[self class] routeForControllerMethod:idAndMethod];
+	NSRRemoteObject *prefix = [self performSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefix)];
+	if (prefix)
+	{
+		//  other/5/posts/1/something
+		pathWithController = [NSString stringWithFormat:@"%@/%@",[prefix routeForInstanceMethod:nil],pathWithController];
+	}
+
+	return pathWithController;
 }
 
 
@@ -811,7 +851,15 @@ _NSR_REMOTEID_SYNTH remoteID;
 {
 	if (!self.remoteID)
 	{
-		[NSException raise:NSRNullRemoteIDException format:@"Attempted to update, delete, or retrieve an object with no ID. (Instance of %@)",NSStringFromClass([self class])];
+		[NSException raise:NSRNullRemoteIDException format:@"Attempted to update, delete, or retrieve an object with no ID. (Instance of %@)",[self class]];
+	}
+	else if ([self respondsToSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefix)])
+	{
+		NSRRemoteObject *prefix = [self performSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefix)];
+		if (!prefix.remoteID)
+		{
+			[NSException raise:NSRNullRemoteIDException format:@"Attempted to update, delete, or retrieve an object whose prefix association (%@) has no ID. (Instance of %@)",[prefix class],[self class]];
+		}			
 	}
 }
 
