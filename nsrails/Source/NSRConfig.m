@@ -106,8 +106,8 @@ NSString * const NSRCoreDataException				= @"NSRCoreDataException";
 #endif
 
 @implementation NSRConfig
-@synthesize appURL, appUsername, appPassword;
-@synthesize autoinflectsClassNames, autoinflectsPropertyNames, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages, performsCompletionBlocksOnMainThread, managedObjectContext;
+@synthesize appURL, appUsername, appPassword, appOAuthToken;
+@synthesize autoinflectsClassNames, autoinflectsPropertyNames, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages, performsCompletionBlocksOnMainThread, managedObjectContext, updateMethod;
 @dynamic dateFormat;
 
 #pragma mark -
@@ -194,6 +194,9 @@ static NSString *currentEnvironment = nil;
 		self.succinctErrorMessages = YES;
 		self.timeoutInterval = 60.0f;
 		self.performsCompletionBlocksOnMainThread = YES;
+    
+    //by default, use PUT for updates
+    self.updateMethod = @"PUT";
 		
 		asyncOperationQueue = [[NSOperationQueue alloc] init];
 	}
@@ -453,6 +456,11 @@ static NSString *currentEnvironment = nil;
 		
 		[request setValue:authHeader forHTTPHeaderField:@"Authorization"]; 
 	}
+  else if (self.appOAuthToken)
+  {
+    NSString *authHeader = [NSString stringWithFormat:@"OAuth %@", self.appOAuthToken];
+    [request setValue:authHeader forHTTPHeaderField:@"Authorization"];
+  }
 	
 	if (body)
 	{
