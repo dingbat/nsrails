@@ -54,15 +54,6 @@
 
 
 /// =============================================================================================
-/// @name NSRUseResourcePrefix
-/// =============================================================================================
-
-//define to return an instance variable whose controller name and ID shall be used as a prefix to path
-#define NSRUseResourcePrefix(member) \
-	- (NSRRemoteObject *) NSRUseResourcePrefix { return member; };
-
-
-/// =============================================================================================
 /// @name NSRUseModelName
 /// =============================================================================================
 
@@ -70,7 +61,7 @@
 //definitely check out how this works - it's cool
 #define _CAT(a, b) _PRIMITIVE_CAT(a, b)
 #define _PRIMITIVE_CAT(a, b) a##b
-#define _N_ARGS(...) _N_ARGS_1(__VA_ARGS__, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#define _N_ARGS(...) _N_ARGS_1(__VA_ARGS__, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0)
 #define _N_ARGS_1(...) _N_ARGS_2(__VA_ARGS__)
 #define _N_ARGS_2(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, n, ...) n
 
@@ -86,5 +77,27 @@
 #define _NSR_Name2(name,plural) \
 	+ (NSString*) NSRUseModelName { return (name); } \
 	+ (NSString*) NSRUsePluralName { return (plural); }
+
+
+/// =============================================================================================
+/// @name NSRUseResourcePrefix
+/// =============================================================================================
+
+//define to concat either _NSR_Prefix1(x) or _NSR_Prefix2(x,...), depending on the number of args passed in
+#define NSRUseResourcePrefix(...) \
+	_CAT(_NSR_Prefix,_N_ARGS(__VA_ARGS__))(__VA_ARGS__)
+
+#define _NSR_Prefix1(member) \
+	_NSR_Prefix((member), nil)
+
+//optional list of methods that this would apply to - simply return them as an array
+#define _NSR_Prefix2(member, ...) \
+	_NSR_Prefix((member), ([NSArray arrayWithObjects:__VA_ARGS__,nil]))
+
+//define to return an instance variable whose controller name and ID shall be used as a prefix to path
+//      and return an array of HTTP verbs where this will be used
+#define _NSR_Prefix(member, array) \
+	- (NSRRemoteObject *) NSRUseResourcePrefix { return member; }; \
+	- (NSArray *) NSRUseResourcePrefixMethods { return array; }
 
 
