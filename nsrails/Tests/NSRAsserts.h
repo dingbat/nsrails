@@ -29,7 +29,7 @@
 + (NSRPropertyCollection *) propertyCollection;
 - (NSRPropertyCollection *) propertyCollection;
 
-- (NSString *) routeForInstanceMethod:(NSString *)route;
+- (NSString *) routeForInstanceMethod:(NSString *)route httpVerb:(NSString *)str;
 + (NSString *) routeForControllerMethod:(NSString *)route;
 
 + (NSString *) typeForProperty:(NSString *)prop;
@@ -66,7 +66,7 @@
 #define NSRNumber(x)	[NSNumber numberWithInteger:x]
 
 #define NSRAssertEqualArraysNoOrder(arr, arr2) \
-if ([arr2 count] != arr.count) STFail(@"%@ should be equal (order doesn't matter) to %@",arr,arr2); \
+if ([arr2 count] != [arr count]) STFail(@"%@ should be equal (order doesn't matter) to %@",arr,arr2); \
 for (id obj in arr2) { \
 if (![arr containsObject:obj]) STFail(@"%@ should be equal (order doesn't matter) to %@",arr,arr2); \
 }
