@@ -29,7 +29,7 @@
 + (NSRPropertyCollection *) propertyCollection;
 - (NSRPropertyCollection *) propertyCollection;
 
-- (NSString *) routeForInstanceMethod:(NSString *)route httpVerb:(NSString *)str;
+- (NSString *) routeForInstanceMethod:(NSString *)route httpMethod:(NSString *)str;
 + (NSString *) routeForControllerMethod:(NSString *)route;
 
 + (NSString *) typeForProperty:(NSString *)prop;

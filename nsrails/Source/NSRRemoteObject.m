@@ -62,7 +62,6 @@
 
 + (NSString *) routeForControllerMethod:(NSString *)customRESTMethod;
 - (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod httpVerb:(NSString *)verb;
-- (void) assertCanSendInstanceRequestOnVerb:(NSString *)httpVerb;
 
 + (NSString *) NSRMap;
 + (NSString *) NSRUseModelName;
@@ -825,17 +824,33 @@ _NSR_REMOTEID_SYNTH remoteID;
 	return route;
 }
 
-- (BOOL) verbUsesPrefixConstruction:(NSString *)verb
+- (NSString *) routeForInstanceMethod:(NSString *)method httpMethod:(NSString *)verb
 {
-	NSArray *allowedVerbs = [self performSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefixMethods)];
-
-	return (!allowedVerbs || [allowedVerbs containsObject:verb] || [allowedVerbs containsObject:[verb lowercaseString]]);
-}
-
-- (NSString *) routeForInstanceMethod:(NSString *)method httpVerb:(NSString *)verb
-{
-	[self assertCanSendInstanceRequestOnVerb:verb];
+	if (!self.remoteID)
+	{
+		[NSException raise:NSRNullRemoteIDException format:@"Attempt to %@ to %@/:id/%@ with %@ instance that has a nil remoteID.",verb,[[self class] masterPluralName],method ? method : @"",[self class]];
+	}
 	
+	NSRRemoteObject *prefix = nil;
+	BOOL shouldUsePrefixConstruction = NO;
+	if ([self respondsToSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefix)])
+	{
+		NSArray *allowedVerbs = [self performSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefixMethods)];
+		
+		shouldUsePrefixConstruction = (!allowedVerbs || 
+									   [allowedVerbs containsObject:verb] || 
+									   [allowedVerbs containsObject:[verb lowercaseString]]);
+		
+		if (shouldUsePrefixConstruction)
+		{
+			prefix = [self performSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefix)];
+			if (!prefix.remoteID)
+			{
+				[NSException raise:NSRNullRemoteIDException format:@"Attempt to %@ %@ instance with a prefix association (%@ instance) that has a nil remoteID.",verb,[self class],[prefix class]];
+			}
+		}
+	}
+		
 	// 1/something
 	// posts/1/something
 	// other/5/posts/1/something (only if prefix - use everything as instance method of prefix object)
@@ -843,11 +858,8 @@ _NSR_REMOTEID_SYNTH remoteID;
 	NSString *route = [[self.remoteID stringValue] stringByAppendingPathComponent:method];
 	route = [[self class] routeForControllerMethod:route];
 	
-	NSRRemoteObject *prefix = [self performSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefix)];
-	if (prefix && [self verbUsesPrefixConstruction:verb])
-	{
-		route = [prefix routeForInstanceMethod:route httpVerb:verb];
-	}
+	if (shouldUsePrefixConstruction)
+		route = [prefix routeForInstanceMethod:route httpMethod:verb];
 
 	return route;
 }
@@ -855,32 +867,15 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 #pragma mark Performing actions on instances
 
-- (void) assertCanSendInstanceRequestOnVerb:(NSString *)verb
-{
-	if (!self.remoteID)
-	{
-		[NSException raise:NSRNullRemoteIDException format:@"Attempted to update, delete, or retrieve an object with no ID. (Instance of %@)",[self class]];
-	}
-	else if ([self respondsToSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefix)] && 
-			 [self verbUsesPrefixConstruction:verb])
-	{
-		NSRRemoteObject *prefix = [self performSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefix)];
-		if (!prefix.remoteID)
-		{
-			[NSException raise:NSRNullRemoteIDException format:@"Attempted to update, delete, or retrieve an object whose prefix association (%@) has no ID. (Instance of %@)",[prefix class],[self class]];
-		}			
-	}
-}
-
 - (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body error:(NSError **)error
 {
-	NSString *route = [self routeForInstanceMethod:customRESTMethod httpVerb:httpVerb];
+	NSString *route = [self routeForInstanceMethod:customRESTMethod httpMethod:httpVerb];
 	return [[self getRelevantConfig] makeRequest:httpVerb requestBody:body route:route sync:error orAsync:nil];
 }
 
 - (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body async:(NSRHTTPCompletionBlock)completionBlock
 {
-	NSString *route = [self routeForInstanceMethod:customRESTMethod httpVerb:httpVerb];
+	NSString *route = [self routeForInstanceMethod:customRESTMethod httpMethod:httpVerb];
 	[[self getRelevantConfig] makeRequest:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
 }
 
@@ -888,16 +883,11 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod error:(NSError **)error
 {
-	//done again so it can be tested before converting to JSON
-	[self assertCanSendInstanceRequestOnVerb:httpVerb];
-	
 	return [self remoteRequest:httpVerb method:customRESTMethod body:[self remoteDictionaryRepresentationWrapped:YES] error:error];
 }
 
 - (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock
 {
-	[self assertCanSendInstanceRequestOnVerb:httpVerb];
-	
 	[self remoteRequest:httpVerb method:customRESTMethod body:[self remoteDictionaryRepresentationWrapped:YES] async:completionBlock];
 }
 
