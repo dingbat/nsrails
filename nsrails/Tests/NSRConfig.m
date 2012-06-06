@@ -264,6 +264,23 @@
 	STAssertEqualObjects([[request URL] description], url, @"Keeps the URL");
 		
 	
+	/* OAuth */
+	
+	for (int i = 0; i < 2; i++)
+	{
+		[NSRConfig defaultConfig].appOAuthToken = @"token123";
+		NSURLRequest *requesto = [[NSRConfig defaultConfig] HTTPRequestForRequestType:@"POST"
+																		 requestBody:body
+																				 url:url];
+		
+		STAssertEqualObjects([requesto valueForHTTPHeaderField:@"Authorization"], @"OAuth token123", @"Should send OAuth token");
+			
+		//should be identical if only one user/pass element is present (but still oauth)
+		[[NSRConfig defaultConfig] setAppPassword:@"password"];
+	}
+	
+	[NSRConfig defaultConfig].appOAuthToken = nil;
+
 	/* User/pass */
 
 	[[NSRConfig defaultConfig] setAppPassword:@"password"];
