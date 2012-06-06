@@ -271,6 +271,11 @@ extern NSString * const NSRCoreDataException;
 @property (nonatomic, strong) NSString *appPassword;
 
 /**
+ Token for OAuth authentication (if used by server.)
+ */
+@property (nonatomic, strong) NSString *appOAuthToken;
+
+/**
  Date [format]("https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/DataFormatting/Articles/dfDateFormatting10_4.html%23//apple_ref/doc/uid/TP40002369-SW4") used if a property of type NSDate is encountered, to "encode" and "decode" NSDate objects.
  
  This should not be changed unless the format is also changed server-side; the default is the default Rails format.

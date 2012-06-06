@@ -106,7 +106,7 @@ NSString * const NSRCoreDataException				= @"NSRCoreDataException";
 #endif
 
 @implementation NSRConfig
-@synthesize appURL, appUsername, appPassword;
+@synthesize appURL, appUsername, appPassword, appOAuthToken;
 @synthesize autoinflectsClassNames, autoinflectsPropertyNames, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages, performsCompletionBlocksOnMainThread, managedObjectContext;
 @dynamic dateFormat;
 
@@ -453,6 +453,11 @@ static NSString *currentEnvironment = nil;
 		
 		[request setValue:authHeader forHTTPHeaderField:@"Authorization"]; 
 	}
+  else if (self.appOAuthToken)
+  {
+    NSString *authHeader = [NSString stringWithFormat:@"OAuth %@", self.appOAuthToken];
+    [request setValue:authHeader forHTTPHeaderField:@"Authorization"];
+  }
 	
 	if (body)
 	{
