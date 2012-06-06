@@ -349,7 +349,11 @@ static BOOL noServer = NO;
 	
 	NSError *e = nil;
 	
-	id posts = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts" sync:&e orAsync:nil];
+	NSRRequest *req = [[NSRRequest alloc] init];
+	req.httpMethod = @"GET";
+	req.route = @"posts";
+	
+	id posts = [req sendSynchronous:&e];
 	
 	STAssertNil(e, @"Should be no error getting posts");
 	STAssertTrue([posts isKindOfClass:[NSArray class]], @"Response should be an array");
@@ -366,15 +370,17 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	id post = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:[NSString stringWithFormat:@"posts/%@", p.remoteID] sync:&e orAsync:nil];
-	
+	req.route = [NSString stringWithFormat:@"posts/%@", p.remoteID];
+	id post = [req sendSynchronous:&e];
+
 	STAssertNil(e, @"Should be no error getting a post (e=%@)",e);
 	STAssertTrue([post isKindOfClass:[NSDictionary class]], @"Response should be a dictionary");
 	STAssertNotNil([post objectForKey:@"created_at"], @"Should be have created_at, etc");
 	
 	e = nil;
 	
-	id root = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"404" sync:&e orAsync:nil];
+	req.route = @"404";
+	id root = [req sendSynchronous:&e];
 	
 	STAssertNil(e, @"Should be no error getting 404 string HTML (e=%@)",e);
 	STAssertTrue([root isKindOfClass:[NSString class]], @"Response should be a string");
@@ -382,16 +388,24 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	id bad = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"8349834" sync:&e orAsync:nil];
+	req.route = @"8349834";
+	id bad = [req sendSynchronous:&e];
 	
 	STAssertNotNil(e, @"Should be an error getting /8349834");
 	STAssertNil(bad, @"Response should be nil (error)");
 	
 	e = nil;
 	
-	STAssertThrows([[NSRConfig defaultConfig] makeRequest:@"POST" requestBody:@"STRING" route:@"posts" sync:&e orAsync:nil], @"Should throw exception when sending invalid JSON");
+	req.route = @"posts";
+	req.body = @"STRING";
+	req.httpMethod = @"POST";
+	STAssertThrows([req sendSynchronous:&e], @"Should throw exception when sending invalid JSON");
 	
-	id responseFromDestroy = [[NSRConfig defaultConfig] makeRequest:@"DELETE" requestBody:nil route:[NSString stringWithFormat:@"posts/%@", p.remoteID] sync:&e orAsync:nil];
+	req.body = nil;
+	req.httpMethod = @"DELETE";
+	req.route = [NSString stringWithFormat:@"posts/%@", p.remoteID];
+	
+	id responseFromDestroy = [req sendSynchronous:&e];
 	
 	STAssertNil(e, @"Shouldn't be an error from DELETE (e=%@)",e);
 	STAssertNotNil(responseFromDestroy, @"Response shouldn't be nil, even if blank");
@@ -411,9 +425,12 @@ static BOOL noServer = NO;
 	
 	[NSRConfig resetConfigs];
 	
+	NSRRequest *req = [[NSRRequest alloc] init];
+	req.httpMethod = @"GET";
+
 	NSError *e = nil;
 	
-	STAssertThrowsSpecificNamed([[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:nil sync:&e orAsync:nil], NSException, NSRMissingURLException, @"Should fail on no app URL set in config, where's the error?");
+	STAssertThrowsSpecificNamed([req sendSynchronous:&e], NSException, NSRMissingURLException, @"Should fail on no app URL set in config, where's the error?");
 	
 	e = nil;
 	
@@ -422,14 +439,17 @@ static BOOL noServer = NO;
 	[[NSRConfig defaultConfig] setAppUsername:nil];
 	[[NSRConfig defaultConfig] setAppPassword:nil];
 	
-	NSString *root = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"404" sync:&e orAsync:nil];
+	req.httpMethod = @"GET";
+	req.route = @"404";
+	NSString *root = [req sendSynchronous:&e];
 	
 	STAssertNil(e, @"Should require no authentication for /404 (e=%@)",e);
 	STAssertNotNil(root, @"Should require no authentication for /404");
 		
 	e = nil;
 	
-	NSArray *index = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts" sync:&e orAsync:nil];
+	req.route = @"posts";
+	NSArray *index = [req sendSynchronous:&e];
 	
 	STAssertNotNil(e, @"Should fail on not authenticated, where's the error?");
 	STAssertNil(index, @"Response should be nil because there was an authentication error");
@@ -440,14 +460,15 @@ static BOOL noServer = NO;
 	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
 	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
 	
-	index = [[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"posts" sync:&e orAsync:nil];
+	index = [req sendSynchronous:&e];
 	STAssertNil(e, @"Authenticated, should be no error");
 	STAssertNotNil(index, @"Authenticated, reponse should be present");
 	
 	e = nil;
 	
 	//test error domain
-	[[NSRConfig defaultConfig] makeRequest:@"GET" requestBody:nil route:@"///missing" sync:&e orAsync:nil];
+	req.route = @"///missing";
+	STAssertNil([req sendSynchronous:&e],@"Should be nil");
 	STAssertTrue(e.domain == NSRRemoteErrorDomain, @"Server error should have NSRRemoteErrorDomain");
 }
 

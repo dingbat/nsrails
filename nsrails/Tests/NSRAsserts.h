@@ -55,6 +55,14 @@
 
 @end
 
+@interface NSRRequest (internal)
+
+- (NSURLRequest *) HTTPRequest;
+- (NSError *) errorForResponse:(id)response statusCode:(NSInteger)statusCode;
+- (id) receiveResponse:(NSHTTPURLResponse *)response data:(NSData *)data error:(NSError **)error;
+
+@end
+
 #define NSRAssertNoServer(x)	if (x) { STFail(@"Test Rails server not running -- run rails s on the demo app."); return; }
 
 
