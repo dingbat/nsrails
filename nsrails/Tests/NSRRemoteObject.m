@@ -372,9 +372,12 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	
 	// Instance
 	Empty *smth = [[Empty alloc] init];
-	STAssertThrowsSpecificNamed([smth routeForInstanceMethod:nil httpMethod:verb], NSException, NSRNullRemoteIDException, @"Should have been an exception getting instance route if nil remoteID");
 	
+	STAssertEqualObjects([smth routeForInstanceMethod:nil httpMethod:verb], @"empties", @"Nil instance route failed");
+	STAssertEqualObjects([smth routeForInstanceMethod:@"action" httpMethod:verb], @"empties/action", @"Instance route failed");
+
 	smth.remoteID = [NSNumber numberWithInt:1];
+	
 	STAssertEqualObjects([smth routeForInstanceMethod:nil httpMethod:verb], @"empties/1", @"Nil instance route failed");
 	STAssertEqualObjects([smth routeForInstanceMethod:@"action" httpMethod:verb], @"empties/1/action", @"Instance route failed");
 }

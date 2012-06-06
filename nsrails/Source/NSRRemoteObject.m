@@ -857,11 +857,6 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod httpMethod:(NSString *)verb
 {
-	if (!self.remoteID)
-	{
-		[NSException raise:NSRNullRemoteIDException format:@"Attempt to make a remote instance request (instance of %@) but remoteID is nil.",[self class]];
-	}
-	
 	return [[self class] routeForMethod:customRESTMethod withObject:self httpMethod:verb];
 }
 
@@ -873,6 +868,14 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 
 #pragma mark Performing actions on instances
+
+- (void) assertPresentRemoteID:(SEL)cmd
+{
+	if (!self.remoteID)
+	{
+		[NSException raise:NSRNullRemoteIDException format:@"Attempt to call -[%@ %@] with a nil remoteID.",[self class],NSStringFromSelector(cmd)];
+	}	
+}
 
 - (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body error:(NSError **)error
 {
@@ -958,36 +961,35 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (BOOL) remoteCreate:(NSError **)error
 {
-	NSString *route = [[self class] routeForMethod:nil withObject:self httpMethod:@"POST"];
+	// Just in case object already has an ID, route as if we had no ID (usually the case anyway)
+	NSNumber *oldID = self.remoteID;
+	self.remoteID = nil;
+
+	NSDictionary *jsonResponse = [self remoteRequest:@"POST" method:nil error:error];
+
+	self.remoteID = oldID;
+
+	if (jsonResponse)
+		[self setPropertiesUsingRemoteDictionary:jsonResponse applyToRemoteAttributes:YES];
 	
-	NSDictionary *jsonResponse = [self.getRelevantConfig makeRequest:@"POST" 
-														 requestBody:[self remoteDictionaryRepresentationWrapped:YES] 
-															   route:route
-																sync:error
-															 orAsync:nil];
-	if (!jsonResponse)
-		return NO;
-	
-	[self setPropertiesUsingRemoteDictionary:jsonResponse applyToRemoteAttributes:YES];
-	
-	return YES;
+	return !!jsonResponse;
 }
 
 - (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock
 {
-	NSString *route = [[self class] routeForMethod:nil withObject:self httpMethod:@"POST"];
+	NSNumber *oldID = self.remoteID;
+	self.remoteID = nil;
 	
-	[self.getRelevantConfig makeRequest:@"POST" 
-							requestBody:[self remoteDictionaryRepresentationWrapped:YES] 
-								  route:route
-								   sync:nil
-								orAsync:^(id result, NSError *error) 
-										{
-											if (result)
-												[self setPropertiesUsingRemoteDictionary:result 
-																 applyToRemoteAttributes:YES];
-											completionBlock(error);
-										}];
+	[self remoteRequest:@"POST" method:nil async:
+	 ^(id result, NSError *error) 
+	 {
+		 self.remoteID = oldID;
+		 
+		 if (result)
+			 [self setPropertiesUsingRemoteDictionary:result applyToRemoteAttributes:YES];
+		 
+		 completionBlock(error);
+	 }];
 }
 
 
@@ -995,6 +997,8 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (BOOL) remoteUpdate:(NSError **)error
 {
+	[self assertPresentRemoteID:_cmd];
+	
 	if (![self remoteRequest:[self getRelevantConfig].updateMethod method:nil error:error])
 		return NO;
 	
@@ -1004,6 +1008,8 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock
 {
+	[self assertPresentRemoteID:_cmd];
+	
 	[self remoteRequest:[self getRelevantConfig].updateMethod method:nil async:
 	 ^(id result, NSError *error) 
 	 {
@@ -1019,6 +1025,8 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (BOOL) remoteReplace:(NSError **)error
 {
+	[self assertPresentRemoteID:_cmd];
+	
 	if (![self remoteRequest:@"PUT" method:nil error:error])
 		return NO;
 	
@@ -1028,6 +1036,8 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (void) remoteReplaceAsync:(NSRBasicCompletionBlock)completionBlock
 {
+	[self assertPresentRemoteID:_cmd];
+	
 	[self remoteRequest:@"PUT" method:nil async:
 	 ^(id result, NSError *error) 
 	 {
@@ -1043,6 +1053,8 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (BOOL) remoteDestroy:(NSError **)error
 {
+	[self assertPresentRemoteID:_cmd];
+	
 	if (![self remoteRequest:@"DELETE" method:nil body:nil error:error])
 		return NO;
 	
@@ -1053,6 +1065,8 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (void) remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock
 {
+	[self assertPresentRemoteID:_cmd];
+	
 	[self remoteRequest:@"DELETE" method:nil body:nil async:
 	 ^(id result, NSError *error) 
 	 {
@@ -1069,6 +1083,8 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (BOOL) remoteFetch:(NSError **)error changes:(BOOL *)changesPtr
 {
+	[self assertPresentRemoteID:_cmd];
+	
 	NSDictionary *jsonResponse = [self remoteGET:nil error:error];
 	
 	if (!jsonResponse)
@@ -1087,11 +1103,15 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (BOOL) remoteFetch:(NSError **)error
 {
+	[self assertPresentRemoteID:_cmd];
+	
 	return [self remoteFetch:error changes:NULL];
 }
 
 - (void) remoteFetchAsync:(NSRFetchCompletionBlock)completionBlock
 {
+	[self assertPresentRemoteID:_cmd];
+	
 	[self remoteGET:nil async:
 	 ^(id result, NSError *error) 
 	 {

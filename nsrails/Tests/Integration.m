@@ -230,6 +230,14 @@ static BOOL noServer = NO;
 	STAssertNotNil(newPost.remoteID, @"New post was just created, remoteID shouldn't be nil.");
 	STAssertNotNil(newPost.remoteAttributes, @"New post was just created, remoteAttributes shouldn't be nil.");
 	STAssertNotNil([newPost.remoteAttributes objectForKey:@"updated_at"], @"Remote attributes should have updated_at, even though not declared in NSRMap.");
+
+	NSNumber *oldID = newPost.remoteID;
+	
+	e = nil;
+	
+	STAssertTrue([newPost remoteCreate:&e],@"");
+	STAssertNotNil(newPost.remoteID, @"New post was just created, remoteID shouldn't be nil.");
+	STAssertFalse([newPost.remoteID isEqualToNumber:oldID], @"Should NOT be equal IDs - separate creates");
 	
 	e = nil;
 	
