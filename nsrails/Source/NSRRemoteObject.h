@@ -3,7 +3,7 @@
  _|_|_|    _|_|  _|_|  _|_|  _|  _|      _|_|           
  _|  _|  _|_|    _|    _|_|  _|  _|_|  _|_| 
  
- NSRails.h
+ NSRRemoteObject.h
  
  Copyright (c) 2012 Dan Hassin.
  

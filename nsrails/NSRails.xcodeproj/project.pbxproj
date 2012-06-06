@@ -36,6 +36,12 @@
 		594765BF1569F9E100C07A62 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B41569F9E100C07A62 /* NSRConfig.m */; };
 		594765C01569F9E100C07A62 /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B51569F9E100C07A62 /* NSRPropertyCollection.m */; };
 		594765C11569F9E100C07A62 /* NSRPropertyCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B51569F9E100C07A62 /* NSRPropertyCollection.m */; };
+		598D217615800AC2002CC996 /* NSRRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 598D217415800AC2002CC996 /* NSRRequest.h */; };
+		598D217715800AC2002CC996 /* NSRRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 598D217415800AC2002CC996 /* NSRRequest.h */; };
+		598D217815800AC2002CC996 /* NSRRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 598D217415800AC2002CC996 /* NSRRequest.h */; };
+		598D217915800AC2002CC996 /* NSRRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 598D217515800AC2002CC996 /* NSRRequest.m */; };
+		598D217A15800AC2002CC996 /* NSRRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 598D217515800AC2002CC996 /* NSRRequest.m */; };
+		598D217B15800AC2002CC996 /* NSRRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 598D217515800AC2002CC996 /* NSRRequest.m */; };
 		5993AF521575CD3000DA25F4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17A8155C74200092B048 /* Foundation.framework */; };
 		5993AF5F1575CD3100DA25F4 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592585C21569F067009AD599 /* SenTestingKit.framework */; };
 		5993AF601575CD3100DA25F4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17AA155C74890092B048 /* UIKit.framework */; };
@@ -142,6 +148,8 @@
 		594765B31569F9E100C07A62 /* NSRAsserts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRAsserts.h; sourceTree = "<group>"; };
 		594765B41569F9E100C07A62 /* NSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = NSRConfig.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		594765B51569F9E100C07A62 /* NSRPropertyCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRPropertyCollection.m; sourceTree = "<group>"; };
+		598D217415800AC2002CC996 /* NSRRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRRequest.h; sourceTree = "<group>"; };
+		598D217515800AC2002CC996 /* NSRRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRequest.m; sourceTree = "<group>"; };
 		5993AF511575CD3000DA25F4 /* libNSRailsCD.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNSRailsCD.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5993AF5E1575CD3100DA25F4 /* NSRailsCDTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NSRailsCDTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5993AF761575CD6E00DA25F4 /* NSData+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Additions.h"; sourceTree = "<group>"; };
@@ -285,6 +293,8 @@
 				5993AF831575CD6E00DA25F4 /* NSRPropertyCollection.m */,
 				5993AF841575CD6E00DA25F4 /* NSRRemoteObject.h */,
 				5993AF851575CD6E00DA25F4 /* NSRRemoteObject.m */,
+				598D217415800AC2002CC996 /* NSRRequest.h */,
+				598D217515800AC2002CC996 /* NSRRequest.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -358,6 +368,7 @@
 				5993AFA71575CD6E00DA25F4 /* NSRMacros.h in Headers */,
 				5993AFAA1575CD6E00DA25F4 /* NSRPropertyCollection.h in Headers */,
 				5993AFB01575CD6E00DA25F4 /* NSRRemoteObject.h in Headers */,
+				598D217615800AC2002CC996 /* NSRRequest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -374,6 +385,7 @@
 				5993AFA81575CD6E00DA25F4 /* NSRMacros.h in Headers */,
 				5993AFAB1575CD6E00DA25F4 /* NSRPropertyCollection.h in Headers */,
 				5993AFB11575CD6E00DA25F4 /* NSRRemoteObject.h in Headers */,
+				598D217715800AC2002CC996 /* NSRRequest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,6 +402,7 @@
 				5993AFA91575CD6E00DA25F4 /* NSRMacros.h in Headers */,
 				5993AFAC1575CD6E00DA25F4 /* NSRPropertyCollection.h in Headers */,
 				5993AFB21575CD6E00DA25F4 /* NSRRemoteObject.h in Headers */,
+				598D217815800AC2002CC996 /* NSRRequest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -618,6 +631,7 @@
 				5993AFA41575CD6E00DA25F4 /* NSRConfig.m in Sources */,
 				5993AFAD1575CD6E00DA25F4 /* NSRPropertyCollection.m in Sources */,
 				5993AFB31575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */,
+				598D217915800AC2002CC996 /* NSRRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -646,6 +660,7 @@
 				5993AFA51575CD6E00DA25F4 /* NSRConfig.m in Sources */,
 				5993AFAE1575CD6E00DA25F4 /* NSRPropertyCollection.m in Sources */,
 				5993AFB41575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */,
+				598D217A15800AC2002CC996 /* NSRRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -674,6 +689,7 @@
 				5993AFA61575CD6E00DA25F4 /* NSRConfig.m in Sources */,
 				5993AFAF1575CD6E00DA25F4 /* NSRPropertyCollection.m in Sources */,
 				5993AFB51575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */,
+				598D217B15800AC2002CC996 /* NSRRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1107,6 +1123,7 @@
 				5993AF701575CD3100DA25F4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5993AF711575CD3100DA25F4 /* Build configuration list for PBXNativeTarget "NSRailsCDTests" */ = {
 			isa = XCConfigurationList;
@@ -1115,6 +1132,7 @@
 				5993AF731575CD3100DA25F4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		59C46490155C580D00920FD5 /* Build configuration list for PBXProject "NSRails" */ = {
 			isa = XCConfigurationList;

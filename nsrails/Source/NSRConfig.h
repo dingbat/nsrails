@@ -64,7 +64,7 @@ extern NSString * const NSRCoreDataException;
 
 /**
  
- The NSRails configuration class is `NSRConfig`, a class that stores your Rails app's configuration settings (server URL, etc) for either your app globally or in specific instances. It also supports basic HTTP authentication and can be subclassed to fit specific implementations.
+ The NSRails configuration class is `NSRConfig`, a class that stores your Rails app's configuration settings (server URL, etc) for either your app globally or in specific instances. It also supports basic HTTP authentication and very simple OAuth authentication.
  
  ## Universal Config
  
@@ -142,28 +142,6 @@ extern NSString * const NSRCoreDataException;
  - **Instance-specific config**: If the method is an instance method and the instance was initialized with initWithCustomMap:customConfig:, will use that config.
  - **Class-specific config**: If the receiving class of the method (class or instance) defines a custom class with useForClass:.
  - **Default config**: (Most frequent case.) Uses the config set to default of the current environment. (Current environment is `NSRConfigEnvironmentDevelopment` by default.
- 
-
- ## Subclassing NSRConfig
- 
- Subclassing NSRConfig can be useful if you want to implement a connection method that's not HTTP (for example, HTTPS), or if you're using a non-Rails REST service with different standards. Moreover, it can be used to generate errors specific to your app.
- 
- - The main method to override if you wish to do so is responseForRequestType:requestBody:url:sync:orAsync:. This method is called internally by NSRails and expects a Foundation objects that correspond to the returned JSON (ie, NSArray, NSDictionary).
- 
- - This should also set the `NSError **error` or perform the `NSRHTTPCompletionBlock completionBlock`, whichever one is present.
-	- In determining errors, it is highly recommend to use the helper method errorForResponse:statusCode:. This method will return you any Rails-specific errors (like validation errors), as well as make the error message succinct. In addition to being used, it is also possible to override this method (making sure to check if a `super` call to it returns anything) if your Rails app has specific errors you want to handle.
- 
- - You can set your new `NSRConfig` subclass to be the default config like so (this would be instead of the first code example of course):
- 
-		CustomConfig *myConfig = [[CustomConfig alloc] initWithAppURL:@"https://localhost:3000"];
-		//set custom myConfig properties...
- 
-		[myConfig useAsDefault];
- 
-		//or, to a specific environment:
-		[myConfig useAsDefaultForEnvironment:NSRConfigEnvironmentProduction];
- 
-	Or, if only a _certain_ action requires it, you can use your new instance for a block of code just as you would in the section above.
  */
 
 @interface NSRConfig : NSObject <NSCoding>
@@ -390,9 +368,7 @@ extern NSString * const NSRCoreDataException;
  Specifies for all NSRails actions in the current environment to use the receiver.
  
  Lowest config precedence.
- 
- Can be useful if the receiver is a custom `NSRConfig` subclass which you'd like to use for the entirety of your app.
-  */
+ */
 - (void) useAsDefault;
 
 /**
@@ -440,58 +416,6 @@ extern NSString * const NSRCoreDataException;
  @param url App URL to be set to the new instance.
  */
 - (id) initWithAppURL:(NSString *)url;
-
-
-/// =============================================================================================
-/// @name Making custom requests
-/// =============================================================================================
-
-/**
- Makes a custom request. Returns the response string if synchronous; otherwise executes given block.
- 
- Used by every remote NSRRemoteObject method.
- 
- @warning Do not override this method if you wish to override NSRConfig, since this method contains important workflows such as checking if the appURL is nil, managing the network activity indicator, and logging. Rather, override responseForRequestType:requestBody:url:sync:orAsync:.
- 
- @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
- @param body Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).
- @param route The route to which the request will be made. This is appended to the `appURL`, so not the full URL. For instance, `articles/1`.
- @param error Pointer to an `NSError` object. Only used if *completionBlock* is `NULL`. May be `NULL`.
- @param completionBlock If this parameter is not `NULL`, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is `NULL`, request will be made synchronously and the *sync* paramter may be used.
- @return The response representation (parsed from JSON), only if request is made synchronously. Otherwise, will return `nil`.
- */
-- (id) makeRequest:(NSString *)httpVerb requestBody:(id)body route:(NSString *)route sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock;
-
-/// =============================================================================================
-/// @name Methods to override
-/// =============================================================================================
-
-/**
- If you wish to define your own method of making a connection that's not HTTP (eg HTTPS), or include a custom header, etc, this is the method to override.
- 
- You should continue to make calls to makeRequest:requestBody:route:sync:orAsync: - it will call this method internally. It is important to do so because it contains workflows that your override will hide.
- 
- @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
- @param body Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).
- @param url The url to which the request will be made (full URL.)
- @param error Pointer to an `NSError` object. Only used if *completionBlock* is `NULL`. May be `NULL`.
- @param completionBlock If this parameter is not `NULL`, the request will be made asynchronously and this block will be executed when the request is complete. If this parameter is `NULL`, request will be made synchronously and the *sync* paramter may be used.
- @return The response representation (parsed from JSON), only if request is made synchronously. Otherwise, will return `nil`. 
- */
-- (id) responseForRequestType:(NSString *)httpVerb requestBody:(id)body url:(NSString *)url sync:(NSError **)error orAsync:(NSRHTTPCompletionBlock)completionBlock;
-
-/**
- (Typically only used when subclassing NSRConfig.) It is recommended to use this method after implementing your own request method, as it will generate some Rails-specific errors (like validation errors).
- 
- Will give you any Rails-specific errors (like validation errors) and make the error message succinct (if enabled).
- 
- You can also override this on its own if you have errors you want handled that NSRails doesn't take of already.
- 
- @param jsonResponse Response representation given by a server.
- @param statusCode Status code that was returned with the response.
- @return Error if one could be extracted - otherwise nil.
- */
-- (NSError *) errorForResponse:(id)jsonResponse statusCode:(NSInteger)statusCode;
 
 @end
 

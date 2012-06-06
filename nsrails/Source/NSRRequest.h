@@ -1,9 +1,9 @@
 /*
  
- _|_|_|    _|_|  _|_|  _|_|  _|  _|      _|_|   
- _|  _|  _|_|    _|    _|_|  _|  _|_|  _|_|    v1.1
+ _|_|_|    _|_|  _|_|  _|_|  _|  _|      _|_|           
+ _|  _|  _|_|    _|    _|_|  _|  _|_|  _|_| 
  
- NSRails.h
+ NSRRequest.h
  
  Copyright (c) 2012 Dan Hassin.
  
@@ -28,27 +28,17 @@
  
  */
 
-// CoreData
-// ============
-// #define NSR_USE_COREDATA
+#import <Foundation/Foundation.h>
+#import "NSRails.h"
 
-// Uncomment the line above if you want to enable CoreData
-// You can also add NSR_USE_COREDATA to "Preprocessor Macros Not Used in Precompiled Headers" in your target's build settings
-//   See http://dingbat.github.com/nsrails/Classes/NSRRemoteObject.html#coredata for more details
+@interface NSRRequest : NSObject
 
+@property (nonatomic, strong) NSRConfig *config;
+@property (nonatomic, strong) NSString *route;
+@property (nonatomic, strong) NSString *httpMethod;
+@property (nonatomic, strong) id body;
 
-// Logging
-// =============
-//					As undefined, NSRails will log nothing
-// #define NSRLog 1	//As 1, NSRails will log HTTP verbs with their outgoing URLs, as well as any server errors 
-#define NSRLog 2	//As 2, NSRails will also log any JSON going out/coming in
+- (id) sendSynchronous:(NSError **)e;
+- (void) sendAsynchronous:(NSRHTTPCompletionBlock)block;
 
-
-// Imports
-// =============
-#import "NSRConfig.h"
-#import "NSRRemoteObject.h"
-#import "NSMutableArray+NSRails.h"
-#import "NSRMacros.h"
-#import "NSRRequest.h"
-
+@end

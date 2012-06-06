@@ -3,7 +3,7 @@
  _|_|_|    _|_|  _|_|  _|_|  _|  _|      _|_|           
  _|  _|  _|_|    _|    _|_|  _|  _|_|  _|_| 
  
- NSRails.m
+ NSRRemoteObject.m
  
  Copyright (c) 2012 Dan Hassin.
  
@@ -60,7 +60,9 @@
 - (NSRRemoteObject *) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict;
 - (id) remoteRepresentationOfObjectForProperty:(NSRProperty *)prop;
 
-- (NSString *) routeForInstanceMethod:(NSString *)method withID:(NSNumber *)rID httpMethod:(NSString *)verb;
++ (NSString *) routeForMethod:(NSString *)method withObject:(NSRRemoteObject *)obj httpMethod:(NSString *)verb;
+- (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod httpMethod:(NSString *)verb;
++ (NSString *) routeForControllerMethod:(NSString *)customRESTMethod;
 
 + (NSString *) NSRMap;
 + (NSString *) NSRUseModelName;
@@ -880,13 +882,25 @@ _NSR_REMOTEID_SYNTH remoteID;
 - (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body error:(NSError **)error
 {
 	NSString *route = [self routeForInstanceMethod:customRESTMethod httpMethod:httpVerb];
-	return [[self getRelevantConfig] makeRequest:httpVerb requestBody:body route:route sync:error orAsync:nil];
+	
+	NSRRequest *request = [[NSRRequest alloc] init];
+	request.route = route;
+	request.config = [self getRelevantConfig];
+	request.body = body;
+	request.httpMethod = httpVerb;
+	return [request sendSynchronous:error];
 }
 
 - (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body async:(NSRHTTPCompletionBlock)completionBlock
 {
 	NSString *route = [self routeForInstanceMethod:customRESTMethod httpMethod:httpVerb];
-	[[self getRelevantConfig] makeRequest:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
+
+	NSRRequest *request = [[NSRRequest alloc] init];
+	request.route = route;
+	request.config = [self getRelevantConfig];
+	request.body = body;
+	request.httpMethod = httpVerb;
+	[request sendAsynchronous:completionBlock];
 }
 
 //these are really just convenience methods that'll call the above method sending the object data as request body
@@ -920,13 +934,25 @@ _NSR_REMOTEID_SYNTH remoteID;
 + (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body error:(NSError **)error
 {
 	NSString *route = [self routeForControllerMethod:customRESTMethod];
-	return [[self getRelevantConfig] makeRequest:httpVerb requestBody:body route:route sync:error orAsync:nil];
+	
+	NSRRequest *request = [[NSRRequest alloc] init];
+	request.route = route;
+	request.config = [self getRelevantConfig];
+	request.body = body;
+	request.httpMethod = httpVerb;
+	return [request sendSynchronous:error];
 }
 
 + (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body async:(NSRHTTPCompletionBlock)completionBlock
 {
 	NSString *route = [self routeForControllerMethod:customRESTMethod];
-	[[self getRelevantConfig] makeRequest:httpVerb requestBody:body route:route sync:nil orAsync:completionBlock];
+
+	NSRRequest *request = [[NSRRequest alloc] init];
+	request.route = route;
+	request.config = [self getRelevantConfig];
+	request.body = body;
+	request.httpMethod = httpVerb;
+	[request sendAsynchronous:completionBlock];
 }
 
 //these are really just convenience methods that'll call the above method with the JSON representation of the object
