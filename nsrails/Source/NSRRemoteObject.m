@@ -1005,6 +1005,30 @@ _NSR_REMOTEID_SYNTH remoteID;
 	 }];
 }
 
+#pragma mark Replace
+
+- (BOOL) remoteReplace:(NSError **)error
+{
+	if (![self remoteRequest:@"PUT" method:nil error:error])
+		return NO;
+	
+	[self saveContext];
+	return YES;
+}
+
+- (void) remoteReplaceAsync:(NSRBasicCompletionBlock)completionBlock
+{
+	[self remoteRequest:@"PUT" method:nil async:
+	 ^(id result, NSError *error) 
+	 {
+		 if (result)
+		 {
+			 [self saveContext];
+		 }
+		 completionBlock(error);
+	 }];
+}
+
 #pragma mark Destroy
 
 - (BOOL) remoteDestroy:(NSError **)error

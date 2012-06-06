@@ -426,7 +426,9 @@
 /**
  Updates receiver's corresponding remote object.
  
- Sends an `UPDATE` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
+ Sends a request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
+ Will use the HTTP method defined in the relevant config's [updateMethod](../NSRConfig.html#//api/name/updateMethod) property (default `PUT`).
+ 
  Request made synchronously. See remoteUpdateAsync: for asynchronous operation.
 
  Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
@@ -438,14 +440,15 @@
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return `YES` if update was successful. Returns `NO` if an error occurred.
 
- @warning No local properties will be set, as Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.
+ @warning No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.
  */
 - (BOOL) remoteUpdate:(NSError **)error;
 
 /**
  Updates receiver's corresponding remote object.
  
- Asynchronously sends an `UPDATE` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
+ Sends a request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
+ Will use the HTTP method defined in the relevant config's [updateMethod](../NSRConfig.html#//api/name/updateMethod) property(default `PUT`).
  
  Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
  
@@ -455,7 +458,7 @@
 
  @param completionBlock Block to be executed when the request is complete.
  
- @warning No local properties will be set, as Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.
+ @warning No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.
  */
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock;
 
@@ -517,6 +520,47 @@
  @param completionBlock Block to be executed when the request is complete.
  */
 - (void) remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock;
+
+/**
+ "Places" receiver's corresponding remote object.
+ 
+ Sends an `PUT` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
+ 
+ The distinction between this method and remoteUpdate: is that this method will always use the `PUT` HTTP method, while remoteUpdate: is configurable. This is to allow servers that use `PATCH` to update attributes using remoteUpdate: and keep remoteReplace: for a more accurate "placement" procedure that should occur with the `PUT` method. More discussion [here](http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/).
+ 
+ Request made synchronously. See remoteReplaceAsync: for asynchronous operation.
+ 
+ Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
+ 
+ **CoreData**
+ 
+ If successful, will save its managed object context. Note that changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.
+ 
+ @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
+ @return `YES` if place was successful. Returns `NO` if an error occurred.
+ 
+ @warning No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.
+ */
+- (BOOL) remoteReplace:(NSError **)error;
+
+/**
+ "Places" receiver's corresponding remote object.
+ 
+ Asynchronously sends an `PUT` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
+ 
+ The distinction between this method and remoteUpdateAsync: is that this method will always use the `PUT` HTTP method, while remoteUpdateAsync: is configurable. This is to allow servers that use `PATCH` to update attributes using remoteUpdateAsync: and keep remoteReplaceAsync: for a more accurate "placement" procedure that should occur with the `PUT` method. More discussion [here](http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/).
+ 
+ Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
+ 
+ **CoreData**
+ 
+ If successful, will save its managed object context. Note that changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.
+ 
+ @param completionBlock Block to be executed when the request is complete.
+ 
+ @warning No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.
+ */
+- (void) remoteReplaceAsync:(NSRBasicCompletionBlock)completionBlock;
 
 
 /// =============================================================================================

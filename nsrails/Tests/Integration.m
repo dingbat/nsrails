@@ -247,31 +247,45 @@ static BOOL noServer = NO;
 	/////////////////
 	//TEST UPDATE
 	
-	//update should go through
-	newPost.author = @"Dan 2";
-	STAssertTrue([newPost remoteUpdate:&e], @"Should return YES");
-	STAssertNil(e, @"Update should've gone through, there should be no error");
-	
-	e = nil;
-	
 	NSNumber *postID = newPost.remoteID;
-	newPost.remoteID = nil;
-	
-	//test to see that it'll fail on trying to update instance with nil ID
-	STAssertThrowsSpecificNamed([newPost remoteUpdate:&e], NSException, NSRNullRemoteIDException, @"Tried to update an instance with a nil ID, where's the exception?");
-	newPost.remoteID = postID;
-	
-	e = nil;
-	
-	//update should fail validation b/c no author
-	newPost.author = nil;
-	STAssertFalse([newPost remoteUpdate:&e],@"");
-	
-	STAssertNotNil(e, @"New post should've failed, there should be an error.");
-	STAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"There was an error by validation, so validation error dictionary should be present.");
-	STAssertNil(newPost.author, @"New author failed validation (unchanged) but it should still be nil locally.");
-	
-	e = nil;
+	//do this twice - using remoteReplace should be the same in this instance since they both use PUT
+	for (int i = 0; i < 2; i++)
+	{
+		//update should go through
+		newPost.author = @"Dan 2";
+		if (i == 0)
+			STAssertTrue([newPost remoteUpdate:&e], @"Should return YES");
+		else
+			STAssertTrue([newPost remoteReplace:&e], @"Should return YES");
+		STAssertNil(e, @"Update should've gone through, there should be no error");
+		
+		e = nil;
+		
+		newPost.remoteID = nil;
+		
+		//test to see that it'll fail on trying to update instance with nil ID
+		if (i == 0)
+			STAssertThrowsSpecificNamed([newPost remoteUpdate:&e], NSException, NSRNullRemoteIDException, @"Tried to update an instance with a nil ID, where's the exception?");
+		else
+			STAssertThrowsSpecificNamed([newPost remoteReplace:&e], NSException, NSRNullRemoteIDException, @"Tried to update an instance with a nil ID, where's the exception?");
+		
+		newPost.remoteID = postID;
+		
+		e = nil;
+		
+		//update should fail validation b/c no author
+		newPost.author = nil;
+		if (i == 0)
+			STAssertFalse([newPost remoteUpdate:&e],@"");
+		else
+			STAssertFalse([newPost remoteUpdate:&e],@"");
+
+		STAssertNotNil(e, @"New post should've failed, there should be an error.");
+		STAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"There was an error by validation, so validation error dictionary should be present.");
+		STAssertNil(newPost.author, @"New author failed validation (unchanged) but it should still be nil locally.");
+		
+		e = nil;
+	}
 	
 	//not a great test for this
 	[[NSRConfig defaultConfig] setUpdateMethod:@"PATCH"];
