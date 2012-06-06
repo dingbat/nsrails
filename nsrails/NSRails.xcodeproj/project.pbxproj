@@ -42,6 +42,8 @@
 		598D217915800AC2002CC996 /* NSRRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 598D217515800AC2002CC996 /* NSRRequest.m */; };
 		598D217A15800AC2002CC996 /* NSRRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 598D217515800AC2002CC996 /* NSRRequest.m */; };
 		598D217B15800AC2002CC996 /* NSRRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 598D217515800AC2002CC996 /* NSRRequest.m */; };
+		598D21891580174E002CC996 /* NSRRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 598D21881580174E002CC996 /* NSRRequest.m */; };
+		598D218A1580174E002CC996 /* NSRRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 598D21881580174E002CC996 /* NSRRequest.m */; };
 		5993AF521575CD3000DA25F4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17A8155C74200092B048 /* Foundation.framework */; };
 		5993AF5F1575CD3100DA25F4 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592585C21569F067009AD599 /* SenTestingKit.framework */; };
 		5993AF601575CD3100DA25F4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17AA155C74890092B048 /* UIKit.framework */; };
@@ -150,6 +152,7 @@
 		594765B51569F9E100C07A62 /* NSRPropertyCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRPropertyCollection.m; sourceTree = "<group>"; };
 		598D217415800AC2002CC996 /* NSRRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRRequest.h; sourceTree = "<group>"; };
 		598D217515800AC2002CC996 /* NSRRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRequest.m; sourceTree = "<group>"; };
+		598D21881580174E002CC996 /* NSRRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRequest.m; sourceTree = "<group>"; };
 		5993AF511575CD3000DA25F4 /* libNSRailsCD.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNSRailsCD.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5993AF5E1575CD3100DA25F4 /* NSRailsCDTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NSRailsCDTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5993AF761575CD6E00DA25F4 /* NSData+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Additions.h"; sourceTree = "<group>"; };
@@ -262,6 +265,7 @@
 				594765B21569F9E100C07A62 /* NSRRemoteObject.m */,
 				594765B31569F9E100C07A62 /* NSRAsserts.h */,
 				594765B41569F9E100C07A62 /* NSRConfig.m */,
+				598D21881580174E002CC996 /* NSRRequest.m */,
 				594765B51569F9E100C07A62 /* NSRPropertyCollection.m */,
 				59EC6A661572A24900AA6D79 /* Test.xcdatamodeld */,
 				59EC6A4715729FE600AA6D79 /* NSRRemoteObject+CoreData.m */,
@@ -646,6 +650,7 @@
 				594765BC1569F9E100C07A62 /* NSRRemoteObject.m in Sources */,
 				594765BE1569F9E100C07A62 /* NSRConfig.m in Sources */,
 				594765C01569F9E100C07A62 /* NSRPropertyCollection.m in Sources */,
+				598D21891580174E002CC996 /* NSRRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -675,6 +680,7 @@
 				594765BD1569F9E100C07A62 /* NSRRemoteObject.m in Sources */,
 				594765BF1569F9E100C07A62 /* NSRConfig.m in Sources */,
 				594765C11569F9E100C07A62 /* NSRPropertyCollection.m in Sources */,
+				598D218A1580174E002CC996 /* NSRRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
