@@ -31,6 +31,7 @@
 
 - (NSString *) routeForInstanceMethod:(NSString *)route httpMethod:(NSString *)str;
 + (NSString *) routeForControllerMethod:(NSString *)route;
++ (NSString *) routeForMethod:(NSString *)method withObject:(NSRRemoteObject *)obj httpMethod:(NSString *)verb;
 
 + (NSString *) typeForProperty:(NSString *)prop;
 

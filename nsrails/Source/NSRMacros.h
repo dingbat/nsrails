@@ -61,7 +61,8 @@
 //definitely check out how this works - it's cool
 #define _CAT(a, b) _PRIMITIVE_CAT(a, b)
 #define _PRIMITIVE_CAT(a, b) a##b
-#define _N_ARGS(...) _N_ARGS_1(__VA_ARGS__, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0)
+//typically descends from 16... here, any more args than 2 will cap at 2 so we don't have to define a million different _NSR_Prefix flavors
+#define _N_ARGS(...) _N_ARGS_1(__VA_ARGS__, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0) 
 #define _N_ARGS_1(...) _N_ARGS_2(__VA_ARGS__)
 #define _N_ARGS_2(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, n, ...) n
 
@@ -98,6 +99,6 @@
 //      and return an array of HTTP verbs where this will be used
 #define _NSR_Prefix(member, array) \
 	- (NSRRemoteObject *) NSRUseResourcePrefix { return member; }; \
-	- (NSArray *) NSRUseResourcePrefixMethods { return array; }
+	+ (NSArray *) NSRUseResourcePrefixMethods { return array; }
 
 

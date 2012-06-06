@@ -389,7 +389,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	
 	// Instance
 	Prefixer *smth = [[Prefixer alloc] init];
-	STAssertNil([smth NSRUseResourcePrefixMethods], @"Should have nil allowed array");
+	STAssertNil([[smth class] NSRUseResourcePrefixMethods], @"Should have nil allowed array");
 	
 	STAssertThrowsSpecificNamed([smth routeForInstanceMethod:nil httpMethod:verb], NSException, NSRNullRemoteIDException, @"Should have been an exception getting instance route if nil remoteID");
 		
@@ -404,6 +404,12 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertEqualObjects([smth routeForInstanceMethod:nil httpMethod:verb], @"empties/15/prefixers/1", @"Nil instance route failed");
 	STAssertEqualObjects([smth routeForInstanceMethod:@"action" httpMethod:verb], @"empties/15/prefixers/1/action", @"Instance route failed");
 	
+	STAssertEqualObjects([Prefixer routeForMethod:nil withObject:smth httpMethod:@"POST"], @"empties/15/prefixers/1", @"Controller route w/object failed");
+	
+	smth.remoteID = nil;
+
+	STAssertEqualObjects([Prefixer routeForMethod:nil withObject:smth httpMethod:@"POST"], @"empties/15/prefixers", @"Should still work even without a remoteID");
+	
 	
 	// Now double nested + custom names
 	// Controller (class)
@@ -413,15 +419,24 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertEqualObjects([Prefixer2 routeForControllerMethod:nil], @"premans", @"Nil controller route failed");	
 	STAssertEqualObjects([Prefixer2 routeForControllerMethod:@"action"], @"premans/action", @"Controller route failed");
 
-	//should be normal for DELETE
+	NSRAssertEqualArraysNoOrder([Prefixer2 NSRUseResourcePrefixMethods], NSRArray(@"GET", @"patch"));
+
+	// Instance
 	Prefixer2 *smth2 = [[Prefixer2 alloc] init];
 	
-	NSRAssertEqualArraysNoOrder([smth2 NSRUseResourcePrefixMethods], NSRArray(@"GET", @"patch"));
+	STAssertThrowsSpecificNamed([Prefixer2 routeForMethod:nil withObject:smth2 httpMethod:verb], NSException, NSRNullRemoteIDException, @"Should have been an exception getting controller route if nil association");
 
+
+	STAssertEqualObjects([Prefixer2 routeForControllerMethod:@"action"], @"premans/action", @"Controller route failed");
+	
 	STAssertThrowsSpecificNamed([smth2 routeForInstanceMethod:nil httpMethod:verb], NSException, NSRNullRemoteIDException, @"Should have been an exception getting instance route if nil remoteID");
 	
 	smth2.remoteID = [NSNumber numberWithInt:15];
 	
+	STAssertThrowsSpecificNamed([Prefixer2 routeForMethod:nil withObject:smth2 httpMethod:verb], NSException, NSRNullRemoteIDException, @"Should have been an exception getting controller route if nil association, even with ID");
+
+	
+	//should be normal for DELETE
 	STAssertEqualObjects([smth2 routeForInstanceMethod:nil httpMethod:@"DELETE"], @"premans/15", @"Should be normal for non-included");
 	STAssertEqualObjects([smth2 routeForInstanceMethod:@"something" httpMethod:@"DELETE"], @"premans/15/something", @"Should be normal for non-included");
 	
@@ -454,6 +469,16 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 		
 		STAssertEqualObjects([smth2 routeForInstanceMethod:nil httpMethod:verb], @"empties/23/prefixers/15/premans/1", @"Nil instance route failed");
 		STAssertEqualObjects([smth2 routeForInstanceMethod:@"action" httpMethod:verb], @"empties/23/prefixers/15/premans/1/action", @"Instance route failed");
+		
+		STAssertEqualObjects([Prefixer2 routeForMethod:nil withObject:smth2 httpMethod:verb], @"empties/23/prefixers/15/premans/1", @"Should build controller route w/object");
+
+		STAssertEqualObjects([Prefixer2 routeForMethod:@"something" withObject:smth2 httpMethod:verb], @"empties/23/prefixers/15/premans/1/something", @"Should build controller route w/object");
+
+		smth2.remoteID = nil;
+
+		STAssertEqualObjects([Prefixer2 routeForMethod:nil withObject:smth2 httpMethod:verb], @"empties/23/prefixers/15/premans", @"Should build controller route w/o remoteID");
+
+		STAssertEqualObjects([Prefixer2 routeForMethod:@"something" withObject:smth2 httpMethod:verb], @"empties/23/prefixers/15/premans/something", @"Should build controller route w/o remoteID");
 	}
 }
 

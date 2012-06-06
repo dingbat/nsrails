@@ -60,8 +60,7 @@
 - (NSRRemoteObject *) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict;
 - (id) remoteRepresentationOfObjectForProperty:(NSRProperty *)prop;
 
-+ (NSString *) routeForControllerMethod:(NSString *)customRESTMethod;
-- (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod httpVerb:(NSString *)verb;
+- (NSString *) routeForInstanceMethod:(NSString *)method withID:(NSNumber *)rID httpMethod:(NSString *)verb;
 
 + (NSString *) NSRMap;
 + (NSString *) NSRUseModelName;
@@ -810,30 +809,20 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 #pragma mark - HTTP Request stuff
 
-+ (NSString *) routeForControllerMethod:(NSString *)method
++ (NSString *) routeForMethod:(NSString *)method withObject:(NSRRemoteObject *)obj httpMethod:(NSString *)verb
 {
-	NSString *controller = [self masterPluralName];
 	NSString *route = (method ? method : @"");
-	//if !controller, means it was called on NSRRemoteObject (to access a "root method"), so don't modify the route
-	//otherwise, add the controller to the beginning
-	if (controller)
-	{
-		route = [controller stringByAppendingPathComponent:method];
-	}
-
-	return route;
-}
-
-- (NSString *) routeForInstanceMethod:(NSString *)method httpMethod:(NSString *)verb
-{
-	if (!self.remoteID)
-	{
-		[NSException raise:NSRNullRemoteIDException format:@"Attempt to %@ to %@/:id/%@ with %@ instance that has a nil remoteID.",verb,[[self class] masterPluralName],method ? method : @"",[self class]];
-	}
 	
+	NSString *controller = [self masterPluralName];
+	if (!controller)
+	{
+		//means it was called on NSRRemoteObject (to access a "root method"), so don't modify the route
+		return route;
+	}
+
 	NSRRemoteObject *prefix = nil;
 	BOOL shouldUsePrefixConstruction = NO;
-	if ([self respondsToSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefix)])
+	if ([obj respondsToSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefix)])
 	{
 		NSArray *allowedVerbs = [self performSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefixMethods)];
 		
@@ -843,7 +832,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 		
 		if (shouldUsePrefixConstruction)
 		{
-			prefix = [self performSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefix)];
+			prefix = [obj performSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefix)];
 			if (!prefix.remoteID)
 			{
 				[NSException raise:NSRNullRemoteIDException format:@"Attempt to %@ %@ instance with a prefix association (%@ instance) that has a nil remoteID.",verb,[self class],[prefix class]];
@@ -851,17 +840,35 @@ _NSR_REMOTEID_SYNTH remoteID;
 		}
 	}
 		
-	// 1/something
+	// 1/something (if there's an ID)
 	// posts/1/something
-	// other/5/posts/1/something (only if prefix - use everything as instance method of prefix object)
+	// other/5/posts/1/something (if there's a prefix association)
 
-	NSString *route = [[self.remoteID stringValue] stringByAppendingPathComponent:method];
-	route = [[self class] routeForControllerMethod:route];
+	if (obj.remoteID)
+		route = [[obj.remoteID stringValue] stringByAppendingPathComponent:route];
+	
+	route = [controller stringByAppendingPathComponent:route];
 	
 	if (shouldUsePrefixConstruction)
 		route = [prefix routeForInstanceMethod:route httpMethod:verb];
 
 	return route;
+}
+
+- (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod httpMethod:(NSString *)verb
+{
+	if (!self.remoteID)
+	{
+		[NSException raise:NSRNullRemoteIDException format:@"Attempt to make a remote instance request (instance of %@) but remoteID is nil.",[self class]];
+	}
+	
+	return [[self class] routeForMethod:customRESTMethod withObject:self httpMethod:verb];
+}
+
++ (NSString *) routeForControllerMethod:(NSString *)customRESTMethod
+{
+	//http method is only relevant for instances bc it's only relevant for prefixes
+	return [self routeForMethod:customRESTMethod withObject:nil httpMethod:nil];
 }
 
 
@@ -951,7 +958,13 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (BOOL) remoteCreate:(NSError **)error
 {
-	NSDictionary *jsonResponse = [[self class] remoteRequest:@"POST" method:nil bodyAsObject:self error:error];
+	NSString *route = [[self class] routeForMethod:nil withObject:self httpMethod:@"POST"];
+	
+	NSDictionary *jsonResponse = [self.getRelevantConfig makeRequest:@"POST" 
+														 requestBody:[self remoteDictionaryRepresentationWrapped:YES] 
+															   route:route
+																sync:error
+															 orAsync:nil];
 	if (!jsonResponse)
 		return NO;
 	
@@ -962,14 +975,21 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock
 {
-	[[self class] remoteRequest:@"POST" method:nil bodyAsObject:self async:
-	 ^(id result, NSError *error) 
-	 {
-		 if (result)
-			 [self setPropertiesUsingRemoteDictionary:result applyToRemoteAttributes:YES];
-		 completionBlock(error);
-	 }];
+	NSString *route = [[self class] routeForMethod:nil withObject:self httpMethod:@"POST"];
+	
+	[self.getRelevantConfig makeRequest:@"POST" 
+							requestBody:[self remoteDictionaryRepresentationWrapped:YES] 
+								  route:route
+								   sync:nil
+								orAsync:^(id result, NSError *error) 
+										{
+											if (result)
+												[self setPropertiesUsingRemoteDictionary:result 
+																 applyToRemoteAttributes:YES];
+											completionBlock(error);
+										}];
 }
+
 
 #pragma mark Update
 
