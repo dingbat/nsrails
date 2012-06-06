@@ -985,7 +985,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (BOOL) remoteUpdate:(NSError **)error
 {
-	if (![self remoteRequest:@"PUT" method:nil error:error])
+	if (![self remoteRequest:[self getRelevantConfig].updateMethod method:nil error:error])
 		return NO;
 	
 	[self saveContext];
@@ -994,7 +994,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock
 {
-	[self remoteRequest:@"PUT" method:nil async:
+	[self remoteRequest:[self getRelevantConfig].updateMethod method:nil async:
 	 ^(id result, NSError *error) 
 	 {
 		 if (result)

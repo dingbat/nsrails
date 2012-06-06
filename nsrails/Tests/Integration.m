@@ -250,7 +250,6 @@ static BOOL noServer = NO;
 	//update should go through
 	newPost.author = @"Dan 2";
 	STAssertTrue([newPost remoteUpdate:&e], @"Should return YES");
-	
 	STAssertNil(e, @"Update should've gone through, there should be no error");
 	
 	e = nil;
@@ -271,6 +270,16 @@ static BOOL noServer = NO;
 	STAssertNotNil(e, @"New post should've failed, there should be an error.");
 	STAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"There was an error by validation, so validation error dictionary should be present.");
 	STAssertNil(newPost.author, @"New author failed validation (unchanged) but it should still be nil locally.");
+	
+	e = nil;
+	
+	//not a great test for this
+	[[NSRConfig defaultConfig] setUpdateMethod:@"PATCH"];
+	
+	newPost.author = @"test";
+	
+	STAssertFalse([newPost remoteUpdate:&e], @"Should fail because no PATCH method on server");
+	STAssertTrue([[e description] rangeOfString:@"PATCH"].location != NSNotFound, @"Should be an error relating to PATCH");
 	
 	e = nil;
 	

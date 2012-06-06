@@ -271,6 +271,15 @@ extern NSString * const NSRCoreDataException;
 @property (nonatomic, strong) NSString *appPassword;
 
 /**
+ HTTP method used for updating objects.
+ 
+ Rails is currently at 3.2.3 and using PUT, but 4.0 will use PATCH be default.
+ 
+ **Default:** `@"PUT"`
+ */
+@property (nonatomic, strong) NSString *updateMethod;
+
+/**
  Date [format]("https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/DataFormatting/Articles/dfDateFormatting10_4.html%23//apple_ref/doc/uid/TP40002369-SW4") used if a property of type NSDate is encountered, to "encode" and "decode" NSDate objects.
  
  This should not be changed unless the format is also changed server-side; the default is the default Rails format.
