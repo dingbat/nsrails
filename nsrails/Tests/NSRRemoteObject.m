@@ -410,16 +410,20 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertEqualObjects([Prefixer routeForControllerMethod:nil], @"prefixers", @"Nil controller route failed");	
 	STAssertEqualObjects([Prefixer routeForControllerMethod:@"action"], @"prefixers/action", @"Controller route failed");
 
-	//should be normal for GET
+	STAssertEqualObjects([Prefixer2 routeForControllerMethod:nil], @"premans", @"Nil controller route failed");	
+	STAssertEqualObjects([Prefixer2 routeForControllerMethod:@"action"], @"premans/action", @"Controller route failed");
+
+	//should be normal for DELETE
 	Prefixer2 *smth2 = [[Prefixer2 alloc] init];
 	
 	NSRAssertEqualArraysNoOrder([smth2 NSRUseResourcePrefixMethods], NSRArray(@"GET", @"patch"));
 
 	STAssertThrowsSpecificNamed([smth2 routeForInstanceMethod:nil httpVerb:verb], NSException, NSRNullRemoteIDException, @"Should have been an exception getting instance route if nil remoteID");
 	
-	STAssertEqualObjects([Prefixer2 routeForControllerMethod:nil], @"premans", @"Nil controller route failed");	
-	STAssertEqualObjects([Prefixer2 routeForControllerMethod:@"action"], @"premans/action", @"Controller route failed");
-
+	smth2.remoteID = [NSNumber numberWithInt:15];
+	
+	STAssertEqualObjects([smth2 routeForInstanceMethod:nil httpVerb:@"DELETE"], @"premans/15", @"Should be normal for non-included");
+	STAssertEqualObjects([smth2 routeForInstanceMethod:@"something" httpVerb:@"DELETE"], @"premans/15/something", @"Should be normal for non-included");
 	
 	for (int i = 0; i < 2; i++)
 	{
