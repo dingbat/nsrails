@@ -110,6 +110,10 @@
 	
 	<option value="//api/name/remoteGET:error:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteGET:error:</option>
 	
+	<option value="//api/name/remoteReplace:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteReplace:</option>
+	
+	<option value="//api/name/remoteReplaceAsync:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteReplaceAsync:</option>
+	
 	<option value="//api/name/remoteRequest:method:async:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteRequest:method:async:</option>
 	
 	<option value="//api/name/remoteRequest:method:body:async:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteRequest:method:body:async:</option>
@@ -238,6 +242,10 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteGET:error:">remoteGET:error:</a></span></li>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteReplace:">remoteReplace:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteReplaceAsync:">remoteReplaceAsync:</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteRequest:method:async:">remoteRequest:method:async:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteRequest:method:body:async:">remoteRequest:method:body:async:</a></span></li>
@@ -314,7 +322,7 @@
 <ul>
 <li><code>NSRMap()</code> &ndash; define specific properties to be shared with Rails, along with configurable behaviors.</li>
 <li><code>NSRUseModelName()</code> &ndash; define a custom model name for your class, optionally with a custom plural. Takes string literal(s).</li>
-<li><code>NSRUseConfig()</code> &ndash; define a custom app URL for your class, optionally with username/password. Takes string literal(s).</li>
+<li><code>NSRUseResourcePrefix()</code> &ndash; define a resource prefix for instances of your class (used for nesting).</li>
 </ul>
 
 
@@ -324,12 +332,13 @@
 @synthesize title, content;
 NSRMap(*);
 NSRUseModelName(@"post");
-NSRUseConfig(@"http://myotherserver.com");
+
+…
 
 @end
 </code></pre>
 
-<p>Please see their detailed descriptions on <a href="https://github.com/dingbat/nsrails/wiki/Macros">the NSRails wiki</a>.</p>
+<p>Please see their detailed descriptions on <a href="https://github.com/dingbat/nsrails/wiki/">the NSRails wiki</a>.</p>
 
 <h2>Validation Errors</h2>
 
@@ -595,6 +604,20 @@ NSRUseConfig(@"http://myotherserver.com");
 	</span>
 	
 	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/remoteReplace:">&ndash;&nbsp;remoteReplace:</a></code>
+		<span class="tooltip"><p>&ldquo;Places&rdquo; receiver&rsquo;s corresponding remote object.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/remoteReplaceAsync:">&ndash;&nbsp;remoteReplaceAsync:</a></code>
+		<span class="tooltip"><p>&ldquo;Places&rdquo; receiver&rsquo;s corresponding remote object.</p></span>
+	</span>
+	
+	
 </li>
 						</ul>
 						
@@ -786,6 +809,7 @@ NSRUseConfig(@"http://myotherserver.com");
 if ([myObj remoteFetch:&amp;error])
 {
     NSDictionary *hashSentByRails = myObj.remoteAttributes;
+    …
 </code></pre>
 
 <p>Methods that will update <code>remoteAttributes</code> include <a href="#//api/name/initWithRemoteDictionary:">initWithRemoteDictionary:</a>, <a href="#//api/name/remoteFetch:">remoteFetch:</a> and <a href="#//api/name/remoteCreate:">remoteCreate:</a>. Objects returned with remoteObjectWithID:, and <a href="#//api/name/remoteAll:">remoteAll:</a> will also have an accurate <code>remoteAttributes</code>.</p>
@@ -1902,7 +1926,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>The given NSRMap string and config will be used only for this <strong>instance</strong>. This instance will not use its class&rsquo;s NSRMap or NSRUseConfig or any default configs (although any config in a context block (with use or useIn) will take precedence). This is very uncommon and triple checking is recommended before going with this implementation strategy.</p>
+		<p>The given NSRMap string and config will be used only for this <strong>instance</strong>. This instance will not use its class&rsquo;s NSRMap or any default or class-specific configs (although any config in a context block (with use or useIn) will take precedence). This is very uncommon and triple checking is recommended before going with this implementation strategy.</p>
 
 <p>Pass in a string as you would type it into NSRMap():</p>
 
@@ -2576,6 +2600,127 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 </div>
 						
 						<div class="section-method">
+	<a name="//api/name/remoteReplace:" title="remoteReplace:"></a>
+	<h3 class="subsubtitle method-title">remoteReplace:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>&ldquo;Places&rdquo; receiver&rsquo;s corresponding remote object.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (BOOL)remoteReplace:(NSError **)<em>error</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>error</em></dt>
+			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if place was successful. Returns <code>NO</code> if an error occurred.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Sends an <code>PUT</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID">remoteID</a>).</p>
+
+<p>The distinction between this method and <a href="#//api/name/remoteUpdate:">remoteUpdate:</a> is that this method will always use the <code>PUT</code> HTTP method, while <a href="#//api/name/remoteUpdate:">remoteUpdate:</a> is configurable. This is to allow servers that use <code>PATCH</code> to update attributes using <a href="#//api/name/remoteUpdate:">remoteUpdate:</a> and keep remoteReplace: for a more accurate &ldquo;placement&rdquo; procedure that should occur with the <code>PUT</code> method. More discussion <a href="http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/">here</a>.</p>
+
+<p>Request made synchronously. See <a href="#//api/name/remoteReplaceAsync:">remoteReplaceAsync:</a> for asynchronous operation.</p>
+
+<p>Requires presence of <a href="#//api/name/remoteID">remoteID</a>, or will throw an <code>NSRNullRemoteIDException</code>.</p>
+
+<p><strong>CoreData</strong></p>
+
+<p>If successful, will save its managed object context. Note that changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/remoteReplaceAsync:" title="remoteReplaceAsync:"></a>
+	<h3 class="subsubtitle method-title">remoteReplaceAsync:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>&ldquo;Places&rdquo; receiver&rsquo;s corresponding remote object.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)remoteReplaceAsync:(NSRBasicCompletionBlock)<em>completionBlock</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>completionBlock</em></dt>
+			<dd><p>Block to be executed when the request is complete.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Asynchronously sends an <code>PUT</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID">remoteID</a>).</p>
+
+<p>The distinction between this method and <a href="#//api/name/remoteUpdateAsync:">remoteUpdateAsync:</a> is that this method will always use the <code>PUT</code> HTTP method, while <a href="#//api/name/remoteUpdateAsync:">remoteUpdateAsync:</a> is configurable. This is to allow servers that use <code>PATCH</code> to update attributes using <a href="#//api/name/remoteUpdateAsync:">remoteUpdateAsync:</a> and keep remoteReplaceAsync: for a more accurate &ldquo;placement&rdquo; procedure that should occur with the <code>PUT</code> method. More discussion <a href="http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/">here</a>.</p>
+
+<p>Requires presence of <a href="#//api/name/remoteID">remoteID</a>, or will throw an <code>NSRNullRemoteIDException</code>.</p>
+
+<p><strong>CoreData</strong></p>
+
+<p>If successful, will save its managed object context. Note that changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
 	<a name="//api/name/remoteRequest:method:async:" title="remoteRequest:method:async:"></a>
 	<h3 class="subsubtitle method-title">remoteRequest:method:async:</h3>
 	
@@ -2884,14 +3029,16 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Sends an <code>UPDATE</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID">remoteID</a>).
-Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteUpdateAsync:</a> for asynchronous operation.</p>
+		<p>Sends a request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID">remoteID</a>).
+Will use the HTTP method defined in the relevant config&rsquo;s <a href="NSRConfig.html#//api/name/updateMethod">updateMethod</a> property (default <code>PUT</code>).</p>
+
+<p>Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteUpdateAsync:</a> for asynchronous operation.</p>
 
 <p>Requires presence of <a href="#//api/name/remoteID">remoteID</a>, or will throw an <code>NSRNullRemoteIDException</code>.</p>
 
 <p><strong>CoreData</strong></p>
 
-<p>If successful, will save its managed object context. Note that changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
+<p>If successful, will save its managed object context. Note that changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
 	</div>
 	
 	
@@ -2940,13 +3087,14 @@ Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteU
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Asynchronously sends an <code>UPDATE</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID">remoteID</a>).</p>
+		<p>Sends a request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID">remoteID</a>).
+Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRConfig.html#//api/name/updateMethod">updateMethod</a> property(default <code>PUT</code>).</p>
 
 <p>Requires presence of <a href="#//api/name/remoteID">remoteID</a>, or will throw an <code>NSRNullRemoteIDException</code>.</p>
 
 <p><strong>CoreData</strong></p>
 
-<p>If successful, will save its managed object context. Note that changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
+<p>If successful, will save its managed object context. Note that changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
 	</div>
 	
 	
@@ -3071,7 +3219,7 @@ Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteU
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-05-29)</span><br />
+						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-05)</span><br />
 						
 						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 789)</a>.</span></p>
 						

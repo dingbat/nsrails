@@ -273,9 +273,11 @@ extern NSString * const NSRCoreDataException;
 /**
  HTTP method used for updating objects.
  
- Rails is currently at 3.2.3 and using PUT, but 4.0 will use PATCH be default.
+ Rails is currently at 3.2.3 and using PUT, but 4.0 will use PATCH by default.
  
  **Default:** `@"PUT"`
+
+ @warning When Rails 4.0 is released, this default value will be changed to `@"PATCH"`.
  */
 @property (nonatomic, strong) NSString *updateMethod;
 

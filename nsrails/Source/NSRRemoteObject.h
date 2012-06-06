@@ -53,7 +53,7 @@
  
  - `NSRMap()` - define specific properties to be shared with Rails, along with configurable behaviors.
  - `NSRUseModelName()` - define a custom model name for your class, optionally with a custom plural. Takes string literal(s).
- - `NSRUseConfig()` - define a custom app URL for your class, optionally with username/password. Takes string literal(s).
+ - `NSRUseResourcePrefix()` - define a resource prefix for instances of your class (used for nesting).
  
  They are all optional. Usage:
  
@@ -61,11 +61,12 @@
 	@synthesize title, content;
 	NSRMap(*);
 	NSRUseModelName(@"post");
-	NSRUseConfig(@"http://myotherserver.com");
 	
+	…
+ 
 	@end
  
- Please see their detailed descriptions on [the NSRails wiki](https://github.com/dingbat/nsrails/wiki/Macros).
+ Please see their detailed descriptions on [the NSRails wiki](https://github.com/dingbat/nsrails/wiki/).
  
  ## Validation Errors
  
@@ -170,7 +171,7 @@
 	if ([myObj remoteFetch:&error])
 	{
 		NSDictionary *hashSentByRails = myObj.remoteAttributes;
-		...
+		…
  
  Methods that will update `remoteAttributes` include initWithRemoteDictionary:, remoteFetch: and remoteCreate:. Objects returned with remoteObjectWithID:, and remoteAll: will also have an accurate `remoteAttributes`.
  
@@ -427,7 +428,7 @@
  Updates receiver's corresponding remote object.
  
  Sends a request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
- Will use the HTTP method defined in the relevant config's [updateMethod](../NSRConfig.html#//api/name/updateMethod) property (default `PUT`).
+ Will use the HTTP method defined in the relevant config's [updateMethod](NSRConfig.html#//api/name/updateMethod) property (default `PUT`).
  
  Request made synchronously. See remoteUpdateAsync: for asynchronous operation.
 
@@ -719,7 +720,7 @@
 /**
  Initializes a new instance of the receiver's class with a custom NSRMap string and config.
  
- The given NSRMap string and config will be used only for this **instance**. This instance will not use its class's NSRMap or NSRUseConfig or any default configs (although any config in a context block (with use or useIn) will take precedence). This is very uncommon and triple checking is recommended before going with this implementation strategy.
+ The given NSRMap string and config will be used only for this **instance**. This instance will not use its class's NSRMap or any default or class-specific configs (although any config in a context block (with use or useIn) will take precedence). This is very uncommon and triple checking is recommended before going with this implementation strategy.
  
  Pass in a string as you would type it into NSRMap():
 	Person *zombie = [[Person alloc] initWithCustomMap:@"*, brain -x" customConfig:nonInflectingConfig];

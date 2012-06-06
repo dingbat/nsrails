@@ -447,6 +447,38 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteReplace:</TokenIdentifier>
+			<Abstract type="html">&quot;Places&quot; receiver&apos;s corresponding remote object.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (BOOL)remoteReplace:(NSError **)error</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>error</Name>
+					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract type="html">YES if place was successful. Returns NO if an error occurred.</Abstract></ReturnValue>
+			<Anchor>//api/name/remoteReplace:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteReplaceAsync:</TokenIdentifier>
+			<Abstract type="html">&quot;Places&quot; receiver&apos;s corresponding remote object.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (void)remoteReplaceAsync:(NSRBasicCompletionBlock)completionBlock</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>completionBlock</Name>
+					<Abstract type="html">Block to be executed when the request is complete.</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/remoteReplaceAsync:</Anchor>
+		</Token>
+		
+		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteGET:error:</TokenIdentifier>
 			<Abstract type="html">Returns the JSON response for a GET request to a custom method.</Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
