@@ -144,7 +144,13 @@ NSRUseModelName(@"pref");
 	STAssertEqualObjects([request HTTPMethod], @"POST", @"HTTP Methods mismatch");
 	STAssertEqualObjects([[NSString alloc] initWithData:[request HTTPBody] encoding:NSUTF8StringEncoding], @"{\"test\":\"body\"}", @"HTTP bodies mismatch");
 	STAssertEqualObjects([[request URL] description], url, @"Keeps the URL");
+	
+	req.config = [[NSRConfig alloc] initWithAppURL:@"http://CUSTOM"];
 		
+	request = [req HTTPRequest];
+	STAssertEqualObjects([[request URL] description], @"http://CUSTOM", @"Uses custom config");
+
+	req.config = nil;
 	
 	/* OAuth */
 	
@@ -182,6 +188,9 @@ NSRUseModelName(@"pref");
 - (void) test_routing
 {
 	NSRRequest *request = [[NSRRequest alloc] init];
+	
+	[request routeTo:@"hi"];
+	STAssertEqualObjects(request.route, @"hi", nil);
 	
 	/* NORMAL */
 	
@@ -234,6 +243,7 @@ NSRUseModelName(@"pref");
 	
 	
 	/* PREFIX */
+	
 	//class
 	[request routeToClass:[PrefixClass class]];	
 	STAssertEqualObjects(request.route, @"prefs", nil);
@@ -261,6 +271,20 @@ NSRUseModelName(@"pref");
 	
 	[request routeToObject:pref withCustomMethod:@"action"];	
 	STAssertEqualObjects(request.route, @"normal_classes/1/prefs/5/action", nil);
+	
+	
+	/* CUSTOM CONFIG */
+	
+	NSRConfig *config = [[NSRConfig alloc] initWithAppURL:@"http://CUSTOM"];
+	[config useForClass:[CustomClass class]];
+
+	[request routeToClass:[CustomClass class]];
+	STAssertEquals(request.config, config, @"Should have same config");
+
+	request.config = nil;
+
+	[request routeToObject:[[CustomClass alloc] init]];
+	STAssertEquals(request.config, config, @"Should have same config");
 }
 
 - (void) test_factories
@@ -304,6 +328,14 @@ NSRUseModelName(@"pref");
 	[[NSRConfig defaultConfig] setUpdateMethod:@"PATCH"];
 	update = [NSRRequest requestToUpdateObject:norm];
 	STAssertEqualObjects(update.httpMethod, @"PATCH", nil);
+	
+	NSRConfig *config = [[NSRConfig alloc] initWithAppURL:@"http://CUSTOM"];
+	config.updateMethod = @"PUT";
+	[config useForClass:[NormalClass class]];
+	
+	update = [NSRRequest requestToUpdateObject:norm];
+
+	STAssertEqualObjects(update.httpMethod, @"PUT", nil);
 
 	/* DELETE */
 	

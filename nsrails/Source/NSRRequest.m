@@ -64,7 +64,10 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 @interface NSRRequest (private)
 
++ (NSRRequest *) requestWithHTTPMethod:(NSString *)method;
+
 - (NSURLRequest *) HTTPRequest;
+
 - (NSError *) errorForResponse:(id)response statusCode:(NSInteger)statusCode;
 - (id) receiveResponse:(NSHTTPURLResponse *)response data:(NSData *)data error:(NSError **)error;
 
@@ -84,23 +87,18 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	return config;
 }
 
-- (id) init
+# pragma mark - Convenient routing
+
+- (id) routeTo:(NSString *)r
 {
-	if ((self = [super init]))
-	{
-		self.httpMethod = @"GET";
-	}
+	self.route = r;
 	return self;
 }
-
-# pragma mark - Convenient routing
 
 - (id) routeToClass:(Class)c withCustomMethod:(NSString *)optionalRESTMethod
 {
 	self.config = [c getRelevantConfig];
-	self.route = [c routeForControllerMethod:optionalRESTMethod];
-	
-	return self;
+	return [self routeTo:[c routeForControllerMethod:optionalRESTMethod]];
 }
 
 - (id) routeToClass:(Class)c
@@ -111,9 +109,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 - (id) routeToObject:(NSRRemoteObject *)o withCustomMethod:(NSString *)optionalRESTMethod
 {
 	self.config = [o getRelevantConfig];
-	self.route = [o routeForInstanceMethod:optionalRESTMethod httpMethod:httpMethod];
-	
-	return self;
+	return [self routeTo:[o routeForInstanceMethod:optionalRESTMethod httpMethod:httpMethod]];
 }
 
 - (id) routeToObject:(NSRRemoteObject *)o;
@@ -128,14 +124,6 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 # pragma mark - Factory requests
 
-+ (NSRRequest *) requestWithRoute:(NSString *)str
-{
-	NSRRequest *req = [[NSRRequest alloc] init];
-	req.route = str;
-	
-	return req;
-}
-
 + (NSRRequest *) requestWithHTTPMethod:(NSString *)method
 {
 	NSRRequest *req = [[NSRRequest alloc] init];
@@ -144,6 +132,32 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	return req;
 }
 
++ (NSRRequest *) GET
+{
+	return [self requestWithHTTPMethod:@"GET"];
+}
+
++ (NSRRequest *) DELETE
+{
+	return [self requestWithHTTPMethod:@"DELETE"];	
+}
+
++ (NSRRequest *) POST
+{
+	return [self requestWithHTTPMethod:@"POST"];
+}
+
++ (NSRRequest *) PUT
+{
+	return [self requestWithHTTPMethod:@"PUT"];
+}
+
++ (NSRRequest *) PATCH
+{
+	return [self requestWithHTTPMethod:@"PATCH"];
+}
+
+
 + (NSRRequest *) requestToFetchObjectWithID:(NSNumber *)rID ofClass:(Class)c
 {
 	if (!rID)
@@ -151,12 +165,12 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 		[NSException raise:NSInvalidArgumentException format:@"Attempt to fetch remote %@ objectWithID but ID passed in was nil.", c];
 	}
 
-	return [[NSRRequest requestWithHTTPMethod:@"GET"] routeToClass:c withCustomMethod:rID.stringValue];
+	return [[NSRRequest GET] routeToClass:c withCustomMethod:rID.stringValue];
 }
 
 + (NSRRequest *) requestToFetchAllObjectsOfClass:(Class)c
 {
-	return [[NSRRequest requestWithHTTPMethod:@"GET"] routeToClass:c];
+	return [[NSRRequest GET] routeToClass:c];
 }
 
 
@@ -170,10 +184,11 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 + (NSRRequest *) requestToCreateObject:(NSRRemoteObject *)obj
 {
-	NSRRequest *req = [NSRRequest requestWithHTTPMethod:@"POST"];
+	NSRRequest *req = [NSRRequest POST];
 
 	NSNumber *oldID = obj.remoteID;
 	
+	// Just in case object already has an ID, route as if we had no ID (usually the case anyway)
 	obj.remoteID = nil;
 	[req routeToObject:obj];
 	obj.remoteID = oldID;
@@ -186,14 +201,14 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 {
 	[self assertPresentRemoteID:obj forMethod:@"fetch"];
 	
-	return [[NSRRequest requestWithHTTPMethod:@"GET"] routeToObject:obj];
+	return [[NSRRequest GET] routeToObject:obj];
 }
 
 + (NSRRequest *) requestToDestroyObject:(NSRRemoteObject *)obj
 {
 	[self assertPresentRemoteID:obj forMethod:@"destroy"];
 
-	return [[NSRRequest requestWithHTTPMethod:@"DELETE"] routeToObject:obj];
+	return [[NSRRequest DELETE] routeToObject:obj];
 }
 
 + (NSRRequest *) requestToUpdateObject:(NSRRemoteObject *)obj
@@ -214,7 +229,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 {
 	[self assertPresentRemoteID:obj forMethod:@"replace"];
 
-	NSRRequest *req = [[NSRRequest requestWithHTTPMethod:@"PUT"] routeToObject:obj];
+	NSRRequest *req = [[NSRRequest PUT] routeToObject:obj];
 	[req setBodyToObject:obj];
 	return req;
 }

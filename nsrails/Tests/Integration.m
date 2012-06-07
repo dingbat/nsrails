@@ -1003,7 +1003,7 @@ static BOOL noServer = NO;
 	
 	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
 	
-	[NSRRemoteObject remoteGET:@"404.html" error:&e];
+	[[[NSRRequest GET] routeTo:@"404.html"] sendSynchronous:&e];
 	
 	//if error, and it's NSURL domain, must be that the server isn't running
 	if (e && [[e domain] isEqualToString:NSURLErrorDomain])

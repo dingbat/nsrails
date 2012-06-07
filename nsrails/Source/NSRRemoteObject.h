@@ -195,7 +195,7 @@
 
 
 // =============================================================================================
-/// @name Class requests (Common)
+/// @name Common class requests
 // =============================================================================================
 
 /**
@@ -226,7 +226,6 @@
  @param completionBlock Block to be executed when the request is complete.
  */
 + (void) remoteAllAsync:(NSRFetchAllCompletionBlock)completionBlock;
-
 
 
 /**
@@ -262,108 +261,8 @@
 
 
 
-// =============================================================================================
-/// @name Class requests (Custom)
-// =============================================================================================
-
-/**
- Returns the JSON response for a GET request to a custom method.
- 
- Calls remoteRequest:method:body:error: with `GET` for *httpVerb* and `nil` for *body*.
- 
- Request done synchronously. See remoteGET:async: for asynchronous operation.
-
- @param customRESTMethod Custom REST method to be called on the subclass's controller. If `nil`, will route to index.
- @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
- @return JSON response object (could be an `NSArray` or `NSDictionary`).
- */
-+ (id) remoteGET:(NSString *)customRESTMethod error:(NSError **)error;
-
-/**
- Makes a GET request to a custom method.
- 
- Calls remoteRequest:method:body:async: with `GET` for *httpVerb* and `nil` for *body*.
- 
- @param customRESTMethod Custom REST method to be called on the subclass's controller. If `nil`, will route to index.
- @param completionBlock Block to be executed when the request is complete.
- */
-+ (void) remoteGET:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock;
-
-
-
-/**
- Returns the JSON response for a request with a custom method, sending an `NSRRemoteObject` subclass instance as the body.
-
- Calls remoteRequest:method:body:error: with `obj`'s remote dictionary representation for *body*.
-
- Request done synchronously. See remoteRequest:method:bodyAsObject:async: for asynchronous operation.
- 
- @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
- @param customRESTMethod Custom REST method to be called on the subclass's controller. If `nil`, will route to index.
- @param obj NSRRemoteObject subclass instance - object you want to send in the body.
- @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
- @return JSON response object (could be an `NSArray` or `NSDictionary`).
- */
-+ (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRRemoteObject *)obj error:(NSError **)error;
-
-/**
- Makes a request with a custom method, sending an `NSRRemoteObject` subclass instance as the body.
- 
- Calls remoteRequest:method:body:error: with `obj`'s remote dictionary representation for *body*.
- 
- @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
- @param customRESTMethod Custom REST method to be called on the subclass's controller. If `nil`, will route to index.
- @param obj NSRRemoteObject subclass instance - object you want to send in the body.
- @param completionBlock Block to be executed when the request is complete.
- */
-+ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRRemoteObject *)obj async:(NSRHTTPCompletionBlock)completionBlock;
-
-
-/**
- Returns the JSON response for a request with a custom method.
- 
- If called on a subclass, makes the request to `/objects/method` (where `objects` is the pluralization of receiver's model name, and `method` is *customRESTMethod*).
- 
- If called on `NSRRemoteObject`, makes the request to `/method` (where `method` is *customRESTMethod*).
- 
- `/method` is omitted if `customRESTMethod` is nil.
- 
-	 [Article remoteRequest:@"POST" method:nil body:json error:&e];           ==> POST /articles
-	 [Article remoteRequest:@"POST" method:@"register" body:json error:&e];   ==> POST /articles/register
-	 [NSRRemoteObject remoteGET:@"root" error:&e];                               ==> GET /root
- 
- Request made synchronously. See remoteRequest:method:body:async: for asynchronous operation.
- 
- @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
- @param customRESTMethod The REST method to call (appended to the route). If `nil`, will call index. See above for examples.
- @param body Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).
- @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
- @return JSON response object (could be an `NSArray` or `NSDictionary`).
- */
-+ (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body error:(NSError **)error;
-
-/**
- Makes a request with a custom method.
- 
- If called on a subclass, makes the request to `/objects/method` (where `objects` is the pluralization of receiver's model name, and `method` is *customRESTMethod*).
- 
- If called on `NSRRemoteObject`, makes the request to `/method` (where `method` is *customRESTMethod*).
- 
- `/method` is omitted if `customRESTMethod` is nil.
- 
-	 [Article remoteRequest:@"POST" method:nil body:json async:block];           ==> POST /articles
-	 [Article remoteRequest:@"POST" method:@"register" body:json async:block];   ==> POST /articles/register
-	 [NSRRemoteObject remoteRequest:@"GET" method:@"root" body:nil async:block];    ==> GET /root
- 
- @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
- @param customRESTMethod The REST method to call (appended to the route). If `nil`, will call index. See above for examples.
- @param body Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).
- @param completionBlock Block to be executed when the request is complete.
- */
-+ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body async:(NSRHTTPCompletionBlock)completionBlock;
-
 /// =============================================================================================
-/// @name Instance requests (CRUD)
+/// @name CRUD
 /// =============================================================================================
 
 /**
@@ -562,99 +461,6 @@
  @warning No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.
  */
 - (void) remoteReplaceAsync:(NSRBasicCompletionBlock)completionBlock;
-
-
-/// =============================================================================================
-/// @name Instance requests (Custom)
-/// =============================================================================================
-
-/**
- Returns the JSON response for a GET request to a custom method.
- 
- Calls remoteRequest:method:body:error: with `GET` for *httpVerb* and `nil` for *body*.
- 
- Request done synchronously. See remoteGET:async: for asynchronous operation.
- 
- @param customRESTMethod Custom REST method to be called on the remote object corresponding to the receiver. If `nil`, will route to only the receiver (objects/1).
- @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
- @return JSON response object (could be an `NSArray` or `NSDictionary`).
- */
-- (id) remoteGET:(NSString *)customRESTMethod error:(NSError **)error;
-
-/**
- Makes a GET request to a custom method.
- 
- Calls remoteRequest:method:body:async: with `GET` for *httpVerb* and `nil` for *body*.
- 
- @param customRESTMethod Custom REST method to be called on the remote object corresponding to the receiver. If `nil`, will route to only the receiver (objects/1).
- @param completionBlock Block to be executed when the request is complete.
- */
-- (void) remoteGET:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock;
-
-
-/**
- Returns the JSON response for a request with a custom method, sending the JSON representation of the receiver as the request body.
- 
- Calls remoteRequest:method:body:error: with `obj`'s remote dictionary representation for *body*.
- 
- Request done synchronously. See remoteRequest:method:bodyAsObject:async: for asynchronous operation.
- 
- @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
- @param customRESTMethod Custom REST method to be called on the remote object corresponding to the receiver. If `nil`, will route to only the receiver (objects/1).
- @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
- @return JSON response object (could be an `NSArray` or `NSDictionary`).
- */
-- (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod error:(NSError **)error;
-
-/**
- Makes a request with a custom method, sending the JSON representation of the receiver as the request body.
- 
- Calls remoteRequest:method:body:async: with receiver's remote dictionary representation for *body*.
- 
- @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
- @param customRESTMethod Custom REST method to be called on the remote object corresponding to the receiver. If `nil`, will route to only the receiver (objects/1).
- @param completionBlock Block to be executed when the request is complete.
- */
-- (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock;
-
-
-/**
- Returns the JSON response for a request with a custom method on the receiver's corresponding remote object.
- 
- Makes a request to `/objects/1/method` (where `objects` is the pluralization of receiver's model name, `1` is the receiver's remoteID, and `method` is *customRESTMethod*).
-  
- `/method` is omitted if `customRESTMethod` is nil.
- 
-	[myArticle remoteRequest:@"PUT" method:nil body:json error:&e];           ==> PUT /articles/1
-	[myArticle remoteRequest:@"PUT" method:@"register" body:json error:&e];   ==> PUT /articles/1/register
- 
- Request made synchronously. See remoteRequest:method:body:async: for asynchronous operation.
- 
- @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
- @param customRESTMethod The REST method to call (appended to the route). If `nil`, will call index. See above for examples.
- @param body Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).
- @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
- @return JSON response object (could be an `NSArray` or `NSDictionary`).
- */
-- (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body error:(NSError **)error;
-
-/**
- Makes a request with a custom method on the receiver's corresponding remote object.
- 
- Asynchronously akes a request to `/objects/1/method` (where `objects` is the pluralization of receiver's model name, `1` is the receiver's remoteID, and `method` is *customRESTMethod*).
-  
- `/method` is omitted if `customRESTMethod` is nil.
- 
-	[myArticle remoteRequest:@"PUT" method:nil body:json error:&e];           ==> PUT /articles/1
-	[myArticle remoteRequest:@"PUT" method:@"register" body:json error:&e];   ==> PUT /articles/1/register
- 
- @param httpVerb The HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, etc.)
- @param customRESTMethod The REST method to call (appended to the route). If `nil`, will call index. See above for examples.
- @param body Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).
- @param completionBlock Block to be executed when the request is complete.
- */
-- (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body async:(NSRHTTPCompletionBlock)completionBlock;
-
 
 
 /// =============================================================================================

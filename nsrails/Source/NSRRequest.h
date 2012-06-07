@@ -40,8 +40,11 @@
 @property (nonatomic, strong) NSString *httpMethod;
 @property (nonatomic, strong) id body;
 
-+ (NSRRequest *) requestWithRoute:(NSString *)str;
-+ (NSRRequest *) requestWithHTTPMethod:(NSString *)method;
++ (NSRRequest *) GET;
++ (NSRRequest *) DELETE;
++ (NSRRequest *) POST;
++ (NSRRequest *) PUT;
++ (NSRRequest *) PATCH;
 
 + (NSRRequest *) requestToFetchObjectWithID:(NSNumber *)rID ofClass:(Class)c;
 + (NSRRequest *) requestToFetchAllObjectsOfClass:(Class)c;
@@ -53,7 +56,9 @@
 + (NSRRequest *) requestToReplaceObject:(NSRRemoteObject *)obj;
 
 //These return self so that they can be used chained in one line:
-//[[[NSRRequest requestWithHTTPMethod:@"GET"] routeToClass:[Post class]] sendSynchronous:&e];
+//[[[NSRRequest GET] routeToClass:[Post class]] sendSynchronous:&e];
+
+- (NSRRequest *) routeTo:(NSString *)route;
 
 - (NSRRequest *) routeToClass:(Class)c;
 - (NSRRequest *) routeToObject:(NSRRemoteObject *)o;

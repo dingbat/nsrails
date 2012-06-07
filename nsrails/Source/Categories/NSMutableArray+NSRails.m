@@ -102,7 +102,7 @@
 {
 	[self assertValidSubclass:class cmd:_cmd];
 	
-	NSArray *array = [class remoteGET:nil error:errorPtr];
+	NSArray *array = [[NSRRequest requestToFetchAllObjectsOfClass:class] sendSynchronous:errorPtr];
 	
 	if (!array)
 	{
@@ -123,8 +123,9 @@
 {
 	[self assertValidSubclass:class cmd:_cmd];
 	
-	[class remoteGET:nil async:^(id jsonRep, NSError *error) 
-	{
+	[[NSRRequest requestToFetchAllObjectsOfClass:class] sendAsynchronous:
+	 ^(id jsonRep, NSError *error) 
+	 {
 		if (!jsonRep)
 		{
 			block(NO, error);
@@ -134,7 +135,7 @@
 			BOOL changes = [self setSelfToRemoteArray:jsonRep forClass:class];
 			block(changes, nil);
 		}
-	}];
+	 }];
 }
 
 @end

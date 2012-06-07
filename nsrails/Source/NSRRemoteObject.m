@@ -809,7 +809,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 
 
-#pragma mark - HTTP Request stuff
+#pragma mark - Routing
 
 + (NSString *) routeForMethod:(NSString *)method withObject:(NSRRemoteObject *)obj httpMethod:(NSString *)verb
 {
@@ -837,7 +837,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 			prefix = [obj performSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefix)];
 			if (!prefix.remoteID)
 			{
-				[NSException raise:NSRNullRemoteIDException format:@"Attempt to %@ %@ instance with a prefix association (%@ instance) that has a nil remoteID.",verb,[self class],[prefix class]];
+				[NSException raise:NSRNullRemoteIDException format:@"Attempt to %@ %@ instance with a prefix association (%@ instance) that has a nil remoteID.",verb ? verb : @"remotely access",[self class],[prefix class]];
 			}
 		}
 	}
@@ -868,132 +868,13 @@ _NSR_REMOTEID_SYNTH remoteID;
 	return [self routeForMethod:customRESTMethod withObject:nil httpMethod:nil];
 }
 
-
-#pragma mark Performing actions on instances
-
-- (void) assertPresentRemoteID:(SEL)cmd
-{
-	if (!self.remoteID)
-	{
-		[NSException raise:NSRNullRemoteIDException format:@"Attempt to call -[%@ %@] with a nil remoteID.",[self class],NSStringFromSelector(cmd)];
-	}	
-}
-
-- (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body error:(NSError **)error
-{
-	NSString *route = [self routeForInstanceMethod:customRESTMethod httpMethod:httpVerb];
-	
-	NSRRequest *request = [[NSRRequest alloc] init];
-	request.route = route;
-	request.config = [self getRelevantConfig];
-	request.body = body;
-	request.httpMethod = httpVerb;
-	return [request sendSynchronous:error];
-}
-
-- (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body async:(NSRHTTPCompletionBlock)completionBlock
-{
-	NSString *route = [self routeForInstanceMethod:customRESTMethod httpMethod:httpVerb];
-
-	NSRRequest *request = [[NSRRequest alloc] init];
-	request.route = route;
-	request.config = [self getRelevantConfig];
-	request.body = body;
-	request.httpMethod = httpVerb;
-	[request sendAsynchronous:completionBlock];
-}
-
-//these are really just convenience methods that'll call the above method sending the object data as request body
-
-- (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod error:(NSError **)error
-{
-	return [self remoteRequest:httpVerb method:customRESTMethod body:[self remoteDictionaryRepresentationWrapped:YES] error:error];
-}
-
-- (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock
-{
-	[self remoteRequest:httpVerb method:customRESTMethod body:[self remoteDictionaryRepresentationWrapped:YES] async:completionBlock];
-}
-
-//these are really just convenience methods that'll call the above method with pre-built "GET" and no body
-
-- (id) remoteGET:(NSString *)customRESTMethod error:(NSError **)error
-{
-	return [self remoteRequest:@"GET" method:customRESTMethod body:nil error:error];
-}
-
-- (void) remoteGET:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock
-{
-	[self remoteRequest:@"GET" method:customRESTMethod body:nil async:completionBlock];
-}
-
-
-#pragma mark Performing actions on classes
-
-
-+ (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body error:(NSError **)error
-{
-	NSString *route = [self routeForControllerMethod:customRESTMethod];
-	
-	NSRRequest *request = [[NSRRequest alloc] init];
-	request.route = route;
-	request.config = [self getRelevantConfig];
-	request.body = body;
-	request.httpMethod = httpVerb;
-	return [request sendSynchronous:error];
-}
-
-+ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body async:(NSRHTTPCompletionBlock)completionBlock
-{
-	NSString *route = [self routeForControllerMethod:customRESTMethod];
-
-	NSRRequest *request = [[NSRRequest alloc] init];
-	request.route = route;
-	request.config = [self getRelevantConfig];
-	request.body = body;
-	request.httpMethod = httpVerb;
-	[request sendAsynchronous:completionBlock];
-}
-
-//these are really just convenience methods that'll call the above method with the JSON representation of the object
-
-+ (id) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRRemoteObject *)obj error:(NSError **)error
-{
-	return [self remoteRequest:httpVerb method:customRESTMethod body:[obj remoteDictionaryRepresentationWrapped:YES] error:error];
-}
-
-+ (void) remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRRemoteObject *)obj async:(NSRHTTPCompletionBlock)completionBlock
-{
-	[self remoteRequest:httpVerb method:customRESTMethod body:[obj remoteDictionaryRepresentationWrapped:YES] async:completionBlock];
-}
-
-//these are really just convenience methods that'll call the above method with pre-built "GET" and no body
-
-+ (id) remoteGET:(NSString *)customRESTMethod error:(NSError **)error
-{
-	return [self remoteRequest:@"GET" method:customRESTMethod body:nil error:error];
-}
-
-+ (void) remoteGET:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock
-{
-	[self remoteRequest:@"GET" method:customRESTMethod body:nil async:completionBlock];
-}
-
-
-
 #pragma mark - External stuff (CRUD)
 
 #pragma mark Create
 
 - (BOOL) remoteCreate:(NSError **)error
 {
-	// Just in case object already has an ID, route as if we had no ID (usually the case anyway)
-	NSNumber *oldID = self.remoteID;
-	self.remoteID = nil;
-
-	NSDictionary *jsonResponse = [self remoteRequest:@"POST" method:nil error:error];
-
-	self.remoteID = oldID;
+	NSDictionary *jsonResponse = [[NSRRequest requestToCreateObject:self] sendSynchronous:error];
 
 	if (jsonResponse)
 		[self setPropertiesUsingRemoteDictionary:jsonResponse applyToRemoteAttributes:YES];
@@ -1003,14 +884,9 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock
 {
-	NSNumber *oldID = self.remoteID;
-	self.remoteID = nil;
-	
-	[self remoteRequest:@"POST" method:nil async:
+	[[NSRRequest requestToCreateObject:self] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
-		 self.remoteID = oldID;
-		 
 		 if (result)
 			 [self setPropertiesUsingRemoteDictionary:result applyToRemoteAttributes:YES];
 		 
@@ -1023,9 +899,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (BOOL) remoteUpdate:(NSError **)error
 {
-	[self assertPresentRemoteID:_cmd];
-	
-	if (![self remoteRequest:[self getRelevantConfig].updateMethod method:nil error:error])
+	if (![[NSRRequest requestToUpdateObject:self] sendSynchronous:error])
 		return NO;
 	
 	[self saveContext];
@@ -1034,9 +908,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock
 {
-	[self assertPresentRemoteID:_cmd];
-	
-	[self remoteRequest:[self getRelevantConfig].updateMethod method:nil async:
+	[[NSRRequest requestToUpdateObject:self] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
 		 if (result)
@@ -1051,9 +923,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (BOOL) remoteReplace:(NSError **)error
 {
-	[self assertPresentRemoteID:_cmd];
-	
-	if (![self remoteRequest:@"PUT" method:nil error:error])
+	if (![[NSRRequest requestToReplaceObject:self] sendSynchronous:error])
 		return NO;
 	
 	[self saveContext];
@@ -1062,9 +932,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (void) remoteReplaceAsync:(NSRBasicCompletionBlock)completionBlock
 {
-	[self assertPresentRemoteID:_cmd];
-	
-	[self remoteRequest:@"PUT" method:nil async:
+	[[NSRRequest requestToReplaceObject:self] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
 		 if (result)
@@ -1079,9 +947,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (BOOL) remoteDestroy:(NSError **)error
 {
-	[self assertPresentRemoteID:_cmd];
-	
-	if (![self remoteRequest:@"DELETE" method:nil body:nil error:error])
+	if (![[NSRRequest requestToDestroyObject:self] sendSynchronous:error])
 		return NO;
 	
 	[self.managedObjectContext deleteObject:(id)self];
@@ -1091,9 +957,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (void) remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock
 {
-	[self assertPresentRemoteID:_cmd];
-	
-	[self remoteRequest:@"DELETE" method:nil body:nil async:
+	[[NSRRequest requestToDestroyObject:self] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
 		 if (result)
@@ -1109,9 +973,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (BOOL) remoteFetch:(NSError **)error changes:(BOOL *)changesPtr
 {
-	[self assertPresentRemoteID:_cmd];
-	
-	NSDictionary *jsonResponse = [self remoteGET:nil error:error];
+	NSDictionary *jsonResponse = [[NSRRequest requestToFetchObject:self] sendSynchronous:error];
 	
 	if (!jsonResponse)
 	{
@@ -1129,40 +991,26 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (BOOL) remoteFetch:(NSError **)error
 {
-	[self assertPresentRemoteID:_cmd];
-	
 	return [self remoteFetch:error changes:NULL];
 }
 
 - (void) remoteFetchAsync:(NSRFetchCompletionBlock)completionBlock
 {
-	[self assertPresentRemoteID:_cmd];
-	
-	[self remoteGET:nil async:
-	 ^(id result, NSError *error) 
+	[[NSRRequest requestToFetchObject:self] sendAsynchronous:
+	 ^(id jsonRep, NSError *error) 
 	 {
 		 BOOL change = NO;
-		 if (result)
-			 change = [self setPropertiesUsingRemoteDictionary:result applyToRemoteAttributes:YES];
+		 if (jsonRep)
+			 change = [self setPropertiesUsingRemoteDictionary:jsonRep applyToRemoteAttributes:YES];
 		 completionBlock(change, error);
 	 }];
 }
 
 #pragma mark Get specific object (class-level)
 
-+ (void) assertValidRemoteID:(NSNumber *)mID cmd:(SEL)sel
-{
-	if (!mID)
-	{
-		[NSException raise:NSInvalidArgumentException format:@"Attempt to call +[%@ %@] with a nil remoteID.", self.class, NSStringFromSelector(sel)];
-	}
-}
-
 + (id) remoteObjectWithID:(NSNumber *)mID error:(NSError **)error
 {
-	[self assertValidRemoteID:mID cmd:_cmd];
-	
-	NSDictionary *objData = [[self class] remoteGET:[mID stringValue] error:error];
+	NSDictionary *objData = [[NSRRequest requestToFetchObjectWithID:mID ofClass:self] sendSynchronous:error];
 	
 	if (objData)
 	{
@@ -1175,10 +1023,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 + (void) remoteObjectWithID:(NSNumber *)mID async:(NSRFetchObjectCompletionBlock)completionBlock
 {
-	[self assertValidRemoteID:mID cmd:_cmd];
-	
-	[[self class] remoteGET:[mID stringValue]
-					  async:
+	[[NSRRequest requestToFetchObjectWithID:mID ofClass:self] sendAsynchronous:
 	 ^(id jsonRep, NSError *error) 
 	 {
 		 if (!jsonRep)
@@ -1197,8 +1042,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 + (NSArray *) remoteAll:(NSError **)error
 {
-	//make a class GET call (so just the controller - myapp.com/users)
-	id json = [self remoteGET:nil error:error];
+	id json = [[NSRRequest requestToFetchAllObjectsOfClass:self] sendSynchronous:error];
 	if (!json)
 		return nil;
 	
@@ -1209,7 +1053,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 + (void) remoteAllAsync:(NSRFetchAllCompletionBlock)completionBlock
 {
-	[self remoteGET:nil async:
+	[[NSRRequest requestToFetchAllObjectsOfClass:self] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
 		 if (!result)
