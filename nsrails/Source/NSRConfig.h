@@ -163,7 +163,7 @@ extern NSString * const NSRCoreDataException;
  
  When false, names must be identical to their corresponding models in Rails.
  
- If there are just a few cases where you don't want this, see the NSRUseModelName macro to override model names.
+ If there are just a few cases where you don't want this, you can override model names [like this](NSRRemoteObject.html#overriding).
  
  **Default:** `YES`.
  */

@@ -54,8 +54,14 @@
 
 
 /// =============================================================================================
-/// @name NSRUseModelName
+/// @name NSRUseModelName (DEPRECATED)
 /// =============================================================================================
+
+
+//#define NSR_DEPRECATE(nam, msg) void inline __attribute__((deprecated(#msg))) name (void); { name(); };
+
+#define NSR_DEPRECATE(name, msg) + (void) name __attribute__ ((deprecated(#msg))) { } + (void) name##_dep { [self name]; }
+
 
 //helper trick to allow "overloading" macro functions thanks to orj's gist: https://gist.github.com/985501
 //definitely check out how this works - it's cool
@@ -72,33 +78,29 @@
 
 //_NSR_Name1 (only with 1 parameter, ie, custom model name but default plurality), creates NSRUseModelName method that returns param, return nil for plural to make it go to default
 #define _NSR_Name1(name) \
-	_NSR_Name2((name), nil)
+	NSR_DEPRECATE(NSRUseModelName, Override the `remoteModelName` class method instead.); \
+	+ (NSString*) remoteModelName { return (name); }
 
 //_NSR_Name2 (2 parameters, ie, custom model name and custom plurality), creates NSRUseModelName and NSRUsePluralName
 #define _NSR_Name2(name,plural) \
-	+ (NSString*) NSRUseModelName { return (name); } \
-	+ (NSString*) NSRUsePluralName { return (plural); }
+	_NSR_Name1(name) \
+	NSR_DEPRECATE(NSRUsePluralName, Override the `remoteControllerName` class method instead.); \
+	+ (NSString*) remoteControllerName { return (plural); }
 
 
 /// =============================================================================================
-/// @name NSRUseResourcePrefix
+/// @name NSRUseResourcePrefix (DEPRECATED)
 /// =============================================================================================
 
 //define to concat either _NSR_Prefix1(x) or _NSR_Prefix2(x,...), depending on the number of args passed in
 #define NSRUseResourcePrefix(...) \
 	_CAT(_NSR_Prefix,_N_ARGS(__VA_ARGS__))(__VA_ARGS__)
 
-#define _NSR_Prefix1(member) \
-	_NSR_Prefix((member), nil)
-
-//optional list of methods that this would apply to - simply return them as an array
-#define _NSR_Prefix2(member, ...) \
-	_NSR_Prefix((member), ([NSArray arrayWithObjects:__VA_ARGS__,nil]))
-
 //define to return an instance variable whose controller name and ID shall be used as a prefix to path
-//      and return an array of HTTP verbs where this will be used
-#define _NSR_Prefix(member, array) \
-	- (NSRRemoteObject *) NSRUseResourcePrefix { return member; }; \
-	+ (NSArray *) NSRUseResourcePrefixMethods { return array; }
+#define _NSR_Prefix1(member) \
+	NSR_DEPRECATE(NSRUseResourcePrefix, Override the `objectUsedToPrefixRequest:` instance method instead.); \
+	- (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)r { return (member); } \
 
+#define _NSR_Prefix2(member, ...) \
+	_NSR_Prefix1(member);
 

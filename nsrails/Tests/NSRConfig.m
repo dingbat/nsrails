@@ -57,7 +57,7 @@
 		 NSRAssertRelevantConfigURL(@"Default", @"default at the end of default block after nestings");
 	 }];
 	
-	STAssertEqualObjects(@"some_class", [SomeClass masterModelName], @"auto-underscoring");
+	STAssertEqualObjects(@"some_class", [SomeClass remoteModelName], @"auto-underscoring");
 	
 	NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"NoAuto"];
 	c.autoinflectsClassNames = NO;
@@ -65,7 +65,7 @@
 	 ^{
 		 NSRAssertRelevantConfigURL(@"NoAuto", @"custom block ^{} block");
 		 
-		 STAssertEqualObjects(@"SomeClass", [SomeClass masterModelName], @"No auto-underscoring");
+		 STAssertEqualObjects(@"SomeClass", [SomeClass remoteModelName], @"No auto-underscoring");
 	 }];
 	
 	NSRAssertRelevantConfigURL(@"Default", @"default exterior after all nesting");

@@ -53,12 +53,6 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 - (NSRConfig *) getRelevantConfig;
 
 + (NSRPropertyCollection *) propertyCollection;
-+ (NSString *) masterModelName;
-+ (NSString *) masterPluralName;
-
-+ (NSString *) routeForMethod:(NSString *)method withObject:(NSRRemoteObject *)obj httpMethod:(NSString *)verb;
-- (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod httpMethod:(NSString *)verb;
-+ (NSString *) routeForControllerMethod:(NSString *)customRESTMethod;
 
 @end
 
@@ -89,6 +83,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 # pragma mark - Convenient routing
 
+
 - (id) routeTo:(NSString *)r
 {
 	self.route = r;
@@ -98,7 +93,12 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 - (id) routeToClass:(Class)c withCustomMethod:(NSString *)optionalRESTMethod
 {
 	self.config = [c getRelevantConfig];
-	return [self routeTo:[c routeForControllerMethod:optionalRESTMethod]];
+
+	NSString *controller = [c remoteControllerName];
+	if (!controller)
+		return [self routeTo:optionalRESTMethod];
+
+	return [self routeTo:[controller stringByAppendingPathComponent:optionalRESTMethod]];
 }
 
 - (id) routeToClass:(Class)c
@@ -109,7 +109,26 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 - (id) routeToObject:(NSRRemoteObject *)o withCustomMethod:(NSString *)optionalRESTMethod
 {
 	self.config = [o getRelevantConfig];
-	return [self routeTo:[o routeForInstanceMethod:optionalRESTMethod httpMethod:httpMethod]];
+	
+	NSString *methodWithID = (optionalRESTMethod ? optionalRESTMethod : @"");
+
+	if (o.remoteID)
+		methodWithID = [[o.remoteID stringValue] stringByAppendingPathComponent:methodWithID];
+	
+	[self routeToClass:[o class] withCustomMethod:methodWithID];
+	
+	NSRRemoteObject *prefix = [o objectUsedToPrefixRequest:self];
+	if (prefix)
+	{
+		if (!prefix.remoteID)
+		{
+			[NSException raise:NSRNullRemoteIDException format:@"Attempt to %@ %@ instance with a prefix association (%@ instance) that has a nil remoteID.",self.httpMethod ? self.httpMethod : @"remotely access",[o class],[prefix class]];
+		}
+		
+		[self routeToObject:prefix withCustomMethod:self.route];
+	}
+	
+	return self;
 }
 
 - (id) routeToObject:(NSRRemoteObject *)o;
@@ -175,10 +194,13 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 + (NSRRequest *) requestToFetchAllObjectsOfClass:(Class)c viaObject:(NSRRemoteObject *)obj
 {
-	if (!obj)
-		return [NSRRequest requestToFetchAllObjectsOfClass:c];
+	if (!obj.remoteID)
+		if (obj)
+			[NSException raise:NSRNullRemoteIDException format:@"Attempt to fetch all %@s via object %@, but the object's remoteID was nil.",[self class],[obj class]];
+		else
+			return [NSRRequest requestToFetchAllObjectsOfClass:c];
 	
-	return [[NSRRequest GET] routeToObject:obj withCustomMethod:[c routeForControllerMethod:nil]];
+	return [[NSRRequest GET] routeToObject:obj withCustomMethod:[c remoteControllerName]];
 }
 
 + (void) assertPresentRemoteID:(NSRRemoteObject *)obj forMethod:(NSString *)str

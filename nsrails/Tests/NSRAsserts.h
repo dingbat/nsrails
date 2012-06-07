@@ -23,15 +23,8 @@
 + (NSString *) masterNSRMap;
 + (NSString *) masterNSRMapWithOverrideString:(NSString *)override;
 
-+ (NSString *) masterModelName;
-+ (NSString *) masterPluralName;
-
 + (NSRPropertyCollection *) propertyCollection;
 - (NSRPropertyCollection *) propertyCollection;
-
-- (NSString *) routeForInstanceMethod:(NSString *)route httpMethod:(NSString *)str;
-+ (NSString *) routeForControllerMethod:(NSString *)route;
-+ (NSString *) routeForMethod:(NSString *)method withObject:(NSRRemoteObject *)obj httpMethod:(NSString *)verb;
 
 + (NSString *) typeForProperty:(NSString *)prop;
 
@@ -66,9 +59,9 @@
 #define NSRAssertNoServer(x)	if (x) { STFail(@"Test Rails server not running -- run rails s on the demo app."); return; }
 
 
-#define NSRAssertClassModelName(mname, class)	STAssertEqualObjects([class masterModelName], mname, @"%@ model name failed.", NSStringFromClass(class))
+#define NSRAssertClassModelName(mname, class)	STAssertEqualObjects([class remoteModelName], mname, @"%@ model name failed.", NSStringFromClass(class))
 
-#define NSRAssertClassPluralName(mname, class)	STAssertEqualObjects([class masterPluralName], mname, @"%@ model name failed.", NSStringFromClass(class))
+#define NSRAssertClassPluralName(mname, class)	STAssertEqualObjects([class remoteControllerName], mname, @"%@ model name failed.", NSStringFromClass(class))
 
 #define NSRArray(...) [NSArray arrayWithObjects:__VA_ARGS__, nil]
 #define NSRDictionary(...) [NSDictionary dictionaryWithObjectsAndKeys:__VA_ARGS__, nil]

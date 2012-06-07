@@ -34,6 +34,7 @@
 #import <CoreData/CoreData.h>
 
 @class NSRPropertyCollection;
+@class NSRRequest;
 
 /**
  
@@ -41,32 +42,21 @@
   
  Note that you do not have to define an `id` property for your Objective-C class, as your subclass will inherit `NSRRemoteObject`'s remoteID property. Foreign keys are optional but also unnecessary (see [nesting](https://github.com/dingbat/nsrails/wiki/Nesting) on the NSRails wiki).
  
- About this document:
+ ## NSRMap
  
- - You'll notice that almost all `NSRRemoteObject` properties and methods are prefixed with `remote`, so you can quickly navigate through them with autocomplete.
- - When this document refers to an object's "model name", that means (by default) the name of its class. If you wish to define a custom model name (if the name of your model in Rails is distinct from your class name), use the `NSRUseModelName()` macro.
- - Before exploring this document, make sure that your class inherits from `NSRRemoteObject`, or of course these methods & properties will not be available.
+ NSRMap is a macro used to define specific properties to be shared with Rails, along with configurable behaviors. 
  
- ## Available Macros
- 
- The following macros can be defined right inside your subclass's implementation:
- 
- - `NSRMap()` - define specific properties to be shared with Rails, along with configurable behaviors.
- - `NSRUseModelName()` - define a custom model name for your class, optionally with a custom plural. Takes string literal(s).
- - `NSRUseResourcePrefix()` - define a resource prefix for instances of your class (used for nesting).
- 
- They are all optional. Usage:
+ It is optional (if omitted, will default to all properties being used). Usage:
  
 	@implementation Article
-	@synthesize title, content;
-	NSRMap(*);
-	NSRUseModelName(@"post");
+	@synthesize title, content, createdAt;
+	NSRMap(*, createdAt -r);
 	
 	…
  
 	@end
  
- Please see their detailed descriptions on [the NSRails wiki](https://github.com/dingbat/nsrails/wiki/).
+ Please see its more detailed description on [the NSRails wiki](https://github.com/dingbat/nsrails/wiki/NSRMap).
  
  ## Validation Errors
  
@@ -127,6 +117,12 @@
 	- `remoteID` should be an Integer (16 is fine) and indexed.
 
 	- Also ensure that you're using only subclasses (ie, set the Class of any entities to your desired subclass). Using generic NSManagedObjects or even NSRRemoteObjects is not supported.
+ 
+ <a name="overriding"></a>
+
+ ## Overriding
+ 
+ 
   */
 
 #ifdef NSR_USE_COREDATA
@@ -643,6 +639,99 @@
  @return Whether or not the save was successful.
  */
 - (BOOL) saveContext;
+
+
+/// =============================================================================================
+/// @name Methods to override
+/// =============================================================================================
+
+/**
+ The equivalent name of this class on your server.
+ 
+ Recommended behavior is to return a string literal:
+	
+	@implementation User
+ 
+	+ (NSString *) remoteModelName
+	{
+		return @"subscriber";
+	}
+ 
+	@end
+		
+ The above example would be needed if the same class is called `User` in Objective-C but `Subscriber` on your server.
+ 
+ **Default Behavior** (when not overriden)
+ 
+ Returns the name of the subclass, lowercase and underscored if [enabled](NSRConfig.html#//api/name/autoinflectsClassNames), and with its prefix stripped if [enabled](NSRConfig.html#//api/name/ignoresClassPrefixes).
+ 
+ @warning When overriding this method, NSRails will no longer autoinflect for determining this class name! What you enter will be used exactly.
+ */
++ (NSString *) remoteModelName;
+
+/**
+ The name of this class's controller on the server. (Where actions for this class should be routed)
+ 
+ **Default Behavior** (when not overriden)
+ 
+ Pluralizes remoteModelName.
+ */
++ (NSString *) remoteControllerName;
+
+/**
+ Used if instances of this class should have their resource path be based off an association.
+ 
+ This may be needed if you define your routes in Rails to look something like:
+ 
+	 MySweetApp::Application.routes.draw do
+		 resources :users
+			 resources :invites
+		 end
+	 end
+ 
+ And invites are accessed in relation to some user:
+ 
+	 GET    /users/1/invites.json
+	 POST   /users/1/invites.json
+	 GET    /users/1/invites/3.json
+	 DELETE /users/1/invites/3.json
+ 
+ Typically, this method is overriden with an instance variable that represents a parent:
+ 
+	@implementation Invite
+	@synthesize user, foo;
+	NSRMap(*, user -b);
+
+	- (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request
+	{
+		return user;
+	}
+ 
+	…
+
+	@end
+ 
+ @param request The request whose path is currently being evalutated. Its [route](NSRRequest.html#//api/name/route) will be the route *before* adding the prefix (ie, the route used if the behavior is not desired).
+ 
+ Using this parameter, you may filter requests that you don't want to prefix. Let's say you only want this behavior for POST and GET, but want to keep DELETE and PATCH with their traditional routes:
+ 
+	 GET    /users/3/invites.json  "get all the invites for user 3"
+	 POST   /users/3/invites.json  "create an invite for user 3"
+	 PATCH  /invites/28.json       "update user invite 28"
+	 DELETE /invites/28.json       "delete user invite 28"
+ 
+ This could be done by checking **request**'s [httpMethod](NSRRequest.html#//api/name/httpMethod):
+ 
+	 - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request
+	 {
+		 if ([request.httpMethod isEqualToString:@"GET"] || [request.httpMethod isEqualToString:@"POST"])
+			 return user;
+		 return nil;
+	 }
+ 
+ @return An object (typically an instance variable) that represents a parent to this class, or `nil` if this behavior is not desired.
+ */
+- (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request;
 
 @end
 

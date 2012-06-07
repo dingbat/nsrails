@@ -21,14 +21,31 @@
 NSRUseModelName(@"custom");
 @end
 
-@interface PrefixClass : NSRRemoteObject
-@property (nonatomic, strong) NormalClass *normal;
+@interface Prefixer : NSRRemoteObject
+@property (nonatomic, strong) CustomClass *custom;
 @end
 
-@implementation PrefixClass
-@synthesize normal;
-NSRUseResourcePrefix(normal);
+@implementation Prefixer
+@synthesize custom;
+NSRUseResourcePrefix(custom);
 NSRUseModelName(@"pref");
+
+@end
+
+@interface Prefixer2 : NSRRemoteObject
+@property (nonatomic, strong) Prefixer *thePrefixer;
+@end
+
+@implementation Prefixer2
+@synthesize thePrefixer;
+
+- (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)req
+{
+	if ([req.httpMethod isEqualToString:@"GET"] || [req.httpMethod isEqualToString:@"PATCH"])
+		return thePrefixer;
+	return nil;
+}
+
 @end
 
 
@@ -245,32 +262,132 @@ NSRUseModelName(@"pref");
 	/* PREFIX */
 	
 	//class
-	[request routeToClass:[PrefixClass class]];	
+	[request routeToClass:[Prefixer class]];	
 	STAssertEqualObjects(request.route, @"prefs", nil);
 	
-	[request routeToClass:[PrefixClass class] withCustomMethod:@"action"];
+	[request routeToClass:[Prefixer class] withCustomMethod:@"action"];
 	STAssertEqualObjects(request.route, @"prefs/action", nil);
 	
 	//object
-	PrefixClass *pref = [[PrefixClass alloc] init];
-	STAssertThrows([request routeToObject:pref], @"Should throw exception bc association is nil");
+	Prefixer *pref = [[Prefixer alloc] init];
 	
-	pref.normal = [[NormalClass alloc] init];
+	[request routeToObject:pref];
+	STAssertEqualObjects(request.route, @"prefs", nil);
+	
+	pref.custom = [[CustomClass alloc] init];
 	STAssertThrows([request routeToObject:pref], @"Should throw exception bc association's rID is nil");
 	
-	pref.normal.remoteID = NSRNumber(1);
+	pref.custom.remoteID = NSRNumber(1);
 	[request routeToObject:pref];
-	STAssertEqualObjects(request.route, @"normal_classes/1/prefs", nil);
+	STAssertEqualObjects(request.route, @"customs/1/prefs", nil);
 
 	[request routeToObject:pref withCustomMethod:@"action"];
-	STAssertEqualObjects(request.route, @"normal_classes/1/prefs/action", nil);
+	STAssertEqualObjects(request.route, @"customs/1/prefs/action", nil);
 
 	pref.remoteID = NSRNumber(5);
 	[request routeToObject:pref];
-	STAssertEqualObjects(request.route, @"normal_classes/1/prefs/5", nil);
+	STAssertEqualObjects(request.route, @"customs/1/prefs/5", nil);
 	
 	[request routeToObject:pref withCustomMethod:@"action"];	
-	STAssertEqualObjects(request.route, @"normal_classes/1/prefs/5/action", nil);
+	STAssertEqualObjects(request.route, @"customs/1/prefs/5/action", nil);
+	
+	/* DOUBLE PREFIX */
+	
+	
+	// Now double nested + custom names
+	// Controller (class)
+	
+	[request routeToClass:[Prefixer2 class]];	
+	STAssertEqualObjects(request.route, @"prefixer2s", nil);
+	
+	[request routeToClass:[Prefixer2 class] withCustomMethod:@"action"];	
+	STAssertEqualObjects(request.route, @"prefixer2s/action", nil);
+	
+	// Instance
+	Prefixer2 *smth2 = [[Prefixer2 alloc] init];
+	
+	[request routeToObject:smth2 withCustomMethod:nil];
+	STAssertEqualObjects(request.route, @"prefixer2s", nil);
+
+	[request routeToObject:smth2 withCustomMethod:@"action"];
+	STAssertEqualObjects(request.route, @"prefixer2s/action", nil);
+
+	smth2.remoteID = [NSNumber numberWithInt:15];
+
+	for (int i = 0; i < 2; i++)
+	{
+		[request routeToObject:smth2 withCustomMethod:nil];
+		STAssertEqualObjects(request.route, @"prefixer2s/15", nil);
+		
+		[request routeToObject:smth2 withCustomMethod:@"action"];
+		STAssertEqualObjects(request.route, @"prefixer2s/15/action", nil);
+
+		request.httpMethod = @"DELETE";
+	}
+		
+	for (int i = 0; i < 2; i++)
+	{
+		if (i == 0)
+			request.httpMethod = @"PATCH";
+		else
+			request.httpMethod = @"GET";
+		
+		smth2.remoteID = nil;
+		smth2.thePrefixer = nil;
+		
+		// Instance
+		[request routeToObject:smth2];
+		STAssertEqualObjects(request.route, @"prefixer2s", nil);
+
+		[request routeToObject:smth2 withCustomMethod:@"action"];
+		STAssertEqualObjects(request.route, @"prefixer2s/action", nil);
+
+		smth2.remoteID = [NSNumber numberWithInt:1];
+
+		[request routeToObject:smth2];
+		STAssertEqualObjects(request.route, @"prefixer2s/1", nil);
+
+		[request routeToObject:smth2 withCustomMethod:@"action"];
+		STAssertEqualObjects(request.route, @"prefixer2s/1/action", nil);
+
+		smth2.thePrefixer = [[Prefixer alloc] init];
+		STAssertThrowsSpecificNamed([request routeToObject:smth2], NSException, NSRNullRemoteIDException, @"Should still crash, because 'thePrefixer' relation has a nil remoteID");
+
+		smth2.thePrefixer.remoteID = [NSNumber numberWithInt:15];
+		
+		[request routeToObject:smth2];
+		STAssertEqualObjects(request.route, @"prefs/15/prefixer2s/1", nil);
+		
+		[request routeToObject:smth2 withCustomMethod:@"action"];
+		STAssertEqualObjects(request.route, @"prefs/15/prefixer2s/1/action", nil);
+		
+		smth2.thePrefixer.custom = [[CustomClass alloc] init];
+		STAssertThrowsSpecificNamed([request routeToObject:smth2], NSException, NSRNullRemoteIDException, @"Should STILL crash, because 'thePrefixer' relation's 'custom' has a nil remoteID");
+		
+		smth2.thePrefixer.custom.remoteID = [NSNumber numberWithInt:23];
+		
+		[request routeToObject:smth2];
+		STAssertEqualObjects(request.route, @"customs/23/prefs/15/prefixer2s/1", nil);
+
+		[request routeToObject:smth2 withCustomMethod:@"action"];
+		STAssertEqualObjects(request.route, @"customs/23/prefs/15/prefixer2s/1/action", nil);
+
+		//make sure class methods still work
+		[request routeToClass:[Prefixer2 class]];	
+		STAssertEqualObjects(request.route, @"prefixer2s", nil);
+		
+		[request routeToClass:[Prefixer2 class] withCustomMethod:@"action"];	
+		STAssertEqualObjects(request.route, @"prefixer2s/action", nil);
+		
+		//make sure no ID still works
+		smth2.remoteID = nil;
+		
+		[request routeToObject:smth2];
+		STAssertEqualObjects(request.route, @"customs/23/prefs/15/prefixer2s", nil);
+		
+		[request routeToObject:smth2 withCustomMethod:@"action"];
+		STAssertEqualObjects(request.route, @"customs/23/prefs/15/prefixer2s/action", nil);
+	}
 	
 	
 	/* CUSTOM CONFIG */
@@ -388,10 +505,18 @@ NSRUseModelName(@"pref");
 	
 	norm.remoteID = NSRNumber(5);
 	
-	NSRRequest *findAllObj = [NSRRequest requestToFetchAllObjectsOfClass:[PrefixClass class] viaObject:norm];
+	NSRRequest *findAllObj = [NSRRequest requestToFetchAllObjectsOfClass:[Prefixer class] viaObject:norm];
 	STAssertEqualObjects(findAllObj.route, @"normal_classes/5/prefs", nil);
 	STAssertEqualObjects(findAllObj.httpMethod, @"GET", nil);
 	STAssertNil(findAllObj.body, nil);
+	
+	norm.remoteID = nil;
+	
+	STAssertThrows([NSRRequest requestToFetchAllObjectsOfClass:[Prefixer class] viaObject:norm], @"Should throw nil rID");
+	
+	//try with nil
+	findAllObj = [NSRRequest requestToFetchAllObjectsOfClass:[Prefixer class] viaObject:nil];
+	STAssertEqualObjects(findAllObj.route, @"prefs", nil);
 }
 
 - (void)setUp

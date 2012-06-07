@@ -15,7 +15,16 @@
 @implementation Parent
 @synthesize parentAttr, parentAttr2;
 NSRMap (*, parentAttr2 -x)
-NSRUseModelName(@"parent", @"parentS")
+
++ (NSString *) remoteModelName
+{
+	return @"parent";
+}
++ (NSString *) remoteControllerName
+{
+	return @"parentS";
+}
+
 @end
 
 	@interface Child : Parent
@@ -25,7 +34,7 @@ NSRUseModelName(@"parent", @"parentS")
 	@implementation Child
 	@synthesize childAttr1, childAttr2;
 	NSRMap (childAttr1, parentAttr2) //absent NSRNoCarryFromSuper -> will inherit from parent
-	NSRUseModelName(@"parent", @"parentS")
+	//absent model name -> will inherit "parent"
 	@end
 
 		@interface Grandchild : Child
@@ -34,6 +43,7 @@ NSRUseModelName(@"parent", @"parentS")
 		@implementation Grandchild
 		@synthesize gchildAttr;
 		NSRMap(*, parentAttr2 -x) //absent NSRNoCarryFromSuper -> will inherit from parent, but ignored parentAttr2 as test
+		//absent model name -> will inherit "parent"
 		@end
 
 		@interface RebelliousGrandchild : Child
@@ -42,7 +52,10 @@ NSRUseModelName(@"parent", @"parentS")
 		@implementation RebelliousGrandchild
 		@synthesize r_gchildAttr;
 		NSRMapNoInheritance(*) //NSRNoCarryFromSuper present -> won't inherit anything
-		NSRUseModelName(@"r_gchild")
+		+ (NSString *) remoteModelName
+		{
+			return @"r_gchild"; //will override Parent's modelname -> will use "r_grandchild"
+		}
 		@end
 
 	@interface RebelliousChild : Parent
@@ -51,7 +64,10 @@ NSRUseModelName(@"parent", @"parentS")
 	@implementation RebelliousChild
 	@synthesize r_childAttr;
 	NSRMapNoInheritance(*) //NSRNoCarryFromSuper present -> won't inherit anything
-	NSRUseModelName(@"r_child")
+	+ (NSString *) remoteControllerName
+	{
+		return @"rebs"; //will override parent controller, but NOT model
+	}
 	@end
 
 		@interface GrandchildOfRebellious : RebelliousChild
@@ -59,7 +75,8 @@ NSRUseModelName(@"parent", @"parentS")
 		@end
 		@implementation GrandchildOfRebellious
 		@synthesize gchild_rAttr;
-		// * -> //absent NSRNoCarryFromSuper -> will inherit from r.child, BUT inheritance will stop @ R.Child 
+		NSRMap(*) //absent NSRNoCarryFromSuper -> will inherit from r.child, BUT inheritance will stop @ R.Child 
+		//absent model name, will inherit his parent
 		@end
 
 		@interface RebelliousGrandchildOfRebellious : RebelliousChild
@@ -68,7 +85,7 @@ NSRUseModelName(@"parent", @"parentS")
 		@implementation RebelliousGrandchildOfRebellious
 		@synthesize r_gchild_rAttr;
 		NSRMapNoInheritance(*) //NSRNoCarryFromSuper present -> won't inherit anything
-		NSRUseModelName(@"r_gchild_r", @"r_gchild_rS")
+		NSRUseModelName(@"r_gchild_r", @"r_gchild_rS") //will override R.Child's modelname -> will use "r_r_gchild"
 		@end
 
 
@@ -92,31 +109,26 @@ NSRUseModelName(@"parent", @"parentS")
 
 - (void) test_model_name_inheritance
 {
-	//was explicitly set to "parent"
 	NSRAssertClassModelName(@"parent", [Parent class]);
 	NSRAssertClassPluralName(@"parentS", [Parent class]);
 	
-	
-	//was explicitly set to "parent" (test that even identical implementations are marked different)
 	NSRAssertClassModelName(@"parent", [Child class]);
-	NSRAssertClassPluralName(@"parentS", [Child class]); //explicit plural set
+	NSRAssertClassPluralName(@"parentS", [Child class]);
 	
-	NSRAssertClassModelName(@"grandchild", [Grandchild class]);
-	NSRAssertClassPluralName(@"grandchilds", [Grandchild class]);
+	NSRAssertClassModelName(@"parent", [Grandchild class]);
+	NSRAssertClassPluralName(@"parentS", [Grandchild class]);
 	
-	//explicit set
 	NSRAssertClassModelName(@"r_gchild", [RebelliousGrandchild class]);
-	NSRAssertClassPluralName(@"r_gchilds", [RebelliousGrandchild class]); //no explicit plural set
+	NSRAssertClassPluralName(@"parentS", [RebelliousGrandchild class]); 
 	
 	
-	//explicit set
-	NSRAssertClassModelName(@"r_child", [RebelliousChild class]);
-	NSRAssertClassPluralName(@"r_childs", [RebelliousChild class]); //default plural set
+	NSRAssertClassModelName(@"parent", [RebelliousChild class]);
+	NSRAssertClassPluralName(@"rebs", [RebelliousChild class]); 
 	
-	NSRAssertClassModelName(@"grandchild_of_rebellious", [GrandchildOfRebellious class]);
-	NSRAssertClassPluralName(@"grandchild_of_rebelliouses", [GrandchildOfRebellious class]); //inherits default
+	NSRAssertClassModelName(@"parent", [GrandchildOfRebellious class]);
+	NSRAssertClassPluralName(@"rebs", [GrandchildOfRebellious class]);
 	
-	//explicit set
+	//is rebellious (defines NSRUseModelName as "r_gchild_r"), so it'll use that name
 	NSRAssertClassModelName(@"r_gchild_r", [RebelliousGrandchildOfRebellious class]);
 	NSRAssertClassPluralName(@"r_gchild_rS", [RebelliousGrandchildOfRebellious class]); //explicitly set
 }

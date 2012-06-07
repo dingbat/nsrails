@@ -60,18 +60,10 @@
 - (NSRRemoteObject *) makeRelevantModelFromClass:(NSString *)classN basedOn:(NSDictionary *)dict;
 - (id) remoteRepresentationOfObjectForProperty:(NSRProperty *)prop;
 
-+ (NSString *) routeForMethod:(NSString *)method withObject:(NSRRemoteObject *)obj httpMethod:(NSString *)verb;
-- (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod httpMethod:(NSString *)verb;
-+ (NSString *) routeForControllerMethod:(NSString *)customRESTMethod;
-
 + (NSString *) NSRMap;
-+ (NSString *) NSRUseModelName;
-+ (NSString *) NSRUsePluralName;
 
 + (NSString *) masterNSRMapWithOverrideString:(NSString *)override;
 + (NSString *) masterNSRMap;
-+ (NSString *) masterModelName;
-+ (NSString *) masterPluralName;
 
 + (id) performSelectorWithoutClimbingHierarchy:(SEL)selector;
 
@@ -231,15 +223,11 @@ _NSR_REMOTEID_SYNTH remoteID;
 	return [self masterNSRMapWithOverrideString:nil];
 }
 
-+ (NSString *) masterModelName
++ (NSString *) remoteModelName
 {
 	if (self == [NSRRemoteObject class])
 		return nil;
 	
-	NSString *defined = [self performSelectorWithoutClimbingHierarchy:@selector(NSRUseModelName)];
-	if (defined) return defined;
-	
-	//otherwise, return name of the class
 	NSString *class = NSStringFromClass(self);
 	
 	if ([self getRelevantConfig].autoinflectsClassNames)
@@ -252,13 +240,14 @@ _NSR_REMOTEID_SYNTH remoteID;
 	}
 }
 
-+ (NSString *) masterPluralName
++ (NSString *) remoteControllerName
 {
-	NSString *defined = [self performSelectorWithoutClimbingHierarchy:@selector(NSRUsePluralName)];
-	if (defined) return defined;
-	
-	//otherwise, pluralize ModelName
-	return [[self masterModelName] pluralize];
+	return [[self remoteModelName] pluralize];
+}
+
+- (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)verb
+{
+	return nil;
 }
 
 + (NSRPropertyCollection *) propertyCollection
@@ -299,7 +288,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 		return [NSRConfig overrideConfig];
 	}
 	
-	//if this class/instance defines NSRUseConfig, use it over the default
+	//if this class/instance has a custom config, use it over the default
 	else if (propertyCollection.customConfig)
 	{
 		return propertyCollection.customConfig;
@@ -384,7 +373,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 	NSRRemoteObject *obj = [objClass findOrInsertObjectUsingRemoteDictionary:dict];
 	
 	//see if we can assign an association to its parent (self)
-	NSString *parentModelName = [[self class] masterModelName];
+	NSString *parentModelName = [[self class] remoteModelName];
 	NSArray *properties = [[obj propertyCollection] objcPropertiesForRemoteEquivalent:parentModelName 
 																		  autoinflect:[self getRelevantConfig].autoinflectsPropertyNames];
 	
@@ -523,7 +512,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 	remoteAttributes = dict;
 	
 	//support JSON that comes in like {"post"=>{"something":"something"}}
-	NSDictionary *innerDict = [dict objectForKey:[[self class] masterModelName]];
+	NSDictionary *innerDict = [dict objectForKey:[[self class] remoteModelName]];
 	if (dict.count == 1 && [innerDict isKindOfClass:[NSDictionary class]])
 	{
 		dict = innerDict;
@@ -732,7 +721,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 	NSDictionary *dict = [self dictionaryOfRemotePropertiesFromNesting:NO];
 	
 	if (wrapped)
-		return [NSDictionary dictionaryWithObject:dict forKey:[[self class] masterModelName]];
+		return [NSDictionary dictionaryWithObject:dict forKey:[[self class] remoteModelName]];
 	return dict;
 }
 
@@ -807,70 +796,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 #pragma clang diagnostic pop
 
 
-
-
-#pragma mark - Routing
-
-+ (NSString *) routeForMethod:(NSString *)method withObject:(NSRRemoteObject *)obj httpMethod:(NSString *)verb
-{
-	NSString *route = (method ? method : @"");
-	
-	NSString *controller = [self masterPluralName];
-	if (!controller)
-	{
-		//means it was called on NSRRemoteObject (to access a "root method"), so don't modify the route
-		return route;
-	}
-
-	NSRRemoteObject *prefix = nil;
-	BOOL shouldUsePrefixConstruction = NO;
-	if ([obj respondsToSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefix)])
-	{
-		NSArray *allowedVerbs = [self performSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefixMethods)];
-		
-		shouldUsePrefixConstruction = (!allowedVerbs || 
-									   [allowedVerbs containsObject:verb] || 
-									   [allowedVerbs containsObject:[verb lowercaseString]]);
-		
-		if (shouldUsePrefixConstruction)
-		{
-			prefix = [obj performSelectorWithoutClimbingHierarchy:@selector(NSRUseResourcePrefix)];
-			if (!prefix.remoteID)
-			{
-				[NSException raise:NSRNullRemoteIDException format:@"Attempt to %@ %@ instance with a prefix association (%@ instance) that has a nil remoteID.",verb ? verb : @"remotely access",[self class],[prefix class]];
-			}
-		}
-	}
-		
-	// 1/something (if there's an ID)
-	// posts/1/something
-	// other/5/posts/1/something (if there's a prefix association)
-
-	if (obj.remoteID)
-		route = [[obj.remoteID stringValue] stringByAppendingPathComponent:route];
-	
-	route = [controller stringByAppendingPathComponent:route];
-	
-	if (shouldUsePrefixConstruction)
-		route = [prefix routeForInstanceMethod:route httpMethod:verb];
-
-	return route;
-}
-
-- (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod httpMethod:(NSString *)verb
-{
-	return [[self class] routeForMethod:customRESTMethod withObject:self httpMethod:verb];
-}
-
-+ (NSString *) routeForControllerMethod:(NSString *)customRESTMethod
-{
-	//http method is only relevant for instances bc it's only relevant for prefixes
-	return [self routeForMethod:customRESTMethod withObject:nil httpMethod:nil];
-}
-
-#pragma mark - External stuff (CRUD)
-
-#pragma mark Create
+#pragma mark - Create
 
 - (BOOL) remoteCreate:(NSError **)error
 {
