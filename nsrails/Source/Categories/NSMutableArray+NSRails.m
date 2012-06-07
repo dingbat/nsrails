@@ -98,7 +98,8 @@
 	return changes;
 }
 
-- (BOOL) remoteFetchAll:(Class)class error:(NSError **)errorPtr changes:(BOOL *)changesPtr {
+- (BOOL) remoteFetchAll:(Class)class error:(NSError **)errorPtr changes:(BOOL *)changesPtr
+{
     return [self remoteFetchAll:class viaObject:nil error:errorPtr changes:changesPtr];
 }
 
@@ -123,7 +124,8 @@
 	return YES;
 }
 
-- (void) remoteFetchAll:(Class)class async:(NSRFetchCompletionBlock)block {
+- (void) remoteFetchAll:(Class)class async:(NSRFetchCompletionBlock)block
+{
     [self remoteFetchAll:class viaObject:nil async:block];
 }
 
@@ -131,7 +133,7 @@
 {
 	[self assertValidSubclass:class cmd:_cmd];
 	
-	[class remoteGET:nil async:^(id jsonRep, NSError *error) 
+	NSRHTTPCompletionBlock completionBlock = ^(id jsonRep, NSError *error) 
 	{
 		if (!jsonRep)
 		{
@@ -142,7 +144,12 @@
 			BOOL changes = [self setSelfToRemoteArray:jsonRep forClass:class];
 			block(changes, nil);
 		}
-	}];
+	};
+	
+	if (obj)
+		[class remoteAllViaObject:obj async:completionBlock];
+	else
+		[class remoteGET:nil async:completionBlock];
 }
 
 @end

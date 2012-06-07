@@ -1171,19 +1171,12 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 + (NSArray *) remoteAll:(NSError **)error
 {
-	//make a class GET call (so just the controller - myapp.com/users)
-	id json = [self remoteGET:nil error:error];
-	if (!json)
-		return nil;
-	
-	[json translateRemoteDictionariesIntoInstancesOfClass:[self class]];
-	
-	return json;
+	return [self remoteAllViaObject:nil error:error];
 }
 
-+ (NSArray *) remoteAllViaObject:(NSRRemoteObject *)obj error:(NSError **)error {
-    id json = [obj remoteRequest:@"GET" method:[self routeForControllerMethod:nil] body:nil error:error];
-    
++ (NSArray *) remoteAllViaObject:(NSRRemoteObject *)obj error:(NSError **)error
+{
+    id json = [(obj ? obj : self) remoteGET:(obj ? [self routeForControllerMethod:nil] : nil) error:error];
     if (!json)
 		return nil;
 	
@@ -1194,7 +1187,12 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 + (void) remoteAllAsync:(NSRFetchAllCompletionBlock)completionBlock
 {
-	[self remoteGET:nil async:
+	[self remoteAllViaObject:nil async:completionBlock];
+}
+
++ (void) remoteAllViaObject:(NSRRemoteObject *)obj async:(NSRFetchAllCompletionBlock)completionBlock
+{
+    [(obj ? obj : self) remoteGET:(obj ? [self routeForControllerMethod:nil] : nil) async:
 	 ^(id result, NSError *error) 
 	 {
 		 if (!result)
@@ -1204,27 +1202,10 @@ _NSR_REMOTEID_SYNTH remoteID;
 		 else
 		 {
 			 [result translateRemoteDictionariesIntoInstancesOfClass:[self class]];
-			 
+
 			 completionBlock(result,error);
 		 }
 	 }];
-}
-
-+ (void) remoteAllViaObject:(NSRRemoteObject *)obj async:(NSRFetchAllCompletionBlock)completionBlock {
-    [self remoteRequest:@"GET" method:[self routeForControllerMethod:nil] body:nil async:
-    ^(id result, NSError *error) 
-    {
-        if (!result)
-        {
-            completionBlock(nil, error);
-        }
-        else
-        {
-            [result translateRemoteDictionariesIntoInstancesOfClass:[self class]];
-            
-            completionBlock(result,error);
-        }
-    }];
 }
 
 

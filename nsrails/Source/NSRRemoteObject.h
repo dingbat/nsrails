@@ -215,20 +215,21 @@
 + (NSArray *) remoteAll:(NSError **)error;
 
 /**
- Returns an array of all remote objects (as instances of receiver's class.) Each instance’s properties will be set to those returned by Rails.
+ Returns an array of all remote objects (as instances of receiver's class), constructed with a parent prefix. Each instance’s properties will be set to those returned by Rails.
  
- Makes a GET request to `/objects` (where `objects` is the pluralization of receiver's model name.)
+ Makes a GET request to `/parents/3/objects` (where `parents/3` is the path for the **parentObject**, and `objects` is the pluralization of this model name.)
  
- Request done synchronously. See remoteAllAsync: for asynchronous operation.
+ Request done synchronously. See remoteAllViaObject:async: for asynchronous operation.
  
  **CoreData**
  
  Each object returned in the array may be an existing or newly inserted object. All objects will reflect properites set to those returned by your server.
  
+ @param parentObject Remote object by which to request the collection from - establishes pattern for resources depending on nesting. Raises an exception if this object's `remoteID` is nil, as it is used to construct the route.
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return NSArray of instances of receiver's class. Each object’s properties will be set to those returned by Rails.
  */
-+ (NSArray *) remoteAllViaObject:(NSRRemoteObject *)obj error:(NSError **)error;
++ (NSArray *) remoteAllViaObject:(NSRRemoteObject *)parentObject error:(NSError **)error;
 
 /**
  Retrieves an array of all remote objects (as instances of receiver's class.) Each instance’s properties will be set to those returned by Rails.
@@ -246,15 +247,16 @@
 /**
  Retrieves an array of all remote objects (as instances of receiver's class.) Each instance’s properties will be set to those returned by Rails.
  
- Asynchronously makes a GET request to `/objects` (where `objects` is the pluralization of receiver's model name.)
+ Asynchronously makes a GET request to `/parents/3/objects` (where `parents/3` is the path for the **parentObject**, and `objects` is the pluralization of this model name.)
  
  **CoreData**
  
  Each object returned in the array may be an existing or newly inserted object. All objects will reflect properites set to those returned by your server.
  
+ @param parentObject Remote object by which to request the collection from - establishes pattern for resources depending on nesting. Raises an exception if this object's `remoteID` is nil, as it is used to construct the route.
  @param completionBlock Block to be executed when the request is complete.
  */
-+ (void) remoteAllViaObject:(NSRRemoteObject* )obj async:(NSRFetchAllCompletionBlock)completionBlock;
++ (void) remoteAllViaObject:(NSRRemoteObject *)parentObject async:(NSRFetchAllCompletionBlock)completionBlock;
 
 
 
