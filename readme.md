@@ -90,8 +90,9 @@ post.content = @"Changed!";
 BOOL objectDidChange;
 [post remoteFetch:&error changes:&objectDidChange];
 
-// Call custom REST method - would GET http://myapp.com/posts/1/something
-[post remoteGET:@"something" error:&error];
+// If your app defines nested resources separately (instead of simply sending them bundled on show),
+// you can retrieve a collection based on another object - will GET to /posts/1/responses.json
+NSArray *responses = [Response remoteAllViaObject:post error:&error];
 
 // Async is also available:
 [post remoteDestroyAsync: ^(NSError *error) {  if (!error) ... }];
