@@ -29,7 +29,9 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "NSRails.h"
+
+@class NSRRemoteObject;
+@class NSRConfig;
 
 @interface NSRRequest : NSObject
 
@@ -37,6 +39,29 @@
 @property (nonatomic, strong) NSString *route;
 @property (nonatomic, strong) NSString *httpMethod;
 @property (nonatomic, strong) id body;
+
++ (NSRRequest *) requestWithRoute:(NSString *)str;
++ (NSRRequest *) requestWithHTTPMethod:(NSString *)method;
+
++ (NSRRequest *) requestToFetchObjectWithID:(NSNumber *)rID ofClass:(Class)c;
++ (NSRRequest *) requestToFetchAllObjectsOfClass:(Class)c;
+
++ (NSRRequest *) requestToCreateObject:(NSRRemoteObject *)obj;
++ (NSRRequest *) requestToFetchObject:(NSRRemoteObject *)obj;
++ (NSRRequest *) requestToDestroyObject:(NSRRemoteObject *)obj;
++ (NSRRequest *) requestToUpdateObject:(NSRRemoteObject *)obj;
++ (NSRRequest *) requestToReplaceObject:(NSRRemoteObject *)obj;
+
+//These return self so that they can be used chained in one line:
+//[[[NSRRequest requestWithHTTPMethod:@"GET"] routeToClass:[Post class]] sendSynchronous:&e];
+
+- (NSRRequest *) routeToClass:(Class)c;
+- (NSRRequest *) routeToObject:(NSRRemoteObject *)o;
+
+- (NSRRequest *) routeToClass:(Class)c withCustomMethod:(NSString *)optionalRESTMethod;
+- (NSRRequest *) routeToObject:(NSRRemoteObject *)o withCustomMethod:(NSString *)optionalRESTMethod;
+
+- (void) setBodyToObject:(NSRRemoteObject *)obj;
 
 - (id) sendSynchronous:(NSError **)e;
 - (void) sendAsynchronous:(NSRHTTPCompletionBlock)block;

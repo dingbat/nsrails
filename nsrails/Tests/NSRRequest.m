@@ -8,6 +8,30 @@
 
 #import "NSRAsserts.h"
 
+@interface NormalClass : NSRRemoteObject
+@end
+
+@implementation NormalClass
+@end
+
+@interface CustomClass : NSRRemoteObject
+@end
+
+@implementation CustomClass
+NSRUseModelName(@"custom");
+@end
+
+@interface PrefixClass : NSRRemoteObject
+@property (nonatomic, strong) NormalClass *normal;
+@end
+
+@implementation PrefixClass
+@synthesize normal;
+NSRUseResourcePrefix(normal);
+NSRUseModelName(@"pref");
+@end
+
+
 @interface TNSRRequest : SenTestCase
 @end
 
@@ -153,6 +177,171 @@
 	[[NSRConfig defaultConfig] setAppPassword:@"password"];
 	request = [req HTTPRequest];
 	STAssertNotNil([request valueForHTTPHeaderField:@"Authorization"], @"Should send w/authorization if username+password");
+}
+
+- (void) test_routing
+{
+	NSRRequest *request = [[NSRRequest alloc] init];
+	
+	/* NORMAL */
+	
+	//class
+	[request routeToClass:[NormalClass class]];	
+	STAssertEqualObjects(request.route, @"normal_classes", nil);
+	
+	[request routeToClass:[NormalClass class] withCustomMethod:@"action"];
+	STAssertEqualObjects(request.route, @"normal_classes/action", nil);
+	
+	//object (no id)
+	[request routeToObject:[[NormalClass alloc] init]];	
+	STAssertEqualObjects(request.route, @"normal_classes", nil);
+	
+	[request routeToObject:[[NormalClass alloc] init] withCustomMethod:@"action"];	
+	STAssertEqualObjects(request.route, @"normal_classes/action", nil);
+	
+	//object (id)
+	NSDictionary *idDict = NSRDictionary(NSRNumber(1), @"id");
+	
+	[request routeToObject:[[NormalClass alloc] initWithRemoteDictionary:idDict]];	
+	STAssertEqualObjects(request.route, @"normal_classes/1", nil);
+	
+	[request routeToObject:[[NormalClass alloc] initWithRemoteDictionary:idDict] withCustomMethod:@"action"];	
+	STAssertEqualObjects(request.route, @"normal_classes/1/action", nil);
+	
+	
+	/* CUSTOM */
+	
+	//class
+	[request routeToClass:[CustomClass class]];	
+	STAssertEqualObjects(request.route, @"customs", nil);
+	
+	[request routeToClass:[CustomClass class] withCustomMethod:@"action"];
+	STAssertEqualObjects(request.route, @"customs/action", nil);
+	
+	//object (no id)
+	[request routeToObject:[[CustomClass alloc] init]];	
+	STAssertEqualObjects(request.route, @"customs", nil);
+	
+	[request routeToObject:[[CustomClass alloc] init] withCustomMethod:@"action"];	
+	STAssertEqualObjects(request.route, @"customs/action", nil);
+	
+	//object (id)	
+	[request routeToObject:[[CustomClass alloc] initWithRemoteDictionary:idDict]];	
+	STAssertEqualObjects(request.route, @"customs/1", nil);
+	
+	[request routeToObject:[[CustomClass alloc] initWithRemoteDictionary:idDict] withCustomMethod:@"action"];	
+	STAssertEqualObjects(request.route, @"customs/1/action", nil);
+	
+	
+	/* PREFIX */
+	//class
+	[request routeToClass:[PrefixClass class]];	
+	STAssertEqualObjects(request.route, @"prefs", nil);
+	
+	[request routeToClass:[PrefixClass class] withCustomMethod:@"action"];
+	STAssertEqualObjects(request.route, @"prefs/action", nil);
+	
+	//object
+	PrefixClass *pref = [[PrefixClass alloc] init];
+	STAssertThrows([request routeToObject:pref], @"Should throw exception bc association is nil");
+	
+	pref.normal = [[NormalClass alloc] init];
+	STAssertThrows([request routeToObject:pref], @"Should throw exception bc association's rID is nil");
+	
+	pref.normal.remoteID = NSRNumber(1);
+	[request routeToObject:pref];
+	STAssertEqualObjects(request.route, @"normal_classes/1/prefs", nil);
+
+	[request routeToObject:pref withCustomMethod:@"action"];
+	STAssertEqualObjects(request.route, @"normal_classes/1/prefs/action", nil);
+
+	pref.remoteID = NSRNumber(5);
+	[request routeToObject:pref];
+	STAssertEqualObjects(request.route, @"normal_classes/1/prefs/5", nil);
+	
+	[request routeToObject:pref withCustomMethod:@"action"];	
+	STAssertEqualObjects(request.route, @"normal_classes/1/prefs/5/action", nil);
+}
+
+- (void) test_factories
+{
+	NormalClass *norm = [[NormalClass alloc] init];
+	
+	/* CREATE */
+	
+	NSRRequest *create = [NSRRequest requestToCreateObject:norm];
+	STAssertEqualObjects(create.route, @"normal_classes", nil);
+	STAssertEqualObjects(create.httpMethod, @"POST", nil);
+	STAssertEqualObjects(create.body, [norm remoteDictionaryRepresentationWrapped:YES], nil);
+	
+	norm.remoteID = NSRNumber(5);
+	
+	create = [NSRRequest requestToCreateObject:norm];
+	STAssertEqualObjects(create.route, @"normal_classes", @"Should ignore ID in route");
+	
+	/* FETCH */
+	
+	norm.remoteID = nil;
+	STAssertThrows([NSRRequest requestToFetchObject:norm], @"Should throw nil rID");
+
+	norm.remoteID = NSRNumber(5);
+	NSRRequest *fetch = [NSRRequest requestToFetchObject:norm];
+	STAssertEqualObjects(fetch.route, @"normal_classes/5", nil);
+	STAssertEqualObjects(fetch.httpMethod, @"GET", nil);
+	STAssertNil(fetch.body, nil);
+	
+	/* UPDATE */
+	
+	norm.remoteID = nil;
+	STAssertThrows([NSRRequest requestToUpdateObject:norm], @"Should throw nil rID");
+	
+	norm.remoteID = NSRNumber(5);
+	NSRRequest *update = [NSRRequest requestToUpdateObject:norm];
+	STAssertEqualObjects(update.route, @"normal_classes/5", nil);
+	STAssertEqualObjects(update.httpMethod, @"PUT", nil);
+	STAssertEqualObjects(update.body, [norm remoteDictionaryRepresentationWrapped:YES], nil);
+
+	[[NSRConfig defaultConfig] setUpdateMethod:@"PATCH"];
+	update = [NSRRequest requestToUpdateObject:norm];
+	STAssertEqualObjects(update.httpMethod, @"PATCH", nil);
+
+	/* DELETE */
+	
+	norm.remoteID = nil;
+	STAssertThrows([NSRRequest requestToDestroyObject:norm], @"Should throw nil rID");
+	
+	norm.remoteID = NSRNumber(5);
+	NSRRequest *delete = [NSRRequest requestToDestroyObject:norm];
+	STAssertEqualObjects(delete.route, @"normal_classes/5", nil);
+	STAssertEqualObjects(delete.httpMethod, @"DELETE", nil);
+	STAssertNil(delete.body, nil);
+	
+	/* REPLACE */
+	
+	norm.remoteID = nil;
+	STAssertThrows([NSRRequest requestToReplaceObject:norm], @"Should throw nil rID");
+	
+	norm.remoteID = NSRNumber(5);
+	NSRRequest *replace = [NSRRequest requestToReplaceObject:norm];
+	STAssertEqualObjects(replace.route, @"normal_classes/5", nil);
+	STAssertEqualObjects(replace.httpMethod, @"PUT", nil);
+	STAssertEqualObjects(replace.body, [norm remoteDictionaryRepresentationWrapped:YES], nil);
+
+	/* FIND ONE */
+	
+	STAssertThrows([NSRRequest requestToFetchObjectWithID:nil ofClass:[NormalClass class]], @"Should throw nil rID");
+	
+	NSRRequest *findOne = [NSRRequest requestToFetchObjectWithID:NSRNumber(1) ofClass:[NormalClass class]];
+	STAssertEqualObjects(findOne.route, @"normal_classes/1", nil);
+	STAssertEqualObjects(findOne.httpMethod, @"GET", nil);
+	STAssertNil(findOne.body, nil);
+
+	/* FIND ALL */
+		
+	NSRRequest *findAll = [NSRRequest requestToFetchAllObjectsOfClass:[NormalClass class]];
+	STAssertEqualObjects(findAll.route, @"normal_classes", nil);
+	STAssertEqualObjects(findAll.httpMethod, @"GET", nil);
+	STAssertNil(findAll.body, nil);
 }
 
 - (void)setUp

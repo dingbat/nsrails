@@ -28,6 +28,8 @@
  
  */
 
+#import "NSRails.h"
+
 #import "NSRRequest.h"
 #import "NSData+Additions.h"
 
@@ -45,6 +47,21 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 #define NSRLogInOut(...)
 #endif
 
+@interface NSRRemoteObject (internal)
+
++ (NSRConfig *) getRelevantConfig;
+- (NSRConfig *) getRelevantConfig;
+
++ (NSRPropertyCollection *) propertyCollection;
++ (NSString *) masterModelName;
++ (NSString *) masterPluralName;
+
++ (NSString *) routeForMethod:(NSString *)method withObject:(NSRRemoteObject *)obj httpMethod:(NSString *)verb;
+- (NSString *) routeForInstanceMethod:(NSString *)customRESTMethod httpMethod:(NSString *)verb;
++ (NSString *) routeForControllerMethod:(NSString *)customRESTMethod;
+
+@end
+
 @interface NSRRequest (private)
 
 - (NSURLRequest *) HTTPRequest;
@@ -56,13 +73,153 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 @implementation NSRRequest
 @synthesize route, httpMethod, body, config;
 
+# pragma mark - Config
+
 - (NSRConfig *) config
 {
+	//have a nil config be the default
 	if (!config)
 		return [NSRConfig defaultConfig];
 	
 	return config;
 }
+
+- (id) init
+{
+	if ((self = [super init]))
+	{
+		self.httpMethod = @"GET";
+	}
+	return self;
+}
+
+# pragma mark - Convenient routing
+
+- (id) routeToClass:(Class)c withCustomMethod:(NSString *)optionalRESTMethod
+{
+	self.config = [c getRelevantConfig];
+	self.route = [c routeForControllerMethod:optionalRESTMethod];
+	
+	return self;
+}
+
+- (id) routeToClass:(Class)c
+{
+	return [self routeToClass:c withCustomMethod:nil];
+}
+
+- (id) routeToObject:(NSRRemoteObject *)o withCustomMethod:(NSString *)optionalRESTMethod
+{
+	self.config = [o getRelevantConfig];
+	self.route = [o routeForInstanceMethod:optionalRESTMethod httpMethod:httpMethod];
+	
+	return self;
+}
+
+- (id) routeToObject:(NSRRemoteObject *)o;
+{
+	return [self routeToObject:o withCustomMethod:nil];
+}
+
+- (void) setBodyToObject:(NSRRemoteObject *)obj
+{
+	self.body = [obj remoteDictionaryRepresentationWrapped:YES];
+}
+
+# pragma mark - Factory requests
+
++ (NSRRequest *) requestWithRoute:(NSString *)str
+{
+	NSRRequest *req = [[NSRRequest alloc] init];
+	req.route = str;
+	
+	return req;
+}
+
++ (NSRRequest *) requestWithHTTPMethod:(NSString *)method
+{
+	NSRRequest *req = [[NSRRequest alloc] init];
+	req.httpMethod = method;
+	
+	return req;
+}
+
++ (NSRRequest *) requestToFetchObjectWithID:(NSNumber *)rID ofClass:(Class)c
+{
+	if (!rID)
+	{
+		[NSException raise:NSInvalidArgumentException format:@"Attempt to fetch remote %@ objectWithID but ID passed in was nil.", c];
+	}
+
+	return [[NSRRequest requestWithHTTPMethod:@"GET"] routeToClass:c withCustomMethod:rID.stringValue];
+}
+
++ (NSRRequest *) requestToFetchAllObjectsOfClass:(Class)c
+{
+	return [[NSRRequest requestWithHTTPMethod:@"GET"] routeToClass:c];
+}
+
+
++ (void) assertPresentRemoteID:(NSRRemoteObject *)obj forMethod:(NSString *)str
+{
+	if (!obj.remoteID)
+	{
+		[NSException raise:NSRNullRemoteIDException format:@"Attempt to %@ a %@ with a nil remoteID.",str,[obj class]];
+	}	
+}
+
++ (NSRRequest *) requestToCreateObject:(NSRRemoteObject *)obj
+{
+	NSRRequest *req = [NSRRequest requestWithHTTPMethod:@"POST"];
+
+	NSNumber *oldID = obj.remoteID;
+	
+	obj.remoteID = nil;
+	[req routeToObject:obj];
+	obj.remoteID = oldID;
+	
+	[req setBodyToObject:obj];
+	return req;
+}
+
++ (NSRRequest *) requestToFetchObject:(NSRRemoteObject *)obj
+{
+	[self assertPresentRemoteID:obj forMethod:@"fetch"];
+	
+	return [[NSRRequest requestWithHTTPMethod:@"GET"] routeToObject:obj];
+}
+
++ (NSRRequest *) requestToDestroyObject:(NSRRemoteObject *)obj
+{
+	[self assertPresentRemoteID:obj forMethod:@"destroy"];
+
+	return [[NSRRequest requestWithHTTPMethod:@"DELETE"] routeToObject:obj];
+}
+
++ (NSRRequest *) requestToUpdateObject:(NSRRemoteObject *)obj
+{
+	[self assertPresentRemoteID:obj forMethod:@"update"];
+
+	NSRRequest *req = [[[NSRRequest alloc] init] routeToObject:obj];
+	
+	//wait till config is set to set the update method - HTTP method depends on the config
+	req.httpMethod = req.config.updateMethod;
+	
+	[req setBodyToObject:obj];
+	
+	return req;
+}
+
++ (NSRRequest *) requestToReplaceObject:(NSRRemoteObject *)obj
+{
+	[self assertPresentRemoteID:obj forMethod:@"replace"];
+
+	NSRRequest *req = [[NSRRequest requestWithHTTPMethod:@"PUT"] routeToObject:obj];
+	[req setBodyToObject:obj];
+	return req;
+}
+
+# pragma mark - Making the request
 
 - (NSURLRequest *) HTTPRequest
 {	
