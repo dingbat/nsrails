@@ -31,16 +31,20 @@
 #import <Foundation/Foundation.h>
 #import "NSRConfig.h"
 
+@class NSRRemoteObject;
+
 @interface NSMutableArray (NSRFetch)
 
 /**
  Updates elements in this array using index of remote objects.
  
  Makes a GET request to `/objects` (where `objects` is the pluralization of *class*'s model name.)
+ If viaObject is specified, will nest resource request (ex. GET to `/parents/3/objects`)
  
  Request done synchronously. See remoteFetchAll:async: for asynchronous operation.
  
  @param class Class with which to build instances to insert into this array. Raises an exception if this class does not subclass NSRRemoteObject.
+ @param viaObject Remote object by which to request the collection from, establishes pattern for resources depending on nesting
  @param errorPtr Out parameter used if an error occurs while processing the request. May be `NULL`.
  @param changesPtr Reference to a BOOL. Will indicate whether or not there were local changes to the array after this operation. Returns `YES` if no elements were added or deleted, and if no element changed when updating its respective properties.
  
@@ -48,17 +52,21 @@
  @return `YES` if fetch was successful. Returns `NO` if an error occurred.
  */
 - (BOOL) remoteFetchAll:(Class)class error:(NSError **)errorPtr changes:(BOOL *)changesPtr;
+- (BOOL) remoteFetchAll:(Class)class viaObject:(NSRRemoteObject *)obj error:(NSError **)errorPtr changes:(BOOL *)changesPtr;
 
 
 /**
  Updates elements in this array using index of remote objects.
  
  Makes a GET request to `/objects` (where `objects` is the pluralization of *class*'s model name.)
+ If viaObject is specified, will nest resource request (ex. GET to `/parents/3/objects`)
   
  @param class Class with which to build instances to insert into this array. Raises an exception if this class does not subclass NSRRemoteObject.
+ @param viaObject Remote object by which to request the collection from, establishes pattern for resources depending on nesting
  @param completionBlock Block to be executed on completion..
  */
 - (void) remoteFetchAll:(Class)class async:(NSRFetchCompletionBlock)completionBlock;
+- (void) remoteFetchAll:(Class)class viaObject:(NSRRemoteObject *)obj async:(NSRFetchCompletionBlock)completionBlock;
 
 
 /**
