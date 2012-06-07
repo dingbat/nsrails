@@ -74,7 +74,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (NSRConfig *) config
 {
-	//have a nil config be the default
+	//have a nil config mean the default
 	if (!config)
 		return [NSRConfig defaultConfig];
 	
@@ -106,16 +106,16 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	return [self routeToClass:c withCustomMethod:nil];
 }
 
-- (id) routeToObject:(NSRRemoteObject *)o withCustomMethod:(NSString *)optionalRESTMethod
+- (id) routeToObject:(NSRRemoteObject *)o withCustomMethod:(NSString *)method ignoreID:(BOOL)ignoreID
 {
 	self.config = [o getRelevantConfig];
 	
-	NSString *methodWithID = (optionalRESTMethod ? optionalRESTMethod : @"");
-
-	if (o.remoteID)
-		methodWithID = [[o.remoteID stringValue] stringByAppendingPathComponent:methodWithID];
+	//prepend the ID: action -> 1/action
+	if (o.remoteID && !ignoreID)
+		method = [[o.remoteID stringValue] stringByAppendingPathComponent:method];
 	
-	[self routeToClass:[o class] withCustomMethod:methodWithID];
+	//prepend the classname: 1/action -> class/1/action
+	[self routeToClass:[o class] withCustomMethod:method];
 	
 	NSRRemoteObject *prefix = [o objectUsedToPrefixRequest:self];
 	if (prefix)
@@ -125,13 +125,24 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 			[NSException raise:NSRNullRemoteIDException format:@"Attempt to %@ %@ instance with a prefix association (%@ instance) that has a nil remoteID.",self.httpMethod ? self.httpMethod : @"remotely access",[o class],[prefix class]];
 		}
 		
+		//if prefix, prepend the route to prefix: class/1/action -> prefixes/15/class/1/action (+ recursive)
 		[self routeToObject:prefix withCustomMethod:self.route];
 	}
 	
 	return self;
 }
 
-- (id) routeToObject:(NSRRemoteObject *)o;
+- (id) routeToObject:(NSRRemoteObject *)o withCustomMethod:(NSString *)method
+{
+	return [self routeToObject:o withCustomMethod:method ignoreID:NO];
+}
+
+- (id) routeToObject:(NSRRemoteObject *)o ignoreID:(BOOL)ignore
+{
+	return [self routeToObject:o withCustomMethod:nil ignoreID:ignore];
+}
+
+- (id) routeToObject:(NSRRemoteObject *)o
 {
 	return [self routeToObject:o withCustomMethod:nil];
 }
@@ -213,16 +224,9 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 + (NSRRequest *) requestToCreateObject:(NSRRemoteObject *)obj
 {
-	NSRRequest *req = [NSRRequest POST];
-
-	NSNumber *oldID = obj.remoteID;
-	
-	// Just in case object already has an ID, route as if we had no ID (usually the case anyway)
-	obj.remoteID = nil;
-	[req routeToObject:obj];
-	obj.remoteID = oldID;
-	
+	NSRRequest *req = [[NSRRequest POST] routeToObject:obj ignoreID:YES];	
 	[req setBodyToObject:obj];
+	
 	return req;
 }
 
@@ -244,11 +248,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 {
 	[self assertPresentRemoteID:obj forMethod:@"update"];
 
-	NSRRequest *req = [[[NSRRequest alloc] init] routeToObject:obj];
-	
-	//wait till config is set to set the update method - HTTP method depends on the config
-	req.httpMethod = req.config.updateMethod;
-	
+	NSRRequest *req = [[NSRRequest requestWithHTTPMethod:obj.getRelevantConfig.updateMethod] routeToObject:obj];
 	[req setBodyToObject:obj];
 	
 	return req;
