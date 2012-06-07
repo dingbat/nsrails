@@ -98,11 +98,15 @@
 	return changes;
 }
 
-- (BOOL) remoteFetchAll:(Class)class error:(NSError **)errorPtr changes:(BOOL *)changesPtr
+- (BOOL) remoteFetchAll:(Class)class error:(NSError **)errorPtr changes:(BOOL *)changesPtr {
+    return [self remoteFetchAll:class viaObject:nil error:errorPtr changes:changesPtr];
+}
+
+- (BOOL) remoteFetchAll:(Class)class viaObject:(NSRRemoteObject *)obj error:(NSError **)errorPtr changes:(BOOL *)changesPtr
 {
 	[self assertValidSubclass:class cmd:_cmd];
 	
-	NSArray *array = [class remoteGET:nil error:errorPtr];
+	NSArray *array = obj ? [class remoteAllViaObject:obj error:errorPtr] : [class remoteGET:nil error:errorPtr];
 	
 	if (!array)
 	{
@@ -119,7 +123,11 @@
 	return YES;
 }
 
-- (void) remoteFetchAll:(Class)class async:(NSRFetchCompletionBlock)block
+- (void) remoteFetchAll:(Class)class async:(NSRFetchCompletionBlock)block {
+    [self remoteFetchAll:class viaObject:nil async:block];
+}
+
+- (void) remoteFetchAll:(Class)class viaObject:(NSRRemoteObject *)obj async:(NSRFetchCompletionBlock)block
 {
 	[self assertValidSubclass:class cmd:_cmd];
 	

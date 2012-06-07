@@ -1181,6 +1181,17 @@ _NSR_REMOTEID_SYNTH remoteID;
 	return json;
 }
 
++ (NSArray *) remoteAllViaObject:(NSRRemoteObject *)obj error:(NSError **)error {
+    id json = [obj remoteRequest:@"GET" method:[self routeForControllerMethod:nil] body:nil error:error];
+    
+    if (!json)
+		return nil;
+	
+	[json translateRemoteDictionariesIntoInstancesOfClass:[self class]];
+    
+    return json;
+}
+
 + (void) remoteAllAsync:(NSRFetchAllCompletionBlock)completionBlock
 {
 	[self remoteGET:nil async:
@@ -1197,6 +1208,23 @@ _NSR_REMOTEID_SYNTH remoteID;
 			 completionBlock(result,error);
 		 }
 	 }];
+}
+
++ (void) remoteAllViaObject:(NSRRemoteObject *)obj async:(NSRFetchAllCompletionBlock)completionBlock {
+    [self remoteRequest:@"GET" method:[self routeForControllerMethod:nil] body:nil async:
+    ^(id result, NSError *error) 
+    {
+        if (!result)
+        {
+            completionBlock(nil, error);
+        }
+        else
+        {
+            [result translateRemoteDictionariesIntoInstancesOfClass:[self class]];
+            
+            completionBlock(result,error);
+        }
+    }];
 }
 
 

@@ -215,6 +215,22 @@
 + (NSArray *) remoteAll:(NSError **)error;
 
 /**
+ Returns an array of all remote objects (as instances of receiver's class.) Each instance’s properties will be set to those returned by Rails.
+ 
+ Makes a GET request to `/objects` (where `objects` is the pluralization of receiver's model name.)
+ 
+ Request done synchronously. See remoteAllAsync: for asynchronous operation.
+ 
+ **CoreData**
+ 
+ Each object returned in the array may be an existing or newly inserted object. All objects will reflect properites set to those returned by your server.
+ 
+ @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
+ @return NSArray of instances of receiver's class. Each object’s properties will be set to those returned by Rails.
+ */
++ (NSArray *) remoteAllViaObject:(NSRRemoteObject *)obj error:(NSError **)error;
+
+/**
  Retrieves an array of all remote objects (as instances of receiver's class.) Each instance’s properties will be set to those returned by Rails.
  
  Asynchronously makes a GET request to `/objects` (where `objects` is the pluralization of receiver's model name.)
@@ -226,6 +242,19 @@
  @param completionBlock Block to be executed when the request is complete.
  */
 + (void) remoteAllAsync:(NSRFetchAllCompletionBlock)completionBlock;
+
+/**
+ Retrieves an array of all remote objects (as instances of receiver's class.) Each instance’s properties will be set to those returned by Rails.
+ 
+ Asynchronously makes a GET request to `/objects` (where `objects` is the pluralization of receiver's model name.)
+ 
+ **CoreData**
+ 
+ Each object returned in the array may be an existing or newly inserted object. All objects will reflect properites set to those returned by your server.
+ 
+ @param completionBlock Block to be executed when the request is complete.
+ */
++ (void) remoteAllViaObject:(NSRRemoteObject* )obj async:(NSRFetchAllCompletionBlock)completionBlock;
 
 
 
