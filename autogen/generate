@@ -231,7 +231,7 @@ end
 class Generator  
   attr_accessor :prefix, :ruby, :created_at, :updated_at
   
-  OBJC_CONVERSIONS = {"integer" => "NSNumber", "float" => "NSNumber", "double" => "NSNumber", "string" => "NSString", "text" => "NSString", "datetime" => "NSDate"}
+  OBJC_CONVERSIONS = {"integer" => "NSNumber", "float" => "NSNumber", "double" => "NSNumber", "string" => "NSString", "text" => "NSString", "datetime" => "NSDate", "date" => "NSDate", "boolean" => "NSNumber"}
   
   def self.objc_header(file)
 %Q{//
@@ -377,8 +377,8 @@ class Runner
     end
     
     begin
-      Dir.mkdir(@@output_path)
       puts "Making directory #{@@options["project"]}.gen/"
+      Dir.mkdir(@@output_path)
     rescue
     end
 
