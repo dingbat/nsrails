@@ -369,11 +369,29 @@ NSRUseModelName(@"pref");
 	STAssertNil(findOne.body, nil);
 
 	/* FIND ALL */
+	
+	for (int i = 0; i < 2; i++)
+	{
+		NSRRequest *findAll;
+		if (i == 0)
+			findAll = [NSRRequest requestToFetchAllObjectsOfClass:[NormalClass class] viaObject:nil];
+		else
+			findAll = [NSRRequest requestToFetchAllObjectsOfClass:[NormalClass class]];
 		
-	NSRRequest *findAll = [NSRRequest requestToFetchAllObjectsOfClass:[NormalClass class]];
-	STAssertEqualObjects(findAll.route, @"normal_classes", nil);
-	STAssertEqualObjects(findAll.httpMethod, @"GET", nil);
-	STAssertNil(findAll.body, nil);
+		STAssertEqualObjects(findAll.route, @"normal_classes", nil);
+		STAssertEqualObjects(findAll.httpMethod, @"GET", nil);
+		STAssertNil(findAll.body, nil);
+	}
+
+	
+	/* FIND ALL VIA OBJECT */
+	
+	norm.remoteID = NSRNumber(5);
+	
+	NSRRequest *findAllObj = [NSRRequest requestToFetchAllObjectsOfClass:[PrefixClass class] viaObject:norm];
+	STAssertEqualObjects(findAllObj.route, @"normal_classes/5/prefs", nil);
+	STAssertEqualObjects(findAllObj.httpMethod, @"GET", nil);
+	STAssertNil(findAllObj.body, nil);
 }
 
 - (void)setUp

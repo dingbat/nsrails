@@ -48,6 +48,7 @@
 
 + (NSRRequest *) requestToFetchObjectWithID:(NSNumber *)rID ofClass:(Class)c;
 + (NSRRequest *) requestToFetchAllObjectsOfClass:(Class)c;
++ (NSRRequest *) requestToFetchAllObjectsOfClass:(Class)c viaObject:(NSRRemoteObject *)obj;
 
 + (NSRRequest *) requestToCreateObject:(NSRRemoteObject *)obj;
 + (NSRRequest *) requestToFetchObject:(NSRRemoteObject *)obj;

@@ -1042,18 +1042,28 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 + (NSArray *) remoteAll:(NSError **)error
 {
-	id json = [[NSRRequest requestToFetchAllObjectsOfClass:self] sendSynchronous:error];
-	if (!json)
+	return [self remoteAllViaObject:nil error:error];
+}
+
++ (NSArray *) remoteAllViaObject:(NSRRemoteObject *)obj error:(NSError **)error
+{
+    id json = [[NSRRequest requestToFetchAllObjectsOfClass:self viaObject:obj] sendSynchronous:error];
+    if (!json)
 		return nil;
 	
 	[json translateRemoteDictionariesIntoInstancesOfClass:[self class]];
-	
-	return json;
+    
+    return json;
 }
 
 + (void) remoteAllAsync:(NSRFetchAllCompletionBlock)completionBlock
 {
-	[[NSRRequest requestToFetchAllObjectsOfClass:self] sendAsynchronous:
+	[self remoteAllViaObject:nil async:completionBlock];
+}
+
++ (void) remoteAllViaObject:(NSRRemoteObject *)obj async:(NSRFetchAllCompletionBlock)completionBlock
+{
+    [[NSRRequest requestToFetchAllObjectsOfClass:self viaObject:obj] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
 		 if (!result)
@@ -1063,7 +1073,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 		 else
 		 {
 			 [result translateRemoteDictionariesIntoInstancesOfClass:[self class]];
-			 
+
 			 completionBlock(result,error);
 		 }
 	 }];

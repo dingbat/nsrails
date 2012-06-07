@@ -100,9 +100,14 @@
 
 - (BOOL) remoteFetchAll:(Class)class error:(NSError **)errorPtr changes:(BOOL *)changesPtr
 {
+    return [self remoteFetchAll:class viaObject:nil error:errorPtr changes:changesPtr];
+}
+
+- (BOOL) remoteFetchAll:(Class)class viaObject:(NSRRemoteObject *)obj error:(NSError **)errorPtr changes:(BOOL *)changesPtr
+{
 	[self assertValidSubclass:class cmd:_cmd];
 	
-	NSArray *array = [[NSRRequest requestToFetchAllObjectsOfClass:class] sendSynchronous:errorPtr];
+	NSArray *array = [[NSRRequest requestToFetchAllObjectsOfClass:class viaObject:obj] sendSynchronous:errorPtr];
 	
 	if (!array)
 	{
@@ -121,9 +126,14 @@
 
 - (void) remoteFetchAll:(Class)class async:(NSRFetchCompletionBlock)block
 {
+    [self remoteFetchAll:class viaObject:nil async:block];
+}
+
+- (void) remoteFetchAll:(Class)class viaObject:(NSRRemoteObject *)obj async:(NSRFetchCompletionBlock)block
+{
 	[self assertValidSubclass:class cmd:_cmd];
 	
-	[[NSRRequest requestToFetchAllObjectsOfClass:class] sendAsynchronous:
+	[[NSRRequest requestToFetchAllObjectsOfClass:class viaObject:obj] sendAsynchronous:
 	 ^(id jsonRep, NSError *error) 
 	 {
 		if (!jsonRep)

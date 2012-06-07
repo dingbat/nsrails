@@ -173,6 +173,13 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	return [[NSRRequest GET] routeToClass:c];
 }
 
++ (NSRRequest *) requestToFetchAllObjectsOfClass:(Class)c viaObject:(NSRRemoteObject *)obj
+{
+	if (!obj)
+		return [NSRRequest requestToFetchAllObjectsOfClass:c];
+	
+	return [[NSRRequest GET] routeToObject:obj withCustomMethod:[c routeForControllerMethod:nil]];
+}
 
 + (void) assertPresentRemoteID:(NSRRemoteObject *)obj forMethod:(NSString *)str
 {
