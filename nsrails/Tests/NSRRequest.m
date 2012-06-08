@@ -519,6 +519,32 @@ NSRUseModelName(@"pref");
 	STAssertEqualObjects(findAllObj.route, @"prefs", nil);
 }
 
+- (void) test_query_params
+{
+	[[NSRConfig defaultConfig] setAppURL:@"http://myapp.com"];
+	
+	NSRRequest *req = [NSRRequest GET];
+	[req.queryParameters setObject:@"etc" forKey:@"q"];
+	
+	NSURLRequest *request = [req HTTPRequest];
+	STAssertEqualObjects([request.URL description], @"http://myapp.com?q=etc", nil);
+	
+	[req.queryParameters setObject:@"num2" forKey:@"qz"];
+	
+	request = [req HTTPRequest];
+	STAssertEqualObjects([request.URL description], @"http://myapp.com?q=etc&qz=num2", nil);
+	
+	[req routeTo:@"test"];
+
+	request = [req HTTPRequest];
+	STAssertEqualObjects([request.URL description], @"http://myapp.com/test?q=etc&qz=num2", nil);
+	
+	[req.queryParameters removeAllObjects];
+
+	request = [req HTTPRequest];
+	STAssertEqualObjects([request.URL description], @"http://myapp.com/test", nil);
+}
+
 - (void)setUp
 {
 	[NSRConfig resetConfigs];

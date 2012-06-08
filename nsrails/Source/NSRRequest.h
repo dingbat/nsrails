@@ -82,6 +82,19 @@
 @property (nonatomic, strong) NSString *httpMethod;
 
 /**
+ The query parameters with which to make the request.
+ 
+	 NSRRequest *request = [[NSRRequest GET] routeTo:@"something"];
+	 [request.queryParameters setObject:@"search" forKey:@"q"];
+	 
+	 //GET to /something?q=search
+	 id response = [request sendSynchronous:&e];
+ 
+ @warning Doesn't escape anything! Make sure your params are RFC 1808 compliant.
+ */
+@property (nonatomic, strong) NSMutableDictionary *queryParameters;
+
+/**
  Request body.
  
  Must be a JSON-parsable object (NSArray, NSDictionary, NSString) or will throw an exception.

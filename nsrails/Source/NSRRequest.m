@@ -68,7 +68,15 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 @end
 
 @implementation NSRRequest
-@synthesize route, httpMethod, body, config;
+@synthesize route, httpMethod, body, config, queryParameters;
+
+- (NSMutableDictionary *) queryParameters
+{
+	if (!queryParameters)
+		queryParameters = [[NSMutableDictionary alloc] init];
+
+	return queryParameters;
+}
 
 # pragma mark - Config
 
@@ -82,7 +90,6 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 }
 
 # pragma mark - Convenient routing
-
 
 - (id) routeTo:(NSString *)r
 {
@@ -275,10 +282,24 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	}
 
 	NSURL *url = [NSURL URLWithString:self.config.appURL];
-	if (route)
-		url = [url URLByAppendingPathComponent:route];
 	
-	NSRLogInOut(@"OUT", body, @"===> %@ to %@", httpMethod, url);	
+	NSString *appendedRoute = (route ? route : @"");
+	if (queryParameters.count > 0)
+	{
+		NSMutableArray *params = [NSMutableArray arrayWithCapacity:queryParameters.count];
+		[queryParameters enumerateKeysAndObjectsUsingBlock:
+		 ^(id key, id obj, BOOL *stop) 
+		 {
+			 //TODO
+			 //Escape to be RFC 1808 compliant
+			 [params addObject:[NSString stringWithFormat:@"%@=%@",key,obj]];
+		 }];
+		appendedRoute = [appendedRoute stringByAppendingFormat:@"?%@",[params componentsJoinedByString:@"&"]];
+	}
+	
+	url = [NSURL URLWithString:appendedRoute relativeToURL:url];
+	
+	NSRLogInOut(@"OUT", body, @"===> %@ to %@", httpMethod, [url absoluteString]);	
 	
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url
 														   cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
