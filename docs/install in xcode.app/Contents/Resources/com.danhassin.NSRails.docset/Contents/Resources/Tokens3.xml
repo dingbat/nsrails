@@ -78,6 +78,28 @@
 		</Token>
 		
 		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRequest/setQueryParameters:</TokenIdentifier>
+			<Abstract type="html">The query parameters with which to make the request.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSMutableDictionary *queryParameters</Declaration>
+			
+			
+			<Anchor>//api/name/queryParameters</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instp/NSRRequest/queryParameters</TokenIdentifier>
+			<Abstract type="html">The query parameters with which to make the request.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSMutableDictionary *queryParameters</Declaration>
+			
+			
+			<Anchor>//api/name/queryParameters</Anchor>
+		</Token>
+		
+		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRRequest/setBody:</TokenIdentifier>
 			<Abstract type="html">Request body.</Abstract>
 			<DeclaredIn>NSRRequest.h</DeclaredIn>			
