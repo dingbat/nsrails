@@ -46,6 +46,8 @@
 	
 	<option value="//api/name/httpMethod">&nbsp;&nbsp;&nbsp;&nbsp;httpMethod</option>
 	
+	<option value="//api/name/queryParameters">&nbsp;&nbsp;&nbsp;&nbsp;queryParameters</option>
+	
 	<option value="//api/name/route">&nbsp;&nbsp;&nbsp;&nbsp;route</option>
 	
 	
@@ -141,6 +143,8 @@
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/config">config</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/httpMethod">httpMethod</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/queryParameters">queryParameters</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/route">route</a></span></li>
 	
@@ -290,6 +294,13 @@ id response = [request sendSynchronous:&amp;e];
 	<span class="tooltip">
 		<code><a href="#//api/name/httpMethod">&nbsp;&nbsp;httpMethod</a></code>
 		<span class="tooltip"><p>The HTTP verb with which to make the request.</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/queryParameters">&nbsp;&nbsp;queryParameters</a></code>
+		<span class="tooltip"><p>The query parameters with which to make the request.</p></span>
 	</span>
 	<span class="task-item-suffix">property</span>
 	
@@ -601,6 +612,50 @@ id response = [request sendSynchronous:&amp;e];
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>This should hardly ever be <em>set</em>. Use the <a href="#//api/name/GET">GET</a>, <a href="#//api/name/DELETE">DELETE</a>, <a href="#//api/name/POST">POST</a>, <a href="#//api/name/PUT">PUT</a>, and <a href="#//api/name/PATCH">PATCH</a> factory methods.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/queryParameters" title="queryParameters"></a>
+	<h3 class="subsubtitle method-title">queryParameters</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The query parameters with which to make the request.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSMutableDictionary *queryParameters</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<pre><code> NSRRequest *request = [[NSRRequest GET] routeTo:@"something"];
+ [request.queryParameters setObject:@"search" forKey:@"q"];
+
+ //GET to /something?q=search
+ id response = [request sendSynchronous:&amp;e];
+</code></pre><div class="warning"><p><strong>Warning:</strong> Doesn&rsquo;t escape anything! Make sure your params are RFC 1808 compliant.</p></div>
 	</div>
 	
 	
