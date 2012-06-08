@@ -130,6 +130,14 @@
 		}
 	}
 	
+	// replace items that end in Id with ID
+	if ([underscored hasSuffix:@"Id"])
+		[underscored replaceCharactersInRange:NSMakeRange(underscored.length - 2, 2) withString:@"ID"];
+
+	// replace items that end in Ids with IDs
+	if ([underscored hasSuffix:@"Ids"])
+		[underscored replaceCharactersInRange:NSMakeRange(underscored.length - 3, 3) withString:@"IDs"];
+
 	return underscored;
 }
 
@@ -144,11 +152,10 @@
 	if ([self isEqualToString:@"Person"])
 		return @"People";
 	
-	if ([[self substringFromIndex:self.length-1] isEqualToString:@"y"] &&
-		(self.length == 1 || ![[self substringFromIndex:self.length-2] isEqualToString:@"ey"]))
+	if ([self hasSuffix:@"y"] && ![self hasSuffix:@"ey"])
 		return [[self substringToIndex:self.length-1] stringByAppendingString:@"ies"];
 	
-	if ([[self substringFromIndex:self.length-1] isEqualToString:@"s"])
+	if ([self hasSuffix:@"s"])
 		return [self stringByAppendingString:@"es"];
 	
 	return [self stringByAppendingString:@"s"];

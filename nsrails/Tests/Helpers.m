@@ -92,6 +92,7 @@
 
 - (void) test_inflection
 {
+	NSRAssertEqualsUnderscored(@"p", @"p");
 	NSRAssertEqualsUnderscored(@"post", @"post");
 	NSRAssertEqualsUnderscored(@"Post", @"post");
 	NSRAssertEqualsUnderscored(@"POST", @"post");
@@ -110,9 +111,13 @@
 	STAssertEqualObjects([@"PostDH" underscoreIgnorePrefix:YES], @"post_dh", nil);
 	STAssertEqualObjects([@"DHPostDH" underscoreIgnorePrefix:YES], @"post_dh", nil);
 	
+	NSRAssertEqualsCamelized(@"p", @"p");
 	NSRAssertEqualsCamelized(@"post", @"post");
 	NSRAssertEqualsCamelized(@"Post", @"Post");
 	NSRAssertEqualsCamelized(@"post_object", @"postObject");
+	NSRAssertEqualsCamelized(@"post_object_id", @"postObjectID");
+	NSRAssertEqualsCamelized(@"post_object_ids", @"postObjectIDs");
+	NSRAssertEqualsCamelized(@"post_object_idx", @"postObjectIdx");
 	NSRAssertEqualsCamelized(@"post_object_abc", @"postObjectAbc");
 	NSRAssertEqualsCamelized(@"post_object_ABC", @"postObjectABC");
 	NSRAssertEqualsCamelized(@"post_object_ABC_something", @"postObjectABCSomething");
