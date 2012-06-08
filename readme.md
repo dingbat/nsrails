@@ -129,7 +129,7 @@ Dependencies
 Credits
 ----------
 
-Version 1.1.
+Version 1.2.
 
 A lot of NSRails was inspired by the [ObjectiveResource](https://github.com/yfactorial/objectiveresource) project. CoreData integration help from jdjennin of Twin Engine Labs.
 
