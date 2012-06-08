@@ -90,8 +90,7 @@ post.content = @"Changed!";
 BOOL objectDidChange;
 [post remoteFetch:&error changes:&objectDidChange];
 
-// If your app defines nested resources separately (instead of simply sending them bundled on show),
-// you can retrieve a collection based on another object - will GET to /posts/1/responses.json
+// Retrieve a collection based on an object - will GET /posts/1/responses.json
 NSArray *responses = [Response remoteAllViaObject:post error:&error];
 
 // Async is also available:
