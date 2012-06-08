@@ -96,6 +96,25 @@ Note that you do not have to define an id property for your Objective-C class, a
 		</Token>
 		
 		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteAllViaObject:error:</TokenIdentifier>
+			<Abstract type="html">Returns an array of all remote objects (as instances of receiver&apos;s class), constructed with a parent prefix. Each instance’s properties will be set to those returned by Rails.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>+ (NSArray *)remoteAllViaObject:(NSRRemoteObject *)parentObject error:(NSError **)error</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>parentObject</Name>
+					<Abstract type="html">Remote object by which to request the collection from - establishes pattern for resources depending on nesting. Raises an exception if this object&apos;s remoteID is nil, as it is used to construct the route.</Abstract>
+				</Parameter><Parameter>
+					<Name>error</Name>
+					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract type="html">NSArray of instances of receiver&apos;s class. Each object’s properties will be set to those returned by Rails.</Abstract></ReturnValue>
+			<Anchor>//api/name/remoteAllViaObject:error:</Anchor>
+		</Token>
+		
+		<Token>
 			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteAllAsync:</TokenIdentifier>
 			<Abstract type="html">Retrieves an array of all remote objects (as instances of receiver&apos;s class.) Each instance’s properties will be set to those returned by Rails.</Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
@@ -109,6 +128,25 @@ Note that you do not have to define an id property for your Objective-C class, a
 			</Parameters>
 			
 			<Anchor>//api/name/remoteAllAsync:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteAllViaObject:async:</TokenIdentifier>
+			<Abstract type="html">Retrieves an array of all remote objects (as instances of receiver&apos;s class.) Each instance’s properties will be set to those returned by Rails.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>+ (void)remoteAllViaObject:(NSRRemoteObject *)parentObject async:(NSRFetchAllCompletionBlock)completionBlock</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>parentObject</Name>
+					<Abstract type="html">Remote object by which to request the collection from - establishes pattern for resources depending on nesting. Raises an exception if this object&apos;s remoteID is nil, as it is used to construct the route.</Abstract>
+				</Parameter><Parameter>
+					<Name>completionBlock</Name>
+					<Abstract type="html">Block to be executed when the request is complete.</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/remoteAllViaObject:async:</Anchor>
 		</Token>
 		
 		<Token>
@@ -147,144 +185,6 @@ Note that you do not have to define an id property for your Objective-C class, a
 			</Parameters>
 			
 			<Anchor>//api/name/remoteObjectWithID:async:</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteGET:error:</TokenIdentifier>
-			<Abstract type="html">Returns the JSON response for a GET request to a custom method.</Abstract>
-			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
-			
-			<Declaration>+ (id)remoteGET:(NSString *)customRESTMethod error:(NSError **)error</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>customRESTMethod</Name>
-					<Abstract type="html">Custom REST method to be called on the subclass&apos;s controller. If nil, will route to index.</Abstract>
-				</Parameter><Parameter>
-					<Name>error</Name>
-					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
-				</Parameter>
-			</Parameters>
-			<ReturnValue><Abstract type="html">JSON response object (could be an NSArray or NSDictionary).</Abstract></ReturnValue>
-			<Anchor>//api/name/remoteGET:error:</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteGET:async:</TokenIdentifier>
-			<Abstract type="html">Makes a GET request to a custom method.</Abstract>
-			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
-			
-			<Declaration>+ (void)remoteGET:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>customRESTMethod</Name>
-					<Abstract type="html">Custom REST method to be called on the subclass&apos;s controller. If nil, will route to index.</Abstract>
-				</Parameter><Parameter>
-					<Name>completionBlock</Name>
-					<Abstract type="html">Block to be executed when the request is complete.</Abstract>
-				</Parameter>
-			</Parameters>
-			
-			<Anchor>//api/name/remoteGET:async:</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteRequest:method:bodyAsObject:error:</TokenIdentifier>
-			<Abstract type="html">Returns the JSON response for a request with a custom method, sending an NSRRemoteObject subclass instance as the body.</Abstract>
-			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
-			
-			<Declaration>+ (id)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRRemoteObject *)obj error:(NSError **)error</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>httpVerb</Name>
-					<Abstract type="html">The HTTP method to use (GET, POST, PUT, DELETE, etc.)</Abstract>
-				</Parameter><Parameter>
-					<Name>customRESTMethod</Name>
-					<Abstract type="html">Custom REST method to be called on the subclass&apos;s controller. If nil, will route to index.</Abstract>
-				</Parameter><Parameter>
-					<Name>obj</Name>
-					<Abstract type="html">NSRRemoteObject subclass instance - object you want to send in the body.</Abstract>
-				</Parameter><Parameter>
-					<Name>error</Name>
-					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
-				</Parameter>
-			</Parameters>
-			<ReturnValue><Abstract type="html">JSON response object (could be an NSArray or NSDictionary).</Abstract></ReturnValue>
-			<Anchor>//api/name/remoteRequest:method:bodyAsObject:error:</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteRequest:method:bodyAsObject:async:</TokenIdentifier>
-			<Abstract type="html">Makes a request with a custom method, sending an NSRRemoteObject subclass instance as the body.</Abstract>
-			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
-			
-			<Declaration>+ (void)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod bodyAsObject:(NSRRemoteObject *)obj async:(NSRHTTPCompletionBlock)completionBlock</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>httpVerb</Name>
-					<Abstract type="html">The HTTP method to use (GET, POST, PUT, DELETE, etc.)</Abstract>
-				</Parameter><Parameter>
-					<Name>customRESTMethod</Name>
-					<Abstract type="html">Custom REST method to be called on the subclass&apos;s controller. If nil, will route to index.</Abstract>
-				</Parameter><Parameter>
-					<Name>obj</Name>
-					<Abstract type="html">NSRRemoteObject subclass instance - object you want to send in the body.</Abstract>
-				</Parameter><Parameter>
-					<Name>completionBlock</Name>
-					<Abstract type="html">Block to be executed when the request is complete.</Abstract>
-				</Parameter>
-			</Parameters>
-			
-			<Anchor>//api/name/remoteRequest:method:bodyAsObject:async:</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteRequest:method:body:error:</TokenIdentifier>
-			<Abstract type="html">Returns the JSON response for a request with a custom method.</Abstract>
-			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
-			
-			<Declaration>+ (id)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body error:(NSError **)error</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>httpVerb</Name>
-					<Abstract type="html">The HTTP method to use (GET, POST, PUT, DELETE, etc.)</Abstract>
-				</Parameter><Parameter>
-					<Name>customRESTMethod</Name>
-					<Abstract type="html">The REST method to call (appended to the route). If nil, will call index. See above for examples.</Abstract>
-				</Parameter><Parameter>
-					<Name>body</Name>
-					<Abstract type="html">Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).</Abstract>
-				</Parameter><Parameter>
-					<Name>error</Name>
-					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
-				</Parameter>
-			</Parameters>
-			<ReturnValue><Abstract type="html">JSON response object (could be an NSArray or NSDictionary).</Abstract></ReturnValue>
-			<Anchor>//api/name/remoteRequest:method:body:error:</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteRequest:method:body:async:</TokenIdentifier>
-			<Abstract type="html">Makes a request with a custom method.</Abstract>
-			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
-			
-			<Declaration>+ (void)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body async:(NSRHTTPCompletionBlock)completionBlock</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>httpVerb</Name>
-					<Abstract type="html">The HTTP method to use (GET, POST, PUT, DELETE, etc.)</Abstract>
-				</Parameter><Parameter>
-					<Name>customRESTMethod</Name>
-					<Abstract type="html">The REST method to call (appended to the route). If nil, will call index. See above for examples.</Abstract>
-				</Parameter><Parameter>
-					<Name>body</Name>
-					<Abstract type="html">Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).</Abstract>
-				</Parameter><Parameter>
-					<Name>completionBlock</Name>
-					<Abstract type="html">Block to be executed when the request is complete.</Abstract>
-				</Parameter>
-			</Parameters>
-			
-			<Anchor>//api/name/remoteRequest:method:body:async:</Anchor>
 		</Token>
 		
 		<Token>
@@ -479,138 +379,6 @@ Note that because this only tracks differences in local changes, properties that
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteGET:error:</TokenIdentifier>
-			<Abstract type="html">Returns the JSON response for a GET request to a custom method.</Abstract>
-			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
-			
-			<Declaration>- (id)remoteGET:(NSString *)customRESTMethod error:(NSError **)error</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>customRESTMethod</Name>
-					<Abstract type="html">Custom REST method to be called on the remote object corresponding to the receiver. If nil, will route to only the receiver (objects/1).</Abstract>
-				</Parameter><Parameter>
-					<Name>error</Name>
-					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
-				</Parameter>
-			</Parameters>
-			<ReturnValue><Abstract type="html">JSON response object (could be an NSArray or NSDictionary).</Abstract></ReturnValue>
-			<Anchor>//api/name/remoteGET:error:</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteGET:async:</TokenIdentifier>
-			<Abstract type="html">Makes a GET request to a custom method.</Abstract>
-			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
-			
-			<Declaration>- (void)remoteGET:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>customRESTMethod</Name>
-					<Abstract type="html">Custom REST method to be called on the remote object corresponding to the receiver. If nil, will route to only the receiver (objects/1).</Abstract>
-				</Parameter><Parameter>
-					<Name>completionBlock</Name>
-					<Abstract type="html">Block to be executed when the request is complete.</Abstract>
-				</Parameter>
-			</Parameters>
-			
-			<Anchor>//api/name/remoteGET:async:</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteRequest:method:error:</TokenIdentifier>
-			<Abstract type="html">Returns the JSON response for a request with a custom method, sending the JSON representation of the receiver as the request body.</Abstract>
-			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
-			
-			<Declaration>- (id)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod error:(NSError **)error</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>httpVerb</Name>
-					<Abstract type="html">The HTTP method to use (GET, POST, PUT, DELETE, etc.)</Abstract>
-				</Parameter><Parameter>
-					<Name>customRESTMethod</Name>
-					<Abstract type="html">Custom REST method to be called on the remote object corresponding to the receiver. If nil, will route to only the receiver (objects/1).</Abstract>
-				</Parameter><Parameter>
-					<Name>error</Name>
-					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
-				</Parameter>
-			</Parameters>
-			<ReturnValue><Abstract type="html">JSON response object (could be an NSArray or NSDictionary).</Abstract></ReturnValue>
-			<Anchor>//api/name/remoteRequest:method:error:</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteRequest:method:async:</TokenIdentifier>
-			<Abstract type="html">Makes a request with a custom method, sending the JSON representation of the receiver as the request body.</Abstract>
-			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
-			
-			<Declaration>- (void)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod async:(NSRHTTPCompletionBlock)completionBlock</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>httpVerb</Name>
-					<Abstract type="html">The HTTP method to use (GET, POST, PUT, DELETE, etc.)</Abstract>
-				</Parameter><Parameter>
-					<Name>customRESTMethod</Name>
-					<Abstract type="html">Custom REST method to be called on the remote object corresponding to the receiver. If nil, will route to only the receiver (objects/1).</Abstract>
-				</Parameter><Parameter>
-					<Name>completionBlock</Name>
-					<Abstract type="html">Block to be executed when the request is complete.</Abstract>
-				</Parameter>
-			</Parameters>
-			
-			<Anchor>//api/name/remoteRequest:method:async:</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteRequest:method:body:error:</TokenIdentifier>
-			<Abstract type="html">Returns the JSON response for a request with a custom method on the receiver&apos;s corresponding remote object.</Abstract>
-			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
-			
-			<Declaration>- (id)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body error:(NSError **)error</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>httpVerb</Name>
-					<Abstract type="html">The HTTP method to use (GET, POST, PUT, DELETE, etc.)</Abstract>
-				</Parameter><Parameter>
-					<Name>customRESTMethod</Name>
-					<Abstract type="html">The REST method to call (appended to the route). If nil, will call index. See above for examples.</Abstract>
-				</Parameter><Parameter>
-					<Name>body</Name>
-					<Abstract type="html">Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).</Abstract>
-				</Parameter><Parameter>
-					<Name>error</Name>
-					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
-				</Parameter>
-			</Parameters>
-			<ReturnValue><Abstract type="html">JSON response object (could be an NSArray or NSDictionary).</Abstract></ReturnValue>
-			<Anchor>//api/name/remoteRequest:method:body:error:</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteRequest:method:body:async:</TokenIdentifier>
-			<Abstract type="html">Makes a request with a custom method on the receiver&apos;s corresponding remote object.</Abstract>
-			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
-			
-			<Declaration>- (void)remoteRequest:(NSString *)httpVerb method:(NSString *)customRESTMethod body:(id)body async:(NSRHTTPCompletionBlock)completionBlock</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>httpVerb</Name>
-					<Abstract type="html">The HTTP method to use (GET, POST, PUT, DELETE, etc.)</Abstract>
-				</Parameter><Parameter>
-					<Name>customRESTMethod</Name>
-					<Abstract type="html">The REST method to call (appended to the route). If nil, will call index. See above for examples.</Abstract>
-				</Parameter><Parameter>
-					<Name>body</Name>
-					<Abstract type="html">Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).</Abstract>
-				</Parameter><Parameter>
-					<Name>completionBlock</Name>
-					<Abstract type="html">Block to be executed when the request is complete.</Abstract>
-				</Parameter>
-			</Parameters>
-			
-			<Anchor>//api/name/remoteRequest:method:body:async:</Anchor>
-		</Token>
-		
-		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteDictionaryRepresentationWrapped:</TokenIdentifier>
 			<Abstract type="html">Serializes the receiver&apos;s properties into a dictionary.
   </Abstract>
@@ -783,6 +551,44 @@ This method should not be used without CoreData enabled (see top).</Abstract>
 			
 			<ReturnValue><Abstract type="html">Whether or not the save was successful.</Abstract></ReturnValue>
 			<Anchor>//api/name/saveContext</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteModelName</TokenIdentifier>
+			<Abstract type="html">The equivalent name of this class on your server.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>+ (NSString *)remoteModelName</Declaration>
+			
+			
+			<Anchor>//api/name/remoteModelName</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteControllerName</TokenIdentifier>
+			<Abstract type="html">The name of this class&apos;s controller on the server.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>+ (NSString *)remoteControllerName</Declaration>
+			
+			
+			<Anchor>//api/name/remoteControllerName</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/objectUsedToPrefixRequest:</TokenIdentifier>
+			<Abstract type="html">Used if instances of this class should have their resource path be based off an association.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (NSRRemoteObject *)objectUsedToPrefixRequest:(NSRRequest *)request</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>request</Name>
+					<Abstract type="html">The request whose path is currently being evalutated. Its route will be the route before adding the prefix (ie, the route used if the behavior is not desired).</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract type="html">An object (typically an instance variable) that represents a parent to this class, or nil if this behavior is not desired.</Abstract></ReturnValue>
+			<Anchor>//api/name/objectUsedToPrefixRequest:</Anchor>
 		</Token>
 		
 	</File>

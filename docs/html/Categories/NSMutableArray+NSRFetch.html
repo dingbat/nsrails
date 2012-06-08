@@ -46,6 +46,10 @@
 	
 	<option value="//api/name/remoteFetchAll:error:changes:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteFetchAll:error:changes:</option>
 	
+	<option value="//api/name/remoteFetchAll:viaObject:async:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteFetchAll:viaObject:async:</option>
+	
+	<option value="//api/name/remoteFetchAll:viaObject:error:changes:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteFetchAll:viaObject:error:changes:</option>
+	
 	<option value="//api/name/translateRemoteDictionariesIntoInstancesOfClass:">&nbsp;&nbsp;&nbsp;&nbsp;- translateRemoteDictionariesIntoInstancesOfClass:</option>
 	
 	
@@ -77,6 +81,10 @@
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteFetchAll:async:">remoteFetchAll:async:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteFetchAll:error:changes:">remoteFetchAll:error:changes:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteFetchAll:viaObject:async:">remoteFetchAll:viaObject:async:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteFetchAll:viaObject:error:changes:">remoteFetchAll:viaObject:error:changes:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/translateRemoteDictionariesIntoInstancesOfClass:">translateRemoteDictionariesIntoInstancesOfClass:</a></span></li>
 	
@@ -125,14 +133,28 @@
 							<li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteFetchAll:error:changes:">&ndash;&nbsp;remoteFetchAll:error:changes:</a></code>
-		<span class="tooltip"><p>Updates elements in this array using index of remote objects.</p></span>
+		<span class="tooltip"><p>Updates elements in this array.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/remoteFetchAll:viaObject:error:changes:">&ndash;&nbsp;remoteFetchAll:viaObject:error:changes:</a></code>
+		<span class="tooltip"><p>Updates elements in this array.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteFetchAll:async:">&ndash;&nbsp;remoteFetchAll:async:</a></code>
-		<span class="tooltip"><p>Updates elements in this array using index of remote objects.</p></span>
+		<span class="tooltip"><p>Updates elements in this array.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/remoteFetchAll:viaObject:async:">&ndash;&nbsp;remoteFetchAll:viaObject:async:</a></code>
+		<span class="tooltip"><p>Updates elements in this array.</p></span>
 	</span>
 	
 	
@@ -167,7 +189,7 @@
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Updates elements in this array using index of remote objects.</p>
+		<p>Updates elements in this array.</p>
 	</div>		
 	
 	
@@ -221,7 +243,7 @@
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Updates elements in this array using index of remote objects.</p>
+		<p>Updates elements in this array.</p>
 	</div>		
 	
 	
@@ -266,6 +288,140 @@
 		<p>Makes a GET request to <code>/objects</code> (where <code>objects</code> is the pluralization of <em>class</em>&rsquo;s model name.)</p>
 
 <p>Request done synchronously. See <a href="#//api/name/remoteFetchAll:async:">remoteFetchAll:async:</a> for asynchronous operation.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSMutableArray+NSRails.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/remoteFetchAll:viaObject:async:" title="remoteFetchAll:viaObject:async:"></a>
+	<h3 class="subsubtitle method-title">remoteFetchAll:viaObject:async:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Updates elements in this array.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)remoteFetchAll:(Class)<em>class</em> viaObject:(NSRRemoteObject *)<em>parentObject</em> async:(NSRFetchCompletionBlock)<em>completionBlock</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>class</em></dt>
+			<dd><p>Class with which to build instances to insert into this array. Raises an exception if this class does not subclass <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>parentObject</em></dt>
+			<dd><p>Remote object by which to request the collection from &ndash; establishes pattern for resources depending on nesting. Raises an exception if this object&rsquo;s <code>remoteID</code> is nil, as it is used to construct the route.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>completionBlock</em></dt>
+			<dd><p>Block to be executed on completion..</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Makes a GET request to <code>/parents/3/objects</code> (where <code>parents/3</code> is the path for the <strong>parentObject</strong>, and <code>objects</code> is the pluralization of <em>class</em>&rsquo;s model name.)</p>
+
+<p>If viaObject is specified, will nest resource request (ex. GET to <code>/parents/3/objects</code>.)</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSMutableArray+NSRails.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/remoteFetchAll:viaObject:error:changes:" title="remoteFetchAll:viaObject:error:changes:"></a>
+	<h3 class="subsubtitle method-title">remoteFetchAll:viaObject:error:changes:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Updates elements in this array.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (BOOL)remoteFetchAll:(Class)<em>class</em> viaObject:(NSRRemoteObject *)<em>parentObject</em> error:(NSError **)<em>errorPtr</em> changes:(BOOL *)<em>changesPtr</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>class</em></dt>
+			<dd><p>Class with which to build instances to insert into this array. Raises an exception if this class does not subclass <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>parentObject</em></dt>
+			<dd><p>Remote object by which to request the collection from &ndash; establishes pattern for resources depending on nesting. Raises an exception if this object&rsquo;s <code>remoteID</code> is nil, as it is used to construct the route.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>errorPtr</em></dt>
+			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>changesPtr</em></dt>
+			<dd><p>Reference to a BOOL. Will indicate whether or not there were local changes to the array after this operation. Returns <code>YES</code> if no elements were added or deleted, and if no element changed when updating its respective properties.</p>
+
+<p>Works in a very similar way to remoteFetch: in <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if fetch was successful. Returns <code>NO</code> if an error occurred.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Makes a GET request to <code>/parents/3/objects</code> (where <code>parents/3</code> is the path for the <strong>parentObject</strong>, and <code>objects</code> is the pluralization of <em>class</em>&rsquo;s model name.)</p>
+
+<p>Request done synchronously. See <a href="#//api/name/remoteFetchAll:viaObject:async:">remoteFetchAll:viaObject:async:</a> for asynchronous operation.</p>
 	</div>
 	
 	
@@ -344,7 +500,7 @@
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-05)</span><br />
+						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-07)</span><br />
 						
 						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 789)</a>.</span></p>
 						

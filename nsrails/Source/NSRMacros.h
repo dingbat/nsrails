@@ -58,8 +58,6 @@
 /// =============================================================================================
 
 
-//#define NSR_DEPRECATE(nam, msg) void inline __attribute__((deprecated(#msg))) name (void); { name(); };
-
 #define NSR_DEPRECATE(name, msg) + (void) name __attribute__ ((deprecated(#msg))) { } + (void) name##_dep { [self name]; }
 
 

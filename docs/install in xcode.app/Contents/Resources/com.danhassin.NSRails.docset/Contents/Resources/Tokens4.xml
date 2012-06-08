@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Tokens version="1.0">
+	<File path="Categories/NSMutableArray+NSRFetch.html">
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/cat/NSMutableArray(NSRFetch)</TokenIdentifier>
+			<Abstract type="html"></Abstract>
+			<DeclaredIn>NSMutableArray+NSRails.h</DeclaredIn>
+			
+			<NodeRef refid="4"/>
+		</Token>
+		
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/intfm/NSMutableArray(NSRFetch)/remoteFetchAll:error:changes:</TokenIdentifier>
+			<Abstract type="html">Updates elements in this array.</Abstract>
+			<DeclaredIn>NSMutableArray+NSRails.h</DeclaredIn>			
+			
+			<Declaration>- (BOOL)remoteFetchAll:(Class)class error:(NSError **)errorPtr changes:(BOOL *)changesPtr</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>class</Name>
+					<Abstract type="html">Class with which to build instances to insert into this array. Raises an exception if this class does not subclass NSRRemoteObject.</Abstract>
+				</Parameter><Parameter>
+					<Name>errorPtr</Name>
+					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
+				</Parameter><Parameter>
+					<Name>changesPtr</Name>
+					<Abstract type="html">Reference to a BOOL. Will indicate whether or not there were local changes to the array after this operation. Returns YES if no elements were added or deleted, and if no element changed when updating its respective properties.
+
+Works in a very similar way to remoteFetch: in NSRRemoteObject.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract type="html">YES if fetch was successful. Returns NO if an error occurred.</Abstract></ReturnValue>
+			<Anchor>//api/name/remoteFetchAll:error:changes:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/intfm/NSMutableArray(NSRFetch)/remoteFetchAll:viaObject:error:changes:</TokenIdentifier>
+			<Abstract type="html">Updates elements in this array.</Abstract>
+			<DeclaredIn>NSMutableArray+NSRails.h</DeclaredIn>			
+			
+			<Declaration>- (BOOL)remoteFetchAll:(Class)class viaObject:(NSRRemoteObject *)parentObject error:(NSError **)errorPtr changes:(BOOL *)changesPtr</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>class</Name>
+					<Abstract type="html">Class with which to build instances to insert into this array. Raises an exception if this class does not subclass NSRRemoteObject.</Abstract>
+				</Parameter><Parameter>
+					<Name>parentObject</Name>
+					<Abstract type="html">Remote object by which to request the collection from - establishes pattern for resources depending on nesting. Raises an exception if this object&apos;s remoteID is nil, as it is used to construct the route.</Abstract>
+				</Parameter><Parameter>
+					<Name>errorPtr</Name>
+					<Abstract type="html">Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
+				</Parameter><Parameter>
+					<Name>changesPtr</Name>
+					<Abstract type="html">Reference to a BOOL. Will indicate whether or not there were local changes to the array after this operation. Returns YES if no elements were added or deleted, and if no element changed when updating its respective properties.
+
+Works in a very similar way to remoteFetch: in NSRRemoteObject.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract type="html">YES if fetch was successful. Returns NO if an error occurred.</Abstract></ReturnValue>
+			<Anchor>//api/name/remoteFetchAll:viaObject:error:changes:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/intfm/NSMutableArray(NSRFetch)/remoteFetchAll:async:</TokenIdentifier>
+			<Abstract type="html">Updates elements in this array.</Abstract>
+			<DeclaredIn>NSMutableArray+NSRails.h</DeclaredIn>			
+			
+			<Declaration>- (void)remoteFetchAll:(Class)class async:(NSRFetchCompletionBlock)completionBlock</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>class</Name>
+					<Abstract type="html">Class with which to build instances to insert into this array. Raises an exception if this class does not subclass NSRRemoteObject.</Abstract>
+				</Parameter><Parameter>
+					<Name>completionBlock</Name>
+					<Abstract type="html">Block to be executed on completion..</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/remoteFetchAll:async:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/intfm/NSMutableArray(NSRFetch)/remoteFetchAll:viaObject:async:</TokenIdentifier>
+			<Abstract type="html">Updates elements in this array.</Abstract>
+			<DeclaredIn>NSMutableArray+NSRails.h</DeclaredIn>			
+			
+			<Declaration>- (void)remoteFetchAll:(Class)class viaObject:(NSRRemoteObject *)parentObject async:(NSRFetchCompletionBlock)completionBlock</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>class</Name>
+					<Abstract type="html">Class with which to build instances to insert into this array. Raises an exception if this class does not subclass NSRRemoteObject.</Abstract>
+				</Parameter><Parameter>
+					<Name>parentObject</Name>
+					<Abstract type="html">Remote object by which to request the collection from - establishes pattern for resources depending on nesting. Raises an exception if this object&apos;s remoteID is nil, as it is used to construct the route.</Abstract>
+				</Parameter><Parameter>
+					<Name>completionBlock</Name>
+					<Abstract type="html">Block to be executed on completion..</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/remoteFetchAll:viaObject:async:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/intfm/NSMutableArray(NSRFetch)/translateRemoteDictionariesIntoInstancesOfClass:</TokenIdentifier>
+			<Abstract type="html">Replaces each dictionary in this array with an instance of the given class, setting respective properties to those defined in that dictionary (using the class&apos;s NSRMap).</Abstract>
+			<DeclaredIn>NSMutableArray+NSRails.h</DeclaredIn>			
+			
+			<Declaration>- (void)translateRemoteDictionariesIntoInstancesOfClass:(Class)class</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>class</Name>
+					<Abstract type="html">Class with which to build instances to replace this array&apos;s dictionaries. Raises an exception if this class does not subclass NSRRemoteObject.</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/translateRemoteDictionariesIntoInstancesOfClass:</Anchor>
+		</Token>
+		
+	</File>
+</Tokens>

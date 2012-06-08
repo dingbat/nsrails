@@ -59,21 +59,17 @@
 	
 	<option value="//api/name/remoteAllAsync:">&nbsp;&nbsp;&nbsp;&nbsp;+ remoteAllAsync:</option>
 	
-	<option value="//api/name/remoteGET:async:">&nbsp;&nbsp;&nbsp;&nbsp;+ remoteGET:async:</option>
+	<option value="//api/name/remoteAllViaObject:async:">&nbsp;&nbsp;&nbsp;&nbsp;+ remoteAllViaObject:async:</option>
 	
-	<option value="//api/name/remoteGET:error:">&nbsp;&nbsp;&nbsp;&nbsp;+ remoteGET:error:</option>
+	<option value="//api/name/remoteAllViaObject:error:">&nbsp;&nbsp;&nbsp;&nbsp;+ remoteAllViaObject:error:</option>
+	
+	<option value="//api/name/remoteControllerName">&nbsp;&nbsp;&nbsp;&nbsp;+ remoteControllerName</option>
+	
+	<option value="//api/name/remoteModelName">&nbsp;&nbsp;&nbsp;&nbsp;+ remoteModelName</option>
 	
 	<option value="//api/name/remoteObjectWithID:async:">&nbsp;&nbsp;&nbsp;&nbsp;+ remoteObjectWithID:async:</option>
 	
 	<option value="//api/name/remoteObjectWithID:error:">&nbsp;&nbsp;&nbsp;&nbsp;+ remoteObjectWithID:error:</option>
-	
-	<option value="//api/name/remoteRequest:method:body:async:">&nbsp;&nbsp;&nbsp;&nbsp;+ remoteRequest:method:body:async:</option>
-	
-	<option value="//api/name/remoteRequest:method:body:error:">&nbsp;&nbsp;&nbsp;&nbsp;+ remoteRequest:method:body:error:</option>
-	
-	<option value="//api/name/remoteRequest:method:bodyAsObject:async:">&nbsp;&nbsp;&nbsp;&nbsp;+ remoteRequest:method:bodyAsObject:async:</option>
-	
-	<option value="//api/name/remoteRequest:method:bodyAsObject:error:">&nbsp;&nbsp;&nbsp;&nbsp;+ remoteRequest:method:bodyAsObject:error:</option>
 	
 	
 	
@@ -89,6 +85,8 @@
 	<option value="//api/name/initWithCustomMap:customConfig:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithCustomMap:customConfig:</option>
 	
 	<option value="//api/name/initWithRemoteDictionary:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithRemoteDictionary:</option>
+	
+	<option value="//api/name/objectUsedToPrefixRequest:">&nbsp;&nbsp;&nbsp;&nbsp;- objectUsedToPrefixRequest:</option>
 	
 	<option value="//api/name/remoteCreate:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteCreate:</option>
 	
@@ -106,21 +104,9 @@
 	
 	<option value="//api/name/remoteFetchAsync:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteFetchAsync:</option>
 	
-	<option value="//api/name/remoteGET:async:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteGET:async:</option>
-	
-	<option value="//api/name/remoteGET:error:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteGET:error:</option>
-	
 	<option value="//api/name/remoteReplace:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteReplace:</option>
 	
 	<option value="//api/name/remoteReplaceAsync:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteReplaceAsync:</option>
-	
-	<option value="//api/name/remoteRequest:method:async:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteRequest:method:async:</option>
-	
-	<option value="//api/name/remoteRequest:method:body:async:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteRequest:method:body:async:</option>
-	
-	<option value="//api/name/remoteRequest:method:body:error:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteRequest:method:body:error:</option>
-	
-	<option value="//api/name/remoteRequest:method:error:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteRequest:method:error:</option>
 	
 	<option value="//api/name/remoteUpdate:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteUpdate:</option>
 	
@@ -148,19 +134,17 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Properties">Properties</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Class requests (Common)">Class requests (Common)</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Common class requests">Common class requests</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Class requests (Custom)">Class requests (Custom)</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Instance requests (CRUD)">Instance requests (CRUD)</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Instance requests (Custom)">Instance requests (Custom)</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_CRUD">CRUD</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Setting and retrieving JSON representations">Setting and retrieving JSON representations</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Initializers">Initializers</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_CoreData">CoreData</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Methods to override">Methods to override</a></span></li>
 	
 </ul></li>
 
@@ -190,21 +174,17 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteAllAsync:">remoteAllAsync:</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteGET:async:">remoteGET:async:</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteAllViaObject:async:">remoteAllViaObject:async:</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteGET:error:">remoteGET:error:</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteAllViaObject:error:">remoteAllViaObject:error:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteControllerName">remoteControllerName</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteModelName">remoteModelName</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteObjectWithID:async:">remoteObjectWithID:async:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteObjectWithID:error:">remoteObjectWithID:error:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteRequest:method:body:async:">remoteRequest:method:body:async:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteRequest:method:body:error:">remoteRequest:method:body:error:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteRequest:method:bodyAsObject:async:">remoteRequest:method:bodyAsObject:async:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteRequest:method:bodyAsObject:error:">remoteRequest:method:bodyAsObject:error:</a></span></li>
 	
 </ul></li>
 
@@ -222,6 +202,8 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithRemoteDictionary:">initWithRemoteDictionary:</a></span></li>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/objectUsedToPrefixRequest:">objectUsedToPrefixRequest:</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteCreate:">remoteCreate:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteCreateAsync:">remoteCreateAsync:</a></span></li>
@@ -238,21 +220,9 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteFetchAsync:">remoteFetchAsync:</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteGET:async:">remoteGET:async:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteGET:error:">remoteGET:error:</a></span></li>
-	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteReplace:">remoteReplace:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteReplaceAsync:">remoteReplaceAsync:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteRequest:method:async:">remoteRequest:method:async:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteRequest:method:body:async:">remoteRequest:method:body:async:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteRequest:method:body:error:">remoteRequest:method:body:error:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteRequest:method:error:">remoteRequest:method:error:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteUpdate:">remoteUpdate:</a></span></li>
 	
@@ -306,39 +276,22 @@
 
 <p>Note that you do not have to define an <code>id</code> property for your Objective-C class, as your subclass will inherit <code>NSRRemoteObject</code>&rsquo;s <a href="#//api/name/remoteID">remoteID</a> property. Foreign keys are optional but also unnecessary (see <a href="https://github.com/dingbat/nsrails/wiki/Nesting">nesting</a> on the NSRails wiki).</p>
 
-<p>About this document:</p>
+<h2>NSRMap</h2>
 
-<ul>
-<li>You&rsquo;ll notice that almost all <code>NSRRemoteObject</code> properties and methods are prefixed with <code>remote</code>, so you can quickly navigate through them with autocomplete.</li>
-<li>When this document refers to an object&rsquo;s &ldquo;model name&rdquo;, that means (by default) the name of its class. If you wish to define a custom model name (if the name of your model in Rails is distinct from your class name), use the <code>NSRUseModelName()</code> macro.</li>
-<li>Before exploring this document, make sure that your class inherits from <code>NSRRemoteObject</code>, or of course these methods &amp; properties will not be available.</li>
-</ul>
+<p>NSRMap is a macro used to define specific properties to be shared with Rails, along with configurable behaviors.</p>
 
-
-<h2>Available Macros</h2>
-
-<p>The following macros can be defined right inside your subclass&rsquo;s implementation:</p>
-
-<ul>
-<li><code>NSRMap()</code> &ndash; define specific properties to be shared with Rails, along with configurable behaviors.</li>
-<li><code>NSRUseModelName()</code> &ndash; define a custom model name for your class, optionally with a custom plural. Takes string literal(s).</li>
-<li><code>NSRUseResourcePrefix()</code> &ndash; define a resource prefix for instances of your class (used for nesting).</li>
-</ul>
-
-
-<p>They are all optional. Usage:</p>
+<p>It is optional (if omitted, will default to all properties being used). Usage:</p>
 
 <pre><code>@implementation Article
-@synthesize title, content;
-NSRMap(*);
-NSRUseModelName(@"post");
+@synthesize title, content, createdAt;
+NSRMap(*, createdAt -r);
 
 …
 
 @end
 </code></pre>
 
-<p>Please see their detailed descriptions on <a href="https://github.com/dingbat/nsrails/wiki/">the NSRails wiki</a>.</p>
+<p>Please see its more detailed description on <a href="https://github.com/dingbat/nsrails/wiki/NSRMap">the NSRails wiki</a>.</p>
 
 <h2>Validation Errors</h2>
 
@@ -451,8 +404,8 @@ NSRUseModelName(@"post");
 						</ul>
 						
 						
-						<a title="Class requests (Common)" name="task_Class requests (Common)"></a>
-						<h3 class="subsubtitle task-title">Class requests (Common)</h3>
+						<a title="Common class requests" name="task_Common class requests"></a>
+						<h3 class="subsubtitle task-title">Common class requests</h3>
 
 						<ul class="task-list">
 							<li>
@@ -464,7 +417,21 @@ NSRUseModelName(@"post");
 	
 </li><li>
 	<span class="tooltip">
+		<code><a href="#//api/name/remoteAllViaObject:error:">+&nbsp;remoteAllViaObject:error:</a></code>
+		<span class="tooltip"><p>Returns an array of all remote objects (as instances of receiver&rsquo;s class), constructed with a parent prefix. Each instance’s properties will be set to those returned by Rails.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
 		<code><a href="#//api/name/remoteAllAsync:">+&nbsp;remoteAllAsync:</a></code>
+		<span class="tooltip"><p>Retrieves an array of all remote objects (as instances of receiver&rsquo;s class.) Each instance’s properties will be set to those returned by Rails.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/remoteAllViaObject:async:">+&nbsp;remoteAllViaObject:async:</a></code>
 		<span class="tooltip"><p>Retrieves an array of all remote objects (as instances of receiver&rsquo;s class.) Each instance’s properties will be set to those returned by Rails.</p></span>
 	</span>
 	
@@ -487,58 +454,8 @@ NSRUseModelName(@"post");
 						</ul>
 						
 						
-						<a title="Class requests (Custom)" name="task_Class requests (Custom)"></a>
-						<h3 class="subsubtitle task-title">Class requests (Custom)</h3>
-
-						<ul class="task-list">
-							<li>
-	<span class="tooltip">
-		<code><a href="#//api/name/remoteGET:error:">+&nbsp;remoteGET:error:</a></code>
-		<span class="tooltip"><p>Returns the JSON response for a GET request to a custom method.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/remoteGET:async:">+&nbsp;remoteGET:async:</a></code>
-		<span class="tooltip"><p>Makes a GET request to a custom method.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/remoteRequest:method:bodyAsObject:error:">+&nbsp;remoteRequest:method:bodyAsObject:error:</a></code>
-		<span class="tooltip"><p>Returns the JSON response for a request with a custom method, sending an <code>NSRRemoteObject</code> subclass instance as the body.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/remoteRequest:method:bodyAsObject:async:">+&nbsp;remoteRequest:method:bodyAsObject:async:</a></code>
-		<span class="tooltip"><p>Makes a request with a custom method, sending an <code>NSRRemoteObject</code> subclass instance as the body.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/remoteRequest:method:body:error:">+&nbsp;remoteRequest:method:body:error:</a></code>
-		<span class="tooltip"><p>Returns the JSON response for a request with a custom method.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/remoteRequest:method:body:async:">+&nbsp;remoteRequest:method:body:async:</a></code>
-		<span class="tooltip"><p>Makes a request with a custom method.</p></span>
-	</span>
-	
-	
-</li>
-						</ul>
-						
-						
-						<a title="Instance requests (CRUD)" name="task_Instance requests (CRUD)"></a>
-						<h3 class="subsubtitle task-title">Instance requests (CRUD)</h3>
+						<a title="CRUD" name="task_CRUD"></a>
+						<h3 class="subsubtitle task-title">CRUD</h3>
 
 						<ul class="task-list">
 							<li>
@@ -615,56 +532,6 @@ NSRUseModelName(@"post");
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteReplaceAsync:">&ndash;&nbsp;remoteReplaceAsync:</a></code>
 		<span class="tooltip"><p>&ldquo;Places&rdquo; receiver&rsquo;s corresponding remote object.</p></span>
-	</span>
-	
-	
-</li>
-						</ul>
-						
-						
-						<a title="Instance requests (Custom)" name="task_Instance requests (Custom)"></a>
-						<h3 class="subsubtitle task-title">Instance requests (Custom)</h3>
-
-						<ul class="task-list">
-							<li>
-	<span class="tooltip">
-		<code><a href="#//api/name/remoteGET:error:">&ndash;&nbsp;remoteGET:error:</a></code>
-		<span class="tooltip"><p>Returns the JSON response for a GET request to a custom method.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/remoteGET:async:">&ndash;&nbsp;remoteGET:async:</a></code>
-		<span class="tooltip"><p>Makes a GET request to a custom method.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/remoteRequest:method:error:">&ndash;&nbsp;remoteRequest:method:error:</a></code>
-		<span class="tooltip"><p>Returns the JSON response for a request with a custom method, sending the JSON representation of the receiver as the request body.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/remoteRequest:method:async:">&ndash;&nbsp;remoteRequest:method:async:</a></code>
-		<span class="tooltip"><p>Makes a request with a custom method, sending the JSON representation of the receiver as the request body.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/remoteRequest:method:body:error:">&ndash;&nbsp;remoteRequest:method:body:error:</a></code>
-		<span class="tooltip"><p>Returns the JSON response for a request with a custom method on the receiver&rsquo;s corresponding remote object.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/remoteRequest:method:body:async:">&ndash;&nbsp;remoteRequest:method:body:async:</a></code>
-		<span class="tooltip"><p>Makes a request with a custom method on the receiver&rsquo;s corresponding remote object.</p></span>
 	</span>
 	
 	
@@ -761,6 +628,35 @@ NSRUseModelName(@"post");
 		<span class="tooltip"><p>Save the CoreData object context of the receiver.</p>
 
 <p>This method should not be used without CoreData enabled (see top).</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Methods to override" name="task_Methods to override"></a>
+						<h3 class="subsubtitle task-title">Methods to override</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/remoteModelName">+&nbsp;remoteModelName</a></code>
+		<span class="tooltip"><p>The equivalent name of this class on your server.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/remoteControllerName">+&nbsp;remoteControllerName</a></code>
+		<span class="tooltip"><p>The name of this class&rsquo;s controller on the server.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/objectUsedToPrefixRequest:">&ndash;&nbsp;objectUsedToPrefixRequest:</a></code>
+		<span class="tooltip"><p>Used if instances of this class should have their resource path be based off an association.</p></span>
 	</span>
 	
 	
@@ -1170,25 +1066,25 @@ if ([myObj remoteFetch:&amp;error])
 </div>
 						
 						<div class="section-method">
-	<a name="//api/name/remoteGET:async:" title="remoteGET:async:"></a>
-	<h3 class="subsubtitle method-title">remoteGET:async:</h3>
+	<a name="//api/name/remoteAllViaObject:async:" title="remoteAllViaObject:async:"></a>
+	<h3 class="subsubtitle method-title">remoteAllViaObject:async:</h3>
 	
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Makes a GET request to a custom method.</p>
+		<p>Retrieves an array of all remote objects (as instances of receiver&rsquo;s class.) Each instance’s properties will be set to those returned by Rails.</p>
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>+ (void)remoteGET:(NSString *)<em>customRESTMethod</em> async:(NSRHTTPCompletionBlock)<em>completionBlock</em></code></div>
+	<div class="method-subsection method-declaration"><code>+ (void)remoteAllViaObject:(NSRRemoteObject *)<em>parentObject</em> async:(NSRFetchAllCompletionBlock)<em>completionBlock</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
 		
 		<dl class="argument-def parameter-def">
-			<dt><em>customRESTMethod</em></dt>
-			<dd><p>Custom REST method to be called on the subclass&rsquo;s controller. If <code>nil</code>, will route to index.</p></dd>
+			<dt><em>parentObject</em></dt>
+			<dd><p>Remote object by which to request the collection from &ndash; establishes pattern for resources depending on nesting. Raises an exception if this object&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a> is nil, as it is used to construct the route.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -1206,7 +1102,11 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Calls <a href="#//api/name/remoteRequest:method:body:async:">remoteRequest:method:body:async:</a> with <code>GET</code> for <em>httpVerb</em> and <code>nil</code> for <em>body</em>.</p>
+		<p>Asynchronously makes a GET request to <code>/parents/3/objects</code> (where <code>parents/3</code> is the path for the <strong>parentObject</strong>, and <code>objects</code> is the pluralization of this model name.)</p>
+
+<p><strong>CoreData</strong></p>
+
+<p>Each object returned in the array may be an existing or newly inserted object. All objects will reflect properites set to those returned by your server.</p>
 	</div>
 	
 	
@@ -1224,25 +1124,25 @@ if ([myObj remoteFetch:&amp;error])
 </div>
 						
 						<div class="section-method">
-	<a name="//api/name/remoteGET:error:" title="remoteGET:error:"></a>
-	<h3 class="subsubtitle method-title">remoteGET:error:</h3>
+	<a name="//api/name/remoteAllViaObject:error:" title="remoteAllViaObject:error:"></a>
+	<h3 class="subsubtitle method-title">remoteAllViaObject:error:</h3>
 	
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Returns the JSON response for a GET request to a custom method.</p>
+		<p>Returns an array of all remote objects (as instances of receiver&rsquo;s class), constructed with a parent prefix. Each instance’s properties will be set to those returned by Rails.</p>
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>+ (id)remoteGET:(NSString *)<em>customRESTMethod</em> error:(NSError **)<em>error</em></code></div>
+	<div class="method-subsection method-declaration"><code>+ (NSArray *)remoteAllViaObject:(NSRRemoteObject *)<em>parentObject</em> error:(NSError **)<em>error</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
 		
 		<dl class="argument-def parameter-def">
-			<dt><em>customRESTMethod</em></dt>
-			<dd><p>Custom REST method to be called on the subclass&rsquo;s controller. If <code>nil</code>, will route to index.</p></dd>
+			<dt><em>parentObject</em></dt>
+			<dd><p>Remote object by which to request the collection from &ndash; establishes pattern for resources depending on nesting. Raises an exception if this object&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a> is nil, as it is used to construct the route.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -1256,7 +1156,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>JSON response object (could be an <code>NSArray</code> or <code>NSDictionary</code>).</p>
+		<p>NSArray of instances of receiver&rsquo;s class. Each object’s properties will be set to those returned by Rails.</p>
 	</div>
 	
 	
@@ -1265,9 +1165,111 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Calls <a href="#//api/name/remoteRequest:method:body:error:">remoteRequest:method:body:error:</a> with <code>GET</code> for <em>httpVerb</em> and <code>nil</code> for <em>body</em>.</p>
+		<p>Makes a GET request to <code>/parents/3/objects</code> (where <code>parents/3</code> is the path for the <strong>parentObject</strong>, and <code>objects</code> is the pluralization of this model name.)</p>
 
-<p>Request done synchronously. See <a href="#//api/name/remoteGET:async:">remoteGET:async:</a> for asynchronous operation.</p>
+<p>Request done synchronously. See <a href="#//api/name/remoteAllViaObject:async:">remoteAllViaObject:async:</a> for asynchronous operation.</p>
+
+<p><strong>CoreData</strong></p>
+
+<p>Each object returned in the array may be an existing or newly inserted object. All objects will reflect properites set to those returned by your server.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/remoteControllerName" title="remoteControllerName"></a>
+	<h3 class="subsubtitle method-title">remoteControllerName</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The name of this class&rsquo;s controller on the server.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (NSString *)remoteControllerName</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Where actions for this class should be routed.</p>
+
+<p><strong>Default Behavior</strong> (when not overriden)</p>
+
+<p>Pluralizes <a href="#//api/name/remoteModelName">remoteModelName</a>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/remoteModelName" title="remoteModelName"></a>
+	<h3 class="subsubtitle method-title">remoteModelName</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The equivalent name of this class on your server.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (NSString *)remoteModelName</code></div>
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Recommended behavior is to return a string literal:</p>
+
+<pre><code>@implementation User
+
++ (NSString *) remoteModelName
+{
+    return @"subscriber";
+}
+
+@end
+</code></pre>
+
+<p>The above example would be needed if the same class is called <code>User</code> in Objective-C but <code>Subscriber</code> on your server.</p>
+
+<p><strong>Default Behavior</strong> (when not overriden)</p>
+
+<p>Returns the name of the subclass, lowercase and underscored if <a href="NSRConfig.html#//api/name/autoinflectsClassNames">enabled</a>, and with its prefix stripped if <a href="NSRConfig.html#//api/name/ignoresClassPrefixes">enabled</a>.</p><div class="warning"><p><strong>Warning:</strong> When overriding this method, NSRails will no longer autoinflect for determining this class name! What you enter will be used exactly.</p></div>
 	</div>
 	
 	
@@ -1391,294 +1393,6 @@ if ([myObj remoteFetch:&amp;error])
 <p><strong>CoreData</strong></p>
 
 <p>If request is successful, will attempt to find an existing local object with <em>objectID</em>, and update its properties to the server&rsquo;s response. If it cannot find an existing local object with that <a href="#//api/name/remoteID">remoteID</a>, will inserta  new object into the context, with those properties.</p>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/remoteRequest:method:body:async:" title="remoteRequest:method:body:async:"></a>
-	<h3 class="subsubtitle method-title">remoteRequest:method:body:async:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Makes a request with a custom method.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>+ (void)remoteRequest:(NSString *)<em>httpVerb</em> method:(NSString *)<em>customRESTMethod</em> body:(id)<em>body</em> async:(NSRHTTPCompletionBlock)<em>completionBlock</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>httpVerb</em></dt>
-			<dd><p>The HTTP method to use (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, etc.)</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>customRESTMethod</em></dt>
-			<dd><p>The REST method to call (appended to the route). If <code>nil</code>, will call index. See above for examples.</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>body</em></dt>
-			<dd><p>Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>completionBlock</em></dt>
-			<dd><p>Block to be executed when the request is complete.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>If called on a subclass, makes the request to <code>/objects/method</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>method</code> is <em>customRESTMethod</em>).</p>
-
-<p>If called on <code>NSRRemoteObject</code>, makes the request to <code>/method</code> (where <code>method</code> is <em>customRESTMethod</em>).</p>
-
-<p><code>/method</code> is omitted if <code>customRESTMethod</code> is nil.</p>
-
-<pre><code> [Article remoteRequest:@"POST" method:nil body:json async:block];           ==&gt; POST /articles
- [Article remoteRequest:@"POST" method:@"register" body:json async:block];   ==&gt; POST /articles/register
- [NSRRemoteObject remoteRequest:@"GET" method:@"root" body:nil async:block];    ==&gt; GET /root
-</code></pre>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/remoteRequest:method:body:error:" title="remoteRequest:method:body:error:"></a>
-	<h3 class="subsubtitle method-title">remoteRequest:method:body:error:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Returns the JSON response for a request with a custom method.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>+ (id)remoteRequest:(NSString *)<em>httpVerb</em> method:(NSString *)<em>customRESTMethod</em> body:(id)<em>body</em> error:(NSError **)<em>error</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>httpVerb</em></dt>
-			<dd><p>The HTTP method to use (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, etc.)</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>customRESTMethod</em></dt>
-			<dd><p>The REST method to call (appended to the route). If <code>nil</code>, will call index. See above for examples.</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>body</em></dt>
-			<dd><p>Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>JSON response object (could be an <code>NSArray</code> or <code>NSDictionary</code>).</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>If called on a subclass, makes the request to <code>/objects/method</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>method</code> is <em>customRESTMethod</em>).</p>
-
-<p>If called on <code>NSRRemoteObject</code>, makes the request to <code>/method</code> (where <code>method</code> is <em>customRESTMethod</em>).</p>
-
-<p><code>/method</code> is omitted if <code>customRESTMethod</code> is nil.</p>
-
-<pre><code> [Article remoteRequest:@"POST" method:nil body:json error:&amp;e];           ==&gt; POST /articles
- [Article remoteRequest:@"POST" method:@"register" body:json error:&amp;e];   ==&gt; POST /articles/register
- [NSRRemoteObject remoteGET:@"root" error:&amp;e];                               ==&gt; GET /root
-</code></pre>
-
-<p>Request made synchronously. See <a href="#//api/name/remoteRequest:method:body:async:">remoteRequest:method:body:async:</a> for asynchronous operation.</p>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/remoteRequest:method:bodyAsObject:async:" title="remoteRequest:method:bodyAsObject:async:"></a>
-	<h3 class="subsubtitle method-title">remoteRequest:method:bodyAsObject:async:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Makes a request with a custom method, sending an <code>NSRRemoteObject</code> subclass instance as the body.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>+ (void)remoteRequest:(NSString *)<em>httpVerb</em> method:(NSString *)<em>customRESTMethod</em> bodyAsObject:(NSRRemoteObject *)<em>obj</em> async:(NSRHTTPCompletionBlock)<em>completionBlock</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>httpVerb</em></dt>
-			<dd><p>The HTTP method to use (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, etc.)</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>customRESTMethod</em></dt>
-			<dd><p>Custom REST method to be called on the subclass&rsquo;s controller. If <code>nil</code>, will route to index.</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>obj</em></dt>
-			<dd><p>NSRRemoteObject subclass instance &ndash; object you want to send in the body.</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>completionBlock</em></dt>
-			<dd><p>Block to be executed when the request is complete.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Calls <a href="#//api/name/remoteRequest:method:body:error:">remoteRequest:method:body:error:</a> with <code>obj</code>&rsquo;s remote dictionary representation for <em>body</em>.</p>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/remoteRequest:method:bodyAsObject:error:" title="remoteRequest:method:bodyAsObject:error:"></a>
-	<h3 class="subsubtitle method-title">remoteRequest:method:bodyAsObject:error:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Returns the JSON response for a request with a custom method, sending an <code>NSRRemoteObject</code> subclass instance as the body.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>+ (id)remoteRequest:(NSString *)<em>httpVerb</em> method:(NSString *)<em>customRESTMethod</em> bodyAsObject:(NSRRemoteObject *)<em>obj</em> error:(NSError **)<em>error</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>httpVerb</em></dt>
-			<dd><p>The HTTP method to use (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, etc.)</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>customRESTMethod</em></dt>
-			<dd><p>Custom REST method to be called on the subclass&rsquo;s controller. If <code>nil</code>, will route to index.</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>obj</em></dt>
-			<dd><p>NSRRemoteObject subclass instance &ndash; object you want to send in the body.</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>JSON response object (could be an <code>NSArray</code> or <code>NSDictionary</code>).</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Calls <a href="#//api/name/remoteRequest:method:body:error:">remoteRequest:method:body:error:</a> with <code>obj</code>&rsquo;s remote dictionary representation for <em>body</em>.</p>
-
-<p>Request done synchronously. See <a href="#//api/name/remoteRequest:method:bodyAsObject:async:">remoteRequest:method:bodyAsObject:async:</a> for asynchronous operation.</p>
 	</div>
 	
 	
@@ -1990,6 +1704,109 @@ if ([myObj remoteFetch:&amp;error])
 		<p>Takes into account rules in NSRMap.</p>
 
 <p>If CoreData is enabled, inserts this new instance into the managed object context set in the currently relevant config.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/objectUsedToPrefixRequest:" title="objectUsedToPrefixRequest:"></a>
+	<h3 class="subsubtitle method-title">objectUsedToPrefixRequest:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Used if instances of this class should have their resource path be based off an association.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (NSRRemoteObject *)objectUsedToPrefixRequest:(NSRRequest *)<em>request</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>request</em></dt>
+			<dd><p>The request whose path is currently being evalutated. Its <a href="NSRRequest.html#//api/name/route">route</a> will be the route <em>before</em> adding the prefix (ie, the route used if the behavior is not desired).</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An object (typically an instance variable) that represents a parent to this class, or <code>nil</code> if this behavior is not desired.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This may be needed if you define your routes in Rails to look something like:</p>
+
+<pre><code> MySweetApp::Application.routes.draw do
+     resources :users
+         resources :invites
+     end
+ end
+</code></pre>
+
+<p>And invites are accessed in relation to some user:</p>
+
+<pre><code> GET    /users/1/invites.json
+ POST   /users/1/invites.json
+ GET    /users/1/invites/3.json
+ DELETE /users/1/invites/3.json
+</code></pre>
+
+<p>Typically, this method is overriden with an instance variable that represents a parent:</p>
+
+<pre><code>@implementation Invite
+@synthesize user, foo;
+NSRMap(*, user -b);
+
+- (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request
+{
+    return user;
+}
+
+…
+
+@end
+</code></pre>
+
+<p>Using the <strong>request</strong> parameter, you may filter requests that you don&rsquo;t want to prefix. Let&rsquo;s say you only want this behavior for POST and GET, but want to keep DELETE and PATCH with their traditional routes:</p>
+
+<pre><code> GET    /users/3/invites.json  "get all the invites for user 3"
+ POST   /users/3/invites.json  "create an invite for user 3"
+ PATCH  /invites/28.json       "update user invite 28"
+ DELETE /invites/28.json       "delete user invite 28"
+</code></pre>
+
+<p>This could be done by checking <strong>request</strong>&rsquo;s <a href="NSRRequest.html#//api/name/httpMethod">httpMethod</a>:</p>
+
+<pre><code> - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request
+ {
+     if ([request.httpMethod isEqualToString:@"GET"] || [request.httpMethod isEqualToString:@"POST"])
+         return user;
+     return nil;
+ }
+</code></pre>
 	</div>
 	
 	
@@ -2485,121 +2302,6 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 </div>
 						
 						<div class="section-method">
-	<a name="//api/name/remoteGET:async:" title="remoteGET:async:"></a>
-	<h3 class="subsubtitle method-title">remoteGET:async:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Makes a GET request to a custom method.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>- (void)remoteGET:(NSString *)<em>customRESTMethod</em> async:(NSRHTTPCompletionBlock)<em>completionBlock</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>customRESTMethod</em></dt>
-			<dd><p>Custom REST method to be called on the remote object corresponding to the receiver. If <code>nil</code>, will route to only the receiver (objects/1).</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>completionBlock</em></dt>
-			<dd><p>Block to be executed when the request is complete.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Calls <a href="#//api/name/remoteRequest:method:body:async:">remoteRequest:method:body:async:</a> with <code>GET</code> for <em>httpVerb</em> and <code>nil</code> for <em>body</em>.</p>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/remoteGET:error:" title="remoteGET:error:"></a>
-	<h3 class="subsubtitle method-title">remoteGET:error:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Returns the JSON response for a GET request to a custom method.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>- (id)remoteGET:(NSString *)<em>customRESTMethod</em> error:(NSError **)<em>error</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>customRESTMethod</em></dt>
-			<dd><p>Custom REST method to be called on the remote object corresponding to the receiver. If <code>nil</code>, will route to only the receiver (objects/1).</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>JSON response object (could be an <code>NSArray</code> or <code>NSDictionary</code>).</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Calls <a href="#//api/name/remoteRequest:method:body:error:">remoteRequest:method:body:error:</a> with <code>GET</code> for <em>httpVerb</em> and <code>nil</code> for <em>body</em>.</p>
-
-<p>Request done synchronously. See <a href="#//api/name/remoteGET:async:">remoteGET:async:</a> for asynchronous operation.</p>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
 	<a name="//api/name/remoteReplace:" title="remoteReplace:"></a>
 	<h3 class="subsubtitle method-title">remoteReplace:</h3>
 	
@@ -2704,278 +2406,6 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 <p><strong>CoreData</strong></p>
 
 <p>If successful, will save its managed object context. Note that changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/remoteRequest:method:async:" title="remoteRequest:method:async:"></a>
-	<h3 class="subsubtitle method-title">remoteRequest:method:async:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Makes a request with a custom method, sending the JSON representation of the receiver as the request body.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>- (void)remoteRequest:(NSString *)<em>httpVerb</em> method:(NSString *)<em>customRESTMethod</em> async:(NSRHTTPCompletionBlock)<em>completionBlock</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>httpVerb</em></dt>
-			<dd><p>The HTTP method to use (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, etc.)</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>customRESTMethod</em></dt>
-			<dd><p>Custom REST method to be called on the remote object corresponding to the receiver. If <code>nil</code>, will route to only the receiver (objects/1).</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>completionBlock</em></dt>
-			<dd><p>Block to be executed when the request is complete.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Calls <a href="#//api/name/remoteRequest:method:body:async:">remoteRequest:method:body:async:</a> with receiver&rsquo;s remote dictionary representation for <em>body</em>.</p>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/remoteRequest:method:body:async:" title="remoteRequest:method:body:async:"></a>
-	<h3 class="subsubtitle method-title">remoteRequest:method:body:async:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Makes a request with a custom method on the receiver&rsquo;s corresponding remote object.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>- (void)remoteRequest:(NSString *)<em>httpVerb</em> method:(NSString *)<em>customRESTMethod</em> body:(id)<em>body</em> async:(NSRHTTPCompletionBlock)<em>completionBlock</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>httpVerb</em></dt>
-			<dd><p>The HTTP method to use (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, etc.)</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>customRESTMethod</em></dt>
-			<dd><p>The REST method to call (appended to the route). If <code>nil</code>, will call index. See above for examples.</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>body</em></dt>
-			<dd><p>Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>completionBlock</em></dt>
-			<dd><p>Block to be executed when the request is complete.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Asynchronously akes a request to <code>/objects/1/method</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID">remoteID</a>, and <code>method</code> is <em>customRESTMethod</em>).</p>
-
-<p><code>/method</code> is omitted if <code>customRESTMethod</code> is nil.</p>
-
-<pre><code>[myArticle remoteRequest:@"PUT" method:nil body:json error:&amp;e];           ==&gt; PUT /articles/1
-[myArticle remoteRequest:@"PUT" method:@"register" body:json error:&amp;e];   ==&gt; PUT /articles/1/register
-</code></pre>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/remoteRequest:method:body:error:" title="remoteRequest:method:body:error:"></a>
-	<h3 class="subsubtitle method-title">remoteRequest:method:body:error:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Returns the JSON response for a request with a custom method on the receiver&rsquo;s corresponding remote object.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>- (id)remoteRequest:(NSString *)<em>httpVerb</em> method:(NSString *)<em>customRESTMethod</em> body:(id)<em>body</em> error:(NSError **)<em>error</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>httpVerb</em></dt>
-			<dd><p>The HTTP method to use (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, etc.)</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>customRESTMethod</em></dt>
-			<dd><p>The REST method to call (appended to the route). If <code>nil</code>, will call index. See above for examples.</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>body</em></dt>
-			<dd><p>Request body (needs to be a JSON parsable object, or will throw exception (NSDictionary, NSArray)).</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>JSON response object (could be an <code>NSArray</code> or <code>NSDictionary</code>).</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Makes a request to <code>/objects/1/method</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID">remoteID</a>, and <code>method</code> is <em>customRESTMethod</em>).</p>
-
-<p><code>/method</code> is omitted if <code>customRESTMethod</code> is nil.</p>
-
-<pre><code>[myArticle remoteRequest:@"PUT" method:nil body:json error:&amp;e];           ==&gt; PUT /articles/1
-[myArticle remoteRequest:@"PUT" method:@"register" body:json error:&amp;e];   ==&gt; PUT /articles/1/register
-</code></pre>
-
-<p>Request made synchronously. See <a href="#//api/name/remoteRequest:method:body:async:">remoteRequest:method:body:async:</a> for asynchronous operation.</p>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/remoteRequest:method:error:" title="remoteRequest:method:error:"></a>
-	<h3 class="subsubtitle method-title">remoteRequest:method:error:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Returns the JSON response for a request with a custom method, sending the JSON representation of the receiver as the request body.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>- (id)remoteRequest:(NSString *)<em>httpVerb</em> method:(NSString *)<em>customRESTMethod</em> error:(NSError **)<em>error</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>httpVerb</em></dt>
-			<dd><p>The HTTP method to use (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, etc.)</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>customRESTMethod</em></dt>
-			<dd><p>Custom REST method to be called on the remote object corresponding to the receiver. If <code>nil</code>, will route to only the receiver (objects/1).</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>JSON response object (could be an <code>NSArray</code> or <code>NSDictionary</code>).</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Calls <a href="#//api/name/remoteRequest:method:body:error:">remoteRequest:method:body:error:</a> with <code>obj</code>&rsquo;s remote dictionary representation for <em>body</em>.</p>
-
-<p>Request done synchronously. See <a href="#//api/name/remoteRequest:method:bodyAsObject:async:">remoteRequest:method:bodyAsObject:async:</a> for asynchronous operation.</p>
 	</div>
 	
 	
@@ -3219,7 +2649,7 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-05)</span><br />
+						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-07)</span><br />
 						
 						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 789)</a>.</span></p>
 						

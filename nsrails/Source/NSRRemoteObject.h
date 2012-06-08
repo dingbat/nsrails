@@ -117,12 +117,6 @@
 	- `remoteID` should be an Integer (16 is fine) and indexed.
 
 	- Also ensure that you're using only subclasses (ie, set the Class of any entities to your desired subclass). Using generic NSManagedObjects or even NSRRemoteObjects is not supported.
- 
- <a name="overriding"></a>
-
- ## Overriding
- 
- 
   */
 
 #ifdef NSR_USE_COREDATA
@@ -670,7 +664,9 @@
 + (NSString *) remoteModelName;
 
 /**
- The name of this class's controller on the server. (Where actions for this class should be routed)
+ The name of this class's controller on the server.
+ 
+ Where actions for this class should be routed.
  
  **Default Behavior** (when not overriden)
  
@@ -711,9 +707,7 @@
 
 	@end
  
- @param request The request whose path is currently being evalutated. Its [route](NSRRequest.html#//api/name/route) will be the route *before* adding the prefix (ie, the route used if the behavior is not desired).
- 
- Using this parameter, you may filter requests that you don't want to prefix. Let's say you only want this behavior for POST and GET, but want to keep DELETE and PATCH with their traditional routes:
+ Using the **request** parameter, you may filter requests that you don't want to prefix. Let's say you only want this behavior for POST and GET, but want to keep DELETE and PATCH with their traditional routes:
  
 	 GET    /users/3/invites.json  "get all the invites for user 3"
 	 POST   /users/3/invites.json  "create an invite for user 3"
@@ -728,6 +722,8 @@
 			 return user;
 		 return nil;
 	 }
+ 
+ @param request The request whose path is currently being evalutated. Its [route](NSRRequest.html#//api/name/route) will be the route *before* adding the prefix (ie, the route used if the behavior is not desired).
  
  @return An object (typically an instance variable) that represents a parent to this class, or `nil` if this behavior is not desired.
  */

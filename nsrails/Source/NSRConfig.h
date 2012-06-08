@@ -157,6 +157,59 @@ extern NSString * const NSRCoreDataException;
 
 
 /**
+ Root URL for your Rails server.
+ */
+@property (nonatomic, strong) NSString *appURL;
+
+/**
+ When true, the completion blocks passed into asynchronous `remote` methods will be called on the main thread.
+ 
+ This can be useful if you wish to update view elements from this block (where iOS would otherwise lock up).
+ 
+ Not sure when this couldn't be useful, but leaving disabling it as an option. Maybe performance?
+ 
+ **Default:** `YES`.
+ */
+@property (nonatomic) BOOL performsCompletionBlocksOnMainThread;
+
+/**
+ The network activity indicator (gray spinning wheel on the status bar) will automatically turn on and off with requests.
+ 
+ This is only supported for asynchronous requests, as otherwise the main thread is blocked.
+ 
+ Also only supported in iOS development.
+ 
+ **Default:** `NO`.
+ */
+@property (nonatomic) BOOL managesNetworkActivityIndicator;
+
+/**
+ Cleaner error messages when generating `NSError` objects.
+ 
+ For example, simply `Couldn't find Person with id=15`, instead of [this mess](https://gist.github.com/1725475).
+ 
+ May not be effective with non-Rails servers.
+ 
+ **Default:** `YES`.
+ */
+@property (nonatomic) BOOL succinctErrorMessages;
+
+/**
+ Timeout interval for HTTP requests.
+ 
+ The minimum timeout interval for POST requests is 240 seconds (set by Apple).
+ 
+ **Default:** `60`.
+ */
+@property (nonatomic) NSTimeInterval timeoutInterval;
+
+
+
+/// =============================================================================================
+/// @name Routing
+/// =============================================================================================
+
+/**
  When true, all Objective-C class names will have a default equivalence to their under_scored versions.
  
  For instance, the class `DataType` in Objective-C will change to `data_type` when sending/receiving to/from Rails.
@@ -183,28 +236,6 @@ extern NSString * const NSRCoreDataException;
 @property (nonatomic) BOOL autoinflectsPropertyNames;
 
 /**
- When true, the completion blocks passed into asynchronous `remote` methods will be called on the main thread.
- 
- This can be useful if you wish to update view elements from this block (where iOS would otherwise lock up).
- 
- Not sure when this couldn't be useful, but leaving disabling it as an option. Maybe performance?
- 
- **Default:** `YES`.
- */
-@property (nonatomic) BOOL performsCompletionBlocksOnMainThread;
-
-/**
- The network activity indicator (gray spinning wheel on the status bar) will automatically turn on and off with requests.
- 
- This is only supported for asynchronous requests, as otherwise the main thread is blocked.
- 
- Also only supported in iOS development.
- 
- **Default:** `NO`.
- */
-@property (nonatomic) BOOL managesNetworkActivityIndicator;
-
-/**
  When converting class names to their Rails equivalents, prefixes will be omitted.
  
  Example: `NSRClass` will simply become `class`, instead of `nsr_class`.
@@ -213,30 +244,9 @@ extern NSString * const NSRCoreDataException;
  */
 @property (nonatomic) BOOL ignoresClassPrefixes;
 
-/**
- Cleaner error messages when generating `NSError` objects.
- 
- For example, simply `Couldn't find Person with id=15`, instead of [this mess](https://gist.github.com/1725475).
- 
- May not be effective with non-Rails servers.
- 
- **Default:** `YES`.
- */
-@property (nonatomic) BOOL succinctErrorMessages;
-
-/**
- Timeout interval for HTTP requests.
- 
- The minimum timeout interval for POST requests is 240 seconds (set by Apple).
- 
- **Default:** `60`.
- */
-@property (nonatomic) NSTimeInterval timeoutInterval;
-
-/**
- Root URL for your Rails server.
- */
-@property (nonatomic, strong) NSString *appURL;
+/// =============================================================================================
+/// @name Authentication
+/// =============================================================================================
 
 /**
  Username for basic HTTP authentication (if used by server.)
@@ -252,6 +262,10 @@ extern NSString * const NSRCoreDataException;
  Token for OAuth authentication (if used by server.)
  */
 @property (nonatomic, strong) NSString *appOAuthToken;
+
+/// =============================================================================================
+/// @name Server-side settings
+/// =============================================================================================
 
 /**
  HTTP method used for updating objects.
@@ -272,6 +286,10 @@ extern NSString * const NSRCoreDataException;
  **Default:** `"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'"` (Rails default).
  */
 @property (nonatomic, strong) NSString *dateFormat;
+
+/// =============================================================================================
+/// @name CoreData
+/// =============================================================================================
 
 /**
  Managed object context for CoreData support. **(Required if CoreData is enabled)**

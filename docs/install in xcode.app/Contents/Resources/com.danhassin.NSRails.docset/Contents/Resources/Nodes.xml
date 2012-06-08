@@ -13,6 +13,7 @@
 					<Subnodes>
 						<NodeRef refid="1"/>
 						<NodeRef refid="2"/>
+						<NodeRef refid="3"/>
 						
 					</Subnodes>
 				</Node>
@@ -22,7 +23,7 @@
 					<Name>Categories</Name>
 					<Path>index.html</Path>
 					<Subnodes>
-						<NodeRef refid="3"/>
+						<NodeRef refid="4"/>
 						
 					</Subnodes>
 				</Node>
@@ -41,8 +42,12 @@
 			<Name>NSRRemoteObject</Name>
 			<Path>Classes/NSRRemoteObject.html</Path>
 		</Node>
-		
 		<Node id="3">
+			<Name>NSRRequest</Name>
+			<Path>Classes/NSRRequest.html</Path>
+		</Node>
+		
+		<Node id="4">
 			<Name>NSMutableArray(NSRFetch)</Name>
 			<Path>Categories/NSMutableArray+NSRFetch.html</Path>
 		</Node>
