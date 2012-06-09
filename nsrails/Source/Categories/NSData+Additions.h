@@ -6,16 +6,12 @@
 // Copyright (c) 2001 Kyle Hammond. All rights reserved.
 // Original development by Dave Winer.
 //
+// Adapted to NSRails by Dan Hassin (2012)
 
 #import <Foundation/Foundation.h>
 
 @interface NSData (NSDataAdditions)
-+ (NSData *) dataWithBase64EncodedString:(NSString *) string;
-- (id) initWithBase64EncodedString:(NSString *) string;
 
-- (NSString *) base64Encoding;
-- (NSString *) base64EncodingWithLineLength:(unsigned int) lineLength;
+- (NSString *) nsr_base64Encoding;
 
-- (BOOL) hasPrefix:(NSData *) prefix;
-- (BOOL) hasPrefixBytes:(void *) prefix length:(unsigned int) length;
 @end

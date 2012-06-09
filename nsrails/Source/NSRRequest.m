@@ -314,7 +314,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 		//add auth header encoded in base64
 		NSString *authStr = [NSString stringWithFormat:@"%@:%@", self.config.appUsername, self.config.appPassword];
 		NSData *authData = [authStr dataUsingEncoding:NSUTF8StringEncoding];
-		NSString *authHeader = [NSString stringWithFormat:@"Basic %@", [authData base64Encoding]];
+		NSString *authHeader = [NSString stringWithFormat:@"Basic %@", [authData nsr_base64Encoding]];
 		
 		[request setValue:authHeader forHTTPHeaderField:@"Authorization"]; 
 	}
