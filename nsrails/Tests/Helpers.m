@@ -8,7 +8,7 @@
 
 #import "NSRAsserts.h"
 
-@interface TheMansFather : NSObject
+@interface TheMansFather : NSRRemoteObject
 @property (nonatomic, strong) NSString *parent;
 @end
 
@@ -39,7 +39,7 @@
 @end
 
 
-@interface ASuperclass : NSObject
+@interface ASuperclass : NSRRemoteObject
 + (NSString *) something;
 - (NSString *) something;
 @end

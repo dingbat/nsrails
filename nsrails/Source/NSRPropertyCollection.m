@@ -31,7 +31,6 @@
 #import "NSRails.h"
 
 #import "NSRPropertyCollection.h"
-#import "NSObject+Properties.h"
 #import "NSString+Inflection.h"
 
 @implementation NSRProperty
@@ -84,6 +83,11 @@
 
 @end
 
+@interface NSRRemoteObject (NSRIntrospection)
+
++ (NSString *) typeForProperty:(NSString *)property;
+
+@end
 
 #define NSRRaiseSyncError(x, ...) [NSException raise:NSRMapException format:x,__VA_ARGS__,nil]
 

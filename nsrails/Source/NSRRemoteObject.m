@@ -34,13 +34,6 @@
 
 #import "NSString+Inflection.h"
 #import "NSData+Additions.h"
-#import "NSObject+Properties.h"
-
-/* 
- If this file is too intimidating, 
- remember that you can navigate it
- quickly in Xcode using #pragma marks.
- */
 
 //this will suppress the compiler warnings that come with ARC when using performSelector
 #pragma clang diagnostic push
@@ -48,7 +41,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@interface NSRRemoteObject (internal)
+@interface NSRRemoteObject (NSRailsInternal)
 
 + (NSRConfig *) getRelevantConfig;
 - (NSRConfig *) getRelevantConfig;
@@ -78,99 +71,60 @@
 
 @end
 
-@interface NSRConfig (override)
+@interface NSRRemoteObject (NSRDateHelper)
 
-+ (NSRConfig *) overrideConfig;
-
-@end
-
-///////////////////////////////////
-
-//Quick NSDate category
-
-@implementation NSDate (NSRApproximation)
-
-- (BOOL) significantChangeSinceDate:(NSDate *)date
-{
-	if (!date) return YES;
-	
-	NSTimeInterval diff = [self timeIntervalSinceDate:date];
-	return (fabs(diff) > 1.25);
-}
+//will return if difference between dates is greater than 1.25 seconds (to account for truncation)
+- (BOOL) significantChangeBetweenDate:(NSDate *)date andDate:(NSDate *)date2;
 
 @end
 
+@interface NSRRemoteObject (NSRNoClimb)
+
+//these methods will ONLY look for the method in the receiver, not going up to super
+
+//returns nil if method not implemented in receiver
++ (id) performSelectorWithoutClimbingHierarchy:(SEL)selector;
+- (id) performSelectorWithoutClimbingHierarchy:(SEL)selector;
+
++ (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector;
+- (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector;
+
+@end
+
+@interface NSRRemoteObject (NSRIntrospection)
+
+//returns an array of all properties declared in class
++ (NSArray *) allProperties;
+
+//returns type of the given property for that instance variable (ie, NSString)
++ (NSString *) typeForProperty:(NSString *)property;
+
+//returns SEL for the setter of given property
++ (SEL) setterForProperty:(NSString *)property;
+
+//returns SEL for the getter of given property
++ (SEL) getterForProperty:(NSString *)property;
+
+@end
+
+
 ///////////////////////////////////
 
-//Quick NSObject category to "pose" as NSManagedObject
-
+//Quick NSObject category to "pose" as NSManagedObject (so Xcode doesn't get angry when building without CoreData)
 @interface NSObject (NSRCoreData)
 
 - (id) managedObjectContext;
 
 @end
 
-@interface NSObject (NSRNoClimb)
+//Expose private NSRConfig method for detecting any "use" blocks
+@interface NSRConfig (internal)
 
-+ (id) performSelectorWithoutClimbingHierarchy:(SEL)selector;
-+ (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector;
-
-- (id) performSelectorWithoutClimbingHierarchy:(SEL)selector;
-- (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector;
-
-@end
-
-@implementation NSObject (NSRNoClimb)
-
-// This is a trick to make sure ONLY THIS class declares `selector`, and no superclasses
-//   It's hard to tell because the method gets transparently forwarded to superclass if not found
-// This method actually compares both class's implementations of the method, and if identical (ie, it inherits), ignore it
-+ (id) performSelectorWithoutClimbingHierarchy:(SEL)selector
-{
-	if ([self respondsToSelectorWithoutClimbingHierarchy:selector])
-		return [self performSelector:selector];
-	
-	return nil;
-}
-
-+ (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector
-{
-	if ([self respondsToSelector:selector])
-	{
-		IMP mine = [self methodForSelector:selector]; //will find superclass if necessary
-		IMP supe = [self.superclass methodForSelector:selector];
-		
-		if (mine != supe)
-			return YES;
-	}
-	return NO;
-}
-
-- (id) performSelectorWithoutClimbingHierarchy:(SEL)selector
-{
-	if ([self respondsToSelectorWithoutClimbingHierarchy:selector])
-		return [self performSelector:selector];
-	
-	return nil;
-}
-
-- (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector
-{
-	if ([self respondsToSelector:selector])
-	{
-		IMP mine = [self.class instanceMethodForSelector:selector]; //will find superclass if necessary
-		IMP supe = [self.superclass instanceMethodForSelector:selector];
-
-		if (mine != supe)
-			return YES;
-	}
-	return NO;
-}
++ (NSRConfig *) overrideConfig;
 
 @end
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
 @implementation NSRRemoteObject
@@ -639,7 +593,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 								{
 									NSDate *oldDate = [previousVal objectAtIndex:i];
 									
-									if ([newDate significantChangeSinceDate:oldDate])
+									if ([self significantChangeBetweenDate:newDate andDate:oldDate])
 										changes = YES;
 								}
 							}
@@ -686,7 +640,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 			{
 				if (property.isDate)
 				{
-					if ([decodedObj significantChangeSinceDate:previousVal])
+					if ([self significantChangeBetweenDate:decodedObj andDate:previousVal])
 						changes = YES;
 				}
 				
@@ -791,10 +745,6 @@ _NSR_REMOTEID_SYNTH remoteID;
 	
 	return dict;
 }
-
-//pop the warning suppressor defined above (for calling performSelector's in ARC)
-#pragma clang diagnostic pop
-
 
 #pragma mark - Create
 
@@ -1185,3 +1135,141 @@ _NSR_REMOTEID_SYNTH remoteID;
 }
 
 @end
+
+
+//=======================================
+#pragma mark - Helper implementations
+//=======================================
+
+@implementation NSRRemoteObject (NSRDateHelper)
+
+- (BOOL) significantChangeBetweenDate:(NSDate *)date andDate:(NSDate *)date2
+{
+	return (fabs([date timeIntervalSinceDate:date2]) > 1.25);
+}
+
+@end
+
+@implementation NSRRemoteObject (NSRNoClimb)
+
+// This is a trick to make sure ONLY THIS class declares `selector`, and no superclasses
+//   It's hard to tell because the method gets transparently forwarded to superclass if not found
+// This method actually compares both class's implementations of the method, and if identical (ie, it inherits), ignore it
++ (id) performSelectorWithoutClimbingHierarchy:(SEL)selector
+{
+	if ([self respondsToSelectorWithoutClimbingHierarchy:selector])
+		return [self performSelector:selector];
+	
+	return nil;
+}
+
++ (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector
+{
+	if ([self respondsToSelector:selector])
+	{
+		IMP mine = [self methodForSelector:selector]; //will find superclass if necessary
+		IMP supe = [self.superclass methodForSelector:selector];
+		
+		if (mine != supe)
+			return YES;
+	}
+	return NO;
+}
+
+- (id) performSelectorWithoutClimbingHierarchy:(SEL)selector
+{
+	if ([self respondsToSelectorWithoutClimbingHierarchy:selector])
+		return [self performSelector:selector];
+	
+	return nil;
+}
+
+- (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector
+{
+	if ([self respondsToSelector:selector])
+	{
+		IMP mine = [self.class instanceMethodForSelector:selector]; //will find superclass if necessary
+		IMP supe = [self.superclass instanceMethodForSelector:selector];
+		
+		if (mine != supe)
+			return YES;
+	}
+	return NO;
+}
+
+@end
+
+
+#import <objc/runtime.h>
+
+@implementation NSRRemoteObject (NSRIntrospection)
+
++ (NSArray *) allProperties
+{
+	unsigned int propertyCount;
+	//copy all properties for self (will be a Class)
+	objc_property_t *properties = class_copyPropertyList(self, &propertyCount);
+	if (properties)
+	{
+		NSMutableArray *results = [NSMutableArray arrayWithCapacity:propertyCount];
+		
+		while (propertyCount--)
+		{
+			//get each ivar name and add it to the results
+			const char *propName = property_getName(properties[propertyCount]);
+			NSString *prop = [NSString stringWithCString:propName encoding:NSASCIIStringEncoding];
+			[results addObject:prop];
+		}
+		
+		free(properties);	
+		return results;
+	}
+	return nil;
+}
+
++ (NSString *) getAttributeForProperty:(NSString *)prop prefix:(NSString *)attrPrefix
+{
+	objc_property_t property = class_getProperty(self, [prop UTF8String]);
+	if (!property)
+		return nil;
+	
+	// This will return some garbage like "Ti,GgetFoo,SsetFoo:,Vproperty"
+	// See https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html
+	
+	NSString *atts = [NSString stringWithCString:property_getAttributes(property) encoding:NSUTF8StringEncoding];
+	
+	for (NSString *att in [atts componentsSeparatedByString:@","])
+		if ([att hasPrefix:attrPrefix])
+			return [att substringFromIndex:1];
+	
+	return nil;
+}
+
++ (NSString *) typeForProperty:(NSString *)property
+{
+	return [self getAttributeForProperty:property prefix:@"T"];
+}
+
++ (SEL) getterForProperty:(NSString *)prop
+{
+	NSString *s = [self getAttributeForProperty:prop prefix:@"G"];
+	if (!s)
+		s = prop;
+	
+	return NSSelectorFromString(s);
+}
+
++ (SEL) setterForProperty:(NSString *)prop
+{
+	NSString *s = [self getAttributeForProperty:prop prefix:@"S"];
+	if (!s)
+		s = [NSString stringWithFormat:@"set%@:",[prop firstLetterCapital]];
+	
+	return NSSelectorFromString(s);
+}
+
+@end
+
+//pop the warning suppressor defined above (for calling performSelector's in ARC)
+#pragma clang diagnostic pop
+

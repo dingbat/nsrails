@@ -11,7 +11,6 @@
 #import "NSRails.h"
 #import "NSRPropertyCollection.h"
 #import "NSString+Inflection.h"
-#import "NSObject+Properties.h"
 
 #import "MockServer.h"
 
@@ -32,7 +31,23 @@
 
 @end
 
-@interface NSObject (NSRNoClimb)
+@interface NSRRemoteObject (NSRIntrospection)
+
+//returns an array of all properties declared in class
++ (NSArray *) allProperties;
+
+//returns type of the given property for that instance variable (ie, NSString)
++ (NSString *) typeForProperty:(NSString *)property;
+
+//returns SEL for the setter of given property
++ (SEL) setterForProperty:(NSString *)property;
+
+//returns SEL for the getter of given property
++ (SEL) getterForProperty:(NSString *)property;
+
+@end
+
+@interface NSRRemoteObject (NSRNoClimb)
 
 + (NSString *) performSelectorWithoutClimbingHierarchy:(SEL)selector;
 + (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector;
