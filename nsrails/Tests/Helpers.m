@@ -82,8 +82,15 @@
 
 @end
 
-#define NSRAssertEqualsUnderscored(string, underscored) STAssertEqualObjects([string underscore], underscored, nil)
-#define NSRAssertEqualsCamelized(string, camelized) STAssertEqualObjects([string camelize], camelized, nil)
+@interface NSRProperty (NSRInflection)
+
++ (NSString *) camelizedString:(NSString *)string;
++ (NSString *) underscoredString:(NSString *)string stripPrefix:(BOOL)stripPrefix;
+
+@end
+
+#define NSRAssertEqualsUnderscored(string, underscored, strip) STAssertEqualObjects([NSRProperty underscoredString:string stripPrefix:strip], underscored, nil)
+#define NSRAssertEqualsCamelized(string, camelized) STAssertEqualObjects([NSRProperty camelizedString:string], camelized, nil)
 
 @interface THelpers : SenTestCase
 @end
@@ -92,25 +99,26 @@
 
 - (void) test_inflection
 {
-	NSRAssertEqualsUnderscored(@"p", @"p");
-	NSRAssertEqualsUnderscored(@"post", @"post");
-	NSRAssertEqualsUnderscored(@"Post", @"post");
-	NSRAssertEqualsUnderscored(@"POST", @"post");
-	NSRAssertEqualsUnderscored(@"DHPost", @"dh_post");
-	NSRAssertEqualsUnderscored(@"postObject", @"post_object");
-	NSRAssertEqualsUnderscored(@"postObjectA", @"post_object_a");
-	NSRAssertEqualsUnderscored(@"postObjectAB", @"post_object_ab");
-	NSRAssertEqualsUnderscored(@"postObjectABCSomething", @"post_object_abc_something");
-	NSRAssertEqualsUnderscored(@"post_object", @"post_object");
-	NSRAssertEqualsUnderscored(@"post_Object", @"post_object");
-	
-	STAssertEqualObjects([@"post" underscoreIgnorePrefix:YES], @"post", nil);
-	STAssertEqualObjects([@"Post" underscoreIgnorePrefix:YES], @"post", nil);
-	STAssertEqualObjects([@"DPost" underscoreIgnorePrefix:YES], @"post", nil);
-	STAssertEqualObjects([@"DHPost" underscoreIgnorePrefix:YES], @"post", nil);
-	STAssertEqualObjects([@"PostDH" underscoreIgnorePrefix:YES], @"post_dh", nil);
-	STAssertEqualObjects([@"DHPostDH" underscoreIgnorePrefix:YES], @"post_dh", nil);
-	
+	NSRAssertEqualsUnderscored(@"p", @"p", NO);
+	NSRAssertEqualsUnderscored(@"post", @"post", NO);
+	NSRAssertEqualsUnderscored(@"Post", @"post", NO);
+	NSRAssertEqualsUnderscored(@"POST", @"post", NO);
+	NSRAssertEqualsUnderscored(@"DHPost", @"dh_post", NO);
+	NSRAssertEqualsUnderscored(@"postObject", @"post_object", NO);
+	NSRAssertEqualsUnderscored(@"postObjectA", @"post_object_a", NO);
+	NSRAssertEqualsUnderscored(@"postObjectAB", @"post_object_ab", NO);
+	NSRAssertEqualsUnderscored(@"postObjectABCSomething", @"post_object_abc_something", NO);
+	NSRAssertEqualsUnderscored(@"post_object", @"post_object", NO);
+	NSRAssertEqualsUnderscored(@"post_Object", @"post_object", NO);
+
+	NSRAssertEqualsUnderscored(@"post", @"post", YES);
+	NSRAssertEqualsUnderscored(@"Post", @"post", YES);
+	NSRAssertEqualsUnderscored(@"DPost", @"post", YES);
+	NSRAssertEqualsUnderscored(@"DHPost", @"post", YES);
+	NSRAssertEqualsUnderscored(@"DHpost", @"hpost", YES);
+	NSRAssertEqualsUnderscored(@"PostDH", @"post_dh", YES);
+	NSRAssertEqualsUnderscored(@"DHPostDH", @"post_dh", YES);
+
 	NSRAssertEqualsCamelized(@"p", @"p");
 	NSRAssertEqualsCamelized(@"post", @"post");
 	NSRAssertEqualsCamelized(@"Post", @"Post");

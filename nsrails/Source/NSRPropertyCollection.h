@@ -50,6 +50,7 @@
 @property (nonatomic, strong) NSString *name;
 
 - (BOOL) isHasMany;
+- (BOOL) matchesRemoteName:(NSString *)remoteProp autoinflect:(BOOL)autoinflect;
 
 @end
 

@@ -107,6 +107,12 @@
 
 @end
 
+@interface NSRProperty (NSRInflection)
+
++ (NSString *) underscoredString:(NSString *)string stripPrefix:(BOOL)stripPrefix;
+
+@end
+
 
 ///////////////////////////////////
 
@@ -177,16 +183,18 @@ _NSR_REMOTEID_SYNTH remoteID;
 	return [self masterNSRMapWithOverrideString:nil];
 }
 
-+ (NSString *) remoteModelName
++ (NSString *) remoteModelName //(overridable)
 {
 	if (self == [NSRRemoteObject class])
 		return nil;
+	
+	//Default behavior is to return name of this class
 	
 	NSString *class = NSStringFromClass(self);
 	
 	if ([self getRelevantConfig].autoinflectsClassNames)
 	{
-		return [class underscoreIgnorePrefix:[self getRelevantConfig].ignoresClassPrefixes];
+		return [NSRProperty underscoredString:class stripPrefix:[self getRelevantConfig].ignoresClassPrefixes];
 	}
 	else
 	{
@@ -194,9 +202,26 @@ _NSR_REMOTEID_SYNTH remoteID;
 	}
 }
 
-+ (NSString *) remoteControllerName
++ (NSString *) remoteControllerName //(overridable)
 {
-	return [[self remoteModelName] pluralize];
+	NSString *singular = [self remoteModelName];
+	
+	//Default behavior is to return pluralized model name
+	
+	//Arbitrary pluralization - should probably support more
+	if ([singular isEqualToString:@"person"])
+		return @"people";
+	
+	if ([singular isEqualToString:@"Person"])
+		return @"People";
+	
+	if ([singular hasSuffix:@"y"] && ![singular hasSuffix:@"ey"])
+		return [[singular substringToIndex:singular.length-1] stringByAppendingString:@"ies"];
+	
+	if ([singular hasSuffix:@"s"])
+		return [singular stringByAppendingString:@"es"];
+	
+	return [singular stringByAppendingString:@"s"];
 }
 
 - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)verb
@@ -699,7 +724,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 		if (!railsEquivalent)
 		{
 			if ([NSRConfig defaultConfig].autoinflectsPropertyNames)
-				railsEquivalent = [objcProperty.name underscore];
+				railsEquivalent = [NSRProperty underscoredString:objcProperty.name stripPrefix:NO];
 			else
 				railsEquivalent = objcProperty.name;
 		}

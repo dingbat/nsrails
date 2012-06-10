@@ -33,6 +33,19 @@
 #import "NSRPropertyCollection.h"
 #import "NSString+Inflection.h"
 
+/*
+ NSRProperty class
+ 
+ Used to store behavioral information on a specific property.
+ */
+
+@interface NSRProperty (NSRInflection)
+
++ (NSString *) camelizedString:(NSString *)string;
++ (NSString *) underscoredString:(NSString *)string stripPrefix:(BOOL)stripPrefix;
+
+@end
+
 @implementation NSRProperty
 @synthesize sendable, retrievable, encodable, decodable, remoteEquivalent, nestedClass, date, name, includedOnNesting;
 @synthesize belongsTo, array;
@@ -40,6 +53,22 @@
 - (BOOL) isHasMany
 {
 	return array && nestedClass;
+}
+
+- (BOOL) matchesRemoteName:(NSString *)remoteProp autoinflect:(BOOL)autoinflect
+{
+	if (remoteEquivalent)
+		return [remoteProp isEqualToString:remoteEquivalent];
+
+	if (!autoinflect)
+		return [remoteProp isEqualToString:self.name];
+	
+	return [[NSRProperty camelizedString:remoteProp] isEqualToString:self.name];
+}
+
+- (NSString *) underscoredName
+{
+	return [NSRProperty underscoredString:self.name stripPrefix:NO];
 }
 
 #pragma mark - NSCoding
@@ -80,8 +109,97 @@
 	[aCoder encodeBool:date forKey:@"date"];
 }
 
+@end
+
+@implementation NSRProperty (NSRInflection)
+
++ (NSString *) camelizedString:(NSString *)remoteProp
+{
+	NSMutableString *camelized = [NSMutableString string];
+	BOOL capitalizeNext = NO;
+	for (int i = 0; i < remoteProp.length; i++) 
+	{
+		NSString *str = [remoteProp substringWithRange:NSMakeRange(i, 1)];
+		
+		if ([str isEqualToString:@"_"])
+		{
+			capitalizeNext = YES;
+			continue;
+		}
+		
+		if (capitalizeNext) 
+		{
+			[camelized appendString:[str uppercaseString]];
+			capitalizeNext = NO;
+		} 
+		else
+		{
+			[camelized appendString:str];
+		}
+	}
+	
+	// replace items that end in Id with ID
+	if ([camelized hasSuffix:@"Id"])
+		[camelized replaceCharactersInRange:NSMakeRange(camelized.length - 2, 2) withString:@"ID"];
+	
+	// replace items that end in Ids with IDs
+	if ([camelized hasSuffix:@"Ids"])
+		[camelized replaceCharactersInRange:NSMakeRange(camelized.length - 3, 3) withString:@"IDs"];
+	
+	return camelized;
+}
+
++ (NSString *) underscoredString:(NSString *)string stripPrefix:(BOOL)stripPrefix
+{
+	NSCharacterSet *caps = [NSCharacterSet uppercaseLetterCharacterSet];
+	
+	NSMutableString *underscored = [NSMutableString string];
+	BOOL isPrefix = YES;
+	BOOL previousLetterWasCaps = NO;
+	
+	for (int i = 0; i < string.length; i++) 
+	{
+		unichar c = [string characterAtIndex:i];
+		NSString *currChar = [NSString stringWithFormat:@"%C",c];
+		if ([caps characterIsMember:c]) 
+		{
+			BOOL nextLetterIsCaps = (i+1 == string.length || [caps characterIsMember:[string characterAtIndex:i+1]]);
+			
+			//only add the delimiter if, it's not the first letter, it's not in the middle of a bunch of caps, and it's not a repeat
+			if (i != 0 && !(previousLetterWasCaps && nextLetterIsCaps) && [string characterAtIndex:i-1] != '_')
+			{
+				if (isPrefix && stripPrefix)
+				{
+					underscored = [NSMutableString string];
+				}
+				else 
+				{
+					[underscored appendString:@"_"];
+				}
+			}
+			[underscored appendString:[currChar lowercaseString]];
+			previousLetterWasCaps = YES;
+		}
+		else 
+		{
+			isPrefix = NO;
+			
+			[underscored appendString:currChar];
+			previousLetterWasCaps = NO;
+		}
+	}
+	
+	return underscored;
+}
 
 @end
+
+
+/*
+ NSRPropertyCollection class
+ 
+ Used to parse a class's NSRMap string and store a collection of its properties.
+ */
 
 @interface NSRRemoteObject (NSRIntrospection)
 
@@ -271,23 +389,11 @@
 
 - (NSArray *) objcPropertiesForRemoteEquivalent:(NSString *)remoteProp autoinflect:(BOOL)autoinflect
 {
-	NSString *maybeInflectedRemoteProp = (autoinflect ? [remoteProp camelize] : remoteProp);
-	
 	NSMutableArray *props = [NSMutableArray array];
 	for (NSRProperty *property in properties.allValues)
-	{
-		if (property.remoteEquivalent)
-		{
-			//if explicit equiv found, compare it to the non-inflected version
-			if ([property.remoteEquivalent isEqualToString:remoteProp])
-				[props addObject:property];
-		}
-		else
-		{
-			if ([property.name isEqualToString:maybeInflectedRemoteProp])
-				[props addObject:property];
-		}
-	}
+		if ([property matchesRemoteName:remoteProp autoinflect:autoinflect])
+			[props addObject:property];
+		
 	return props;
 }
 
