@@ -660,6 +660,10 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertTrue([[[[eggDict objectForKey:MotherKey] objectForKey:EggsKey] lastObject] isKindOfClass:[NSDictionary class]],@"Should include an egg (as a dict) in mother's eggs");
 	STAssertNil([[[[eggDict objectForKey:MotherKey] objectForKey:EggsKey] lastObject] objectForKey:MotherKey], @"Egg's mother's egg should not have a mother (since no -n)");
 	
+	e2.mother = nil;
+	eggDict = [e2 remoteDictionaryRepresentationWrapped:NO];
+	STAssertNil([eggDict objectForKey:MotherKey],@"Shouldn't send the mother if nil + associated");
+	
 	[nesterBird.eggs removeAllObjects];
 	
 	Egg *attachedEgg = [[Egg alloc] initWithCustomMap:@"mother:Bird -b"];
@@ -754,8 +758,8 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 		STAssertEqualObjects([[nested.propertyCollection.properties objectForKey:@"array"] nestedClass], @"Egg", @"Should define nested class as Egg");
 		
 		NSMutableDictionary *sendDict = (NSMutableDictionary *)[nested remoteDictionaryRepresentationWrapped:NO];
-		STAssertTrue([[sendDict objectForKey:@"array_attributes"] isKindOfClass:[NSArray class]], @"'array' key should exist & be an array");
-		STAssertTrue([[sendDict objectForKey:@"array_attributes"] count] == 0, @"'array' key should be empty");
+		STAssertNil([sendDict objectForKey:@"array_attributes"], @"'array' key shouldn't exist if empty");
+		STAssertNil([sendDict objectForKey:@"array"], @"'array' key shouldn't exist if empty");
 		
 		nested.array = [[NSMutableArray alloc] initWithObjects:[[Egg alloc] init], nil];
 		

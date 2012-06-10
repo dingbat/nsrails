@@ -520,17 +520,30 @@ _NSR_REMOTEID_SYNTH remoteID;
 {
 	NSRProperty *objcProperty = [[self propertyCollection].properties objectForKey:property];
 	
-	//this is recursion-protection. we don't want to include every nested class in this class because one of those nested class could nest us, causing infinite loop
-	//  we are safe to include all nestedclasses on top-level (if not from within nesting)
-	//  if we are a class being nested, we have to be careful - only inlude nestedclass attrs that were defined with -n
-	//     except if belongs-to, since then attrs aren't being included - just "_id"
-
-	if (nested && objcProperty.nestedClass && !objcProperty.belongsTo && !objcProperty.includedOnNesting)
-		return NO;
-	
 	//don't include id if it's nil or on the main object (nested guys need their IDs)
 	if ([property isEqualToString:@"remoteID"] && (!self.remoteID || !nested))
 		return NO;
+	
+	if (objcProperty.nestedClass)
+	{
+		if (nested && !objcProperty.belongsTo && !objcProperty.includedOnNesting)
+		{
+			//this is recursion-protection. we don't want to include every nested class in this class because one of those nested class could nest us, causing infinite loop
+			//  we are safe to include all nestedclasses on top-level (if not from within nesting)
+			//  if we are a class being nested, we have to be careful - only inlude nestedclass attrs that were defined with -n
+			//     except if belongs-to, since then attrs aren't being included - just "_id"
+
+			return NO;
+		}
+		
+		id val = [self valueForKey:property];
+		
+		//if it's an _attributes and either there's no val or it's an array and it's empty, don't send
+		if ((!objcProperty.isBelongsTo && !val) || (objcProperty.isArray && [val count] == 0))
+		{
+			return NO;
+		}
+	}
 	
 	//legacy support
 	if (!objcProperty.sendable)
