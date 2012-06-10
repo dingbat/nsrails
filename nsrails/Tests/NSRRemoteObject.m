@@ -30,7 +30,22 @@
 
 @implementation PickySender
 @synthesize local, retrieveOnly, shared, sharedExplicit, sendOnly, undefined;
-NSRMap(local -x, retrieveOnly -r, shared, sharedExplicit -rs, sendOnly -s)
+NSRMap(local -x, retrieveOnly, shared, sharedExplicit -rs, sendOnly);
+
+- (BOOL) shouldSendProperty:(NSString *)property nested:(BOOL)nested
+{
+	if ([property isEqualToString:@"retrieveOnly"])
+		return NO;
+	
+	return [super shouldSendProperty:property nested:nested];
+}
+
+- (void) decodeValue:(id)railsObject forProperty:(NSString *)property change:(BOOL *)change
+{
+	if (![property isEqualToString:@"sendOnly"])
+		[super decodeValue:railsObject forProperty:property change:change];
+}
+
 @end
 
 @interface PropertyTester : NSRRemoteObject
@@ -79,7 +94,7 @@ NSRMap(something);
 @synthesize locallyURL, locallyLowercase, remotelyUppercase, componentWithFlippingName, codeToNil, encodeNonJSON, dateOverrideSend, dateOverrideRet, csvArray;
 NSRMap(locallyURL=locally_url -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnly -se, codeToNil -ed, componentWithFlippingName=component -de, dateOverrideSend -e, dateOverrideRet -d, csvArray -ed);
 
-- (id) encodeValueForKey:(NSString *)key
+- (id) encodeValueForProperty:(NSString *)key
 {
 	if ([key isEqualToString:@"remoteOnly"])
 	{
@@ -113,40 +128,41 @@ NSRMap(locallyURL=locally_url -ed, locallyLowercase -d, remotelyUppercase -e, re
 		return nil;
 	}
 
-	return [super encodeValueForKey:key];
+	return [super encodeValueForProperty:key];
 }
 
-- (id) decodeValue:(id)railsObj forKey:(NSString *)key change:(BOOL *)change
+- (void) decodeValue:(id)railsObj forProperty:(NSString *)key change:(BOOL *)change
 {
 	if ([key isEqualToString:@"dateOverrideRet"])
 	{
-		return [NSDate dateWithTimeIntervalSince1970:0];
+		self.dateOverrideRet = [NSDate dateWithTimeIntervalSince1970:0];
 	}
-	if ([key isEqualToString:@"csvArray"])
+	else if ([key isEqualToString:@"csvArray"])
 	{
-		return [railsObj componentsSeparatedByString:@","];
+		self.csvArray = [railsObj componentsSeparatedByString:@","];
 	}
-	if ([key isEqualToString:@"codeToNil"])
+	else if ([key isEqualToString:@"codeToNil"])
 	{
-		return nil;
+		self.codeToNil = nil;
 	}
-	if ([key isEqualToString:@"locallyURL"])
+	else if ([key isEqualToString:@"locallyURL"])
 	{
-		return [NSURL URLWithString:railsObj];
+		self.locallyURL = [NSURL URLWithString:railsObj];
 	}
-	if ([key isEqualToString:@"locallyLowercase"])
+	else if ([key isEqualToString:@"locallyLowercase"])
 	{
-		return [railsObj lowercaseString];
+		self.locallyLowercase = [railsObj lowercaseString];
 	}
-	if ([key isEqualToString:@"componentWithFlippingName"])
+	else if ([key isEqualToString:@"componentWithFlippingName"])
 	{
 		PickyCoderComponent *new = [[PickyCoderComponent alloc] initWithRemoteDictionary:railsObj];
 		new.componentName = [new.componentName lowercaseString];
-		
-		return new;
+		self.componentWithFlippingName = new;
 	}
-	
-	return [super decodeValue:railsObj forKey:key change:change];
+	else
+	{
+		[super decodeValue:railsObj forProperty:key change:change];
+	}
 }
 
 @end

@@ -317,7 +317,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 	return nil;
 }
 
-- (id) encodeValueForKey:(NSString *)key
+- (id) encodeValueForProperty:(NSString *)key
 {	
 	NSRProperty *prop = [[self propertyCollection].properties objectForKey:key];
 	
@@ -393,7 +393,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 	return obj;
 }
 
-- (id) decodeValue:(id)railsObject forKey:(NSString *)key change:(BOOL *)change
+- (void) decodeValue:(id)railsObject forProperty:(NSString *)key change:(BOOL *)change
 {
 	NSRProperty *property = [[self propertyCollection].properties objectForKey:key];
 	
@@ -514,10 +514,31 @@ _NSR_REMOTEID_SYNTH remoteID;
 		}
 	}
 	
-	return decodedObj;
+	[self setValue:decodedObj forKey:key];
 }
 
+- (BOOL) shouldSendProperty:(NSString *)property nested:(BOOL)nested
+{
+	NSRProperty *objcProperty = [[self propertyCollection].properties objectForKey:property];
+	
+	//this is recursion-protection. we don't want to include every nested class in this class because one of those nested class could nest us, causing infinite loop
+	//  we are safe to include all nestedclasses on top-level (if not from within nesting)
+	//  if we are a class being nested, we have to be careful - only inlude nestedclass attrs that were defined with -n
+	//     except if belongs-to, since then attrs aren't being included - just "_id"
 
+	if (nested && objcProperty.nestedClass && !objcProperty.belongsTo && !objcProperty.includedOnNesting)
+		return NO;
+	
+	//don't include id if it's nil or on the main object (nested guys need their IDs)
+	if ([property isEqualToString:@"remoteID"] && (!self.remoteID || !nested))
+		return NO;
+	
+	//legacy support
+	if (!objcProperty.sendable)
+		return NO;
+	
+	return YES;
+}
 
 #pragma mark - Internal NSR stuff
 
@@ -552,7 +573,9 @@ _NSR_REMOTEID_SYNTH remoteID;
 			id previousVal = [self valueForKey:property.name];
 
 			BOOL change = -1;
-			id decodedObj = [self decodeValue:railsObject forKey:property.name change:&change];
+			[self decodeValue:railsObject forProperty:property.name change:&change];
+			
+			id newVal = [self valueForKey:property.name];
 			
 			//means it wasn't set by decodeValue:::, so do the default check - straight equality
 			if (change == -1)
@@ -560,20 +583,18 @@ _NSR_REMOTEID_SYNTH remoteID;
 				change = NO;
 				
 				//if it existed before but now nil, mark change
-				if (!decodedObj && previousVal)
+				if (!newVal && previousVal)
 				{
 					change = YES;
 				}
-				else if (decodedObj)
+				else if (newVal)
 				{
-					change = ![decodedObj isEqual:previousVal];
+					change = ![newVal isEqual:previousVal];
 				}
 			}
 
 			if (change)
 				changes = YES;
-
-			[self setValue:decodedObj forKey:property.name];
 		}
 	}
 	
@@ -596,31 +617,32 @@ _NSR_REMOTEID_SYNTH remoteID;
 	
 	for (NSRProperty *objcProperty in [self propertyCollection].properties.allValues)
 	{
-		//this is recursion-protection. we don't want to include every nested class in this class because one of those nested class could nest us, causing infinite loop
-		//  we are safe to include all nestedclasses on top-level (if not from within nesting)
-		//  if we are a class being nested, we have to be careful - only inlude nestedclass attrs that were defined with -n
-		//     except if belongs-to, since then attrs aren't being included - just "_id"
-		
-		BOOL excludeFromNesting = (nesting && objcProperty.nestedClass && !objcProperty.belongsTo && !objcProperty.includedOnNesting);
-		
-		if (!objcProperty.sendable || excludeFromNesting)
+		if (![self shouldSendProperty:objcProperty.name nested:nesting])
 			continue;
 		
 		NSString *railsEquivalent = objcProperty.remoteEquivalent;
 		if (!railsEquivalent)
 		{
 			if ([NSRConfig defaultConfig].autoinflectsPropertyNames)
+			{
 				railsEquivalent = [NSRProperty underscoredString:objcProperty.name stripPrefix:NO];
+			}
 			else
+			{
 				railsEquivalent = objcProperty.name;
+			}
+			
+			if (objcProperty.isBelongsTo)
+			{
+				railsEquivalent = [railsEquivalent stringByAppendingString:@"_id"];
+			}
+			else if (objcProperty.nestedClass)
+			{
+				railsEquivalent = [railsEquivalent stringByAppendingString:@"_attributes"];
+			}
 		}
 		
-		id remoteRep = [self encodeValueForKey:objcProperty.name];
-		
-		//don't include id if it's nil or on the main object (nested guys need their IDs)
-		if ([railsEquivalent isEqualToString:@"id"] && (!remoteRep || !nesting))
-			continue;
-		
+		id remoteRep = [self encodeValueForProperty:objcProperty.name];
 		if (!remoteRep)
 			remoteRep = [NSNull null];
 		
@@ -632,28 +654,17 @@ _NSR_REMOTEID_SYNTH remoteID;
 		
 		if (!JSONParsable)
 		{
-			[NSException raise:NSRJSONParsingException format:@"Trying to encode property '%@' in class '%@', but the result (%@) was not JSON-parsable. Override -[NSRRemoteObject encodeValueForKey:] if you want to encode a property that's not NSDictionary, NSArray, NSString, NSNumber, or NSNull. Remember to call super if it doesn't need custom encoding.",objcProperty.name, [self class], remoteRep];
+			[NSException raise:NSRJSONParsingException format:@"Trying to encode property '%@' in class '%@', but the result (%@) was not JSON-parsable. Override -[NSRRemoteObject encodeValueForProperty:] if you want to encode a property that's not NSDictionary, NSArray, NSString, NSNumber, or NSNull. Remember to call super if it doesn't need custom encoding.",objcProperty.name, [self class], remoteRep];
 		}
 		
-		
-		if (remoteRep != [NSNull null])
-		{
-			if (objcProperty.isBelongsTo)
-			{
-				//in this case, remoteRep will already be just the id and not the dict
-				railsEquivalent = [railsEquivalent stringByAppendingString:@"_id"];
-			}
-			else if (objcProperty.nestedClass)
-			{
-				railsEquivalent = [railsEquivalent stringByAppendingString:@"_attributes"];
-			}
-		}
 		
 		[dict setObject:remoteRep forKey:railsEquivalent];
 	}
 	
 	if (remoteDestroyOnNesting)
+	{
 		[dict setObject:[NSNumber numberWithBool:YES] forKey:@"_destroy"];
+	}
 	
 	if (wrapped)
 		return [NSDictionary dictionaryWithObject:dict forKey:[[self class] remoteModelName]];

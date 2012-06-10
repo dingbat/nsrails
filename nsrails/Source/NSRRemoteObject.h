@@ -202,34 +202,36 @@
  
 	@implementation MyClass
 
-	- (id) encodeValueForKey:(NSString *)key
+	- (id) encodeValueForProperty:(NSString *)property
 	{
-		if ([key isEqualToString:@"csvArray"])
+		if ([property isEqualToString:@"csvArray"])
 		{
 			return [csvArray componentsJoinedByString:@","];
 		}
-		if ([key isEqualToString:@"URL"])
+		if ([property isEqualToString:@"URL"])
 		{
 			return [URL absoluteString];	
 		}
 
-		return [super encodeValueForKey:key];
+		return [super encodeValueForProperty:property];
 	}
  
  And the decoders: 
  
-	- (id) decodeValue:(id)railsObject forKey:(NSString *)key change:(BOOL *)change
+	- (void) decodeValue:(id)railsObject forProperty:(NSString *)property change:(BOOL *)change
 	{
-		if ([key isEqualToString:@"csvArray"])
+		if ([property isEqualToString:@"csvArray"])
 		{
-			return [railsObject componentsSeparatedByString:@","];
+			self.csvArray = [railsObject componentsSeparatedByString:@","];
 		}
-		if ([key isEqualToString:@"URL"])
+		else if ([property isEqualToString:@"URL"])
 		{
-			return [NSURL URLWithString:railsObject];
+			self.URL = [NSURL URLWithString:railsObject];
 		}
-
-		return [super decodeValue:railsObj forKey:key change:change];
+		else
+		{
+			[super decodeValue:railsObj forProperty:property change:change];
+		}
 	}
 
 	@end
@@ -238,20 +240,20 @@
  
  - The `change` parameter can be ignored unless you wish to define a custom check for changes. If the value of `change` is not modified, NSRails will use its own change detection mechanism. This is used to return a value in remoteFetch:changes:.
  
- - Overriding encodeValueForKey: can be used to define remote-only properties (ie, if your Rails server expects an attribute that you don’t want defined in your Objective-C class). Note here that `uniqueDeviceID` isn’t even a property of the Person class:
+ - Overriding encodeValueForProperty: can be used to define remote-only properties (ie, if your Rails server expects an attribute that you don’t want defined in your Objective-C class). Note here that `uniqueDeviceID` isn’t even a property of the Person class:
 	
 	@implementation Person
 	@synthesize name, age;
 	NSRMap(name, age, uniqueDeviceID -s)  //send-only
 	 
-	- (id) decodeValue:(id)railsObject forKey:(NSString *)key change:(BOOL *)change
+	- (id) encodeValueForProperty:(NSString *)property
 	{
-		if ([key isEqualToString:@"uniqueDeviceID"])
+		if ([property isEqualToString:@"uniqueDeviceID"])
 		{
 			return [[UIDevice currentDevice] uniqueIdentifier];
 		}
 		
-		return [super decodeValue:railsObj forKey:key change:change];
+		return [super encodeValueForProperty:property];
 	}
 	 
 	@end
@@ -862,29 +864,30 @@
  
  See [overriding](#overriding) for more details.
  
- @param key Name of the property.
+ @param property Name of the property.
  @return Remote representation for *key*. Must be JSON-parsable (NSDictionary, NSArray, NSString, NSNumber, or (NSNull or nil)).
  
  @warning Make sure you make a call to super if a certain property shouldn't be custom-coded.
  */
-- (id) encodeValueForKey:(NSString *)key;
+- (id) encodeValueForProperty:(NSString *)property;
 
 /**
- Should return what you want your Objective-C property to be set to, based off a remote representation (can return any type of object).
+ Should set what you want an Objective-C property to be set to, based off a remote representation.
  
  See [overriding](#overriding) for more details.
  
  @param railsObject Remote representation of this key. Will be a JSON-parsed object (NSDictionary, NSArray, NSString, NSNumber, or nil).
- @param key Name of the property.
+ @param property Name of the property.
  @param change Reference to a change boolean. This can (and usually will) be ignored.
- 
- @return The value that should be set to the instance's property.
- 
- *Note*: This method should not set the class’s instance variable after conversion, simply return it. NSRails will set the property.
- 
+  
  @warning Make sure you make a call to super if a certain property shouldn't be custom-coded.
  */
-- (id) decodeValue:(id)railsObject forKey:(NSString *)key change:(BOOL *)change;
+- (void) decodeValue:(id)railsObject forProperty:(NSString *)property change:(BOOL *)change;
+
+/** 
+ 
+ */
+- (BOOL) shouldSendProperty:(NSString *)property nested:(BOOL)nested;
 
 @end
 
