@@ -680,8 +680,8 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	attachedEgg.mother = nil;
 	eggDict = [attachedEgg remoteDictionaryRepresentationWrapped:NO];
 
-	STAssertNotNil([eggDict objectForKey:@"mother"], @"'mother' key should exist - belongs-to but NULL");
-	STAssertTrue([[eggDict objectForKey:@"mother"] isKindOfClass:[NSNull class]], @"mother should be exist and be null");
+	STAssertNotNil([eggDict objectForKey:@"mother_id"], @"'mother_id' key should exist - belongs-to but NULL");
+	STAssertTrue([[eggDict objectForKey:@"mother_id"] isKindOfClass:[NSNull class]], @"mother_id should be exist but be null");
 }
 
 - (void) test_arrays

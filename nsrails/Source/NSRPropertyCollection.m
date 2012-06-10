@@ -31,7 +31,6 @@
 #import "NSRails.h"
 
 #import "NSRPropertyCollection.h"
-#import "NSString+Inflection.h"
 
 /*
  NSRProperty class

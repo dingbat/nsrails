@@ -10,7 +10,6 @@
 
 #import "NSRails.h"
 #import "NSRPropertyCollection.h"
-#import "NSString+Inflection.h"
 
 #import "MockServer.h"
 
