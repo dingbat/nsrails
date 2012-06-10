@@ -40,8 +40,6 @@
 
 @property (nonatomic, getter = isSendable) BOOL sendable;
 @property (nonatomic, getter = isRetrievable) BOOL retrievable;
-@property (nonatomic, getter = isEncodable) BOOL encodable;
-@property (nonatomic, getter = isDecodable) BOOL decodable;
 @property (nonatomic, getter = isArray) BOOL array;
 @property (nonatomic, getter = isBelongsTo) BOOL belongsTo;
 @property (nonatomic, getter = isDate) BOOL date;

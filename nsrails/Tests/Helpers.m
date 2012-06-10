@@ -152,14 +152,6 @@
 	STAssertNotNil([TheManInsideMe typeForProperty:@"primitiveFloat"],@"");
 	STAssertNotNil([TheManInsideMe typeForProperty:@"encoding"],@"");
 	STAssertNotNil([TheManInsideMe typeForProperty:@"rect"],@"");
-
-	STAssertEqualObjects(NSStringFromSelector([TheManInsideMe setterForProperty:@"string"]), @"setTheString:", @"");	
-	STAssertEqualObjects(NSStringFromSelector([TheManInsideMe setterForProperty:@"date"]), @"setDate:", @"");	
-	STAssertEqualObjects(NSStringFromSelector([TheManInsideMe setterForProperty:@"array"]), @"setArray:", @"");	
-
-	STAssertEqualObjects(NSStringFromSelector([TheManInsideMe getterForProperty:@"string"]), @"string", @"");	
-	STAssertEqualObjects(NSStringFromSelector([TheManInsideMe getterForProperty:@"date"]), @"getDate", @"");	
-	STAssertEqualObjects(NSStringFromSelector([TheManInsideMe getterForProperty:@"array"]), @"array", @"");	
 }
 
 - (void) test_noclimb
@@ -174,15 +166,6 @@
 
 	STAssertEqualObjects([ASubclass performSelectorWithoutClimbingHierarchy:sel], @"sub",@"");
 	STAssertTrue([ASubclass respondsToSelectorWithoutClimbingHierarchy:sel], @"");
-
-	STAssertEqualObjects([[[ASuperclass alloc] init] performSelectorWithoutClimbingHierarchy:sel], @"super",@"");
-	STAssertTrue([[[ASuperclass alloc] init] respondsToSelectorWithoutClimbingHierarchy:sel], @"");
-	
-	STAssertNil([[[AClass alloc] init] performSelectorWithoutClimbingHierarchy:sel],@"");
-	STAssertFalse([[[AClass alloc] init] respondsToSelectorWithoutClimbingHierarchy:sel], @"");
-	
-	STAssertEqualObjects([[[ASubclass alloc] init] performSelectorWithoutClimbingHierarchy:sel], @"sub",@"");
-	STAssertTrue([[[ASubclass alloc] init] respondsToSelectorWithoutClimbingHierarchy:sel], @"");
 }
 
 - (void)setUpClass

@@ -21,7 +21,7 @@
 @property (nonatomic, strong) NSString *attr2;
 @property (nonatomic, strong, readonly) NSString *badRetrieve;
 
-@property (nonatomic, strong) NSString *send, *retrieve, *encode, *decode, *local;
+@property (nonatomic, strong) NSString *send, *retrieve, *local;
 @property (nonatomic, strong) TestClassParent *parent;
 
 @property (nonatomic, strong) NSArray *array;
@@ -30,18 +30,18 @@
 
 @implementation TestClass
 @synthesize primitiveAttr, myID, attr1, attr2, array;
-@synthesize retrieve, send, local, decode, encode, parent, badRetrieve;
+@synthesize retrieve, send, local, parent, badRetrieve;
 @end
 
 @interface FlagTestClass : NSRRemoteObject
 @property (nonatomic, strong) NSDate *date;
-@property (nonatomic, strong) NSString *sendretrieve, *nothing, *retrieve, *send, *local, *decode, *encode, *sendOnly, *encodedecode, *objc, *fakeDate;
+@property (nonatomic, strong) NSString *sendretrieve, *nothing, *retrieve, *send, *local, *sendOnly, *objc, *fakeDate;
 @property (nonatomic, strong) NSArray *nestedArrayExplicit, *nestedArrayExplicitM, *nestedArrayM, *nestedArrayNothing, *dateArray;
 @property (nonatomic, strong) TestClass *nestedExplicit, *nestedNothing, *parent;
 @end
 
 @implementation FlagTestClass
-@synthesize sendretrieve, nothing, retrieve, send, local, decode, encode, sendOnly, parent, encodedecode, objc, date, fakeDate;
+@synthesize sendretrieve, nothing, retrieve, send, local, sendOnly, parent, objc, date, fakeDate;
 @synthesize nestedNothing, nestedExplicit, nestedArrayNothing, nestedArrayExplicit, dateArray, nestedArrayExplicitM, nestedArrayM;
 @end
 
@@ -97,22 +97,6 @@ STAssertThrowsSpecificNamed(exp, NSException, NSRMapException, desc)
 	NSRAssertEqualArraysNoOrder(pc.properties.allKeys, NSRArray(@"nothing", @"nonexistent"));
 	
 	STAssertTrue([pc objcPropertiesForRemoteEquivalent:@"notdeclared" autoinflect:NO].count == 0, @"Shouldn't pick up any remotes called notdeclared");
-}
-
-- (void) test_encode_decode
-{
-	NSRPropertyCollection *pc = [[NSRPropertyCollection alloc] initWithClass:[FlagTestClass class]
-																  syncString:@"decode -d, encode -e, encodedecode -ed"];
-	
-	NSRProperty *decode = [pc.properties objectForKey:@"decode"];
-	STAssertTrue(decode.decodable, @"decode should be marked decodable");
-	
-	NSRProperty *encode = [pc.properties objectForKey:@"encode"];
-	STAssertTrue(encode.encodable, @"encode should be marked encodable");
-	
-	NSRProperty *encodedecode = [pc.properties objectForKey:@"encodedecode"];
-	STAssertTrue(encodedecode.encodable, @"encodedecode should be marked encodable");
-	STAssertTrue(encodedecode.decodable, @"encodedecode should be marked encodable");
 }
 
 - (void) test_send_receive

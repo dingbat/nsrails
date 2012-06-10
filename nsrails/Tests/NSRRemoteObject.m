@@ -53,6 +53,7 @@ NSRMap(local -x, retrieveOnly -r, shared, sharedExplicit -rs, sendOnly -s)
 @end
 
 @implementation BadCoder
+NSRMap(something);
 @end
 
 @interface PickyCoderComponent : NSRRemoteObject
@@ -78,78 +79,74 @@ NSRMap(local -x, retrieveOnly -r, shared, sharedExplicit -rs, sendOnly -s)
 @synthesize locallyURL, locallyLowercase, remotelyUppercase, componentWithFlippingName, codeToNil, encodeNonJSON, dateOverrideSend, dateOverrideRet, csvArray;
 NSRMap(locallyURL=locally_url -ed, locallyLowercase -d, remotelyUppercase -e, remoteOnly -se, codeToNil -ed, componentWithFlippingName=component -de, dateOverrideSend -e, dateOverrideRet -d, csvArray -ed);
 
-- (id) encodeRemoteOnly
+- (id) encodeValueForKey:(NSString *)key
 {
-	if (encodeNonJSON)
+	if ([key isEqualToString:@"remoteOnly"])
 	{
-		return [[NSScanner alloc] init];
+		if (encodeNonJSON)
+			return [[NSScanner alloc] init];
+		return @"remote";		
 	}
-	return @"remote";
+	if ([key isEqualToString:@"dateOverrideSend"])
+	{
+		return @"override!";
+	}
+	if ([key isEqualToString:@"csvArray"])
+	{
+		return [csvArray componentsJoinedByString:@","];
+	}
+	if ([key isEqualToString:@"componentWithFlippingName"])
+	{
+		componentWithFlippingName.componentName = [componentWithFlippingName.componentName uppercaseString];
+		return [componentWithFlippingName remoteDictionaryRepresentationWrapped:YES];	
+	}
+	if ([key isEqualToString:@"locallyURL"])
+	{
+		return [locallyURL absoluteString];	
+	}
+	if ([key isEqualToString:@"remotelyUppercase"])
+	{
+		return [remotelyUppercase uppercaseString];
+	}
+	if ([key isEqualToString:@"codeToNil"])
+	{
+		return nil;
+	}
+
+	return [super encodeValueForKey:key];
 }
 
-- (id) encodeDateOverrideSend
+- (id) decodeValue:(id)railsObj forKey:(NSString *)key change:(BOOL *)change
 {
-	return @"override!";
-}
-
-- (id) decodeDateOverrideRet:(NSString *)json
-{
-	return [NSDate dateWithTimeIntervalSince1970:0];
-}
-
-- (NSString *) encodeCsvArray
-{
-	return [csvArray componentsJoinedByString:@","];
-}
-
-- (NSArray *) decodeCsvArray:(NSString *)railsArrayRep
-{
-	return [railsArrayRep componentsSeparatedByString:@","];
-}
-
-- (NSString *) decodeCodeToNil:(NSString *)str
-{
-	return nil;
-}
-
-- (NSString *) encodeCodeToNil:(NSString *)input
-{
-	return nil;
-}
-
-- (NSURL *) decodeLocallyURL:(NSString *)remoteUrl
-{
-	return [NSURL URLWithString:remoteUrl];
-}
-
-- (NSString *) decodeLocallyLowercase:(NSString *)remote
-{
-	return [remote lowercaseString];
-}
-
-- (PickyCoderComponent *) decodeComponentWithFlippingName:(NSDictionary *)remoteDict
-{
-	PickyCoderComponent *new = [[PickyCoderComponent alloc] initWithRemoteDictionary:remoteDict];
-	new.componentName = [new.componentName lowercaseString];
+	if ([key isEqualToString:@"dateOverrideRet"])
+	{
+		return [NSDate dateWithTimeIntervalSince1970:0];
+	}
+	if ([key isEqualToString:@"csvArray"])
+	{
+		return [railsObj componentsSeparatedByString:@","];
+	}
+	if ([key isEqualToString:@"codeToNil"])
+	{
+		return nil;
+	}
+	if ([key isEqualToString:@"locallyURL"])
+	{
+		return [NSURL URLWithString:railsObj];
+	}
+	if ([key isEqualToString:@"locallyLowercase"])
+	{
+		return [railsObj lowercaseString];
+	}
+	if ([key isEqualToString:@"componentWithFlippingName"])
+	{
+		PickyCoderComponent *new = [[PickyCoderComponent alloc] initWithRemoteDictionary:railsObj];
+		new.componentName = [new.componentName lowercaseString];
+		
+		return new;
+	}
 	
-	return new;
-}
-
-- (id) encodeComponentWithFlippingName
-{
-	componentWithFlippingName.componentName = [componentWithFlippingName.componentName uppercaseString];
-	return [componentWithFlippingName remoteDictionaryRepresentationWrapped:YES];
-}
-
-- (NSString *) encodeLocallyURL
-{
-	NSString *ret = [locallyURL description];
-	return ret;
-}
-
-- (id) encodeRemotelyUppercase
-{
-	return [remotelyUppercase uppercaseString];
+	return [super decodeValue:railsObj forKey:key change:change];
 }
 
 @end
@@ -339,11 +336,8 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 
 - (void) test_encode_decode
 {
-	BadCoder *e = [[BadCoder alloc] initWithCustomMap:@"something -e"];
-	STAssertThrows([e remoteDictionaryRepresentationWrapped:NO], @"Should throw unrecognized selector for encode:");
-
-	BadCoder *d = [[BadCoder alloc] initWithCustomMap:@"something -d"];
-	STAssertThrows([d remoteDictionaryRepresentationWrapped:NO], @"Should throw unrecognized selector for decode:");
+	BadCoder *e = [[BadCoder alloc] initWithCustomMap:@"something"];
+	STAssertThrows([e remoteDictionaryRepresentationWrapped:NO], @"Should throw unrecognized encoder");
 
 	PickyCoder *p = [[PickyCoder alloc] initWithRemoteDictionary:[MockServer newPickyCoder]];
 	p.encodeNonJSON = NO;
@@ -364,7 +358,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	NSDictionary *sendDict = [p remoteDictionaryRepresentationWrapped:NO];
 	STAssertTrue([[sendDict objectForKey:@"csv_array"] isKindOfClass:[NSString class]],@"Should've encoded NSArray -> string");
 	STAssertTrue([[sendDict objectForKey:@"locally_url"] isKindOfClass:[NSString class]],@"Should've encoded NSURL -> string");
-	STAssertTrue([[sendDict objectForKey:@"code_to_nil"] isKindOfClass:[NSNull class]], @"Should've encoded codeToNil into NSNull");
+	STAssertTrue([[sendDict objectForKey:@"code_to_nil"] isKindOfClass:[NSNull class]], @"Should be nsnull");
 	STAssertEqualObjects([sendDict objectForKey:@"csv_array"], @"one,two,three", @"Should've encoded into string & retain content");
 	STAssertEqualObjects([sendDict objectForKey:@"locally_url"], @"http://nsrails.com", @"Should've encoded into string & retain content");
 	STAssertEqualObjects([sendDict objectForKey:@"locally_lowercase"], @"lowercase?", @"Should've kept as lowercase");
@@ -505,7 +499,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	STAssertNil(t.propertyTester, @"propertyTester should be nil after setting from JSON");
 
 	t.propertyTester = [[NSScanner alloc] init];
-	STAssertNoThrow([t remoteDictionaryRepresentationWrapped:NO], @"Shouldn't blow up on making a DICT");
+	STAssertThrows([t remoteDictionaryRepresentationWrapped:NO], @"Should blow up on making a dict with scanner");
 	STAssertThrows([t remoteCreate:nil], @"Should blow up on making bad JSON");
 }
 
@@ -669,6 +663,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	
 	attachedEgg.mother = nil;
 	eggDict = [attachedEgg remoteDictionaryRepresentationWrapped:NO];
+
 	STAssertNotNil([eggDict objectForKey:@"mother"], @"'mother' key should exist - belongs-to but NULL");
 	STAssertTrue([[eggDict objectForKey:@"mother"] isKindOfClass:[NSNull class]], @"mother should be exist and be null");
 }
@@ -742,10 +737,9 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 		STAssertTrue([[nested.propertyCollection.properties objectForKey:@"array"] isHasMany], @"Should be an array & HM");
 		STAssertEqualObjects([[nested.propertyCollection.properties objectForKey:@"array"] nestedClass], @"Egg", @"Should define nested class as Egg");
 		
-		//drop _attributes if blank array
 		NSMutableDictionary *sendDict = (NSMutableDictionary *)[nested remoteDictionaryRepresentationWrapped:NO];
-		STAssertTrue([[sendDict objectForKey:@"array"] isKindOfClass:[NSArray class]], @"'array' key should exist & be an array");
-		STAssertTrue([[sendDict objectForKey:@"array"] count] == 0, @"'array' key should be empty");
+		STAssertTrue([[sendDict objectForKey:@"array_attributes"] isKindOfClass:[NSArray class]], @"'array' key should exist & be an array");
+		STAssertTrue([[sendDict objectForKey:@"array_attributes"] count] == 0, @"'array' key should be empty");
 		
 		nested.array = [[NSMutableArray alloc] initWithObjects:[[Egg alloc] init], nil];
 		
@@ -756,7 +750,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 		//right now it's array_attributes - change to just "array" as if it was coming from rails
 		[sendDict setObject:[sendDict objectForKey:@"array_attributes"] forKey:@"array"];
 		[sendDict removeObjectForKey:@"array_attributes"];
-		
+
 		BOOL changes = [nested setPropertiesUsingRemoteDictionary:sendDict];
 		STAssertTrue(changes, @"Should be changes - egg never had an ID so it doesn't know to persist");
 		STAssertNotNil(nested.array, @"Array shouldn't be nil");

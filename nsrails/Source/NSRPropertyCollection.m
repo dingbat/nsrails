@@ -47,7 +47,7 @@
 @end
 
 @implementation NSRProperty
-@synthesize sendable, retrievable, encodable, decodable, remoteEquivalent, nestedClass, date, name, includedOnNesting;
+@synthesize sendable, retrievable, remoteEquivalent, nestedClass, date, name, includedOnNesting;
 @synthesize belongsTo, array;
 
 - (BOOL) isHasMany
@@ -79,8 +79,6 @@
 	{
 		self.sendable = [aDecoder decodeBoolForKey:@"sendable"];
 		self.retrievable = [aDecoder decodeBoolForKey:@"retrievable"];
-		self.decodable = [aDecoder decodeBoolForKey:@"decodable"];
-		self.encodable = [aDecoder decodeBoolForKey:@"encodable"];
 		self.array = [aDecoder decodeBoolForKey:@"array"];
 		self.belongsTo = [aDecoder decodeBoolForKey:@"belongsTo"];
 		self.date = [aDecoder decodeBoolForKey:@"date"];
@@ -102,8 +100,6 @@
 	[aCoder encodeBool:includedOnNesting forKey:@"includedOnNesting"];
 	[aCoder encodeBool:sendable forKey:@"sendable"];
 	[aCoder encodeBool:retrievable forKey:@"retrievable"];
-	[aCoder encodeBool:decodable forKey:@"decodable"];
-	[aCoder encodeBool:encodable forKey:@"encodable"];
 	[aCoder encodeBool:array forKey:@"array"];
 	[aCoder encodeBool:belongsTo forKey:@"belongsTo"];
 	[aCoder encodeBool:date forKey:@"date"];
@@ -165,7 +161,7 @@
 		{
 			BOOL nextLetterIsCaps = (i+1 == string.length || [caps characterIsMember:[string characterAtIndex:i+1]]);
 			
-			//only add the delimiter if, it's not the first letter, it's not in the middle of a bunch of caps, and it's not a repeat
+			//only add the delimiter if, it's not the first letter, it's not in the middle of a bunch of caps, and it's not a _ repeat
 			if (i != 0 && !(previousLetterWasCaps && nextLetterIsCaps) && [string characterAtIndex:i-1] != '_')
 			{
 				if (isPrefix && stripPrefix)
@@ -328,13 +324,7 @@
 			
 			//Check for all other flags (-)
 			if (options)
-			{
-				if ([options rangeOfString:@"e"].location != NSNotFound)
-					property.encodable = YES;
-
-				if ([options rangeOfString:@"d"].location != NSNotFound)
-					property.decodable = YES;
-				
+			{				
 				if ([options rangeOfString:@"b"].location != NSNotFound)
 					property.belongsTo = YES;
 				

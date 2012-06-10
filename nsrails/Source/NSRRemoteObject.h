@@ -36,6 +36,15 @@
 @class NSRPropertyCollection;
 @class NSRRequest;
 
+/*************************************************************************
+ *************************************************************************
+ 
+  See this documentation all pretty at http://dingbat.github.com/nsrails/
+
+ *************************************************************************
+ *************************************************************************/
+
+
 /**
  
  `NSRRemoteObject` is the primary class in NSRails - any classes that inherit from it will be treated with a "remote correspondance" and ActiveResource-like APIs will be available.
@@ -77,6 +86,176 @@
 		 }
 	 }
  
+ <a name="overriding"></a>
+ 
+ ## Overriding
+ 
+ ### Custom model name
+ 
+ remoteModelName should be overriden if the name of this class in Objective-C is different than its corresponding model on your server.
+ 
+ Recommended overriding behavior is to return a string literal:
+ 
+	 @implementation User
+	 
+	 + (NSString *) remoteModelName
+	 {
+		 return @"subscriber";
+	 }
+	 
+	 @end
+ 
+ The above example would be needed if the same class is called `User` in Objective-C but `Subscriber` on your server.
+ 
+ **Default Behavior** (when not overriden)
+ 
+ Returns the name of the subclass, lowercase and underscored if [enabled](NSRConfig.html#//api/name/autoinflectsClassNames), and with its prefix stripped if [enabled](NSRConfig.html#//api/name/ignoresClassPrefixes).
+
+ ### Custom controller name
+ 
+ The name of this class's controller on the server - where actions for this class should be routed.
+ 
+ The default behavior (when not overriden) is to pluralize remoteModelName, so if your class was called `User`, by default requests involving its controller would be routed to `/users`. In the example above for custom model names, it would go to `/subscribers` since remoteModelName was overridden.
+
+ However, this can be overridden as well (can also be overridden on its own.)
+ 
+	 @implementation User
+ 
+	 + (NSString *) remoteModelName
+	 {
+		 return @"subscriber";
+	 }
+ 
+	 + (NSString *) remoteControllerName
+	 {
+		 return @"subscriberz";
+	 }
+ 
+	 @end
+ 
+ (I can't even come up with a good example for when this would be necessary.)
+ 
+ ### Nested resource paths
+ 
+ The objectUsedToPrefixRequest: method should be overridden if instances of your subclass class should have their resource path be based off an association.
+ 
+ This may be needed if you define your routes in Rails to look something like:
+ 
+	 MySweetApp::Application.routes.draw do
+		 resources :users
+			 resources :invites
+		 end
+	 end
+ 
+ And invites are accessed in relation to some user:
+ 
+	 GET    /users/1/invites.json
+	 POST   /users/1/invites.json
+	 GET    /users/1/invites/3.json
+	 DELETE /users/1/invites/3.json
+ 
+ Typically, this method is overriden with an instance variable that represents a parent:
+ 
+	 @implementation Invite
+	 @synthesize user, foo;
+	 NSRMap(*, user -b);
+	 
+	 - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request
+	 {
+		 return user;
+	 }
+	 
+	 @end
+ 
+ Note that if `user`'s remoteID is `nil`, an exception will be thrown (its ID is needed in constructing the route). 
+ 
+ You may also filter requests that you don't want to prefix using the **request** parameter. Let's say you only want this behavior for POST and GET, but want to keep DELETE and PATCH with their traditional routes:
+ 
+	 GET    /users/3/invites.json  "get all the invites for user 3"
+	 POST   /users/3/invites.json  "create an invite for user 3"
+	 PATCH  /invites/28.json       "update user invite 28"
+	 DELETE /invites/28.json       "delete user invite 28"
+ 
+ This could be done by checking **request**'s [httpMethod](NSRRequest.html#//api/name/httpMethod):
+ 
+	 - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request
+	 {
+		 if ([request.httpMethod isEqualToString:@"GET"] || [request.httpMethod isEqualToString:@"POST"])
+			 return user;
+		 return nil;
+	 }
+ 
+ ### Custom encoding/decoding
+ 
+ This method should be overridden if you have a property whose JSON representation should be different than its actual object value when sending and retrieving to/from Rails.
+ 
+	@interface MyClass : NSRRemoteObject
+
+	@property (nonatomic, strong) NSURL *URL;         //on the server this is a plain string
+	@property (nonatomic, strong) NSArray *csvArray;  //on the server this is a comma-separated string
+
+	@end
+ 
+ In the example above, we want `URL` to be an NSURL locally and `csvArray` to be an NSArray locally, but have them interact with Rails them as a strings.
+ 
+ Override the encodeValueForKey: method to define custom encodings:
+ 
+	@implementation MyClass
+
+	- (id) encodeValueForKey:(NSString *)key
+	{
+		if ([key isEqualToString:@"csvArray"])
+		{
+			return [csvArray componentsJoinedByString:@","];
+		}
+		if ([key isEqualToString:@"URL"])
+		{
+			return [URL absoluteString];	
+		}
+
+		return [super encodeValueForKey:key];
+	}
+ 
+ And the decoders: 
+ 
+	- (id) decodeValue:(id)railsObject forKey:(NSString *)key change:(BOOL *)change
+	{
+		if ([key isEqualToString:@"csvArray"])
+		{
+			return [railsObject componentsSeparatedByString:@","];
+		}
+		if ([key isEqualToString:@"URL"])
+		{
+			return [NSURL URLWithString:railsObject];
+		}
+
+		return [super decodeValue:railsObj forKey:key change:change];
+	}
+
+	@end
+ 
+ - It is important to make a call to super if your property doesn't require custom encoding/decoding, as the base class implementation will automatically encode/decode nested classes (translate dicts/arrays into instances of their respective NSRRemoteObject subclasses), as well as automatically convert to and from NSDates.
+ 
+ - The `change` parameter can be ignored unless you wish to define a custom check for changes. If the value of `change` is not modified, NSRails will use its own change detection mechanism. This is used to return a value in remoteFetch:changes:.
+ 
+ - Overriding encodeValueForKey: can be used to define remote-only properties (ie, if your Rails server expects an attribute that you don’t want defined in your Objective-C class). Note here that `uniqueDeviceID` isn’t even a property of the Person class:
+	
+	@implementation Person
+	@synthesize name, age;
+	NSRMap(name, age, uniqueDeviceID -s)  //send-only
+	 
+	- (id) decodeValue:(id)railsObject forKey:(NSString *)key change:(BOOL *)change
+	{
+		if ([key isEqualToString:@"uniqueDeviceID"])
+		{
+			return [[UIDevice currentDevice] uniqueIdentifier];
+		}
+		
+		return [super decodeValue:railsObj forKey:key change:change];
+	}
+	 
+	@end
+
  
  <a name="coredata"></a>
 
@@ -100,14 +279,12 @@
  - By default, NSRRemoteObject inherits from NSObject. Because your managed, NSRails-enabled class need to inherit from NSManagedObject in order to function within CoreData, and because Objective-C does not allow multiple inheritance, NSRRemoteObject will modify its superclass to NSManagedObject during compiletime if `NSR_USE_COREDATA` is defined.
  
  
- ### Some things to note when using NSRails with CoreData:
+ ### Notes
  
  - You must set your managed object context to your config's managedObjectContext property so that NSRails can automatically insert or search for CoreData objects when operations require it:
 	
 		[[NSRConfig defaultConfig] setManagedObjectContext:<#your MOC#>];
- 
- - CRUD operations in NSRails will insert into, delete into, or simply save the managed object context accordingly. For more details, see the descriptions of each CRUD method, under their "CoreData" headers.
- 
+  
  - `remoteID` is used as a "primary key" that NSRails will use to find other instances, etc. This means that `remoteID` has to be defined in your *.xcdatamodeld data model file. 
  
 	- You can either create an abstract entity named NSRRemoteObject that defines a `remoteID` attribute and acts as a parent to your other entities (preferred), **OR** declare `remoteID` for each entity that subclasses NSRRemoteObject:
@@ -162,9 +339,9 @@
 	{
 		NSDictionary *hashSentByRails = myObj.remoteAttributes;
 		…
+	}
  
- Methods that will update `remoteAttributes` include initWithRemoteDictionary:, remoteFetch: and remoteCreate:. Objects returned with remoteObjectWithID:, and remoteAll: will also have an accurate `remoteAttributes`.
- 
+ Calling setPropertiesUsingRemoteDictionary: will also update remoteAttributes to the dictionary passed in.
  */
 @property (nonatomic, strong, readonly) NSDictionary *remoteAttributes;
 
@@ -505,6 +682,8 @@
  
  Takes into account rules in NSRMap.
  
+ Will set remoteAttributes to *dictionary*.
+ 
  @param dictionary Dictionary to be evaluated. 
  @return YES if any changes were made to the local object, NO if object was identical before/after.
  */
@@ -521,7 +700,11 @@
  
  Takes into account rules in NSRMap.
  
- If CoreData is enabled, inserts this new instance into the managed object context set in the currently relevant config.
+ **CoreData**:
+ 
+ Inserts this new instance into the managed object context set in the currently relevant config.
+ 
+ *Note*: With CoreData, it is highly encouraged to use the findOrInsertObjectUsingRemoteDictionary: instead of this. findOrInsertObjectUsingRemoteDictionary: uses a find-or-create strategy to ensure that an object with the same remoteID doesn't already exist in the store (which would raise an exception otherwise).
  
  @param dictionary Dictionary to be evaluated. The keys in this dictionary (being a *remote* dictionary) should have remote keys, since this will pass through NSRMap (eg, "id", not "remoteID", and if a special equivalence isn't defined, "my_property", not "myProperty").
  
@@ -642,19 +825,8 @@
 /**
  The equivalent name of this class on your server.
  
- Recommended behavior is to return a string literal:
-	
-	@implementation User
- 
-	+ (NSString *) remoteModelName
-	{
-		return @"subscriber";
-	}
- 
-	@end
-		
- The above example would be needed if the same class is called `User` in Objective-C but `Subscriber` on your server.
- 
+ See [overriding](#overriding) for more details.
+
  **Default Behavior** (when not overriden)
  
  Returns the name of the subclass, lowercase and underscored if [enabled](NSRConfig.html#//api/name/autoinflectsClassNames), and with its prefix stripped if [enabled](NSRConfig.html#//api/name/ignoresClassPrefixes).
@@ -666,7 +838,7 @@
 /**
  The name of this class's controller on the server.
  
- Where actions for this class should be routed.
+ See [overriding](#overriding) for more details.
  
  **Default Behavior** (when not overriden)
  
@@ -676,58 +848,43 @@
 
 /**
  Used if instances of this class should have their resource path be based off an association.
- 
- This may be needed if you define your routes in Rails to look something like:
- 
-	 MySweetApp::Application.routes.draw do
-		 resources :users
-			 resources :invites
-		 end
-	 end
- 
- And invites are accessed in relation to some user:
- 
-	 GET    /users/1/invites.json
-	 POST   /users/1/invites.json
-	 GET    /users/1/invites/3.json
-	 DELETE /users/1/invites/3.json
- 
- Typically, this method is overriden with an instance variable that represents a parent:
- 
-	@implementation Invite
-	@synthesize user, foo;
-	NSRMap(*, user -b);
 
-	- (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request
-	{
-		return user;
-	}
- 
-	…
+ See [overriding](#overriding) for more details.
 
-	@end
- 
- Using the **request** parameter, you may filter requests that you don't want to prefix. Let's say you only want this behavior for POST and GET, but want to keep DELETE and PATCH with their traditional routes:
- 
-	 GET    /users/3/invites.json  "get all the invites for user 3"
-	 POST   /users/3/invites.json  "create an invite for user 3"
-	 PATCH  /invites/28.json       "update user invite 28"
-	 DELETE /invites/28.json       "delete user invite 28"
- 
- This could be done by checking **request**'s [httpMethod](NSRRequest.html#//api/name/httpMethod):
- 
-	 - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request
-	 {
-		 if ([request.httpMethod isEqualToString:@"GET"] || [request.httpMethod isEqualToString:@"POST"])
-			 return user;
-		 return nil;
-	 }
- 
  @param request The request whose path is currently being evalutated. Its [route](NSRRequest.html#//api/name/route) will be the route *before* adding the prefix (ie, the route used if the behavior is not desired).
  
  @return An object (typically an instance variable) that represents a parent to this class, or `nil` if this behavior is not desired.
  */
 - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request;
+
+/**
+ Should return the remote representation for each property.
+ 
+ See [overriding](#overriding) for more details.
+ 
+ @param key Name of the property.
+ @return Remote representation for *key*. Must be JSON-parsable (NSDictionary, NSArray, NSString, NSNumber, or (NSNull or nil)).
+ 
+ @warning Make sure you make a call to super if a certain property shouldn't be custom-coded.
+ */
+- (id) encodeValueForKey:(NSString *)key;
+
+/**
+ Should return what you want your Objective-C property to be set to, based off a remote representation (can return any type of object).
+ 
+ See [overriding](#overriding) for more details.
+ 
+ @param railsObject Remote representation of this key. Will be a JSON-parsed object (NSDictionary, NSArray, NSString, NSNumber, or nil).
+ @param key Name of the property.
+ @param change Reference to a change boolean. This can (and usually will) be ignored.
+ 
+ @return The value that should be set to the instance's property.
+ 
+ *Note*: This method should not set the class’s instance variable after conversion, simply return it. NSRails will set the property.
+ 
+ @warning Make sure you make a call to super if a certain property shouldn't be custom-coded.
+ */
+- (id) decodeValue:(id)railsObject forKey:(NSString *)key change:(BOOL *)change;
 
 @end
 

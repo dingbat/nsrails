@@ -39,12 +39,6 @@
 //returns type of the given property for that instance variable (ie, NSString)
 + (NSString *) typeForProperty:(NSString *)property;
 
-//returns SEL for the setter of given property
-+ (SEL) setterForProperty:(NSString *)property;
-
-//returns SEL for the getter of given property
-+ (SEL) getterForProperty:(NSString *)property;
-
 @end
 
 @interface NSRRemoteObject (NSRNoClimb)
