@@ -140,11 +140,11 @@
 
 	STAssertNil([TheManInsideMe typeForProperty:@"unknown"], @"Introspection should not pick up non-existent properties");
 	STAssertNil([TheManInsideMe typeForProperty:@"private"], @"Introspection should not pick up non-property ivars");
-	STAssertEqualObjects([TheManInsideMe typeForProperty:@"parent"], @"@\"NSString\"", @"Introspection should pick up superclasses' props");
-	STAssertEqualObjects([TheManInsideMe typeForProperty:@"string"], @"@\"NSString\"", @"");
-	STAssertEqualObjects([TheManInsideMe typeForProperty:@"date"], @"@\"NSDate\"", @"");
-	STAssertEqualObjects([TheManInsideMe typeForProperty:@"array"], @"@\"NSArray\"", @"");
-	STAssertEqualObjects([TheManInsideMe typeForProperty:@"anything"], @"@", @"");
+	STAssertEqualObjects([TheManInsideMe typeForProperty:@"parent"], @"NSString", @"Introspection should pick up superclasses' props");
+	STAssertEqualObjects([TheManInsideMe typeForProperty:@"string"], @"NSString", @"");
+	STAssertEqualObjects([TheManInsideMe typeForProperty:@"date"], @"NSDate", @"");
+	STAssertEqualObjects([TheManInsideMe typeForProperty:@"array"], @"NSArray", @"");
+	STAssertEqualObjects([TheManInsideMe typeForProperty:@"anything"], @"", @"");
 	
 	//non-object returns are undefined, but something will be returned
 	STAssertNotNil([TheManInsideMe typeForProperty:@"primitiveInt"],@"");

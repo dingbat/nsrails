@@ -34,6 +34,7 @@
 #import <CoreData/CoreData.h>
 
 @class NSRPropertyCollection;
+@class NSRRelationship;
 @class NSRRequest;
 
 /*************************************************************************
@@ -888,6 +889,11 @@
  
  */
 - (BOOL) shouldSendProperty:(NSString *)property nested:(BOOL)nested;
+
+/**
+ 
+ */
+- (NSRRelationship *) relationshipForProperty:(NSString *)property;
 
 @end
 

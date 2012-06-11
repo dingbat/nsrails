@@ -1,9 +1,9 @@
 /*
  
- _|_|_|    _|_|  _|_|  _|_|  _|  _|      _|_|   
- _|  _|  _|_|    _|    _|_|  _|  _|_|  _|_|    v1.2
+ _|_|_|    _|_|  _|_|  _|_|  _|  _|      _|_|           
+ _|  _|  _|_|    _|    _|_|  _|  _|_|  _|_| 
  
- NSRails.h
+ NSRRelationship.m
  
  Copyright (c) 2012 Dan Hassin.
  
@@ -28,28 +28,35 @@
  
  */
 
-// CoreData
-// ============
-// #define NSR_USE_COREDATA
-
-// Uncomment the line above if you want to enable CoreData
-// You can also add NSR_USE_COREDATA to "Preprocessor Macros Not Used in Precompiled Headers" in your target's build settings
-//   See http://dingbat.github.com/nsrails/Classes/NSRRemoteObject.html#coredata for more details
-
-
-// Logging
-// =============
-//					As undefined, NSRails will log nothing
-// #define NSRLog 1	//As 1, NSRails will log HTTP verbs with their outgoing URLs, as well as any server errors 
-#define NSRLog 2	//As 2, NSRails will also log any JSON going out/coming in
-
-
-// Imports
-// =============
-#import "NSRConfig.h"
-#import "NSRRemoteObject.h"
-#import "NSMutableArray+NSRails.h"
-#import "NSRMacros.h"
-#import "NSRRequest.h"
 #import "NSRRelationship.h"
 
+@implementation NSRRelationship
+@synthesize nestedClass, toMany, belongsTo;
+
+- (id) initWithClass:(Class)c hasMany:(BOOL)hm belongsTo:(BOOL)bt
+{
+	if ((self = [super init]))
+	{
+		nestedClass = c;
+		toMany = hm;
+		belongsTo = bt;
+	}
+	return self;
+}
+
++ (NSRRelationship *) hasMany:(Class)class
+{
+	return [[NSRRelationship alloc] initWithClass:class hasMany:YES belongsTo:NO];
+}
+
++ (NSRRelationship *) hasOne:(Class)class
+{
+	return [[NSRRelationship alloc] initWithClass:class hasMany:NO belongsTo:NO];	
+}
+
++ (NSRRelationship *) belongsTo:(Class)class
+{
+	return [[NSRRelationship alloc] initWithClass:class hasMany:NO belongsTo:YES];	
+}
+
+@end

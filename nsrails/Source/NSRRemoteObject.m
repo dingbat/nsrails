@@ -316,15 +316,51 @@ _NSR_REMOTEID_SYNTH remoteID;
 	return nil;
 }
 
+- (NSRRelationship *) relationshipForProperty:(NSString *)property
+{
+	//legacy support
+	NSRProperty *prop = [[self propertyCollection].properties objectForKey:property];
+	if (prop.nestedClass)
+	{
+		Class class = NSClassFromString(prop.nestedClass);
+		if (prop.isHasMany)
+			return [NSRRelationship hasMany:class];
+		if (prop.isBelongsTo)
+			return [NSRRelationship belongsTo:class];
+		return [NSRRelationship hasOne:class];
+	}
+
+#ifdef NSR_USE_COREDATA
+	NSRelationshipDescription *cdRelation = [[self.entity relationshipsByName] objectForKey:property];
+	if (cdRelation)
+	{
+		Class class = NSClassFromString(cdRelation.destinationEntity.name);
+		if (cdRelation.isToMany)
+			return [NSRRelationship hasMany:class];
+		if (cdRelation.maxCount == 1)
+			return [NSRRelationship belongsTo:class];
+	}
+#endif
+	
+	Class propType = NSClassFromString([[self class] typeForProperty:property]);
+	if ([propType isSubclassOfClass:[NSRRemoteObject class]])
+	{
+		return [NSRRelationship belongsTo:propType];
+	}
+	
+	return nil;
+}
+
 - (id) encodeValueForProperty:(NSString *)key
 {	
-	NSRProperty *prop = [[self propertyCollection].properties objectForKey:key];
-	
-	id val = [self valueForKey:prop.name];
+	NSRRelationship *relationship = [self relationshipForProperty:key];
+	//NSRProperty *prop = [[self propertyCollection].properties objectForKey:key];
+		
+	id val = [self valueForKey:key];
 	
 	//if the ivar is an array, we need to make every element into JSON and then put them back in the array
 	//this is done before the next 'if' becuase Rails will get angry if you send it a nil array - has to be empty
-	if (prop.isArray)
+	if ([val isKindOfClass:[NSArray class]] || [val isKindOfClass:[NSSet class]] || [val isKindOfClass:[NSOrderedSet class]])
 	{
 		NSMutableArray *new = [NSMutableArray arrayWithCapacity:[val count]];
 		
@@ -332,7 +368,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 		{
 			id encodedObj = element;
 			
-			//if it's an NSRRemoteObject, we can use its dictionaryOfRemoteProperties
+			//if it's an NSRRemoteObject, we can use its remoteDictionaryRepresentationWrapped
 			if ([element isKindOfClass:[NSRRemoteObject class]])
 			{
 				encodedObj = [element remoteDictionaryRepresentationWrapped:NO fromNesting:YES];
@@ -350,16 +386,16 @@ _NSR_REMOTEID_SYNTH remoteID;
 	
 	if (val)
 	{
-		if (prop.nestedClass)
+		if (relationship)
 		{
 			//if it's belongs_to, only return the ID
-			if (prop.isBelongsTo)
+			if (relationship.isBelongsTo)
 				return [val remoteID];
 			
 			return [val remoteDictionaryRepresentationWrapped:NO fromNesting:YES];
 		}
 		
-		if (prop.isDate)
+		if ([val isKindOfClass:[NSDate class]])
 		{
 			return [[self getRelevantConfig] stringFromDate:val];
 		}
@@ -518,15 +554,18 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 - (BOOL) shouldSendProperty:(NSString *)property nested:(BOOL)nested
 {
-	NSRProperty *objcProperty = [[self propertyCollection].properties objectForKey:property];
-	
 	//don't include id if it's nil or on the main object (nested guys need their IDs)
 	if ([property isEqualToString:@"remoteID"] && (!self.remoteID || !nested))
 		return NO;
+
+	NSRRelationship *relationship = [self relationshipForProperty:property];
 	
-	if (objcProperty.nestedClass)
+	//legacy
+	NSRProperty *objcProperty = [[self propertyCollection].properties objectForKey:property];
+
+	if (relationship)
 	{
-		if (nested && !objcProperty.belongsTo && !objcProperty.includedOnNesting)
+		if (nested && !relationship.isBelongsTo && !objcProperty.includedOnNesting)
 		{
 			//this is recursion-protection. we don't want to include every nested class in this class because one of those nested class could nest us, causing infinite loop
 			//  we are safe to include all nestedclasses on top-level (if not from within nesting)
@@ -538,13 +577,13 @@ _NSR_REMOTEID_SYNTH remoteID;
 		
 		id val = [self valueForKey:property];
 		
-		//if it's an _attributes and either there's no val or it's an array and it's empty, don't send
-		if ((!objcProperty.isBelongsTo && !val) || (objcProperty.isArray && [val count] == 0))
+		//if it's an _attributes and either there's no val, don't send (is okay on belongs_to bc we send a null id)
+		if (!relationship.isBelongsTo && !val)
 		{
 			return NO;
 		}
 	}
-	
+
 	//legacy support
 	if (!objcProperty.sendable)
 		return NO;
@@ -644,11 +683,15 @@ _NSR_REMOTEID_SYNTH remoteID;
 				railsEquivalent = objcProperty.name;
 			}
 			
-			if (objcProperty.isBelongsTo)
+			NSRRelationship *relationship = [self relationshipForProperty:objcProperty.name];
+			
+			//legacy support
+			if (objcProperty.isBelongsTo || relationship.isBelongsTo)
 			{
 				railsEquivalent = [railsEquivalent stringByAppendingString:@"_id"];
 			}
-			else if (objcProperty.nestedClass)
+			//legacy support
+			else if (objcProperty.nestedClass || relationship)
 			{
 				railsEquivalent = [railsEquivalent stringByAppendingString:@"_attributes"];
 			}
@@ -1178,7 +1221,9 @@ _NSR_REMOTEID_SYNTH remoteID;
 
 + (NSString *) typeForProperty:(NSString *)property
 {
-	return [self getAttributeForProperty:property prefix:@"T"];
+	NSString *type = [self getAttributeForProperty:property prefix:@"T"];
+	//strip @ and "
+	return [[type stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
 }
 
 @end

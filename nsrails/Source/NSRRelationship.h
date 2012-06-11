@@ -1,9 +1,9 @@
 /*
  
- _|_|_|    _|_|  _|_|  _|_|  _|  _|      _|_|   
- _|  _|  _|_|    _|    _|_|  _|  _|_|  _|_|    v1.2
+ _|_|_|    _|_|  _|_|  _|_|  _|  _|      _|_|           
+ _|  _|  _|_|    _|    _|_|  _|  _|_|  _|_| 
  
- NSRails.h
+ NSRRelationship.h
  
  Copyright (c) 2012 Dan Hassin.
  
@@ -28,28 +28,16 @@
  
  */
 
-// CoreData
-// ============
-// #define NSR_USE_COREDATA
+#import <Foundation/Foundation.h>
 
-// Uncomment the line above if you want to enable CoreData
-// You can also add NSR_USE_COREDATA to "Preprocessor Macros Not Used in Precompiled Headers" in your target's build settings
-//   See http://dingbat.github.com/nsrails/Classes/NSRRemoteObject.html#coredata for more details
+@interface NSRRelationship : NSObject
 
+@property (nonatomic, readonly) Class nestedClass;
+@property (nonatomic, readonly, getter = isToMany) BOOL toMany;
+@property (nonatomic, readonly, getter = isBelongsTo) BOOL belongsTo;
 
-// Logging
-// =============
-//					As undefined, NSRails will log nothing
-// #define NSRLog 1	//As 1, NSRails will log HTTP verbs with their outgoing URLs, as well as any server errors 
-#define NSRLog 2	//As 2, NSRails will also log any JSON going out/coming in
++ (NSRRelationship *) hasMany:(Class)class;
++ (NSRRelationship *) hasOne:(Class)class;
++ (NSRRelationship *) belongsTo:(Class)class;
 
-
-// Imports
-// =============
-#import "NSRConfig.h"
-#import "NSRRemoteObject.h"
-#import "NSMutableArray+NSRails.h"
-#import "NSRMacros.h"
-#import "NSRRequest.h"
-#import "NSRRelationship.h"
-
+@end

@@ -283,15 +283,11 @@
 			
 			//make sure that the property type is not a primitive
 			NSString *type = [class typeForProperty:objcProp];
-			if (type && ![type hasPrefix:@"@"])
+			if (type.length == 1)
 			{
 				NSRRaiseSyncError(@"Property '%@' declared in NSRMap for class %@ was found to be of primitive type '%@' - please use NSNumber*.", objcProp, NSStringFromClass(class), type);
 				continue;
 			}
-			
-			//strip @ and "
-			type = [[type stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
-
 			
 			BOOL typeIsArray = ([NSClassFromString(type) isSubclassOfClass:NSClassFromString(@"NSArray")] || 
 								[NSClassFromString(type) isSubclassOfClass:NSClassFromString(@"NSSet")] ||

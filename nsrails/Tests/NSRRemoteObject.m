@@ -283,6 +283,27 @@ NSRMap(something);
 @synthesize books;
 @end
 
+@interface NewNester : NSRRemoteObject
+@property (nonatomic, strong) NSArray *books;
+@property (nonatomic, strong) Egg *egg;
+@property (nonatomic, strong) Empty *empty;
+@end
+
+@implementation NewNester
+@synthesize books, egg, empty;
+
+- (NSRRelationship *) relationshipForProperty:(NSString *)property
+{
+	if ([property isEqualToString:@"books"])
+		return [NSRRelationship hasMany:[Book class]];
+	if ([property isEqualToString:@"egg"])
+		return [NSRRelationship belongsTo:[Egg class]];
+	
+	return [super relationshipForProperty:property];
+}
+
+@end
+
 @interface TNSRRemoteObject : SenTestCase
 @end
 
@@ -388,6 +409,42 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 	p.encodeNonJSON = YES;
 	
 	STAssertThrowsSpecificNamed([p remoteDictionaryRepresentationWrapped:NO], NSException, NSRJSONParsingException, @"Encoding into non-JSON for sendable dict - where's the error?");
+}
+
+- (void) test_new_nesting
+{
+	NewNester *nn = [[NewNester alloc] init];
+	
+	NSDictionary *sendDict = [nn remoteDictionaryRepresentationWrapped:NO];
+	NSLog(@"got %@",sendDict);
+	STAssertNil([sendDict objectForKey:@"books"], nil);
+	STAssertNil([sendDict objectForKey:@"books_attributes"], nil);
+	STAssertNil([sendDict objectForKey:@"empty"], nil);
+	STAssertNil([sendDict objectForKey:@"empty_attributes"], nil);
+	STAssertNil([sendDict objectForKey:@"egg"], nil);
+	STAssertTrue([[sendDict objectForKey:@"egg_id"] isKindOfClass:[NSNull class]], nil);
+
+	nn.books = [NSArray array];
+	nn.egg = [[Egg alloc] init];
+	nn.empty = [[Empty alloc] init];
+
+	sendDict = [nn remoteDictionaryRepresentationWrapped:NO];
+	STAssertNil([sendDict objectForKey:@"books"], nil);
+	STAssertTrue([[sendDict objectForKey:@"books_attributes"] isKindOfClass:[NSArray class]], nil);
+	STAssertTrue([[sendDict objectForKey:@"books_attributes"] count] == 0, nil);
+	STAssertNil([sendDict objectForKey:@"empty"], nil);
+	STAssertTrue([[sendDict objectForKey:@"empty_attributes"] isKindOfClass:[NSDictionary class]], nil);
+	STAssertTrue([[sendDict objectForKey:@"empty_attributes"] count] == 0, nil);
+
+	nn.books = [NSArray arrayWithObject:[[Book alloc] init]];
+	nn.egg.remoteID = NSRNumber(5);
+	
+	sendDict = [nn remoteDictionaryRepresentationWrapped:NO];
+	STAssertNil([sendDict objectForKey:@"books"], nil);
+	STAssertTrue([[[sendDict objectForKey:@"books_attributes"] lastObject] isKindOfClass:[NSDictionary class]], nil);
+
+	STAssertNil([sendDict objectForKey:@"egg"], nil);
+	STAssertEqualObjects([sendDict objectForKey:@"egg_id"], NSRNumber(5), nil);
 }
 
 - (void) test_send_retrieve
@@ -706,8 +763,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 		STAssertNil([[plain.propertyCollection.properties objectForKey:@"array"] nestedClass], @"Should be an array but without nested class");
 		
 		NSDictionary *sendDict = [plain remoteDictionaryRepresentationWrapped:NO];
-		STAssertTrue([[sendDict objectForKey:@"array"] isKindOfClass:[NSArray class]], @"'array' key should exist & be an array");
-		STAssertTrue([[sendDict objectForKey:@"array"] count] == 0, @"'array' key should be empty");
+		STAssertTrue([[sendDict objectForKey:@"array"] isKindOfClass:[NSNull class]], @"'array' key should be NULL!");
 		
 		//Strings
 		
@@ -806,8 +862,7 @@ NSRAssertEqualArraysNoOrderNoBlanks([a componentsSeparatedByString:@","],[b comp
 		STAssertNil([[dates.propertyCollection.properties objectForKey:@"array"] nestedClass], @"Should be an array but without nested class");
 		
 		NSDictionary *sendDict = [dates remoteDictionaryRepresentationWrapped:NO];
-		STAssertTrue([[sendDict objectForKey:@"array"] isKindOfClass:[NSArray class]], @"'array' key should exist & be an array");
-		STAssertTrue([[sendDict objectForKey:@"array"] count] == 0, @"'array' key should be empty");
+		STAssertTrue([[sendDict objectForKey:@"array"] isKindOfClass:[NSNull class]], @"'array' key should exist & be NULL");
 		
 		NSDate *date = [NSDate date];
 		dates.array = [[NSMutableArray alloc] initWithObjects:date, nil];

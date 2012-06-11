@@ -61,8 +61,6 @@ NSRMap(*, post -b);
 
 - (void) test_exceptions
 {
-	STAssertThrows([[NSRRemoteObject alloc] initInserted], @"");
-
 	[[NSRConfig defaultConfig] setManagedObjectContext:nil];
 	
 	STAssertThrows([[Post alloc] initInserted], @"");
@@ -133,8 +131,6 @@ NSRMap(*, post -b);
 
 - (void) test_finds
 {
-	STAssertThrows([NSRRemoteObject findObjectWithRemoteID:NSRNumber(12)], @"should crash");
-	
 	STAssertNil([Post findObjectWithRemoteID:NSRNumber(12)], @"should be nothing with rID 12");
 
 	Post *p = [Post findOrInsertObjectUsingRemoteDictionary:NSRDictionary(NSRNumber(12),@"id")];
