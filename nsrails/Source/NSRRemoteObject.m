@@ -34,6 +34,9 @@
 
 #import "NSData+Additions.h"
 
+#import <objc/runtime.h>
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @interface NSRRemoteObject (NSRailsInternal)
@@ -78,16 +81,6 @@
 //returns nil if method not implemented in receiver
 + (id) performSelectorWithoutClimbingHierarchy:(SEL)selector;
 + (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector;
-
-@end
-
-@interface NSRRemoteObject (NSRIntrospection)
-
-//returns an array of all properties declared in class
-+ (NSArray *) allProperties;
-
-//returns type of the given property for that instance variable (ie, NSString)
-+ (NSString *) typeForProperty:(NSString *)property;
 
 @end
 
@@ -142,7 +135,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 		mapStr = [mapStr stringByReplacingOccurrencesOfString:@"*" withString:@""];
 		
 		//expand the star to everything in the class
-		NSString *expanded = [self.allProperties componentsJoinedByString:@", "];
+		NSString *expanded = [[self.remoteProperties allKeys] componentsJoinedByString:@", "];
 		if (expanded)
 		{
 			//properties need to be appended to existing sync string since they can be overridden like with -x (and stripped of *)
@@ -311,6 +304,42 @@ _NSR_REMOTEID_SYNTH remoteID;
 	return [singular stringByAppendingString:@"s"];
 }
 
++ (NSMutableDictionary *) remoteProperties
+{
+	unsigned int propertyCount;
+	//copy all properties for self (will be a Class)
+	
+	objc_property_t *properties = class_copyPropertyList(self, &propertyCount);
+	if (properties)
+	{
+		NSMutableDictionary *results = [NSMutableDictionary dictionaryWithCapacity:propertyCount];
+		
+		while (propertyCount--)
+		{
+			//get each ivar name/type and add it to the results
+			NSString *prop = [NSString stringWithCString:property_getName(properties[propertyCount]) encoding:NSASCIIStringEncoding];
+			NSString *atts = [NSString stringWithCString:property_getAttributes(properties[propertyCount]) encoding:NSASCIIStringEncoding];
+			
+			NSString *type = nil;
+			
+			for (NSString *att in [atts componentsSeparatedByString:@","])
+				if ([att hasPrefix:@"T"])
+					type = [att substringFromIndex:1];
+			
+			if (type)
+			{
+				type = [[type stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
+				
+				[results setObject:type forKey:prop];
+			}
+		}
+		
+		free(properties);	
+		return results;
+	}
+	return nil;
+}
+
 - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)verb
 {
 	return nil;
@@ -342,7 +371,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 	}
 #endif
 	
-	Class propType = NSClassFromString([[self class] typeForProperty:property]);
+	Class propType = NSClassFromString([[self.class remoteProperties] objectForKey:property]);
 	if ([propType isSubclassOfClass:[NSRRemoteObject class]])
 	{
 		return [NSRRelationship belongsTo:propType];
@@ -428,9 +457,20 @@ _NSR_REMOTEID_SYNTH remoteID;
 	return obj;
 }
 
++ (BOOL) propertyIsDate:(NSString *)prop
+{
+	NSString *type = [[self.remoteProperties objectForKey:prop] lowercaseString];
+	return [type isEqualToString:@"date"] || [type isEqualToString:@"nsdate"] || [type isEqualToString:@"datetime"];
+}
+
 - (void) decodeValue:(id)railsObject forProperty:(NSString *)key change:(BOOL *)change
 {
+	NSRRelationship *relationship = [self relationshipForProperty:key];
+
 	NSRProperty *property = [[self propertyCollection].properties objectForKey:key];
+	
+	//legacy support
+	BOOL isDate = [self.class propertyIsDate:property.name] || property.isDate;
 	
 	id previousVal = [self valueForKey:key];
 	id decodedObj = nil;
@@ -438,7 +478,9 @@ _NSR_REMOTEID_SYNTH remoteID;
 	if (railsObject)
 	{
 		//custom-encode if it's a datearray or if it's an array of nested classes
-		if (property.isHasMany || (property.isDate && property.isArray))
+		if (relationship.isToMany || 
+			//legacy support
+			(property.isHasMany || (isDate && property.isArray)))
 		{
 			BOOL changes = NO;
 			
@@ -448,7 +490,8 @@ _NSR_REMOTEID_SYNTH remoteID;
 			
 			id newArray = [[NSMutableArray alloc] init];
 			
-			if (property.nestedClass)
+			//legacy support
+			if (relationship || property.nestedClass)
 			{							
 				//array of NSRRemoteObjects is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
 				
@@ -500,7 +543,8 @@ _NSR_REMOTEID_SYNTH remoteID;
 #endif
 				
 			}
-			else if (property.isDate)
+			//legacy support
+			else if (isDate)
 			{
 				//array of NSDates
 				for (int i = 0; i < [railsObject count]; i++)
@@ -521,7 +565,7 @@ _NSR_REMOTEID_SYNTH remoteID;
 			decodedObj = newArray;
 			*change = changes;
 		}
-		else if (property.isDate)
+		else if (isDate)
 		{
 			decodedObj = [[self getRelevantConfig] dateFromString:railsObject];
 			
@@ -577,8 +621,9 @@ _NSR_REMOTEID_SYNTH remoteID;
 		
 		id val = [self valueForKey:property];
 		
+		//legacy
 		//if it's an _attributes and either there's no val, don't send (is okay on belongs_to bc we send a null id)
-		if (!relationship.isBelongsTo && !val)
+		if (((objcProperty && !objcProperty.isBelongsTo) || !relationship.isBelongsTo) && !val)
 		{
 			return NO;
 		}
@@ -1172,59 +1217,3 @@ _NSR_REMOTEID_SYNTH remoteID;
 #pragma clang diagnostic pop
 
 @end
-
-
-#import <objc/runtime.h>
-
-@implementation NSRRemoteObject (NSRIntrospection)
-
-+ (NSArray *) allProperties
-{
-	unsigned int propertyCount;
-	//copy all properties for self (will be a Class)
-	objc_property_t *properties = class_copyPropertyList(self, &propertyCount);
-	if (properties)
-	{
-		NSMutableArray *results = [NSMutableArray arrayWithCapacity:propertyCount];
-		
-		while (propertyCount--)
-		{
-			//get each ivar name and add it to the results
-			const char *propName = property_getName(properties[propertyCount]);
-			NSString *prop = [NSString stringWithCString:propName encoding:NSASCIIStringEncoding];
-			[results addObject:prop];
-		}
-		
-		free(properties);	
-		return results;
-	}
-	return nil;
-}
-
-+ (NSString *) getAttributeForProperty:(NSString *)prop prefix:(NSString *)attrPrefix
-{
-	objc_property_t property = class_getProperty(self, [prop UTF8String]);
-	if (!property)
-		return nil;
-	
-	// This will return some garbage like "Ti,GgetFoo,SsetFoo:,Vproperty"
-	// See https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html
-	
-	NSString *atts = [NSString stringWithCString:property_getAttributes(property) encoding:NSUTF8StringEncoding];
-	
-	for (NSString *att in [atts componentsSeparatedByString:@","])
-		if ([att hasPrefix:attrPrefix])
-			return [att substringFromIndex:1];
-	
-	return nil;
-}
-
-+ (NSString *) typeForProperty:(NSString *)property
-{
-	NSString *type = [self getAttributeForProperty:property prefix:@"T"];
-	//strip @ and "
-	return [[type stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
-}
-
-@end
-

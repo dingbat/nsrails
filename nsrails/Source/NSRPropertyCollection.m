@@ -196,12 +196,6 @@
  Used to parse a class's NSRMap string and store a collection of its properties.
  */
 
-@interface NSRRemoteObject (NSRIntrospection)
-
-+ (NSString *) typeForProperty:(NSString *)property;
-
-@end
-
 #define NSRRaiseSyncError(x, ...) [NSException raise:NSRMapException format:x,__VA_ARGS__,nil]
 
 @implementation NSRPropertyCollection
@@ -282,7 +276,7 @@
 								   [options rangeOfString:@"s"].location == NSNotFound));
 			
 			//make sure that the property type is not a primitive
-			NSString *type = [class typeForProperty:objcProp];
+			NSString *type = [[class remoteProperties] objectForKey:objcProp];
 			if (type.length == 1)
 			{
 				NSRRaiseSyncError(@"Property '%@' declared in NSRMap for class %@ was found to be of primitive type '%@' - please use NSNumber*.", objcProp, NSStringFromClass(class), type);

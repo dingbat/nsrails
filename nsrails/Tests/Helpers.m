@@ -136,22 +136,24 @@
 
 - (void) test_introspection
 {
-	NSRAssertEqualArraysNoOrder([TheManInsideMe allProperties], NSRArray(@"string", @"date", @"array", @"anything", @"primitiveInt", @"primitiveBOOL", @"primitiveFloat", @"encoding", @"rect"));
+	NSDictionary *props = [TheManInsideMe remoteProperties];
+	
+	NSRAssertEqualArraysNoOrder(props.allKeys, NSRArray(@"string", @"date", @"array", @"anything", @"primitiveInt", @"primitiveBOOL", @"primitiveFloat", @"encoding", @"rect"));
 
-	STAssertNil([TheManInsideMe typeForProperty:@"unknown"], @"Introspection should not pick up non-existent properties");
-	STAssertNil([TheManInsideMe typeForProperty:@"private"], @"Introspection should not pick up non-property ivars");
-	STAssertEqualObjects([TheManInsideMe typeForProperty:@"parent"], @"NSString", @"Introspection should pick up superclasses' props");
-	STAssertEqualObjects([TheManInsideMe typeForProperty:@"string"], @"NSString", @"");
-	STAssertEqualObjects([TheManInsideMe typeForProperty:@"date"], @"NSDate", @"");
-	STAssertEqualObjects([TheManInsideMe typeForProperty:@"array"], @"NSArray", @"");
-	STAssertEqualObjects([TheManInsideMe typeForProperty:@"anything"], @"", @"");
+	STAssertNil([props objectForKey:@"unknown"], @"Introspection should not pick up non-existent properties");
+	STAssertNil([props objectForKey:@"private"], @"Introspection should not pick up non-property ivars");
+	STAssertEqualObjects([props objectForKey:@"parent"], @"NSString", @"Introspection should pick up superclasses' props");
+	STAssertEqualObjects([props objectForKey:@"string"], @"NSString", @"");
+	STAssertEqualObjects([props objectForKey:@"date"], @"NSDate", @"");
+	STAssertEqualObjects([props objectForKey:@"array"], @"NSArray", @"");
+	STAssertEqualObjects([props objectForKey:@"anything"], @"", @"");
 	
 	//non-object returns are undefined, but something will be returned
-	STAssertNotNil([TheManInsideMe typeForProperty:@"primitiveInt"],@"");
-	STAssertNotNil([TheManInsideMe typeForProperty:@"primitiveBOOL"],@"");
-	STAssertNotNil([TheManInsideMe typeForProperty:@"primitiveFloat"],@"");
-	STAssertNotNil([TheManInsideMe typeForProperty:@"encoding"],@"");
-	STAssertNotNil([TheManInsideMe typeForProperty:@"rect"],@"");
+	STAssertNotNil([props objectForKey:@"primitiveInt"],@"");
+	STAssertNotNil([props objectForKey:@"primitiveBOOL"],@"");
+	STAssertNotNil([props objectForKey:@"primitiveFloat"],@"");
+	STAssertNotNil([props objectForKey:@"encoding"],@"");
+	STAssertNotNil([props objectForKey:@"rect"],@"");
 }
 
 - (void) test_noclimb

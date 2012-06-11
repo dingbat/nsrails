@@ -895,5 +895,10 @@
  */
 - (NSRRelationship *) relationshipForProperty:(NSString *)property;
 
+/**
+ 
+ */
++ (NSDictionary *) remoteProperties;
+
 @end
 

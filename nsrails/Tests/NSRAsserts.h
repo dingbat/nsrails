@@ -24,19 +24,7 @@
 + (NSRPropertyCollection *) propertyCollection;
 - (NSRPropertyCollection *) propertyCollection;
 
-+ (NSString *) typeForProperty:(NSString *)prop;
-
 + (id) findFirstObjectByAttribute:(NSString *)attrName withValue:(id)value inContext:(NSManagedObjectContext *)context;
-
-@end
-
-@interface NSRRemoteObject (NSRIntrospection)
-
-//returns an array of all properties declared in class
-+ (NSArray *) allProperties;
-
-//returns type of the given property for that instance variable (ie, NSString)
-+ (NSString *) typeForProperty:(NSString *)property;
 
 @end
 
@@ -44,9 +32,6 @@
 
 + (NSString *) performSelectorWithoutClimbingHierarchy:(SEL)selector;
 + (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector;
-
-- (NSString *) performSelectorWithoutClimbingHierarchy:(SEL)selector;
-- (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector;
 
 @end
 
