@@ -319,7 +319,12 @@
 			
 			//Check for all other flags (-)
 			if (options)
-			{				
+			{		
+				if ([options rangeOfString:@"e"].location != NSNotFound || [options rangeOfString:@"d"].location != NSNotFound)
+				{
+					NSLog(@"[NSRails] ***WARNING***  NSRMap flags -e and -d (used in class %@) are no longer available. Override -[NSRRemoteObject encodeValueForKey:] and -[NSRRemoteObject decodeValue:forKey:change:] to encode/decode a remote representations. Remember to make a call to super for properties that don't require custom encoding.",class);
+				}
+				
 				if ([options rangeOfString:@"b"].location != NSNotFound)
 					property.belongsTo = YES;
 				
