@@ -58,13 +58,6 @@
 @end
 
 
-@interface NSRRemoteObject (internal)
-
-+ (NSRPropertyCollection *) propertyCollection;
-
-@end
-
-
 //Environments
 NSString * const NSRConfigEnvironmentDevelopment		= @"com.nsrails.NSRConfigEnvironmentDevelopment";
 NSString * const NSRConfigEnvironmentProduction			= @"com.nsrails.NSRConfigEnvironmentProduction";
@@ -122,7 +115,7 @@ static NSString *currentEnvironment = nil;
 	if ([self overrideConfig])
 		return [self overrideConfig];
 	
-	if ([configEnvironments objectForKey:[self environmentKeyForClass:class]])
+	if (class && [configEnvironments objectForKey:[self environmentKeyForClass:class]])
 		return [self configForEnvironment:[self environmentKeyForClass:class]];
 
 	return [self defaultConfig];

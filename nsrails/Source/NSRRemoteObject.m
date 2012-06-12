@@ -112,8 +112,8 @@
 				if ([att hasPrefix:@"T"])
 					type = [att substringFromIndex:1];
 			
-			if (type)
-			{
+			if (type && type.length > 1) // length > 1 ensures that it is not primitive
+ 			{
 				type = [[type stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
 				
 				[results setObject:type forKey:prop];
@@ -676,8 +676,6 @@
 		self.remoteID = [aDecoder decodeObjectForKey:@"remoteID"];
 		remoteAttributes = [aDecoder decodeObjectForKey:@"remoteAttributes"];
 		self.remoteDestroyOnNesting = [aDecoder decodeBoolForKey:@"remoteDestroyOnNesting"];
-		
-		customProperties = [aDecoder decodeObjectForKey:@"customProperties"];
 	}
 	return self;
 }
@@ -687,8 +685,6 @@
 	[aCoder encodeObject:self.remoteID forKey:@"remoteID"];
 	[aCoder encodeObject:remoteAttributes forKey:@"remoteAttributes"];
 	[aCoder encodeBool:remoteDestroyOnNesting forKey:@"remoteDestroyOnNesting"];
-	
-	[aCoder encodeObject:customProperties forKey:@"customProperties"];
 }
 
 @end

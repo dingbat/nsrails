@@ -31,7 +31,6 @@
 #import <Foundation/Foundation.h>
 #import "NSRails.h"
 
-@class NSRPropertyCollection;
 @class NSRRelationship;
 @class NSRRequest;
 
@@ -259,10 +258,6 @@
   */
 
 @interface NSRRemoteObject : NSObject <NSCoding>
-{
-	//used if initialized with initWithCustomMap
-	NSRPropertyCollection *customProperties;
-}
 
 /// =============================================================================================
 /// @name Properties

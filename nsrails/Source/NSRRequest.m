@@ -49,6 +49,8 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 @interface NSRRequest (private)
 
+@property (nonatomic, strong, readwrite) NSURL *baseURL;
+
 + (NSRRequest *) requestWithHTTPMethod:(NSString *)method;
 
 - (NSURLRequest *) HTTPRequest;
@@ -59,7 +61,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 @end
 
 @implementation NSRRequest
-@synthesize route, httpMethod, body, config, queryParameters;
+@synthesize route, httpMethod, body, config, queryParameters, baseURL;
 
 - (NSMutableDictionary *) queryParameters
 {
@@ -67,6 +69,16 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 		queryParameters = [[NSMutableDictionary alloc] init];
 
 	return queryParameters;
+}
+
+- (NSURL *) baseURL
+{
+	if (!baseURL && self.config.appURL)
+	{
+		baseURL = [NSURL URLWithString:self.config.appURL];
+	}
+	
+	return baseURL;
 }
 
 # pragma mark - Config
@@ -265,15 +277,6 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (NSURLRequest *) HTTPRequest
 {	
-	if (!self.config.appURL)
-	{
-		[NSException raise:NSRMissingURLException format:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup. (env=%@)", [NSRConfig currentEnvironment]];
-		
-		return nil;
-	}
-
-	NSURL *url = [NSURL URLWithString:self.config.appURL];
-	
 	NSString *appendedRoute = (route ? route : @"");
 	if (queryParameters.count > 0)
 	{
@@ -288,7 +291,14 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 		appendedRoute = [appendedRoute stringByAppendingFormat:@"?%@",[params componentsJoinedByString:@"&"]];
 	}
 	
-	url = [NSURL URLWithString:appendedRoute relativeToURL:url];
+	NSURL *base = self.baseURL;
+	if (!base)
+	{
+		[NSException raise:NSRMissingURLException format:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup. (env=%@)", [NSRConfig currentEnvironment]];
+	}
+
+	
+	NSURL *url = [NSURL URLWithString:appendedRoute relativeToURL:base];
 	
 	NSRLogInOut(@"OUT", body, @"===> %@ to %@", httpMethod, [url absoluteString]);	
 	

@@ -40,6 +40,7 @@
 // =============
 #import "NSRConfig.h"
 #import "NSRRemoteObject.h"
+#import "NSRRemoteManagedObject.h"
 #import "NSMutableArray+NSRails.h"
 #import "NSRMacros.h"
 #import "NSRRequest.h"
