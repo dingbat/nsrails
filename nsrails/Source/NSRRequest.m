@@ -47,15 +47,6 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 #define NSRLogInOut(...)
 #endif
 
-@interface NSRRemoteObject (internal)
-
-+ (NSRConfig *) getRelevantConfig;
-- (NSRConfig *) getRelevantConfig;
-
-+ (NSRPropertyCollection *) propertyCollection;
-
-@end
-
 @interface NSRRequest (private)
 
 + (NSRRequest *) requestWithHTTPMethod:(NSString *)method;
@@ -68,7 +59,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 @end
 
 @implementation NSRRequest
-@synthesize route, httpMethod, body, config, queryParameters, destinationObject;
+@synthesize route, httpMethod, body, config, queryParameters;
 
 - (NSMutableDictionary *) queryParameters
 {
@@ -99,7 +90,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (id) routeToClass:(Class)c withCustomMethod:(NSString *)optionalRESTMethod
 {
-	self.config = [c getRelevantConfig];
+	self.config = [NSRConfig relevantConfigForClass:c];
 
 	NSString *controller = [c remoteControllerName];
 	if (!controller)
@@ -115,9 +106,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (id) routeToObject:(NSRRemoteObject *)o withCustomMethod:(NSString *)method ignoreID:(BOOL)ignoreID
 {
-	destinationObject = o;
-	
-	self.config = [o getRelevantConfig];
+	self.config = [NSRConfig relevantConfigForClass:o.class];
 	
 	//prepend the ID: action -> 1/action
 	if (o.remoteID && !ignoreID)
@@ -257,7 +246,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 {
 	[self assertPresentRemoteID:obj forMethod:@"update"];
 
-	NSRRequest *req = [[NSRRequest requestWithHTTPMethod:obj.getRelevantConfig.updateMethod] routeToObject:obj];
+	NSRRequest *req = [[NSRRequest requestWithHTTPMethod:[NSRConfig relevantConfigForClass:obj.class].updateMethod] routeToObject:obj];
 	[req setBodyToObject:obj];
 	
 	return req;

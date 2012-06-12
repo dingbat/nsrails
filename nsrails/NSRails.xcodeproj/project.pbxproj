@@ -48,6 +48,12 @@
 		597C80181586B09400950019 /* NSString+Inflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 597C80141586B09400950019 /* NSString+Inflection.m */; };
 		597C80191586B09400950019 /* NSString+Inflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 597C80141586B09400950019 /* NSString+Inflection.m */; };
 		597C801A1586B09400950019 /* NSString+Inflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 597C80141586B09400950019 /* NSString+Inflection.m */; };
+		597C801E1586E62F00950019 /* NSRRemoteManagedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 597C801C1586E62F00950019 /* NSRRemoteManagedObject.h */; };
+		597C801F1586E62F00950019 /* NSRRemoteManagedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 597C801C1586E62F00950019 /* NSRRemoteManagedObject.h */; };
+		597C80201586E62F00950019 /* NSRRemoteManagedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 597C801C1586E62F00950019 /* NSRRemoteManagedObject.h */; };
+		597C80211586E62F00950019 /* NSRRemoteManagedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 597C801D1586E62F00950019 /* NSRRemoteManagedObject.m */; };
+		597C80221586E62F00950019 /* NSRRemoteManagedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 597C801D1586E62F00950019 /* NSRRemoteManagedObject.m */; };
+		597C80231586E62F00950019 /* NSRRemoteManagedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 597C801D1586E62F00950019 /* NSRRemoteManagedObject.m */; };
 		598D217615800AC2002CC996 /* NSRRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 598D217415800AC2002CC996 /* NSRRequest.h */; };
 		598D217715800AC2002CC996 /* NSRRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 598D217415800AC2002CC996 /* NSRRequest.h */; };
 		598D217815800AC2002CC996 /* NSRRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 598D217415800AC2002CC996 /* NSRRequest.h */; };
@@ -148,6 +154,8 @@
 		597C80051586A1C300950019 /* NSRRelationship.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRelationship.m; sourceTree = "<group>"; };
 		597C80131586B09400950019 /* NSString+Inflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Inflection.h"; sourceTree = "<group>"; };
 		597C80141586B09400950019 /* NSString+Inflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Inflection.m"; sourceTree = "<group>"; };
+		597C801C1586E62F00950019 /* NSRRemoteManagedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRRemoteManagedObject.h; sourceTree = "<group>"; };
+		597C801D1586E62F00950019 /* NSRRemoteManagedObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRemoteManagedObject.m; sourceTree = "<group>"; };
 		598D217415800AC2002CC996 /* NSRRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRRequest.h; sourceTree = "<group>"; };
 		598D217515800AC2002CC996 /* NSRRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRequest.m; sourceTree = "<group>"; };
 		598D21881580174E002CC996 /* NSRRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRequest.m; sourceTree = "<group>"; };
@@ -282,11 +290,13 @@
 			children = (
 				5993AF751575CD6E00DA25F4 /* Categories */,
 				5993AF7E1575CD6E00DA25F4 /* NSRails.h */,
+				5993AF811575CD6E00DA25F4 /* NSRMacros.h */,
 				5993AF7F1575CD6E00DA25F4 /* NSRConfig.h */,
 				5993AF801575CD6E00DA25F4 /* NSRConfig.m */,
-				5993AF811575CD6E00DA25F4 /* NSRMacros.h */,
 				5993AF841575CD6E00DA25F4 /* NSRRemoteObject.h */,
 				5993AF851575CD6E00DA25F4 /* NSRRemoteObject.m */,
+				597C801C1586E62F00950019 /* NSRRemoteManagedObject.h */,
+				597C801D1586E62F00950019 /* NSRRemoteManagedObject.m */,
 				598D217415800AC2002CC996 /* NSRRequest.h */,
 				598D217515800AC2002CC996 /* NSRRequest.m */,
 				597C80041586A1C300950019 /* NSRRelationship.h */,
@@ -362,6 +372,7 @@
 				598D217615800AC2002CC996 /* NSRRequest.h in Headers */,
 				597C80061586A1C300950019 /* NSRRelationship.h in Headers */,
 				597C80151586B09400950019 /* NSString+Inflection.h in Headers */,
+				597C801E1586E62F00950019 /* NSRRemoteManagedObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -378,6 +389,7 @@
 				598D217715800AC2002CC996 /* NSRRequest.h in Headers */,
 				597C80071586A1C300950019 /* NSRRelationship.h in Headers */,
 				597C80161586B09400950019 /* NSString+Inflection.h in Headers */,
+				597C801F1586E62F00950019 /* NSRRemoteManagedObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,6 +406,7 @@
 				598D217815800AC2002CC996 /* NSRRequest.h in Headers */,
 				597C80081586A1C300950019 /* NSRRelationship.h in Headers */,
 				597C80171586B09400950019 /* NSString+Inflection.h in Headers */,
+				597C80201586E62F00950019 /* NSRRemoteManagedObject.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -622,6 +635,7 @@
 				598D217915800AC2002CC996 /* NSRRequest.m in Sources */,
 				597C80091586A1C300950019 /* NSRRelationship.m in Sources */,
 				597C80181586B09400950019 /* NSString+Inflection.m in Sources */,
+				597C80211586E62F00950019 /* NSRRemoteManagedObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -651,6 +665,7 @@
 				598D217A15800AC2002CC996 /* NSRRequest.m in Sources */,
 				597C800A1586A1C300950019 /* NSRRelationship.m in Sources */,
 				597C80191586B09400950019 /* NSString+Inflection.m in Sources */,
+				597C80221586E62F00950019 /* NSRRemoteManagedObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -680,6 +695,7 @@
 				598D217B15800AC2002CC996 /* NSRRequest.m in Sources */,
 				597C800B1586A1C300950019 /* NSRRelationship.m in Sources */,
 				597C801A1586B09400950019 /* NSString+Inflection.m in Sources */,
+				597C80231586E62F00950019 /* NSRRemoteManagedObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

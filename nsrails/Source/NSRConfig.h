@@ -312,6 +312,13 @@ extern NSString * const NSRCoreDataException;
  */
 + (NSRConfig *) defaultConfig;
 
+/**
+ Returns the current relevant config
+ 
+ Undocumented
+ */
++ (NSRConfig *) relevantConfigForClass:(Class)class;
+
 /// =============================================================================================
 /// @name Managing the global environment
 /// =============================================================================================

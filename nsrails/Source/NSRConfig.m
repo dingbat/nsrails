@@ -119,12 +119,15 @@ static NSString *currentEnvironment = nil;
 	return [NSString stringWithFormat:@"com.nsrails.class.%@",class];
 }
 
-+ (NSRConfig *) configForClass:(Class)class
++ (NSRConfig *) relevantConfigForClass:(Class)class
 {
+	if ([self overrideConfig])
+		return [self overrideConfig];
+	
 	if ([configEnvironments objectForKey:[self environmentKeyForClass:class]])
 		return [self configForEnvironment:[self environmentKeyForClass:class]];
-	
-	return nil;
+
+	return [self defaultConfig];
 }
 
 + (NSRConfig *) defaultConfig

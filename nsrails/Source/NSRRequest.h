@@ -75,11 +75,6 @@
 @property (nonatomic, strong) NSString *route;
 
 /**
- Undocumented
- */
-@property (nonatomic, readonly) NSRRemoteObject *destinationObject;
-
-/**
  The HTTP verb with which to make the request.
  
  This should hardly ever be *set*. Use the GET, DELETE, POST, PUT, and PATCH factory methods.
