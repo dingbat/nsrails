@@ -31,7 +31,6 @@
 #import "NSRails.h"
 #import "NSRConfig.h"
 
-#import "NSRPropertyCollection.h"
 #import "NSData+Additions.h"
 
 //NSRConfigStackElement implementation
@@ -69,8 +68,8 @@
 
 
 //Environments
-NSString * const NSRConfigEnvironmentDevelopment		= @"NSRConfigEnvironmentDevelopment";
-NSString * const NSRConfigEnvironmentProduction			= @"NSRConfigEnvironmentProduction";
+NSString * const NSRConfigEnvironmentDevelopment		= @"com.nsrails.NSRConfigEnvironmentDevelopment";
+NSString * const NSRConfigEnvironmentProduction			= @"com.nsrails.NSRConfigEnvironmentProduction";
 
 
 NSString * const NSRValidationErrorsKey					= @"NSRValidationErrorsKey";
@@ -104,7 +103,7 @@ static NSString *currentEnvironment = nil;
 	currentEnvironment = NSRConfigEnvironmentDevelopment;
 }
 
-+ (NSRConfig *) configForEnvironment: (NSString *)environment
++ (NSRConfig *) configForEnvironment:(NSString *)environment
 {
 	NSRConfig *config = [configEnvironments objectForKey:environment];
 	if (!config)
@@ -113,6 +112,19 @@ static NSString *currentEnvironment = nil;
 		[config useAsDefaultForEnvironment:environment];
 	}
 	return config;
+}
+
++ (NSString *) environmentKeyForClass:(Class)class
+{
+	return [NSString stringWithFormat:@"com.nsrails.class.%@",class];
+}
+
++ (NSRConfig *) configForClass:(Class)class
+{
+	if ([configEnvironments objectForKey:[self environmentKeyForClass:class]])
+		return [self configForEnvironment:[self environmentKeyForClass:class]];
+	
+	return nil;
 }
 
 + (NSRConfig *) defaultConfig
@@ -137,7 +149,7 @@ static NSString *currentEnvironment = nil;
 
 - (void) useForClass:(Class)class
 {
-	[[class propertyCollection] setCustomConfig:self];
+	[self useAsDefaultForEnvironment:[self.class environmentKeyForClass:class]];
 }
 
 + (void) setCurrentEnvironment:(NSString *)environment

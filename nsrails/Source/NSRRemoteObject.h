@@ -697,7 +697,6 @@
 /// =============================================================================================
 
 
-
 /**
  Initializes a new instance of the receiver's class with a given dictionary input.
  
@@ -716,33 +715,6 @@
  */
 - (id) initWithRemoteDictionary:(NSDictionary *)dictionary;
 
-/**
- Initializes a new instance of the receiver's class with a custom NSRMap string.
- 
- The given NSRMap string will be used only for this **instance**. This instance will not use its class's NSRMap. This is very uncommon and triple checking is recommended before going with this implementation strategy.
- 
- Pass in a string as you would type it into NSRMap():
-	Person *zombie = [[Person alloc] initWithCustomMap:@"*, brain -x"];
-
- 
- @param str String to become this instance's NSRMap - pass as you would an NSRMap string (see above). 
- @return A new instance of the receiver's class with the given custom map string.
- */
-- (id) initWithCustomMap:(NSString *)str;
-
-/**
- Initializes a new instance of the receiver's class with a custom NSRMap string and config.
- 
- The given NSRMap string and config will be used only for this **instance**. This instance will not use its class's NSRMap or any default or class-specific configs (although any config in a context block (with use or useIn) will take precedence). This is very uncommon and triple checking is recommended before going with this implementation strategy.
- 
- Pass in a string as you would type it into NSRMap():
-	Person *zombie = [[Person alloc] initWithCustomMap:@"*, brain -x" customConfig:nonInflectingConfig];
- 
- @param str String to become this instance's NSRMap - pass as you would an NSRMap string (see above).  
- @param config Config to become this instance's config. 
- @return A new instance of the receiver's class with the given custom map string and given custom config.
- */
-- (id) initWithCustomMap:(NSString *)str customConfig:(NSRConfig *)config;
 
 /// =============================================================================================
 /// @name CoreData
@@ -886,17 +858,21 @@
 - (void) decodeValue:(id)railsObject forProperty:(NSString *)property change:(BOOL *)change;
 
 /** 
- 
+ Undocumented
  */
-- (BOOL) shouldSendProperty:(NSString *)property nested:(BOOL)nested;
+- (BOOL) shouldSendProperty:(NSString *)property onRequest:(NSRRequest *)req;
+
+- (NSString *) remoteEquivalenceForProperty:(NSString *)property;
+- (NSString *) remoteKeyForProperty:(NSString *)property;
+- (NSString *) propertyForRemoteKey:(NSString *)remoteAttributeKey;
 
 /**
- 
+ Undocumented
  */
 - (NSRRelationship *) relationshipForProperty:(NSString *)property;
 
 /**
- 
+ Undocumented
  */
 + (NSDictionary *) remoteProperties;
 

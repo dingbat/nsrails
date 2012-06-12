@@ -68,7 +68,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 @end
 
 @implementation NSRRequest
-@synthesize route, httpMethod, body, config, queryParameters;
+@synthesize route, httpMethod, body, config, queryParameters, destinationObject;
 
 - (NSMutableDictionary *) queryParameters
 {
@@ -115,6 +115,8 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (id) routeToObject:(NSRRemoteObject *)o withCustomMethod:(NSString *)method ignoreID:(BOOL)ignoreID
 {
+	destinationObject = o;
+	
 	self.config = [o getRelevantConfig];
 	
 	//prepend the ID: action -> 1/action

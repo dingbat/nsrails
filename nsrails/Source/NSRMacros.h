@@ -42,7 +42,8 @@
 
 //define to create a method called NSRMap, which returns the entire param list
 #define NSRMap(...) \
-	+ (NSString*) NSRMap { return _MAKE_STR(__VA_ARGS__); }
+	+ (NSString*) NSRMap __attribute__ ((unavailable("NSRails now uses NSRRemoteObject overrides for property behavior. See nsrails.com for more."))) { return _MAKE_STR(__VA_ARGS__); } \
+	+ (void) map_dep { [self NSRMap]; }
 
 //define to use NSRMap, just pass in NSRNoCarryFromSuper as well (will be picked up later)
 #define NSRMapNoInheritance(...) \

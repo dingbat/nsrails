@@ -9,21 +9,12 @@
 #import <SenTestingKit/SenTestingKit.h>
 
 #import "NSRails.h"
-#import "NSRPropertyCollection.h"
-
 #import "MockServer.h"
 
 //Make some private methods accessible
 @interface NSRRemoteObject (internal)
 
 + (NSRConfig *) getRelevantConfig;
-
-+ (NSString *) masterNSRMap;
-+ (NSString *) masterNSRMapWithOverrideString:(NSString *)override;
-
-+ (NSRPropertyCollection *) propertyCollection;
-- (NSRPropertyCollection *) propertyCollection;
-
 + (id) findFirstObjectByAttribute:(NSString *)attrName withValue:(id)value inContext:(NSManagedObjectContext *)context;
 
 @end

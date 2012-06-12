@@ -3,7 +3,7 @@
  _|_|_|    _|_|  _|_|  _|_|  _|  _|      _|_|           
  _|  _|  _|_|    _|    _|_|  _|  _|_|  _|_| 
  
- NSRPropertyCollection.h
+ NSString+Inflection.h
  
  Copyright (c) 2012 Dan Hassin.
  
@@ -28,39 +28,13 @@
  
  */
 
-//Note:
-//This class doesn't really have use outside of NSRails's internals.
-//There's not much to do here.
-
 #import <Foundation/Foundation.h>
 
-@class NSRConfig;
+@interface NSString (NSRInflection)
 
-@interface NSRProperty : NSObject <NSCoding>
+- (NSString *) nsr_stringByCamelizing;
 
-@property (nonatomic, getter = isSendable) BOOL sendable;
-@property (nonatomic, getter = isRetrievable) BOOL retrievable;
-@property (nonatomic, getter = isArray) BOOL array;
-@property (nonatomic, getter = isBelongsTo) BOOL belongsTo;
-@property (nonatomic, getter = isDate) BOOL date;
-@property (nonatomic) BOOL includedOnNesting;
-@property (nonatomic, strong) NSString *nestedClass, *remoteEquivalent;
-@property (nonatomic, strong) NSString *name;
-
-- (BOOL) isHasMany;
-- (BOOL) matchesRemoteName:(NSString *)remoteProp autoinflect:(BOOL)autoinflect;
+- (NSString *) nsr_stringByUnderscoring;
+- (NSString *) nsr_stringByUnderscoringIgnoringPrefix:(BOOL)ignorePrefix;
 
 @end
-
-
-@interface NSRPropertyCollection : NSObject <NSCoding>
-
-@property (nonatomic, strong) NSMutableDictionary *properties;
-@property (nonatomic, strong) NSRConfig *customConfig;
-
-- (NSArray *) objcPropertiesForRemoteEquivalent:(NSString *)remoteProperty autoinflect:(BOOL)autoinflect;
-
-- (id) initWithClass:(Class)c syncString:(NSString *)str;
-
-@end
-
