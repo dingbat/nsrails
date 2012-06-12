@@ -10,7 +10,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSData (NSDataAdditions)
+@interface NSData (NSRDataAdditions)
 
 - (NSString *) nsr_base64Encoding;
 

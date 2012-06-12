@@ -8,7 +8,7 @@
 //
 // Adapted to NSRails by Dan Hassin (2012)
 
-#import "NSData+Additions.h"
+#import "NSData+Base64.h"
 
 static char encodingTable[64] = {
 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',
@@ -16,7 +16,7 @@ static char encodingTable[64] = {
 'g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v',
 'w','x','y','z','0','1','2','3','4','5','6','7','8','9','+','/' };
 
-@implementation NSData (NSDataAdditions)
+@implementation NSData (NSRDataAdditions)
 
 - (NSString *) nsr_base64Encoding {
 	return [self nsr_base64EncodingWithLineLength:0];

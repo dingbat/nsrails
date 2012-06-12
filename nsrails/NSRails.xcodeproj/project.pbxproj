@@ -67,12 +67,12 @@
 		5993AF601575CD3100DA25F4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17AA155C74890092B048 /* UIKit.framework */; };
 		5993AF611575CD3100DA25F4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17A8155C74200092B048 /* Foundation.framework */; };
 		5993AF641575CD3100DA25F4 /* libNSRailsCD.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5993AF511575CD3000DA25F4 /* libNSRailsCD.a */; };
-		5993AF861575CD6E00DA25F4 /* NSData+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF761575CD6E00DA25F4 /* NSData+Additions.h */; };
-		5993AF871575CD6E00DA25F4 /* NSData+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF761575CD6E00DA25F4 /* NSData+Additions.h */; };
-		5993AF881575CD6E00DA25F4 /* NSData+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF761575CD6E00DA25F4 /* NSData+Additions.h */; };
-		5993AF891575CD6E00DA25F4 /* NSData+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF771575CD6E00DA25F4 /* NSData+Additions.m */; };
-		5993AF8A1575CD6E00DA25F4 /* NSData+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF771575CD6E00DA25F4 /* NSData+Additions.m */; };
-		5993AF8B1575CD6E00DA25F4 /* NSData+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF771575CD6E00DA25F4 /* NSData+Additions.m */; };
+		5993AF861575CD6E00DA25F4 /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF761575CD6E00DA25F4 /* NSData+Base64.h */; };
+		5993AF871575CD6E00DA25F4 /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF761575CD6E00DA25F4 /* NSData+Base64.h */; };
+		5993AF881575CD6E00DA25F4 /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF761575CD6E00DA25F4 /* NSData+Base64.h */; };
+		5993AF891575CD6E00DA25F4 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF771575CD6E00DA25F4 /* NSData+Base64.m */; };
+		5993AF8A1575CD6E00DA25F4 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF771575CD6E00DA25F4 /* NSData+Base64.m */; };
+		5993AF8B1575CD6E00DA25F4 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF771575CD6E00DA25F4 /* NSData+Base64.m */; };
 		5993AF8C1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF781575CD6E00DA25F4 /* NSMutableArray+NSRails.h */; };
 		5993AF8D1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF781575CD6E00DA25F4 /* NSMutableArray+NSRails.h */; };
 		5993AF8E1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF781575CD6E00DA25F4 /* NSMutableArray+NSRails.h */; };
@@ -161,8 +161,8 @@
 		598D21881580174E002CC996 /* NSRRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRequest.m; sourceTree = "<group>"; };
 		5993AF511575CD3000DA25F4 /* libNSRailsCD.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNSRailsCD.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5993AF5E1575CD3100DA25F4 /* NSRailsCDTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NSRailsCDTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		5993AF761575CD6E00DA25F4 /* NSData+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Additions.h"; sourceTree = "<group>"; };
-		5993AF771575CD6E00DA25F4 /* NSData+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Additions.m"; sourceTree = "<group>"; };
+		5993AF761575CD6E00DA25F4 /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
+		5993AF771575CD6E00DA25F4 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
 		5993AF781575CD6E00DA25F4 /* NSMutableArray+NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+NSRails.h"; sourceTree = "<group>"; };
 		5993AF791575CD6E00DA25F4 /* NSMutableArray+NSRails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+NSRails.m"; sourceTree = "<group>"; };
 		5993AF7E1575CD6E00DA25F4 /* NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRails.h; sourceTree = "<group>"; };
@@ -308,8 +308,8 @@
 		5993AF751575CD6E00DA25F4 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
-				5993AF761575CD6E00DA25F4 /* NSData+Additions.h */,
-				5993AF771575CD6E00DA25F4 /* NSData+Additions.m */,
+				5993AF761575CD6E00DA25F4 /* NSData+Base64.h */,
+				5993AF771575CD6E00DA25F4 /* NSData+Base64.m */,
 				5993AF781575CD6E00DA25F4 /* NSMutableArray+NSRails.h */,
 				5993AF791575CD6E00DA25F4 /* NSMutableArray+NSRails.m */,
 				597C80131586B09400950019 /* NSString+Inflection.h */,
@@ -363,7 +363,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5993AF861575CD6E00DA25F4 /* NSData+Additions.h in Headers */,
+				5993AF861575CD6E00DA25F4 /* NSData+Base64.h in Headers */,
 				5993AF8C1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */,
 				5993AF9E1575CD6E00DA25F4 /* NSRails.h in Headers */,
 				5993AFA11575CD6E00DA25F4 /* NSRConfig.h in Headers */,
@@ -380,7 +380,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5993AF871575CD6E00DA25F4 /* NSData+Additions.h in Headers */,
+				5993AF871575CD6E00DA25F4 /* NSData+Base64.h in Headers */,
 				5993AF8D1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */,
 				5993AF9F1575CD6E00DA25F4 /* NSRails.h in Headers */,
 				5993AFA21575CD6E00DA25F4 /* NSRConfig.h in Headers */,
@@ -397,7 +397,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5993AF881575CD6E00DA25F4 /* NSData+Additions.h in Headers */,
+				5993AF881575CD6E00DA25F4 /* NSData+Base64.h in Headers */,
 				5993AF8E1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */,
 				5993AFA01575CD6E00DA25F4 /* NSRails.h in Headers */,
 				5993AFA31575CD6E00DA25F4 /* NSRConfig.h in Headers */,
@@ -628,7 +628,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5993AF891575CD6E00DA25F4 /* NSData+Additions.m in Sources */,
+				5993AF891575CD6E00DA25F4 /* NSData+Base64.m in Sources */,
 				5993AF8F1575CD6E00DA25F4 /* NSMutableArray+NSRails.m in Sources */,
 				5993AFA41575CD6E00DA25F4 /* NSRConfig.m in Sources */,
 				5993AFB31575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */,
@@ -658,7 +658,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5993AF8A1575CD6E00DA25F4 /* NSData+Additions.m in Sources */,
+				5993AF8A1575CD6E00DA25F4 /* NSData+Base64.m in Sources */,
 				5993AF901575CD6E00DA25F4 /* NSMutableArray+NSRails.m in Sources */,
 				5993AFA51575CD6E00DA25F4 /* NSRConfig.m in Sources */,
 				5993AFB41575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */,
@@ -688,7 +688,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5993AF8B1575CD6E00DA25F4 /* NSData+Additions.m in Sources */,
+				5993AF8B1575CD6E00DA25F4 /* NSData+Base64.m in Sources */,
 				5993AF911575CD6E00DA25F4 /* NSMutableArray+NSRails.m in Sources */,
 				5993AFA61575CD6E00DA25F4 /* NSRConfig.m in Sources */,
 				5993AFB51575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */,

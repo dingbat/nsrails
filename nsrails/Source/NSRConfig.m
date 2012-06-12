@@ -31,8 +31,6 @@
 #import "NSRails.h"
 #import "NSRConfig.h"
 
-#import "NSData+Additions.h"
-
 //NSRConfigStackElement implementation
 
 //this small helper class is used to keep track of which config is contextually relevant

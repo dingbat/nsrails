@@ -31,7 +31,7 @@
 #import "NSRails.h"
 
 #import "NSRRequest.h"
-#import "NSData+Additions.h"
+#import "NSData+Base64.h"
 
 
 #if NSRLog > 0
