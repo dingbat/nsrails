@@ -759,6 +759,10 @@
 /// @name Methods to override
 /// =============================================================================================
 
+#define NSRMap(...) \
++ (void) NSRMap __attribute__ ((unavailable("You're now encouraged to override NSRRemoteObject methods for custom property behavior. See nsrails.com for details."))) { } \
++ (void) map_dep { [self NSRMap]; }
+
 /**
  The equivalent name of this class on your server.
  
@@ -783,6 +787,10 @@
  */
 + (NSString *) remoteControllerName;
 
+#define NSRUseModelName(...) \
++ (void) NSRUseModelName __attribute__ ((unavailable("Override +[NSRRemoteObject remoteModelName] and/or +[NSRRemoteObject remoteControllerName] and return a string literal instead."))) { } \
++ (void) name_dep { [self NSRUseModelName]; }
+
 /**
  Undocumented
  */
@@ -798,6 +806,10 @@
  @return An object (typically an instance variable) that represents a parent to this class, or `nil` if this behavior is not desired.
  */
 - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request;
+
+#define NSRUseResourcePrefix(...) \
++ (void) NSRUseResourcePrefix __attribute__ ((unavailable("Override -[NSRRemoteObject objectUsedToPrefixRequest:] and return the instance variable instead."))) { } \
++ (void) prefix_dep { [self NSRUseResourcePrefix]; }
 
 /**
  Should return the remote representation for each property.

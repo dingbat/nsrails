@@ -48,7 +48,6 @@
 #import "NSRConfig.h"
 #import "NSRRemoteObject.h"
 #import "NSMutableArray+NSRails.h"
-#import "NSRMacros.h"
 #import "NSRRequest.h"
 #import "NSRRelationship.h"
 

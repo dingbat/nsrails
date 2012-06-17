@@ -67,8 +67,6 @@
 		5993AFA21575CD6E00DA25F4 /* NSRConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7F1575CD6E00DA25F4 /* NSRConfig.h */; };
 		5993AFA41575CD6E00DA25F4 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF801575CD6E00DA25F4 /* NSRConfig.m */; };
 		5993AFA51575CD6E00DA25F4 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF801575CD6E00DA25F4 /* NSRConfig.m */; };
-		5993AFA71575CD6E00DA25F4 /* NSRMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF811575CD6E00DA25F4 /* NSRMacros.h */; };
-		5993AFA81575CD6E00DA25F4 /* NSRMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF811575CD6E00DA25F4 /* NSRMacros.h */; };
 		5993AFB01575CD6E00DA25F4 /* NSRRemoteObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF841575CD6E00DA25F4 /* NSRRemoteObject.h */; };
 		5993AFB11575CD6E00DA25F4 /* NSRRemoteObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF841575CD6E00DA25F4 /* NSRRemoteObject.h */; };
 		5993AFB31575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF851575CD6E00DA25F4 /* NSRRemoteObject.m */; };
@@ -144,7 +142,6 @@
 		5993AF7E1575CD6E00DA25F4 /* NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRails.h; sourceTree = "<group>"; };
 		5993AF7F1575CD6E00DA25F4 /* NSRConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRConfig.h; sourceTree = "<group>"; };
 		5993AF801575CD6E00DA25F4 /* NSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConfig.m; sourceTree = "<group>"; };
-		5993AF811575CD6E00DA25F4 /* NSRMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRMacros.h; sourceTree = "<group>"; };
 		5993AF841575CD6E00DA25F4 /* NSRRemoteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRRemoteObject.h; sourceTree = "<group>"; };
 		5993AF851575CD6E00DA25F4 /* NSRRemoteObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRemoteObject.m; sourceTree = "<group>"; };
 		59A2AF8C1586F7E2002765BA /* RemoteObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemoteObject.m; sourceTree = "<group>"; };
@@ -273,7 +270,6 @@
 			children = (
 				5993AF751575CD6E00DA25F4 /* Categories */,
 				5993AF7E1575CD6E00DA25F4 /* NSRails.h */,
-				5993AF811575CD6E00DA25F4 /* NSRMacros.h */,
 				5993AF7F1575CD6E00DA25F4 /* NSRConfig.h */,
 				5993AF801575CD6E00DA25F4 /* NSRConfig.m */,
 				5993AF841575CD6E00DA25F4 /* NSRRemoteObject.h */,
@@ -348,7 +344,6 @@
 				5993AF8C1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */,
 				5993AF9E1575CD6E00DA25F4 /* NSRails.h in Headers */,
 				5993AFA11575CD6E00DA25F4 /* NSRConfig.h in Headers */,
-				5993AFA71575CD6E00DA25F4 /* NSRMacros.h in Headers */,
 				5993AFB01575CD6E00DA25F4 /* NSRRemoteObject.h in Headers */,
 				598D217615800AC2002CC996 /* NSRRequest.h in Headers */,
 				597C80061586A1C300950019 /* NSRRelationship.h in Headers */,
@@ -364,7 +359,6 @@
 				5993AF8D1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */,
 				5993AF9F1575CD6E00DA25F4 /* NSRails.h in Headers */,
 				5993AFA21575CD6E00DA25F4 /* NSRConfig.h in Headers */,
-				5993AFA81575CD6E00DA25F4 /* NSRMacros.h in Headers */,
 				5993AFB11575CD6E00DA25F4 /* NSRRemoteObject.h in Headers */,
 				598D217715800AC2002CC996 /* NSRRequest.h in Headers */,
 				597C80071586A1C300950019 /* NSRRelationship.h in Headers */,
