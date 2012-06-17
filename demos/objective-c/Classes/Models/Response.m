@@ -10,35 +10,29 @@
 
 @implementation Response
 @synthesize content, author, post;
-NSRMap(*, post -b)
 
-// The NSRMap above will sync all properties w/Rails, and specially flag "post" to behave as a belongs_to association
-
+- (NSRRelationship *) relationshipForProperty:(NSString *)property
+{
+	if ([property isEqualToString:@"post"])
+		return [NSRRelationship belongsTo:[Post class]];
+	
+	return [super relationshipForProperty:property];
+}
 
 /*
  ==================
- Not really essential for NSRails, but if you're curious about the "-b" flag:
+ Note:
  ==================
  
- The "-b" flag for the "post" property indicates that a Response belongs_to a post!
+ Overriding relationshipForProperty: above is not necessary. By default, (if it's not overridden), NSRails will detect that 'post' is of type Post (which is an NSRRemoteObject subclass), and will treat it as a hasOne: relationship.
  
- This flag is not necessary (even if it's a belongs_to relation), but it allows us to create new Responses already attached to a specific Post, without having to update the Post object.
+ * The hasOne relationship means that when sending a Response, 'post' will be sent as a dictionary with remote key 'post_attributes'.
  
- Here's an example:
-
-	 Response *newResp = [[Response alloc] init];
-	 newResp.author = author;
-	 newResp.content = content;
-	 newResp.post = preExistingPost;      //<------ this line
-	 
-	 [newResp remoteCreate];
-
- In the marked line, we're setting the "post" property to a living, breathing, Post object, but NSRails knows to only send "post_id" instead of hashing out the entire Post object and sticking it into "post_attributes", which Rails would reject.
+ * The belongsTo relationship means that when sending a Response, only the remoteID from 'post' will be sent, with the remote key 'post_id'
  
- Of course, this is only relevant for belongs_to since you'd typically *want* the "_attributes" key in most cases.
-
- See the wiki for more, specifically under NSRMap: https://github.com/dingbat/nsrails/wiki/NSRMap
+   This means that you don't need to define a postID attribute in your Response class, assign it a real Post object, and still have Rails be chill when receiving it! (Rails gets angry if you send it _attributes for a belongs-to relation.)
  
+   Of course, this is only relevant for belongs-to since you'd typically *want* the "_attributes" key in most cases. 
  */
 
 @end
