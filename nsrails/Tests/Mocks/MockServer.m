@@ -97,7 +97,7 @@
 
 + (NSDictionary *) newCustomCoder
 {
-	return NSRDictionary(@"LoweRCasE?",@"locally_lowercase",@"upper",@"remotely_uppercase",@"http://nsrails.com",@"locally_url",@"one,two,three",@"csv_array",@"invisible",@"remote_only",@"something",@"code_to_nil",@"2012-05-07T04:41:52Z",@"date_override_send",@"afsofauh",@"date_override_ret",NSRDictionary(@"COMP LOWERCASE?", @"component_name"),@"component");
+	return NSRDictionary(@"LoweRCasE?",@"locally_lowercase",@"upper",@"remotely_uppercase",@"http://nsrails.com",@"locally_url",@"one,two,three",@"csv_array",@"invisible",@"remote_only",@"something",@"code_to_nil",@"2012-05-07T04:41:52Z",@"date_override_send",@"afsofauh",@"date_override_ret",NSRDictionary(@"COMP LOWERCASE?", @"component_name"),@"component",@"renamed",@"rails");
 }
 
 + (NSDictionary *) newCustomSender

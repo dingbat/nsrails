@@ -3,7 +3,7 @@
 //  NSRails
 //
 //  Created by Dan Hassin on 6/11/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
 #import "NSRAsserts.h"
@@ -233,6 +233,7 @@
 	STAssertEqualObjects(p.locallyLowercase, @"lowercase?", @"Should've decoded into lowercase");
 	STAssertEqualObjects(p.remotelyUppercase, @"upper", @"Should've kept the same");
 	STAssertEqualObjects(p.componentWithFlippingName.componentName, @"comp lowercase?", @"Should've decoded comp name into lowercase");
+	STAssertEqualObjects(p.objc, @"renamed", @"Should've renamed from 'rails'");
 	
 	p.codeToNil = @"Something";
 	
@@ -249,6 +250,7 @@
 	STAssertEqualObjects(p.componentWithFlippingName.componentName, @"COMP LOWERCASE?", @"Should've encoded comp name into uppercase");
 	
 	STAssertEqualObjects([sendDict objectForKey:@"remote_only"], @"remote", @"Should've captured remoteOnly!");
+	STAssertEqualObjects([sendDict objectForKey:@"objc"], @"renamed", @"Should've kept objc because was not set");
 	
 	p.encodeNonJSON = YES;
 	

@@ -3,7 +3,7 @@
 //  NSRails
 //
 //  Created by Dan Hassin on 6/12/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
 #import "NSRails.h"
@@ -96,7 +96,7 @@
 @property (nonatomic) BOOL encodeNonJSON;
 @property (nonatomic, strong) NSURL *locallyURL;
 @property (nonatomic, strong) NSArray *csvArray;
-@property (nonatomic, strong) NSString *locallyLowercase, *remotelyUppercase, *codeToNil, *remoteOnly;
+@property (nonatomic, strong) NSString *locallyLowercase, *remotelyUppercase, *codeToNil, *remoteOnly, *objc;
 @property (nonatomic, strong) CustomCoderComponent *componentWithFlippingName;
 @property (nonatomic, strong) NSDate *dateOverrideSend, *dateOverrideRet;
 @end

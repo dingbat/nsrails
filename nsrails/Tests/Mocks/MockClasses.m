@@ -3,7 +3,7 @@
 //  NSRails
 //
 //  Created by Dan Hassin on 6/12/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
 #import "MockClasses.h"
@@ -193,7 +193,15 @@
 
 @implementation CustomCoder
 @synthesize encodeNonJSON;
-@synthesize locallyURL, locallyLowercase, remotelyUppercase, componentWithFlippingName, codeToNil, dateOverrideSend, dateOverrideRet, csvArray, remoteOnly;
+@synthesize locallyURL, locallyLowercase, remotelyUppercase, componentWithFlippingName, codeToNil, dateOverrideSend, dateOverrideRet, csvArray, remoteOnly, objc;
+
+- (NSString *) propertyForRemoteKey:(NSString *)remoteKey
+{
+	if ([remoteKey isEqualToString:@"rails"])
+		return @"objc";
+	
+	return [super propertyForRemoteKey:remoteKey];
+}
 
 - (id) encodeValueForProperty:(NSString *)key remoteKey:(NSString **)remoteKey
 {
