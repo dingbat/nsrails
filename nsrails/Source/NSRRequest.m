@@ -49,8 +49,6 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 @interface NSRRequest (private)
 
-@property (nonatomic, strong, readwrite) NSURL *baseURL;
-
 + (NSRRequest *) requestWithHTTPMethod:(NSString *)method;
 
 - (NSURLRequest *) HTTPRequest;
@@ -73,12 +71,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (NSURL *) baseURL
 {
-	if (!baseURL && self.config.appURL)
-	{
-		baseURL = [NSURL URLWithString:self.config.appURL];
-	}
-	
-	return baseURL;
+	return [NSURL URLWithString:self.config.appURL];
 }
 
 # pragma mark - Config

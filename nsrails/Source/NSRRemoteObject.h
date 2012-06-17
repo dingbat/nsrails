@@ -29,7 +29,9 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "NSRails.h"
+
+//needed for block typedefs
+#import "NSRConfig.h"
 
 @class NSRRelationship;
 @class NSRRequest;
@@ -710,7 +712,7 @@
  
  @warning Make sure you make a call to super if a certain property shouldn't be custom-coded.
  */
-- (id) encodeValueForProperty:(NSString *)property;
+- (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey;
 
 /**
  Should set what you want an Objective-C property to be set to, based off a remote representation.
@@ -723,16 +725,12 @@
   
  @warning Make sure you make a call to super if a certain property shouldn't be custom-coded.
  */
-- (void) decodeValue:(id)railsObject forProperty:(NSString *)property change:(BOOL *)change;
+- (void) decodeRemoteValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)change;
 
 /** 
  Undocumented
  */
-- (BOOL) shouldSendProperty:(NSString *)property nested:(BOOL)nested;
-
-- (NSString *) remoteEquivalenceForProperty:(NSString *)property;
-- (NSString *) remoteKeyForProperty:(NSString *)property;
-- (NSString *) propertyForRemoteKey:(NSString *)remoteAttributeKey;
+- (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested;
 
 /**
  Undocumented
@@ -742,7 +740,7 @@
 /**
  Undocumented
  */
-+ (NSDictionary *) remoteProperties;
++ (NSMutableArray *) remoteProperties;
 
 @end
 

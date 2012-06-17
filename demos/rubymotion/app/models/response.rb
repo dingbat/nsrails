@@ -1,12 +1,6 @@
 class Response < NSRRemoteObject  
   attr_accessor :author, :content, :post
-
-  # Right now there's a bug in RubyMotion that requires you to define getter methods manually
-  # Hopefully soon you'll be able delete all of this
-  def author; @author; end  
-  def content; @content; end
-  def post; @post; end
-  
+    
   def self.NSRMap
     'author, content, post:Post -b'
   end

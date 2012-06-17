@@ -10,33 +10,13 @@
 
 #import "NSRails.h"
 #import "MockServer.h"
+#import "MockClasses.h"
+#import "NSString+Inflection.h"
 
-//Make some private methods accessible
-@interface NSRRemoteObject (internal)
-
-+ (NSRConfig *) getRelevantConfig;
-+ (id) findFirstObjectByAttribute:(NSString *)attrName withValue:(id)value inContext:(NSManagedObjectContext *)context;
-
-@end
-
-@interface NSRRemoteObject (NSRNoClimb)
-
-+ (NSString *) performSelectorWithoutClimbingHierarchy:(SEL)selector;
-+ (BOOL) respondsToSelectorWithoutClimbingHierarchy:(SEL)selector;
-
-@end
 
 @interface NSRConfig (internal)
 
 + (void) resetConfigs;
-
-@end
-
-@interface NSRRequest (internal)
-
-- (NSURLRequest *) HTTPRequest;
-- (NSError *) errorForResponse:(id)response statusCode:(NSInteger)statusCode;
-- (id) receiveResponse:(NSHTTPURLResponse *)response data:(NSData *)data error:(NSError **)error;
 
 @end
 
@@ -71,6 +51,6 @@ if ([a count] != length) STFail(@"%@ should be equal (order/blanks don't matter)
 }
 
 
-#define NSRAssertEqualConfigs(config,string,desc, ...) STAssertEqualObjects(config.appURL, string, desc, __VA_ARGS__)
+#define NSRAssertEqualConfigs(config,string, ...) STAssertEqualObjects(config.appURL, string, [NSString stringWithFormat:__VA_ARGS__])
 
 

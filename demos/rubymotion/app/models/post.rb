@@ -1,13 +1,5 @@
 class Post < NSRRemoteObject
   attr_accessor :author, :content, :responses, :created_at
-
-  # Right now there's a bug in RubyMotion that requires you to define getter methods manually
-  # Hopefully soon you'll be able delete all of this
-  def author; @author; end  
-  def content; @content; end
-  def responses; @responses; end
-  def created_at; @created_at; end
-  
    
   # Define the NSRMap macro as usual, only as a class method returning a string
   # Remember that in the Ruby environment, * is not supported, has_many relationships have to be indicated with '-m', and dates must declared with NSDate

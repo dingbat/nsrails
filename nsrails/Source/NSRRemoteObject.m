@@ -30,6 +30,8 @@
 
 #import "NSRRemoteObject.h"
 
+#import "NSRails.h"
+
 #import "NSString+Inflection.h"
 #import <objc/runtime.h>
 
@@ -91,39 +93,58 @@
 	return [singular stringByAppendingString:@"s"];
 }
 
-+ (NSMutableDictionary *) remoteProperties
+
++ (NSString *) typeForProperty:(NSString *)prop
+{
+	objc_property_t property = class_getProperty(self, [prop UTF8String]);
+	if (!property)
+		return nil;
+	
+	// This will return some garbage like "Ti,GgetFoo,SsetFoo:,Vproperty"
+	// See https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html
+	
+	NSString *atts = [NSString stringWithCString:property_getAttributes(property) encoding:NSUTF8StringEncoding];
+	
+	for (NSString *att in [atts componentsSeparatedByString:@","])
+		if ([att hasPrefix:@"T"])
+			return [att substringFromIndex:1];
+	
+	return nil;
+}
+
++ (NSMutableArray *) remoteProperties
 {
 	unsigned int propertyCount;
 	
 	objc_property_t *properties = class_copyPropertyList(self, &propertyCount);
+	NSMutableArray *results = [NSMutableArray arrayWithCapacity:propertyCount];
+
 	if (properties)
 	{
-		NSMutableDictionary *results = [NSMutableDictionary dictionaryWithCapacity:propertyCount];
-		
 		while (propertyCount--)
 		{
-			//get each ivar name/type and add it to the results
+			//get each ivar name and add it to the results
 			NSString *prop = [NSString stringWithCString:property_getName(properties[propertyCount]) encoding:NSASCIIStringEncoding];
-			NSString *atts = [NSString stringWithCString:property_getAttributes(properties[propertyCount]) encoding:NSASCIIStringEncoding];
 			
-			NSString *type = nil;
-			
-			for (NSString *att in [atts componentsSeparatedByString:@","])
-				if ([att hasPrefix:@"T"])
-					type = [att substringFromIndex:1];
-			
-			if (type && type.length > 1) // length > 1 ensures that it is not primitive
+			// makes sure it's not primitive
+			if ([[self typeForProperty:prop] rangeOfString:@"@"].location != NSNotFound)
  			{
-				type = [[type stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
-				
-				[results setObject:type forKey:prop];
+				[results addObject:prop];
 			}
 		}
 		
-		free(properties);	
-		return results;
+		free(properties);
+		
+		if (self == [NSRRemoteObject class])
+		{
+			[results removeObject:@"remoteAttributes"];
+			return results;
+		}
 	}
-	return nil;
+	
+	NSMutableArray *superProps = [self.superclass remoteProperties];
+	[superProps addObjectsFromArray:results];
+	return superProps;
 }
 
 - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)verb
@@ -133,89 +154,96 @@
 
 - (NSRRelationship *) relationshipForProperty:(NSString *)property
 {
-	Class propType = NSClassFromString([[self.class remoteProperties] objectForKey:property]);
-	if ([propType isSubclassOfClass:[NSRRemoteObject class]])
+	NSString *propType = [[[self.class typeForProperty:property] stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
+
+	Class class = NSClassFromString(propType);
+	if ([class isSubclassOfClass:[NSRRemoteObject class]])
 	{
-		return [NSRRelationship belongsTo:propType];
+		return [NSRRelationship belongsTo:class];
 	}
 	
 	return nil;
 }
 
-- (id) encodeValueForProperty:(NSString *)key
+- (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
 {	
-	NSRRelationship *relationship = [self relationshipForProperty:key];
-		
-	id val = [self valueForKey:key];
+	if ([property isEqualToString:@"remoteID"])
+		*remoteKey = @"id";
 	
-	//if the ivar is an array, we need to make every element into JSON and then put them back in the array
-	//this is done before the next 'if' becuase Rails will get angry if you send it a nil array - has to be empty
-	if ([val isKindOfClass:[NSArray class]] || [val isKindOfClass:[NSSet class]] || [val isKindOfClass:[NSOrderedSet class]])
-	{
-		NSMutableArray *new = [NSMutableArray arrayWithCapacity:[val count]];
+	NSRRelationship *relationship = [self relationshipForProperty:property];
 		
-		for (id element in val)
-		{
-			id encodedObj = element;
-			
-			//if it's an NSRRemoteObject, we can use its remoteDictionaryRepresentationWrapped
-			if ([element isKindOfClass:[NSRRemoteObject class]])
-			{
-				encodedObj = [element remoteDictionaryRepresentationWrapped:NO fromNesting:YES];
-			}
-			else if ([element isKindOfClass:[NSDate class]])
-			{
-				encodedObj = [[NSRConfig relevantConfigForClass:self.class] stringFromDate:element];
-			}
-			
-			[new addObject:encodedObj];
+	id val = [self valueForKey:property];
+
+	if (relationship)
+	{
+		//if it's belongs_to, only return the ID
+		if (relationship.isBelongsTo)
+		{			
+			*remoteKey = [*remoteKey stringByAppendingString:@"_id"];
+			return [val remoteID];
 		}
 		
-		return new;
+		*remoteKey = [*remoteKey stringByAppendingString:@"_attributes"];
+		
+		if (relationship.isToMany)
+		{
+			NSMutableArray *new = [NSMutableArray arrayWithCapacity:[val count]];
+			
+			for (id element in val)
+			{
+				id encodedObj = [element remoteDictionaryRepresentationWrapped:NO fromNesting:YES];
+				[new addObject:encodedObj];
+			}
+			
+			return new;
+		}
+		
+		return [val remoteDictionaryRepresentationWrapped:NO fromNesting:YES];
 	}
-	
-	if (val)
+
+	if ([val isKindOfClass:[NSDate class]])
 	{
-		if (relationship)
-		{
-			//if it's belongs_to, only return the ID
-			if (relationship.isBelongsTo)
-				return [val remoteID];
-			
-			return [val remoteDictionaryRepresentationWrapped:NO fromNesting:YES];
-		}
-		
-		if ([val isKindOfClass:[NSDate class]])
-		{
-			return [[NSRConfig relevantConfigForClass:self.class] stringFromDate:val];
-		}
+		return [[NSRConfig relevantConfigForClass:self.class] stringFromDate:val];
 	}
 
 	return val;
 }
 
-- (void) decodeValue:(id)railsObject forProperty:(NSString *)key change:(BOOL *)change
+- (void) decodeRemoteValue:(id)railsObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)change
 {
-	NSRRelationship *relationship = [self relationshipForProperty:key];
-	NSString *type = [[self.class.remoteProperties objectForKey:key] lowercaseString];
+	NSString *property = remoteKey;
+	if ([NSRConfig defaultConfig].autoinflectsPropertyNames)
+		property = [property nsr_stringByCamelizing];
+	
+	if ([remoteKey isEqualToString:@"id"])
+		property = @"remoteID";
+	
+	if (![self.class.remoteProperties containsObject:property])
+		return;
+
+	NSString *type = [[self.class typeForProperty:property] lowercaseString];
+
+	NSRRelationship *relationship = [self relationshipForProperty:property];
 	BOOL isDate = ([type isEqualToString:@"date"] || 
-				   [type isEqualToString:@"nsdate"] || 
+				   [type isEqualToString:@"@\"nsdate\""] || 
 				   [type isEqualToString:@"datetime"]);
 	
-	id previousVal = [self valueForKey:key];
+	id previousVal = [self valueForKey:property];
 	id decodedObj = nil;
+	
+	BOOL changes = -1;
 	
 	if (railsObject)
 	{
 		if (relationship.isToMany)
 		{
-			BOOL changes = NO;
+			changes = NO;
 			
 			BOOL checkForChange = ([railsObject count] == [previousVal count]);
 			if (!checkForChange)
 				changes = YES;
 			
-			id newArray = [[NSMutableArray alloc] init];
+			decodedObj = [[NSMutableArray alloc] init];
 		
 			//array of NSRRemoteObjects is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
 			
@@ -239,7 +267,7 @@
 				if (!existing)
 				{
 					//didn't previously exist - make a new one
-					decodedElement = [relationship.class objectWithRemoteDictionary:railsElement];
+					decodedElement = [relationship.nestedClass objectWithRemoteDictionary:railsElement];
 					
 					changes = YES;
 				}
@@ -253,7 +281,7 @@
 						changes = YES;
 				}
 				
-				[newArray addObject:decodedElement];
+				[decodedObj addObject:decodedElement];
 			}
 			
 #ifdef NSR_USE_COREDATA
@@ -264,32 +292,28 @@
 			else
 				newArray = [NSMutableSet setWithArray:newArray];
 #endif
-			
-			*change = changes;
 		}
 		else if (isDate)
 		{
 			decodedObj = [[NSRConfig relevantConfigForClass:self.class] dateFromString:railsObject];
 			
 			//account for any discrepancies between NSDate object and a string (which doesn't include milliseconds) 
-			if (fabs([decodedObj timeIntervalSinceDate:previousVal]) > 1.25)
-			{
-				*change = YES;
-			}
+			CGFloat diff = fabs([decodedObj timeIntervalSinceDate:previousVal]);
+			changes = (!previousVal || (diff > 1.25));
 		}
 		else if (relationship)
 		{
 			//if the nested object didn't exist before, make it & set it
 			if (!previousVal)
 			{
-				decodedObj = [relationship.class objectWithRemoteDictionary:railsObject];
+				decodedObj = [relationship.nestedClass objectWithRemoteDictionary:railsObject];
 			}
 			//otherwise, keep the old object & only mark as change if its properties changed (recursive)
 			else
 			{
 				decodedObj = previousVal;
 				
-				*change = [decodedObj setPropertiesUsingRemoteDictionary:railsObject];
+				changes = [decodedObj setPropertiesUsingRemoteDictionary:railsObject];
 			}
 		}
 		//otherwise, if not nested or anything, just use what we got (number, string, dictionary, array)
@@ -299,20 +323,42 @@
 		}
 	}
 	
-	[self setValue:decodedObj forKey:key];
+	//means we should check for straight equality (no *change was set)
+	if (changes == -1)
+	{
+		changes = NO;
+
+		//if it existed before but now nil, mark change
+		if (!decodedObj && previousVal)
+		{
+			changes = YES;
+		}
+		else if (decodedObj)
+		{
+			changes = ![decodedObj isEqual:previousVal];
+		}
+	}
+	
+	*change = changes;
+	
+	[self setValue:decodedObj forKey:property];
 }
 
-- (BOOL) shouldSendProperty:(NSString *)property nested:(BOOL)nested
+- (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
 {
 	//don't include id if it's nil or on the main object (nested guys need their IDs)
 	if ([property isEqualToString:@"remoteID"] && (!self.remoteID || !nested))
 		return NO;
-
+	
+	//don't include updated_at or created_at
+	if ([property isEqualToString:@"createdAt"] || [property isEqualToString:@"updatedAt"])
+		return NO;
+	
 	NSRRelationship *relationship = [self relationshipForProperty:property];
 	
-	if (relationship)
+	if (relationship && !relationship.isBelongsTo)
 	{
-		if (nested && !relationship.isBelongsTo)
+		if (nested)
 		{
 			//this is recursion-protection. we don't want to include every nested class in this class because one of those nested class could nest us, causing infinite loop
 			//  we are safe to include all nestedclasses on top-level (if not from within nesting)
@@ -324,57 +370,14 @@
 		
 		id val = [self valueForKey:property];
 		
-		//if it's an _attributes and either there's no val, don't send (is okay on belongs_to bc we send a null id)
-		if (!relationship.isBelongsTo && !val)
+		//it's an _attributes. don't send if there's no val or empty (is okay on belongs_to bc we send a null id)
+		if (!val || (relationship.isToMany && [val count] == 0))
 		{
 			return NO;
 		}
 	}
 	
 	return YES;
-}
-
-- (NSString *) remoteEquivalenceForProperty:(NSString *)property
-{
-	return nil;
-}
-
-- (NSString *) remoteKeyForProperty:(NSString *)property
-{
-	NSString *bidirectional = [self remoteEquivalenceForProperty:property];
-	if (bidirectional)
-		return bidirectional;
-	
-	NSString *key;
-	
-	if ([NSRConfig relevantConfigForClass:self.class].autoinflectsPropertyNames)
-		key = [property nsr_stringByUnderscoring];
-	else
-		key = property;
-	
-	// append stuff to nested properties
-	NSRRelationship *relationship = [self relationshipForProperty:key];
-	if (relationship)
-	{
-		if (relationship.isBelongsTo)
-			key = [key stringByAppendingString:@"_id"];
-		else
-			key = [key stringByAppendingString:@"_attributes"];
-	}
-	
-	return key;
-}
-
-- (NSString *) propertyForRemoteKey:(NSString *)remoteProp
-{
-	NSString *bidirectional = [self remoteEquivalenceForProperty:remoteProp];
-	if (bidirectional)
-		return bidirectional;
-
-	if ([NSRConfig relevantConfigForClass:self.class].autoinflectsPropertyNames)
-		return [remoteProp nsr_stringByCamelizing];
-	
-	return remoteProp;
 }
 
 #pragma mark - Internal NSR stuff
@@ -392,45 +395,16 @@
 	
 	BOOL changes = NO;
 	
-	for (NSString *railsProperty in dict)
+	for (NSString *remoteKey in dict)
 	{
-		NSString *property = [self propertyForRemoteKey:railsProperty];
+		id remoteObject = [dict objectForKey:remoteKey];
+		if (remoteObject == [NSNull null])
+			remoteObject = nil;
 
-		id railsObject = [dict objectForKey:railsProperty];
-		if (railsObject == [NSNull null])
-			railsObject = nil;
-		
-		BOOL isKVC = [self respondsToSelector:NSSelectorFromString(property)];
-		id previousVal;
-		
-		if (isKVC)
-		{
-			previousVal = [self valueForKey:property];
-		}
+		BOOL change = NO;
+		[self decodeRemoteValue:remoteObject forRemoteKey:remoteKey change:&change];
 
-		BOOL change = -1;
-		[self decodeValue:railsObject forProperty:property change:&change];
-		
-		if (isKVC)
-		{
-			id newVal = [self valueForKey:property];
-			
-			//means it wasn't set by decodeValue:::, so do the default check - straight equality
-			if (change == -1)
-			{
-				//if it existed before but now nil, mark change
-				if (!newVal && previousVal)
-				{
-					change = YES;
-				}
-				else if (newVal)
-				{
-					change = ![newVal isEqual:previousVal];
-				}
-			}
-		}
-
-		if (change > 0)
+		if (change)
 			changes = YES;
 	}
 	
@@ -448,12 +422,14 @@
 	
 	for (NSString *objcProperty in [self.class remoteProperties])
 	{
-		if (![self shouldSendProperty:objcProperty nested:nesting])
+		if (![self shouldSendProperty:objcProperty whenNested:nesting])
 			continue;
 		
-		NSString *railsEquivalent = [self remoteKeyForProperty:objcProperty];
+		NSString *remoteKey = objcProperty;
+		if ([NSRConfig defaultConfig].autoinflectsPropertyNames)
+			remoteKey = [remoteKey nsr_stringByUnderscoring];
 		
-		id remoteRep = [self encodeValueForProperty:objcProperty];
+		id remoteRep = [self encodeValueForProperty:objcProperty remoteKey:&remoteKey];
 		if (!remoteRep)
 			remoteRep = [NSNull null];
 		
@@ -465,11 +441,11 @@
 		
 		if (!JSONParsable)
 		{
-			[NSException raise:NSRJSONParsingException format:@"Trying to encode property '%@' in class '%@', but the result (%@) was not JSON-parsable. Override -[NSRRemoteObject encodeValueForProperty:] if you want to encode a property that's not NSDictionary, NSArray, NSString, NSNumber, or NSNull. Remember to call super if it doesn't need custom encoding.",objcProperty, self.class, remoteRep];
+			[NSException raise:NSRJSONParsingException format:@"Trying to encode property '%@' in class '%@', but the result (%@) was not JSON-parsable. Override -[NSRRemoteObject encodeValueForProperty:remoteKey:] if you want to encode a property that's not NSDictionary, NSArray, NSString, NSNumber, or NSNull. Remember to call super if it doesn't need custom encoding.",objcProperty, self.class, remoteRep];
 		}
 		
 		
-		[dict setObject:remoteRep forKey:railsEquivalent];
+		[dict setObject:remoteRep forKey:remoteKey];
 	}
 	
 	if (remoteDestroyOnNesting)
@@ -485,7 +461,7 @@
 
 + (id) objectWithRemoteDictionary:(NSDictionary *)railsDict
 {
-	NSRRemoteObject *object = [[self class] init];
+	NSRRemoteObject *object = [[self.class alloc] init];
 	[object setPropertiesUsingRemoteDictionary:railsDict];
 	
 	return object;

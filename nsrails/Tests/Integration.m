@@ -8,51 +8,16 @@
 
 #import "NSRAsserts.h"
 
-#if !TARGET_OS_IPHONE
-#import <Cocoa/Cocoa.h>
-#endif
-
-@interface Post : NSRRemoteObject
-
-@property (nonatomic, strong) NSString *author, *content;
-@property (nonatomic, strong) NSMutableArray *responses;
-@property (nonatomic, strong) NSDate *updatedAt, *createdAt;
-
-@end
-
-
-@interface NSRResponse : NSRRemoteObject   //prefix to test ignore-prefix feature
-
-@property (nonatomic, strong) NSString *content, *author;
-@property (nonatomic, strong) Post *post;
-
-@end
 
 
 //bad because doesn't inherit from NSRRemoteObject
 @interface BadResponse : NSObject
-
 @property (nonatomic, strong) NSString *content, *author;
 @property (nonatomic, strong) Post *post;
-
-@end
-
-@implementation Post
-@synthesize author, content, responses, updatedAt, createdAt;
-NSRMap(*, responses:NSRResponse, updatedAt -r)
-
-@end
-
-@implementation NSRResponse
-@synthesize post, content, author;
-NSRMap(*)
-
 @end
 
 @implementation BadResponse
 @synthesize post, content, author;
-NSRMap(*)
-
 @end
 
 @interface Faker : NSRRemoteObject
@@ -60,10 +25,10 @@ NSRMap(*)
 @implementation Faker
 @end
 
-@interface TIntegration : SenTestCase
+@interface Integration : SenTestCase
 @end
 
-@implementation TIntegration
+@implementation Integration
 
 static BOOL noServer = NO;
 
@@ -74,7 +39,7 @@ static BOOL noServer = NO;
 	
 	/////////////////
 	//TEST READ ALL
-		
+	
 	[Post remoteAllAsync:^(NSArray *allPeople, NSError *error) 
 	 {
 		 STAssertNil(error, @"ASYNC remoteAll on Post should have worked.'");
@@ -230,7 +195,7 @@ static BOOL noServer = NO;
 	STAssertNotNil(newPost.remoteID, @"New post was just created, remoteID shouldn't be nil.");
 	STAssertNotNil(newPost.remoteAttributes, @"New post was just created, remoteAttributes shouldn't be nil.");
 	STAssertNotNil([newPost.remoteAttributes objectForKey:@"updated_at"], @"Remote attributes should have updated_at, even though not declared in NSRMap.");
-
+	
 	NSNumber *oldID = newPost.remoteID;
 	
 	e = nil;
@@ -287,7 +252,7 @@ static BOOL noServer = NO;
 			STAssertFalse([newPost remoteUpdate:&e],@"");
 		else
 			STAssertFalse([newPost remoteUpdate:&e],@"");
-
+		
 		STAssertNotNil(e, @"New post should've failed, there should be an error.");
 		STAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"There was an error by validation, so validation error dictionary should be present.");
 		STAssertNil(newPost.author, @"New author failed validation (unchanged) but it should still be nil locally.");
@@ -372,7 +337,7 @@ static BOOL noServer = NO;
 	
 	req.route = [NSString stringWithFormat:@"posts/%@", p.remoteID];
 	id post = [req sendSynchronous:&e];
-
+	
 	STAssertNil(e, @"Should be no error getting a post (e=%@)",e);
 	STAssertTrue([post isKindOfClass:[NSDictionary class]], @"Response should be a dictionary");
 	STAssertNotNil([post objectForKey:@"created_at"], @"Should be have created_at, etc");
@@ -427,7 +392,7 @@ static BOOL noServer = NO;
 	
 	NSRRequest *req = [[NSRRequest alloc] init];
 	req.httpMethod = @"GET";
-
+	
 	NSError *e = nil;
 	
 	STAssertThrowsSpecificNamed([req sendSynchronous:&e], NSException, NSRMissingURLException, @"Should fail on no app URL set in config, where's the error?");
@@ -445,7 +410,7 @@ static BOOL noServer = NO;
 	
 	STAssertNil(e, @"Should require no authentication for /404 (e=%@)",e);
 	STAssertNotNil(root, @"Should require no authentication for /404");
-		
+	
 	e = nil;
 	
 	req.route = @"posts";
@@ -476,14 +441,14 @@ static BOOL noServer = NO;
 - (void) test_get_all
 {
 	NSRAssertNoServer(noServer);
-
+	
 	NSError *e = nil;
-
+	
 	NSArray *a = [Faker remoteAll:&e];
 	STAssertNotNil(e, @"Should be an error since route doesn't exist");
 	STAssertEqualObjects([e domain], NSRRemoteErrorDomain, @"Domain should be NSRRemoteErrorDomain");
 	STAssertNil(a, @"Array should be nil since there was an error");
-		
+	
 	e = nil;
 	
 	NSArray *array = [Post remoteAll:&e];
@@ -511,14 +476,14 @@ static BOOL noServer = NO;
 	
 	STAssertNil(e, @"Should be no error in retrieving all remote posts again");	
 	STAssertTrue([array isKindOfClass:[NSArray class]], @"Should be an array");
-
+	
 	
 	STAssertTrue(array.count > 0, @"Should be have at least one post (just made one)");
 	STAssertTrue([[array objectAtIndex:0] isKindOfClass:[Post class]], @"Object should be Post instance");
 	STAssertEqualObjects(p.remoteID, [[array objectAtIndex:0] remoteID], @"Object should have same ID");
-
+	
 	e = nil;
-
+	
 	STAssertTrue([p remoteDestroy:&e], @"");
 	STAssertNil(e, @"Should be no error in deleting post");	
 }
@@ -528,16 +493,7 @@ static BOOL noServer = NO;
 	NSRAssertNoServer(noServer);
 	
 	NSError *e = nil;
-	
-	[[NSRConfig defaultConfig] setIgnoresClassPrefixes:NO];
-	
-	NSArray *resps = [NSRResponse remoteAll:&e];
-	STAssertNotNil(e, @"Without 'prefix ignore' set it should fail trying to access nsr_response...");
-	
-	[[NSRConfig defaultConfig] setIgnoresClassPrefixes:YES];
-	
-	e = nil;
-	
+		
 	Post *post = [[Post alloc] init];
 	post.author = @"Dan";
 	post.content = @"Test";
@@ -562,7 +518,7 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	NSRResponse *response = [[NSRResponse alloc] init];
+	Response *response = [[Response alloc] init];
 	[post.responses addObject:response];
 	
 	STAssertFalse([post remoteUpdate:&e],@"");
@@ -583,14 +539,14 @@ static BOOL noServer = NO;
 	STAssertNotNil(response, @"Local Response object should still be here (created properly)");
 	
 	STAssertNil(response.remoteID, @"Response should have a nil remoteID since it was created on update");
-	STAssertThrowsSpecificNamed([NSRResponse remoteObjectWithID:response.remoteID error:&e], NSException, NSInvalidArgumentException, @"Should throw NSInvalidArgumentException for nil remoteID");
+	STAssertThrowsSpecificNamed([Response remoteObjectWithID:response.remoteID error:&e], NSException, NSInvalidArgumentException, @"Should throw NSInvalidArgumentException for nil remoteID");
 	
 	e = nil;
 	
 	//try fetching and seeing if rID exists
 	STAssertTrue([post remoteFetch:&e], @"");
 	
-	NSRResponse *fetchedResponse = [[post responses] lastObject];
+	Response *fetchedResponse = [[post responses] lastObject];
 	
 	STAssertTrue(fetchedResponse != response, @"Should be different because first response had no ID, so didn't know to reuse this object");
 	
@@ -598,7 +554,7 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	STAssertNotNil([NSRResponse remoteObjectWithID:fetchedResponse.remoteID error:&e], @"Should be a vaild ID");
+	STAssertNotNil([Response remoteObjectWithID:fetchedResponse.remoteID error:&e], @"Should be a vaild ID");
 	STAssertNil(e, @"Should be no error");
 	
 	e = nil;
@@ -612,13 +568,13 @@ static BOOL noServer = NO;
 	e = nil;
 	
 	
-	STAssertNil([NSRResponse remoteObjectWithID:fetchedResponse.remoteID error:&e], @"Should've been deleted");
+	STAssertNil([Response remoteObjectWithID:fetchedResponse.remoteID error:&e], @"Should've been deleted");
 	STAssertNotNil(e, @"Response object should've been nest-deleted, where's the error in retrieving it?");
 	
 	e = nil;
 	
 	//test nest-creation via RESPONSE-side, meaning we set its post variable (this should fail without the -b flag)
-	NSRResponse *newResponse = [[NSRResponse alloc] init];
+	Response *newResponse = [[Response alloc] init];
 	newResponse.content = @"Test";
 	newResponse.author = @"Test";
 	newResponse.post = post;
@@ -630,8 +586,9 @@ static BOOL noServer = NO;
 	e = nil;
 	
 	//now try with -b flag
-	NSRResponse *belongsTo = [[NSRResponse alloc] initWithCustomMap:@"*, post -b"];
+	Response *belongsTo = [[Response alloc] init];
 	belongsTo.content = @"Test";
+	belongsTo.belongsToPost = YES;
 	belongsTo.author = @"Test";
 	belongsTo.post = post;
 	
@@ -671,24 +628,26 @@ static BOOL noServer = NO;
 	STAssertTrue([post remoteFetch:&e changes:&changes],@"Should retrieve post just fine");
 	STAssertTrue(post.responses.count == 1, @"Retrieved post should have 1 responses (just recreated b-t)");
 	STAssertTrue(changes,@"Should be changes since we created a nested response");
-
-
+	
+	
 	//now test with dicts
-	Post *dictionariesPost = [[Post alloc] initWithCustomMap:@"*, responses -m"];
+	Post *dictionariesPost = [[Post alloc] init];
 	dictionariesPost.author = @"author";
 	dictionariesPost.content = @"content";
+	dictionariesPost.noResponseRelationship = YES;
 	dictionariesPost.responses = [NSMutableArray array];
 	
-	NSRResponse *testResponse = [[NSRResponse alloc] initWithCustomMap:@"*, post -b"];
+	Response *testResponse = [[Response alloc] init];
 	testResponse.author = @"Test";
+	testResponse.belongsToPost = YES;
 	testResponse.content = @"Test";
 	
-	[dictionariesPost.responses addObject:testResponse];
+	[dictionariesPost.responses addObject:[testResponse remoteDictionaryRepresentationWrapped:NO]];
 	
 	STAssertFalse([dictionariesPost remoteCreate:&e],@"");
 	STAssertNotNil(e, @"Should be error, since tried to send attrs without _attributes");
 	STAssertNil(dictionariesPost.remoteID, @"Model ID shouldn't be present if there was an error on create...");
-		
+	
 	e = nil;
 	
 	// on retrieve, it should set responses in dictionary form
@@ -721,7 +680,7 @@ static BOOL noServer = NO;
 	NSError *e = nil;
 	
 	//remove the two dates, which could modify our object (not relevant currently in this test, but i'll forget later)
-	Post *post = [[Post alloc] initWithCustomMap:@"*, responses:NSRResponse, updatedAt -x, createdAt -x"];
+	Post *post = [[Post alloc] init];
 	post.author = @"Dan";
 	post.content = @"Text";
 	
@@ -747,9 +706,10 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	//default NSRResponse class doesn't have -b, used for some other test
-	NSRResponse *response = [[NSRResponse alloc] initWithCustomMap:@"*, post -b"];
+	//default Response class doesn't have -b, used for some other test
+	Response *response = [[Response alloc] init];
 	response.author = @"John";
+	response.belongsToPost = YES;
 	response.content = @"Response";
 	
 	[post.responses addObject:response];
@@ -834,18 +794,6 @@ static BOOL noServer = NO;
 	STAssertNotNil(post.updatedAt,@"updatedAt should be present");
 	STAssertTrue(changes,@"UpdatedAt should've changed");
 	
-	e = nil;
-	
-	//invalid date format
-	[[NSRConfig defaultConfig] setDateFormat:@"!@#@$"];
-	STAssertThrowsSpecificNamed([post remoteFetch:&e], NSException, NSRInternalError, @"There should be an exception in setting to a bad format");
-	
-	NSDictionary *dict = [post remoteDictionaryRepresentationWrapped:NO];
-	STAssertNotNil(dict, @"There should be no problem making a dict, even if format is bad");
-	STAssertEqualObjects([dict objectForKey:@"created_at"], @"!@#@$", @"New format should've been applied");	
-	
-	e = nil;
-	
 	STAssertTrue([post remoteDestroy:&e],@"");
 	
 	STAssertNil(e,@"There should be no problem remotely destroying post - just cleaning up.");
@@ -859,9 +807,9 @@ static BOOL noServer = NO;
 	BOOL changes = NO;
 	
 	STAssertThrowsSpecificNamed([array remoteFetchAll:[NSString class] error:&e changes:&changes], NSException, NSInvalidArgumentException, @"Should crash if class is not NSRailsModel subclass");
-
+	
 	STAssertThrowsSpecificNamed([array remoteFetchAll:nil error:&e changes:&changes], NSException, NSInvalidArgumentException, @"Should crash if class is not NSRailsModel subclass");
-
+	
 	NSRAssertNoServer(noServer);
 	
 	STAssertFalse([array remoteFetchAll:[Faker class] error:&e changes:&changes],@"");
@@ -966,7 +914,7 @@ static BOOL noServer = NO;
 	Post *thePostRetrieved = [Post remoteObjectWithID:thePost2.remoteID error:&e];
 	STAssertNotNil(thePostRetrieved, @"should exist (we just created it");
 	STAssertNil(e,@"Should be no error retrieving post (e=%@)",e);
-
+	
 	e = nil;
 	
 	thePostRetrieved.content = @"changed externally!";
@@ -990,7 +938,7 @@ static BOOL noServer = NO;
 	}
 	
 	[array addObject:@"please remove me"];
-
+	
 	STAssertThrows([array remoteFetchAll:[Post class] error:nil changes:NULL],@"Should throw an exception if non-NSRRO object is entered (KVC)");
 }
 
@@ -1028,10 +976,10 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	NSArray *responses = [NSRResponse remoteAll:&e];
+	NSArray *responses = [Response remoteAll:&e];
 	NSAssert(!e,@"Should be no error retrieving all responses (e=%@)",e);
 	
-	for (NSRResponse *r in responses)
+	for (Response *r in responses)
 	{ 
 		e = nil;
 		NSAssert([r remoteDestroy:&e], @"");
@@ -1042,11 +990,11 @@ static BOOL noServer = NO;
 - (void)setUp
 {
 	[NSRConfig resetConfigs];
-
+	
 	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
 	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
 	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
-
+	
 	// Run before each test method
 }
 
