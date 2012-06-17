@@ -49,9 +49,9 @@
 
 - (NSRRelationship *) relationshipForProperty:(NSString *)property
 {
-	if ([property isEqualToString:@"post"] && !belongsToPost)
+	if ([property isEqualToString:@"post"] && belongsToPost)
 	{
-		return [NSRRelationship hasOne:[Post class]];
+		return [NSRRelationship belongsTo:[Post class]];
 	}
 	return [super relationshipForProperty:property];
 }
@@ -168,8 +168,8 @@
 
 - (NSRRelationship *) relationshipForProperty:(NSString *)property
 {
-	if ([property isEqualToString:@"nest"] || ([property isEqualToString:@"bird"] && hasOneBird))
-		return [NSRRelationship hasOne:[Nest class]];
+	if ([property isEqualToString:@"bird"] && !hasOneBird)
+		return [NSRRelationship belongsTo:[Bird class]];
 	return [super relationshipForProperty:property];
 }
 

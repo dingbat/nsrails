@@ -195,7 +195,7 @@
 			if (cdRelation.isToMany)
 				return [NSRRelationship hasMany:class];
 			if (cdRelation.maxCount == 1)
-				return [NSRRelationship belongsTo:class];
+				return [NSRRelationship hasOne:class];
 		}
 	}
 	
@@ -204,7 +204,7 @@
 	Class class = NSClassFromString(propType);
 	if ([class isSubclassOfClass:[NSRRemoteObject class]])
 	{
-		return [NSRRelationship belongsTo:class];
+		return [NSRRelationship hasOne:class];
 	}
 	
 	return nil;
