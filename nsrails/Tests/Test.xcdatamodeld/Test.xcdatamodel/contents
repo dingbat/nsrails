@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1171" systemVersion="11D50" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <entity name="NSRails" representedClassName="NSRRemoteManagedObject" isAbstract="YES" syncable="YES">
+    <entity name="NSRails" representedClassName="" isAbstract="YES" syncable="YES">
         <attribute name="remoteID" optional="YES" attributeType="Integer 16" defaultValueString="0" indexed="YES" syncable="YES"/>
     </entity>
-    <entity name="Post" representedClassName="" parentEntity="NSRails" syncable="YES">
+    <entity name="Post" representedClassName="CDPost" parentEntity="NSRails" syncable="YES">
         <attribute name="author" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="responses" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Response" inverseName="post" inverseEntity="Response" syncable="YES"/>
     </entity>
-    <entity name="Response" representedClassName="" parentEntity="NSRails" syncable="YES">
+    <entity name="Response" representedClassName="CDResponse" parentEntity="NSRails" syncable="YES">
         <attribute name="author" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="content" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="post" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Post" inverseName="responses" inverseEntity="Post" syncable="YES"/>

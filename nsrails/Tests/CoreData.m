@@ -5,8 +5,47 @@
 //  Created by Dan Hassin on 6/12/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
-/*
+
 #import "NSRAsserts.h"
+
+/** CoreData Mock Classes **/
+
+@interface CDPost : NSRRemoteObject
+
+@property (nonatomic, strong) NSString *author, *content;
+@property (nonatomic, strong) NSSet *responses;
+
+@end
+
+@interface CDResponse : NSRRemoteObject
+
+@property (nonatomic, strong) NSString *content, *author;
+@property (nonatomic, strong) CDPost *post;
+
+@end
+
+@implementation CDPost
+@dynamic author, content, responses;
+
++ (NSString *) entityName
+{
+	return @"Post";
+}
+
+@end
+
+@implementation CDResponse
+@dynamic author, content, post;
+
++ (NSString *) entityName
+{
+	return @"Response";
+}
+
+@end
+
+
+/******** **********/
 
 @interface CoreData : SenTestCase
 
@@ -25,34 +64,33 @@
 {
 	[[NSRConfig defaultConfig] setManagedObjectContext:nil];
 	
-	STAssertThrows([[CDPost alloc] initInserted], @"");
-	STAssertThrows([[NSRRemoteManagedObject alloc] initInserted], @"");
-	
-	CDPost *p = [[CDPost alloc] initInsertedIntoContext:__managedObjectContext];
+	STAssertThrows(([[CDPost alloc] initInserted]), @"");
+	STAssertThrows([[NSRRemoteObject alloc] initInserted], @"");
+
+	[[NSRConfig defaultConfig] setManagedObjectContext:__managedObjectContext];
+
+	CDPost *p = [[CDPost alloc] initInserted];
 	p.remoteID = NSRNumber(15);
 	[p saveContext];
-	
-	CDPost *p2 = [[CDPost alloc] initInsertedIntoContext:__managedObjectContext];
-	p2.remoteID = NSRNumber(15);
-	STAssertThrows([p2 saveContext],@"");	
 }
 
 - (void) test_crud
 {
 	CDPost *p = [[CDPost alloc] initInserted];
 	
-	STAssertFalse(p.managedObject.hasChanges, @"");
+	//shouldn't save the context
+	STAssertTrue(p.hasChanges, @"");
 	
 	p.author = @"hi";
 	p.content = @"hello";
 	p.remoteID = NSRNumber(15);
 	
-	STAssertTrue(p.managedObject.hasChanges, @"");
+	STAssertTrue(p.hasChanges, @"");
 	
 	STAssertTrue([p remoteCreate:nil], @"");
 	STAssertTrue(p == [CDPost findObjectWithRemoteID:NSRNumber(p.remoteID.integerValue)], @"should find obj with that ID (just made)");
 	
-	STAssertFalse(p.managedObject.hasChanges, @"");
+	STAssertFalse(p.hasChanges, @"");
 	
 	
 	CDResponse *r = [[CDResponse alloc] initInserted];
@@ -68,16 +106,14 @@
 	STAssertEquals(p.responses.count, (NSUInteger)1, @"");
 	STAssertTrue([[p.responses anyObject] isKindOfClass:[CDResponse class]], @"");
 	STAssertTrue([p.responses anyObject] == r, @"");
-	STAssertTrue([[p.responses anyObject] post] == p, @"");
+	STAssertEquals([[p.responses anyObject] post], p, @"");
 	
 	
 	p.content = @"changed!";
 	
-	//TODO
-	//Not even close to being an expert with CoreData... anyone know why this is failing?
-	//STAssertTrue(p.isUpdated, @"");
+	STAssertTrue(p.isUpdated, @"");
 	STAssertTrue([p remoteUpdate:nil], @"");
-	STAssertFalse(p.managedObject.hasChanges, @"");
+	STAssertFalse(p.hasChanges, @"");
 	
 	CDPost *retrieved = [CDPost findObjectWithRemoteID:NSRNumber(p.remoteID.integerValue)];
 	STAssertTrue(p == retrieved, @"");
@@ -97,22 +133,27 @@
 	
 	STAssertNotNil(p, @"");
 	STAssertEqualObjects(p.remoteID, NSRNumber(12), @"");
-	STAssertFalse(p.managedObject.hasChanges, @"");
+	STAssertFalse(p.hasChanges, @"");
 	
 	CDPost *p2 = [CDPost findObjectWithRemoteID:NSRNumber(12)];
 	STAssertNotNil(p2,@"");
 	STAssertTrue(p2 == p, @"");
 	STAssertEqualObjects(p2.remoteID, NSRNumber(12), @"");
-	STAssertFalse(p2.managedObject.hasChanges, @"");
+	STAssertFalse(p2.hasChanges, @"");
 	
 	CDPost *p3 = [CDPost objectWithRemoteDictionary:NSRDictionary(NSRNumber(12),@"id",@"hi",@"content")];
 	
 	STAssertNotNil(p3,@"");
 	STAssertTrue(p3 == p2,@"");
 	STAssertEqualObjects(p3.content, @"hi", @"");
-	STAssertFalse(p3.managedObject.hasChanges, @"");
+	STAssertFalse(p3.hasChanges, @"");
 	
-	STAssertNil([CDPost objectWithRemoteDictionary:NSRDictionary(@"hi",@"content")], @"should be nil if no rID");
+	CDPost *p4 = [CDPost objectWithRemoteDictionary:NSRDictionary(@"hi",@"content")];
+	
+	STAssertNotNil(p4,@"");
+	STAssertEqualObjects(p4.remoteID, NSRNumber(0), nil);
+	STAssertEqualObjects(p4.content, @"hi", @"");
+	STAssertFalse(p4.hasChanges, @"");
 }
 
 - (void) setUp
@@ -167,4 +208,4 @@
     return __persistentStoreCoordinator;
 }
 
-@end*/
+@end

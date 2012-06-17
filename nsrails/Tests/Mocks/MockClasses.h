@@ -107,20 +107,3 @@
 
 @interface CustomClass : NSRRemoteObject
 @end
-
-
-/** CoreData **/
-
-@interface CDPost : NSRRemoteManagedObject
-
-@property (nonatomic, strong) NSString *author, *content;
-@property (nonatomic, strong) NSMutableSet *responses;
-
-@end
-
-@interface CDResponse : NSRRemoteManagedObject
-
-@property (nonatomic, strong) NSString *content, *author;
-@property (nonatomic, strong) CDPost *post;
-
-@end

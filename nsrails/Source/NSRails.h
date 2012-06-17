@@ -28,6 +28,13 @@
  
  */
 
+// CoreData
+// ============
+// #define NSR_USE_COREDATA
+
+// Uncomment the line above if you want to enable CoreData
+// You can also add NSR_USE_COREDATA to "Preprocessor Macros Not Used in Precompiled Headers" in your target's build settings
+//   See http://dingbat.github.com/nsrails/Classes/NSRRemoteObject.html#coredata for more details
 
 // Logging
 // =============
@@ -40,7 +47,6 @@
 // =============
 #import "NSRConfig.h"
 #import "NSRRemoteObject.h"
-#import "NSRRemoteManagedObject.h"
 #import "NSMutableArray+NSRails.h"
 #import "NSRMacros.h"
 #import "NSRRequest.h"

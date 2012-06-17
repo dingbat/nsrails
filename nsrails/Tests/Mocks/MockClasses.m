@@ -286,31 +286,11 @@
 		[super decodeRemoteValue:remoteObject forRemoteKey:remoteKey change:change];
 }
 
-+ (NSMutableArray *) remoteProperties
+- (NSMutableArray *) remoteProperties
 {
 	NSMutableArray *props = [super remoteProperties];
 	[props removeObject:@"undefined"];
 	return props;
-}
-
-@end
-
-@implementation CDPost
-@synthesize author, content, responses;
-
-+ (NSString *) entityName
-{
-	return @"Post";
-}
-
-@end
-
-@implementation CDResponse
-@synthesize author, content, post;
-
-+ (NSString *) entityName
-{
-	return @"Response";
 }
 
 @end

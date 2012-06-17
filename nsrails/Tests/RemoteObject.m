@@ -25,7 +25,7 @@
 
 - (void) test_introspection
 {
-	NSArray *props = [SubClass remoteProperties];
+	NSArray *props = [[[SubClass alloc] init] remoteProperties];
 	
 	NSRAssertEqualArraysNoOrder(props, NSRArray(@"remoteID", @"superString", @"subDate", @"anything"));
 	

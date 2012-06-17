@@ -72,8 +72,7 @@
  If a create or update failed due to validation reasons, NSRails will package the validation failures into a dictionary. This can be retrieved using the key constant `NSRValidationErrorsKey` in the `userInfo` property of the error. This dictionary contains **each failed property as a key**, with each respective object being **an array of the reasons that property failed validation**. For instance,
  
 	 NSError *error;
-	 [user createRemote:&error];
-	 if (error)
+	 if (![user createRemote:&error])
 	 {
 		 NSDictionary *validationErrors = [[error userInfo] objectForKey:NSRValidationErrorsKey];
 		 
@@ -257,16 +256,61 @@
 	}
 	 
 	@end
+ 
+ <a name="coredata"></a>
+ 
+ ## CoreData
+ 
+ ### Setting up
+ 
+ **You can either:**
+ 
+ - Go into **`NSRails.h`** and uncomment this line:
+ 
+ #define NSR_USE_COREDATA
+ 
+ - OR, if you don't want to mess with NSRails source, you can also add **`NSR_USE_COREDATA`** to "Preprocessor Macros Not Used in Precompiled Headers" in your target's build settings:
+ 
+ 
+ <div style="text-align:center"><a href="cd-flag.png"><img src="cd-flag.png" width=350></img></a></div>
+ 
+ **Why is this necessary?**
+ 
+ - By default, NSRRemoteObject inherits from NSObject. Because your managed, NSRails-enabled class need to inherit from NSManagedObject in order to function within CoreData, and because Objective-C does not allow multiple inheritance, NSRRemoteObject will modify its superclass to NSManagedObject during compile-time if `NSR_USE_COREDATA` is defined.
+ 
+ 
+ ### Setting a universal context
+ 
+ - You must set your managed object context to your config's managedObjectContext property so that NSRails can automatically insert or search for CoreData objects when operations require it:
+ 
+     [[NSRConfig defaultConfig] setManagedObjectContext:<#your MOC#>];
+
+ ### remoteID
+
+ - `remoteID` is used as a "primary key" that NSRails will use to find other instances, etc. This means that `remoteID` has to be defined in your *.xcdatamodeld data model file. 
+ 
+ - You can either create an abstract entity named NSRRemoteObject that defines a `remoteID` attribute and acts as a parent to your other entities (preferred), **OR** declare `remoteID` for each entity that subclasses NSRRemoteObject:
+ 
+ <div style="text-align:center; max-height:100%; height:250px; vertical-align:middle;"><a href="cd-abstract.png"><img src="cd-abstract.png" height=250></img></a> **OR** <a href="cd-no-abstract.png"><img src="cd-no-abstract.png" height=220></img></a></div>
+ 
+ - `remoteID` should be an Integer (16 is fine) and indexed.
+ 
   */
 
-@interface NSRRemoteObject : NSObject <NSCoding>
+#ifdef NSR_USE_COREDATA
+#define _NSR_SUPERCLASS		NSManagedObject
+#else
+#define _NSR_SUPERCLASS		NSObject
+#endif
+
+@interface NSRRemoteObject : _NSR_SUPERCLASS <NSCoding>
 
 /// =============================================================================================
 /// @name Properties
 /// =============================================================================================
 
 /**
- The corresponding local property for `id`.
+ The corresponding local property for remote attribute `id`.
  
  It should be noted that this property will be automatically updated after remoteCreate:, as will anything else that is returned from that create.
  
@@ -635,6 +679,10 @@
  
  Will set remoteAttributes to *dictionary*.
  
+ **CoreData**:
+ 
+ Saves the context.
+ 
  @param dictionary Dictionary to be evaluated. 
  @return YES if any changes were made to the local object, NO if object was identical before/after.
  */
@@ -651,17 +699,61 @@
  Takes into account rules in NSRMap.
  
  **CoreData**:
+  
+ Will attempt to retrieve the object in CoreData whose remoteID matches the object for key `id` in *dictionary*.
  
- Inserts this new instance into the managed object context set in the currently relevant config.
+ - If this object is found, will set its properties using *dictionary* and save the context.
+ - If this object is not found (or there's no `id` key), will create & insert a new object using *dictionary* and save the context.
  
- *Note*: With CoreData, it is highly encouraged to use the findOrInsertObjectUsingRemoteDictionary: instead of this. findOrInsertObjectUsingRemoteDictionary: uses a find-or-create strategy to ensure that an object with the same remoteID doesn't already exist in the store (which would raise an exception otherwise).
- 
+ Will search for objects of entity named with the receiver's class name.
+  
  @param dictionary Dictionary to be evaluated. The keys in this dictionary (being a *remote* dictionary) should have remote keys, since this will pass through NSRMap (eg, "id", not "remoteID", and if a special equivalence isn't defined, "my_property", not "myProperty").
  
  Note that this dictionary needs to be JSON-parasable, meaning all keys are strings and all objects are instances of NSString, NSNumber, NSArray, NSDictionary, or NSNull.
  @return A new instance of the receiver's class with properties set using *dictionary*.
  */
 + (id) objectWithRemoteDictionary:(NSDictionary *)dictionary;
+
+
+/// =============================================================================================
+/// @name CoreData
+/// =============================================================================================
+
+/**
+ Finds the object in CoreData whose remoteID is equal to the value passed in.
+  
+ This method should not be used without CoreData enabled (see top).
+ 
+ @param remoteID The remoteID to search for.
+ 
+ @return The object from CoreData, if it exists. If it does not exist, returns `nil`.
+ 
+ @see findOrInsertObjectUsingRemoteDictionary:
+ */
++ (id) findObjectWithRemoteID:(NSNumber *)remoteID;
+
+/**
+ Instantiates a new instance, inserts it into the default CoreData context.
+ 
+ Does not save the context.
+ 
+ Uses the "global" context defined in the relevant config's `managedObjectContext` property. Throws an exception if this property is `nil`.
+ 
+ This method should not be used without CoreData enabled (see top).
+ 
+ @return The newly inserted object.
+  */
+- (id) initInserted;
+
+/**
+ Save the CoreData object context of the receiver.
+ 
+ This method should not be used without CoreData enabled (see top).
+ 
+ @return Whether or not the save was successful.
+ */
+- (BOOL) saveContext;
+
 
 /// =============================================================================================
 /// @name Methods to override
@@ -690,6 +782,11 @@
  Pluralizes remoteModelName.
  */
 + (NSString *) remoteControllerName;
+
+/**
+ Undocumented
+ */
++ (NSString *) entityName;
 
 /**
  Used if instances of this class should have their resource path be based off an association.
@@ -740,7 +837,12 @@
 /**
  Undocumented
  */
-+ (NSMutableArray *) remoteProperties;
+- (NSMutableArray *) remoteProperties;
+
+/**
+ Undocumented
+ */
+- (NSString *) propertyForRemoteKey:(NSString *)remoteKey;
 
 @end
 
