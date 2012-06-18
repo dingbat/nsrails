@@ -42,6 +42,9 @@
 
 - (NSDictionary *) remoteDictionaryRepresentationWrapped:(BOOL)wrapped fromNesting:(BOOL)nesting;
 
+- (BOOL) propertyIsTimestamp:(NSString *)property;
+- (BOOL) propertyIsDate:(NSString *)property;
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,10 +116,17 @@
 	return [singular stringByAppendingString:@"s"];
 }
 
+- (BOOL) propertyIsTimestamp:(NSString *)property
+{
+	return ([property isEqualToString:@"createdAt"] || [property isEqualToString:@"updatedAt"] ||
+			[property isEqualToString:@"created_at"] || [property isEqualToString:@"updated_at"]);
+}
+
 - (BOOL) propertyIsDate:(NSString *)property
 {
-	NSString *type = [self.class typeForProperty:property];
-	return [type isEqualToString:@"@\"NSDate\""];
+	//give rubymotion the _at dates for frees
+	return ([self propertyIsTimestamp:property] ||
+			[[self.class typeForProperty:property] isEqualToString:@"@\"NSDate\""]);
 }
 
 + (NSString *) typeForProperty:(NSString *)prop
@@ -280,6 +290,10 @@
 	NSRRelationship *relationship = [self relationshipForProperty:property];
 	
 	id previousVal = [self nsr_valueForKey:property];
+	//TODO
+	//RUBYMOTION BUG...... returns NSNull instead of nil in a really specific case
+	if (previousVal == [NSNull null])
+		previousVal = nil;
 	id decodedObj = nil;
 	
 	BOOL changes = -1;
@@ -405,11 +419,11 @@
 		return NO;
 	
 	//don't include updated_at or created_at
-	if ([property isEqualToString:@"createdAt"] || [property isEqualToString:@"updatedAt"])
+	if ([self propertyIsTimestamp:property])
 		return NO;
 	
 	NSRRelationship *relationship = [self relationshipForProperty:property];
-	
+
 	if (relationship && !relationship.isBelongsTo)
 	{
 		if (nested)
@@ -423,9 +437,10 @@
 		}
 		
 		id val = [self nsr_valueForKey:property];
-		
+
 		//it's an _attributes. don't send if there's no val or empty (is okay on belongs_to bc we send a null id)
-		if (!val || (relationship.isToMany && [val count] == 0))
+		//TODO the NSNull check is part of an RM bug
+		if (val == [NSNull null] || !val || (relationship.isToMany && [val count] == 0))
 		{
 			return NO;
 		}
