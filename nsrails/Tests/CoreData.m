@@ -32,6 +32,14 @@
 	return @"Post";
 }
 
+- (NSRRelationship *) relationshipForProperty:(NSString *)property
+{
+	if ([property isEqualToString:@"responses"])
+		return [NSRRelationship hasMany:[CDResponse class]];
+	
+	return [super relationshipForProperty:property];
+}
+
 @end
 
 @implementation CDResponse
@@ -40,6 +48,14 @@
 + (NSString *) entityName
 {
 	return @"Response";
+}
+
+- (NSRRelationship *) relationshipForProperty:(NSString *)property
+{
+	if ([property isEqualToString:@"post"])
+		return [NSRRelationship belongsTo:[CDPost class]];
+	
+	return [super relationshipForProperty:property];
 }
 
 @end
