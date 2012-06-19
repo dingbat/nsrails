@@ -209,10 +209,12 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 + (NSRRequest *) requestToFetchAllObjectsOfClass:(Class)c viaObject:(NSRRemoteObject *)obj
 {
 	if (!obj.remoteID)
+    {
 		if (obj)
 			[NSException raise:NSRNullRemoteIDException format:@"Attempt to fetch all %@s via object %@, but the object's remoteID was nil.",[self class],[obj class]];
 		else
 			return [NSRRequest requestToFetchAllObjectsOfClass:c];
+    }
 	
 	return [[NSRRequest GET] routeToObject:obj withCustomMethod:[c remoteControllerName]];
 }
