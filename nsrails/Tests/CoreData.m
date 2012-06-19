@@ -10,14 +10,14 @@
 
 /** CoreData Mock Classes **/
 
-@interface CDPost : NSRRemoteObject
+@interface CDPost : NSRRemoteManagedObject
 
 @property (nonatomic, strong) NSString *author, *content;
 @property (nonatomic, strong) NSSet *responses;
 
 @end
 
-@interface CDResponse : NSRRemoteObject
+@interface CDResponse : NSRRemoteManagedObject
 
 @property (nonatomic, strong) NSString *content, *author;
 @property (nonatomic, strong) CDPost *post;
@@ -81,7 +81,7 @@
 	[[NSRConfig defaultConfig] setManagedObjectContext:nil];
 	
 	STAssertThrows(([[CDPost alloc] initInserted]), @"");
-	STAssertThrows([[NSRRemoteObject alloc] initInserted], @"");
+	STAssertThrows([[NSRRemoteManagedObject alloc] initInserted], @"");
 
 	[[NSRConfig defaultConfig] setManagedObjectContext:__managedObjectContext];
 

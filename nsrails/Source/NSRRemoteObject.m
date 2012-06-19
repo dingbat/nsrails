@@ -51,27 +51,14 @@
 
 
 @implementation NSRRemoteObject
-@synthesize remoteDestroyOnNesting, remoteAttributes;
+@synthesize remoteDestroyOnNesting, remoteAttributes, remoteID;
 
-#ifdef NSR_USE_COREDATA
-@dynamic remoteID;
-#else
-@synthesize remoteID;
-#endif
+- (NSNumber *) primitiveRemoteID
+{
+	return remoteID;
+}
 
 #pragma mark - Overrides
-
-#pragma mark - Private
-
-- (void) nsr_setValue:(id)value forKey:(NSString *)key
-{
-	[self setValue:value forKey:key];
-}
-
-- (id) nsr_valueForKey:(NSString *)key
-{
-	return [self valueForKey:key];
-}
 
 #pragma mark Encouraged
 
@@ -103,7 +90,6 @@
 	//Arbitrary pluralization - should probably support more
 	if ([singular isEqualToString:@"person"])
 		return @"people";
-	
 	if ([singular isEqualToString:@"Person"])
 		return @"People";
 	
@@ -195,20 +181,7 @@
 }
 
 - (NSRRelationship *) relationshipForProperty:(NSString *)property
-{
-	if (self.managedObjectContext)
-	{
-		NSRelationshipDescription *cdRelation = [[self.entity relationshipsByName] objectForKey:property];
-		if (cdRelation)
-		{
-			Class class = NSClassFromString(cdRelation.destinationEntity.name);
-			if (cdRelation.isToMany)
-				return [NSRRelationship hasMany:class];
-			if (cdRelation.maxCount == 1)
-				return [NSRRelationship hasOne:class];
-		}
-	}
-	
+{	
 	NSString *propType = [[[self.class typeForProperty:property] stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
 
 	Class class = NSClassFromString(propType);
@@ -227,7 +200,7 @@
 	
 	NSRRelationship *relationship = [self relationshipForProperty:property];
 		
-	id val = [self nsr_valueForKey:property];
+	id val = [self valueForKey:property];
 
 	if (relationship)
 	{
@@ -280,6 +253,11 @@
 	return property;
 }
 
+- (Class) containerClassForRelationProperty:(NSString *)property
+{
+	return [NSMutableArray class];
+}
+
 - (void) decodeRemoteValue:(id)railsObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)change
 {
 	NSString *property = [self propertyForRemoteKey:remoteKey];
@@ -289,7 +267,7 @@
 
 	NSRRelationship *relationship = [self relationshipForProperty:property];
 	
-	id previousVal = [self nsr_valueForKey:property];
+	id previousVal = [self valueForKey:property];
 	//TODO
 	//RUBYMOTION BUG...... returns NSNull instead of nil in a really specific case
 	if (previousVal == [NSNull null])
@@ -308,19 +286,7 @@
 			if (!checkForChange)
 				changes = YES;
 			
-			if (self.entity)
-			{
-				BOOL ordered = [[[self.entity propertiesByName] objectForKey:property] isOrdered];
-				
-				if (ordered)
-					decodedObj = [[NSMutableOrderedSet alloc] init];
-				else
-					decodedObj = [[NSMutableSet alloc] init];
-			}
-			else
-			{
-				decodedObj = [[NSMutableArray alloc] init];
-			}
+			decodedObj = [[[self containerClassForRelationProperty:property] alloc] init];
 			
 			//array of NSRRemoteObjects is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
 			
@@ -409,7 +375,7 @@
 	
 	*change = changes;
 	
-	[self nsr_setValue:decodedObj forKey:property];
+	[self setValue:decodedObj forKey:property];
 }
 
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
@@ -426,20 +392,17 @@
 
 	if (relationship && !relationship.isBelongsTo)
 	{
+		//this is recursion-protection. we don't want to include every nested class in this class because one of those nested class could nest us, causing infinite loop. of course, overridable
 		if (nested)
 		{
-			//this is recursion-protection. we don't want to include every nested class in this class because one of those nested class could nest us, causing infinite loop
-			//  we are safe to include all nestedclasses on top-level (if not from within nesting)
-			//  if we are a class being nested, we have to be careful - only inlude nestedclass attrs that were defined with -n
-			//     except if belongs-to, since then attrs aren't being included - just "_id"
-
 			return NO;
 		}
 		
-		id val = [self nsr_valueForKey:property];
+		id val = [self valueForKey:property];
 
 		//it's an _attributes. don't send if there's no val or empty (is okay on belongs_to bc we send a null id)
-		//TODO the NSNull check is part of an RM bug
+		//TODO
+		//the NSNull check is part of an RM bug
 		if (val == [NSNull null] || !val || (relationship.isToMany && [val count] == 0))
 		{
 			return NO;
@@ -476,10 +439,7 @@
 		if (change)
 			changes = YES;
 	}
-	
-	if (changes)
-		[self saveContext];
-	
+		
 	return changes;
 }
 
@@ -534,147 +494,10 @@
 
 + (id) objectWithRemoteDictionary:(NSDictionary *)dict
 {
-	NSRRemoteObject *obj = nil;
-	
-#ifdef NSR_USE_COREDATA
-	NSNumber *objID = [dict objectForKey:@"id"];
-
-	if (objID)
-		obj = [self findObjectWithRemoteID:objID];
-	
-	if (!obj)
-		obj = [[self alloc] initInserted];
-#else
-	obj = [[self alloc] init];
-#endif
-	
+	NSRRemoteObject *obj = [[self alloc] init];
 	[obj setPropertiesUsingRemoteDictionary:dict];
 
 	return obj;
-}
-
-#pragma mark - CoreData
-
-- (NSManagedObjectContext *) managedObjectContext
-{
-#ifdef NSR_USE_COREDATA
-	return [super managedObjectContext];
-#else	
-	return nil;
-#endif
-}
-
-- (NSEntityDescription *) entity
-{
-#ifdef NSR_USE_COREDATA
-	return [super entity];
-#else	
-	return nil;
-#endif
-}
-
-+ (NSString *) entityName
-{
-	return [self description];
-}
-
-- (BOOL) saveContext 
-{
-	if (!self.managedObjectContext)
-		return NO;
-	
-	NSError *error = nil;
-	if (![self.managedObjectContext save:&error])
-	{
-		//TODO
-		// maybe notify a client delegate to handle this error?
-		// raise exception?
-		
-		NSLog(@"NSR Warning: Failed to save CoreData context with error %@", error);
-	}
-	
-	return !error;
-}
-
-+ (id) findObjectWithRemoteID:(NSNumber *)rID
-{
-	if ([self class] == [NSRRemoteObject class])
-	{
-		[NSException raise:NSRCoreDataException format:@"Attempt to call %@ on NSRRemoteObject. Call this on your subclass!",NSStringFromSelector(_cmd)];
-	}
-	
-	return [self findFirstObjectByAttribute:@"remoteID" 
-								  withValue:rID
-								  inContext:[self getGlobalManagedObjectContextFromCmd:_cmd]];
-}
-
-+ (id) findFirstObjectByAttribute:(NSString *)attrName withValue:(id)value inContext:(NSManagedObjectContext *)context
-{
-	NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:self.entityName];
-	
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", attrName, value];
-	fetch.predicate = predicate;
-	fetch.fetchLimit = 1;
-	
-	NSError *error = nil;
-	NSArray *results = [context executeFetchRequest:fetch error:&error];
-	if (results.count > 0) 
-	{
-		return [results objectAtIndex:0];
-	}
-	return nil;
-}
-
-+ (NSManagedObjectContext *) getGlobalManagedObjectContextFromCmd:(SEL)cmd
-{
-	NSManagedObjectContext *ctx = [NSRConfig relevantConfigForClass:self].managedObjectContext;
-	if (!ctx)
-	{
-		[NSException raise:NSRCoreDataException format:@"-[%@ %@] called when the current config's managedObjectContext is nil. A vaild managedObjectContext is necessary when using CoreData. Set your managed object context like so: [[NSRConfig defaultConfig] setManagedObjectContext:<#your moc#>].", self.class, NSStringFromSelector(cmd)];
-	}
-	return ctx;
-}
-
-- (id) initInserted
-{
-	if (![self isKindOfClass:[NSManagedObject class]])
-	{
-		[NSException raise:NSRCoreDataException format:@"Trying to use NSRails with CoreData? Go in NSRails.h and uncomment `#define NSR_CORE_DATA`. You can also add NSR_USE_COREDATA to \"Preprocessor Macros Not Used in Precompiled Headers\" in your target's build settings."];
-	}
-	
-	NSManagedObjectContext *context = [[self class] getGlobalManagedObjectContextFromCmd:_cmd];
-	self = [NSEntityDescription insertNewObjectForEntityForName:[self.class entityName]
-										 inManagedObjectContext:context];
-	
-	return self;
-}
-
-- (BOOL) validateRemoteID:(id *)value error:(NSError **)error 
-{
-	if ([*value intValue] == 0)
-		return YES;
-	
-	NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:self.class.entityName];
-	fetch.includesPropertyValues = NO;
-	fetch.fetchLimit = 1;
-	
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(remoteID == %@) && (self != %@)", *value, self];
-	fetch.predicate = predicate;
-	
-	NSArray *results = [[(id)self managedObjectContext] executeFetchRequest:fetch error:NULL];
-	
-	if (results.count > 0)
-	{
-		*error = [NSError errorWithDomain:NSRCoreDataException 
-									 code:0
-								 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"%@ with remoteID %@ already exists",self.class,*value] forKey:NSLocalizedDescriptionKey]];
-		
-		return NO;
-	}
-	else
-	{
-		return YES;
-	}
 }
 
 #pragma mark - Create
@@ -682,7 +505,7 @@
 - (BOOL) remoteCreate:(NSError **)error
 {
 	NSDictionary *jsonResponse = [[NSRRequest requestToCreateObject:self] sendSynchronous:error];
-
+	
 	if (jsonResponse)
 		[self setPropertiesUsingRemoteDictionary:jsonResponse];
 	
@@ -701,16 +524,11 @@
 	 }];
 }
 
-
 #pragma mark Update
 
 - (BOOL) remoteUpdate:(NSError **)error
 {
-	if (![[NSRRequest requestToUpdateObject:self] sendSynchronous:error])
-		return NO;
-	
-	[self saveContext];
-	return YES;
+	return !![[NSRRequest requestToUpdateObject:self] sendSynchronous:error];
 }
 
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock
@@ -718,9 +536,6 @@
 	[[NSRRequest requestToUpdateObject:self] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
-		 if (!error)
-			 [self saveContext];
-		 
 		 completionBlock(error);
 	 }];
 }
@@ -729,11 +544,7 @@
 
 - (BOOL) remoteReplace:(NSError **)error
 {
-	if (![[NSRRequest requestToReplaceObject:self] sendSynchronous:error])
-		return NO;
-	
-	[self saveContext];
-	return YES;
+	return !![[NSRRequest requestToReplaceObject:self] sendSynchronous:error];
 }
 
 - (void) remoteReplaceAsync:(NSRBasicCompletionBlock)completionBlock
@@ -741,9 +552,6 @@
 	[[NSRRequest requestToReplaceObject:self] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
-		 if (!error)
-			 [self saveContext];
-		 
 		 completionBlock(error);
 	 }];
 }
@@ -752,12 +560,7 @@
 
 - (BOOL) remoteDestroy:(NSError **)error
 {
-	if (![[NSRRequest requestToDestroyObject:self] sendSynchronous:error])
-		return NO;
-	
-	[self.managedObjectContext deleteObject:(id)self];
-	[self saveContext];
-	return YES;
+	return !![[NSRRequest requestToDestroyObject:self] sendSynchronous:error];
 }
 
 - (void) remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock
@@ -765,11 +568,6 @@
 	[[NSRRequest requestToDestroyObject:self] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
-		 if (!error)
-		 {
-			 [self.managedObjectContext deleteObject:(id)self];
-			 [self saveContext];
-		 }
 		 completionBlock(error);
 	 }];
 }

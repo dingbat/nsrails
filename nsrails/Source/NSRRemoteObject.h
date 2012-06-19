@@ -256,45 +256,6 @@
 	}
 	 
 	@end
- 
- <a name="coredata"></a>
- 
- ## CoreData
- 
- ### Setting up
- 
- **You can either:**
- 
- - Go into **`NSRails.h`** and uncomment this line:
- 
- #define NSR_USE_COREDATA
- 
- - OR, if you don't want to mess with NSRails source, you can also add **`NSR_USE_COREDATA`** to "Preprocessor Macros Not Used in Precompiled Headers" in your target's build settings:
- 
- 
- <div style="text-align:center"><a href="cd-flag.png"><img src="cd-flag.png" width=350></img></a></div>
- 
- **Why is this necessary?**
- 
- - By default, NSRRemoteObject inherits from NSObject. Because your managed, NSRails-enabled class need to inherit from NSManagedObject in order to function within CoreData, and because Objective-C does not allow multiple inheritance, NSRRemoteObject will modify its superclass to NSManagedObject during compile-time if `NSR_USE_COREDATA` is defined.
- 
- 
- ### Setting a universal context
- 
- - You must set your managed object context to your config's managedObjectContext property so that NSRails can automatically insert or search for CoreData objects when operations require it:
- 
-     [[NSRConfig defaultConfig] setManagedObjectContext:<#your MOC#>];
-
- ### remoteID
-
- - `remoteID` is used as a "primary key" that NSRails will use to find other instances, etc. This means that `remoteID` has to be defined in your *.xcdatamodeld data model file. 
- 
- - You can either create an abstract entity named NSRRemoteObject that defines a `remoteID` attribute and acts as a parent to your other entities (preferred), **OR** declare `remoteID` for each entity that subclasses NSRRemoteObject:
- 
- <div style="text-align:center; max-height:100%; height:250px; vertical-align:middle;"><a href="cd-abstract.png"><img src="cd-abstract.png" height=250></img></a> **OR** <a href="cd-no-abstract.png"><img src="cd-no-abstract.png" height=220></img></a></div>
- 
- - `remoteID` should be an Integer (16 is fine) and indexed.
- 
   */
 
 #ifdef NSR_USE_COREDATA
@@ -313,10 +274,6 @@
  The corresponding local property for remote attribute `id`.
  
  It should be noted that this property will be automatically updated after remoteCreate:, as will anything else that is returned from that create.
- 
- **CoreData**
-
- This property is used as a "primary key". Trying to insert two objects of the same subclass with the same remoteID in the same context will raise an exception.
  */
 @property (nonatomic, strong) NSNumber *remoteID;
 
@@ -348,16 +305,12 @@
  This can be useful if you have a lot of nested models you need to destroy - you can do it in one request instead of several repeated destroys on each object.
  
  Note that this is relevant for a nested object only. And, for this to work, make sure `:allow_destroy => true` [is set in your Rails model](https://github.com/dingbat/nsrails/wiki/Nesting).
-
- **CoreData**
-
- This property leaves your managed object **unaffected**. You will have to delete it from your context manually if your request was successful.
  */
 @property (nonatomic) BOOL remoteDestroyOnNesting;
 
 
 // =============================================================================================
-/// @name Common class requests
+/// @name Common controller requests
 // =============================================================================================
 
 /**
@@ -366,10 +319,6 @@
  Makes a GET request to `/objects` (where `objects` is the pluralization of receiver's model name.)
  
  Request done synchronously. See remoteAllAsync: for asynchronous operation.
- 
- **CoreData**
-
- Each object returned in the array may be an existing or newly inserted object. All objects will reflect properites set to those returned by your server.
 
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return NSArray of instances of receiver's class. Each object’s properties will be set to those returned by Rails.
@@ -383,10 +332,6 @@
  
  Request done synchronously. See remoteAllViaObject:async: for asynchronous operation.
  
- **CoreData**
- 
- Each object returned in the array may be an existing or newly inserted object. All objects will reflect properites set to those returned by your server.
- 
  @param parentObject Remote object by which to request the collection from - establishes pattern for resources depending on nesting. Raises an exception if this object's `remoteID` is nil, as it is used to construct the route.
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return NSArray of instances of receiver's class. Each object’s properties will be set to those returned by Rails.
@@ -397,10 +342,6 @@
  Retrieves an array of all remote objects (as instances of receiver's class.) Each instance’s properties will be set to those returned by Rails.
  
  Asynchronously makes a GET request to `/objects` (where `objects` is the pluralization of receiver's model name.)
-
- **CoreData**
-
- Each object returned in the array may be an existing or newly inserted object. All objects will reflect properites set to those returned by your server.
  
  @param completionBlock Block to be executed when the request is complete.
  */
@@ -410,10 +351,6 @@
  Retrieves an array of all remote objects (as instances of receiver's class.) Each instance’s properties will be set to those returned by Rails.
  
  Asynchronously makes a GET request to `/parents/3/objects` (where `parents/3` is the path for the **parentObject**, and `objects` is the pluralization of this model name.)
- 
- **CoreData**
- 
- Each object returned in the array may be an existing or newly inserted object. All objects will reflect properites set to those returned by your server.
  
  @param parentObject Remote object by which to request the collection from - establishes pattern for resources depending on nesting. Raises an exception if this object's `remoteID` is nil, as it is used to construct the route.
  @param completionBlock Block to be executed when the request is complete.
@@ -428,10 +365,6 @@
  
  Request done synchronously. See remoteObjectWithID:async: for asynchronous operation.
  
- **CoreData**
-
- If request is successful, will attempt to find an existing local object with *objectID*, and update its properties to the server's response. If it cannot find an existing local object with that remoteID, will inserta  new object into the context, with those properties.
-
  @param objectID The ID of the remote object.
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return Instance of receiver's class with properties from the remote object with that ID.
@@ -442,11 +375,7 @@
  Retrieves an instance receiver's class corresponding to the remote object with that ID.
  
  Asynchronously makes a GET request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is *objectID*)
- 
- **CoreData**
-
- If request is successful, will attempt to find an existing local object with *objectID*, and update its properties to the server's response. If it cannot find an existing local object with that remoteID, will inserta  new object into the context, with those properties.
- 
+  
  @param objectID The ID of the remote object.
  @param completionBlock Block to be executed when the request is complete.
  */
@@ -466,10 +395,6 @@
  
  Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
  
- **CoreData**
-
- If successful and changes are present, will save its managed object context.
-
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`. 
  @return `YES` if fetch was successful. Returns `NO` if an error occurred.
  
@@ -485,10 +410,6 @@
  
  Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
  
- **CoreData**
-
- If successful and changes are present, will save its managed object context.
-
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`. 
  @param changesPtr Pointer to boolean value set to whether or not the receiver changed in any way after the fetch (ie, if this fetch modified one of receiver's local properties due to a change in value server-side). This will also take into account diffs to any nested `NSRRemoteObject` objects that are affected by this fetch (done recursively).
  
@@ -507,10 +428,6 @@
  
  Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
  
- **CoreData**
-
- If successful and changes are present, will save its managed object context.
-
  @param completionBlock Block to be executed when the request is complete. The second parameter passed in is a BOOL whether or not there was a *local* change. This means changes in `updated_at`, etc, will only apply if your Objective-C class implement this as a property as well. This also applies when updating any of its nested objects (done recursively).
  */
 - (void) remoteFetchAsync:(NSRFetchCompletionBlock)completionBlock;
@@ -525,10 +442,6 @@
  Request made synchronously. See remoteUpdateAsync: for asynchronous operation.
 
  Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
- 
- **CoreData**
-
- If successful, will save its managed object context. Note that changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.
 
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return `YES` if update was successful. Returns `NO` if an error occurred.
@@ -545,10 +458,6 @@
  
  Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
  
- **CoreData**
-
- If successful, will save its managed object context. Note that changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.
-
  @param completionBlock Block to be executed when the request is complete.
  
  @warning No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.
@@ -562,10 +471,6 @@
  Sends a `POST` request to `/objects` (where `objects` is the pluralization of receiver's model name), with the receiver's remoteDictionaryRepresentationWrapped:YES as its body.
  Request made synchronously. See remoteCreateAsync: for asynchronous operation.
 
- **CoreData**
-
- If successful, will save its managed object context to update changed properties like remoteID.
-
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return `YES` if create was successful. Returns `NO` if an error occurred.
  */
@@ -576,14 +481,9 @@
  
  Asynchronously sends a `POST` request to `/objects` (where `objects` is the pluralization of receiver's model name), with the receiver's remote dictionary representation as its body.
  
- **CoreData**
-
- If successful, will save its managed object context to update changed properties like remoteID.
-
  @param completionBlock Block to be executed when the request is complete.
  */
 - (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock;
-
 
 
 /**
@@ -591,11 +491,7 @@
  
  Sends a `DELETE` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
  Request made synchronously. See remoteDestroyAsync: for asynchronous operation.
- 
- **CoreData**
-
- If successful, will delete itself from its managed object context and save the context.
- 
+  
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return `YES` if destroy was successful. Returns `NO` if an error occurred.
  */
@@ -605,11 +501,7 @@
  Destroys receiver's corresponding remote object. Local object will be unaffected.
  
  Asynchronously sends a `DELETE` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
- 
- **CoreData**
-
- If successful, will delete itself from its managed object context and save the context.
- 
+  
  @param completionBlock Block to be executed when the request is complete.
  */
 - (void) remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock;
@@ -624,10 +516,6 @@
  Request made synchronously. See remoteReplaceAsync: for asynchronous operation.
  
  Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
- 
- **CoreData**
- 
- If successful, will save its managed object context. Note that changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.
  
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return `YES` if place was successful. Returns `NO` if an error occurred.
@@ -644,10 +532,6 @@
  The distinction between this method and remoteUpdateAsync: is that this method will always use the `PUT` HTTP method, while remoteUpdateAsync: is configurable. This is to allow servers that use `PATCH` to update attributes using remoteUpdateAsync: and keep remoteReplaceAsync: for a more accurate "placement" procedure that should occur with the `PUT` method. More discussion [here](http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/).
  
  Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
- 
- **CoreData**
- 
- If successful, will save its managed object context. Note that changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.
  
  @param completionBlock Block to be executed when the request is complete.
  
@@ -678,11 +562,7 @@
  Takes into account rules in NSRMap.
  
  Will set remoteAttributes to *dictionary*.
- 
- **CoreData**:
- 
- Saves the context.
- 
+
  @param dictionary Dictionary to be evaluated. 
  @return YES if any changes were made to the local object, NO if object was identical before/after.
  */
@@ -697,15 +577,6 @@
  Initializes a new instance of the receiver's class with a given dictionary input.
  
  Takes into account rules in NSRMap.
- 
- **CoreData**:
-  
- Will attempt to retrieve the object in CoreData whose remoteID matches the object for key `id` in *dictionary*.
- 
- - If this object is found, will set its properties using *dictionary* and save the context.
- - If this object is not found (or there's no `id` key), will create & insert a new object using *dictionary* and save the context.
- 
- Will search for objects of entity named with the receiver's class name.
   
  @param dictionary Dictionary to be evaluated. The keys in this dictionary (being a *remote* dictionary) should have remote keys, since this will pass through NSRMap (eg, "id", not "remoteID", and if a special equivalence isn't defined, "my_property", not "myProperty").
  
@@ -713,46 +584,6 @@
  @return A new instance of the receiver's class with properties set using *dictionary*.
  */
 + (id) objectWithRemoteDictionary:(NSDictionary *)dictionary;
-
-
-/// =============================================================================================
-/// @name CoreData
-/// =============================================================================================
-
-/**
- Finds the object in CoreData whose remoteID is equal to the value passed in.
-  
- This method should not be used without CoreData enabled (see top).
- 
- @param remoteID The remoteID to search for.
- 
- @return The object from CoreData, if it exists. If it does not exist, returns `nil`.
- 
- @see findOrInsertObjectUsingRemoteDictionary:
- */
-+ (id) findObjectWithRemoteID:(NSNumber *)remoteID;
-
-/**
- Instantiates a new instance, inserts it into the default CoreData context.
- 
- Does not save the context.
- 
- Uses the "global" context defined in the relevant config's `managedObjectContext` property. Throws an exception if this property is `nil`.
- 
- This method should not be used without CoreData enabled (see top).
- 
- @return The newly inserted object.
-  */
-- (id) initInserted;
-
-/**
- Save the CoreData object context of the receiver.
- 
- This method should not be used without CoreData enabled (see top).
- 
- @return Whether or not the save was successful.
- */
-- (BOOL) saveContext;
 
 
 /// =============================================================================================
@@ -790,11 +621,6 @@
 #define NSRUseModelName(...) \
 + (void) NSRUseModelName __attribute__ ((unavailable("Override +[NSRRemoteObject remoteModelName] and/or +[NSRRemoteObject remoteControllerName] and return a string literal instead."))) { } \
 + (void) name_dep { [self NSRUseModelName]; }
-
-/**
- Undocumented
- */
-+ (NSString *) entityName;
 
 /**
  Used if instances of this class should have their resource path be based off an association.
