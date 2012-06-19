@@ -100,21 +100,6 @@ class Model
     "@synthesize "+@property_collection.property_names.join(", ")+";"
   end
   
-
-  def sync_string
-    if $options[:ruby]
-      @property_collection.properties.map { |p| p.print }.join(", ")
-    else
-      str = "*, "
-      @property_collection.properties.each do |p|
-        if p.prints_special?
-          str += p.print + ", "
-        end
-      end
-      str[0..str.length-3] #strip off trailing ", "
-    end
-  end
-  
   def format_unique_nested_classes(format)
     done = []
     @property_collection.properties.each do |p|
@@ -157,8 +142,15 @@ class Model
     synth = synthesize
     if synth
       str += "\n"+synth
-      if @property_collection.has_special_sync?
-        str += "\nNSRMap(#{sync_string});"
+      if @property_collection.has_relationships?
+        str += "\n\n- (NSRRelationship *) relationshipForProperty:(NSString *)property\n{\n"
+        @property_collection.properties.each do |p|
+          if p.prints_relationship?
+            str += "#{p.print_relationship}\n"
+          end
+        end
+        str += "\n    return [super relationshipForProperty:property];\n}"
+        
       end
     end
     
@@ -171,15 +163,19 @@ class Model
     names = @property_collection.property_names
     if names && !names.empty?
       str += "  attr_accessor :#{names.join(', :')}\n"
+
+      str += "\n  def remoteProperties\n    super + [\"#{names.join('", "')}\"]\n  end"
       
-      ###TODO: Remove this when attr_reader bug is fixed!
-      str += "\n  #TODO: Remove this when attr_reader bug is fixed\n"
-      names.each do |x|
-        str += "  def #{x}; @#{x}; end\n"
+      if @property_collection.has_relationships?
+        str += "\n\n  def relationshipForProperty(property)\n"
+        str += "    case property\n"
+        @property_collection.properties.each do |p|
+          if p.prints_relationship?
+            str += "#{p.print_relationship}\n"
+          end
+        end
+        str += "    else\n      super\n    end\n  end"
       end
-      ###
-      
-      str += "\n  def self.NSRMap\n    '#{sync_string}'\n  end"
     end
     
     str += "\nend"
@@ -206,9 +202,9 @@ class PropertyCollection
     types
   end
   
-  def has_special_sync?
+  def has_relationships?
     @properties.each do |prop|
-      if prop.prints_special?
+      if prop.prints_relationship?
         return true
       end
     end
@@ -227,27 +223,19 @@ class Property
     self.name.camelize(:lower) == "createdAt" || self.name.camelize(:lower) == "updatedAt"
   end
   
-  def prints_special?
-    print != name
+  def prints_relationship?
+    (has_many || belongs_to)
   end
   
-  def print
-    str = self.name
-    flags = ""
-    
-    if self.nested_class
-      str += ":#{self.nested_class}" if (self.has_many || $options[:ruby])
-      flags += "b" if self.belongs_to
-      flags += "m" if self.has_many && $options[:ruby]
-      flags += "r" if $options[:nesting_retrievable_only]
-    end
-    
-    if self.date?
-      str += ":NSDate" if $options[:ruby]
-      flags += "r" if self.timestamp?
-    end
-    
-    str += " -"+flags if !flags.empty?
+  def print_relationship
+    method = has_many ? "hasMany" : "belongsTo"
+    if $options[:ruby]
+      str = "    when \"#{name}\"\n"
+      str += "      NSRRelationship.#{method}(#{nested_class})"
+    else
+      str = "    if ([property isEqualToString:@\"#{name}\"])\n"
+      str += "        return [NSRRelationship #{method}:[#{nested_class} class]];"
+    end 
     str
   end
 end
