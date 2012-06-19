@@ -8,6 +8,13 @@ class Response < NSRRemoteObject
   def relationshipForProperty(property)
     NSRRelationship.belongsTo(Post) if property == "post" || super
   end
+  
+  def encodeValueForProperty(property, remoteKey:key)
+    if property == "author"
+      key = "LOL!"
+    end
+    super
+  end
 end
  
 =begin

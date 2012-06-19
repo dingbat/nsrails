@@ -6,6 +6,11 @@ class Post < NSRRemoteObject
   end
   
   def relationshipForProperty(property)
-    NSRRelationship.hasMany(Response) if property == "responses" || super  
+    case property
+    when "responses"
+      NSRRelationship.hasMany(Response)
+    else
+      super
+    end
   end
 end
