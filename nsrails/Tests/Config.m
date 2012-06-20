@@ -129,7 +129,7 @@ NSRAssertRelevantClassConfigURL(nil, string)
 	[[NSRConfig defaultConfig] setDateFormat:@"yyyy"];
 	
 	//string -> date
-	STAssertThrows([[NSRConfig defaultConfig] dateFromString:mockDatetime], @"Should throw exception - receiving config format != server format");
+	STAssertNil([[NSRConfig defaultConfig] dateFromString:mockDatetime], @"Should be nil - receiving config format != server format");
 	
 	//date -> string
 	NSString *string2 = [[NSRConfig defaultConfig] stringFromDate:date];

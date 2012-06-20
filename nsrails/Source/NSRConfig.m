@@ -66,7 +66,6 @@ NSString * const NSRValidationErrorsKey					= @"NSRValidationErrorsKey";
 
 NSString * const NSRRemoteErrorDomain				= @"NSRRemoteErrorDomain";
 NSString * const NSRJSONParsingException			= @"NSRJSONParsingException";
-NSString * const NSRInternalError					= @"NSRInternalError";
 NSString * const NSRMissingURLException				= @"NSRMissingURLException";
 NSString * const NSRNullRemoteIDException			= @"NSRNullRemoteIDException";
 NSString * const NSRCoreDataException				= @"NSRCoreDataException";
@@ -219,8 +218,7 @@ static NSString *currentEnvironment = nil;
 	
 	if (!date && string)
 	{
-		[NSException raise:NSRInternalError format:@"Attempted to convert remote date string (\"%@\") into an NSDate object, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation).",string,dateFormatter.dateFormat];
-		return nil;
+        NSLog(@"NSR Warning: Attempted to convert remote date string (\"%@\") into an NSDate object, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation). Setting to nil",string,dateFormatter.dateFormat);
 	}
 	
 	return date;
