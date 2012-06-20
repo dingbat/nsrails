@@ -4,7 +4,7 @@ class AppDelegate
 
     NSRConfig.defaultConfig.appURL = "http://nsrails.com"
     # For testing on local server:
-     NSRConfig.defaultConfig.appURL = "http://localhost:3000"
+    # NSRConfig.defaultConfig.appURL = "http://localhost:3000"
     NSRConfig.defaultConfig.appUsername = "NSRails"
     NSRConfig.defaultConfig.appPassword = "iphone"
     
