@@ -5,7 +5,6 @@
             <Name>NSRails</Name>
             <Path>index.html</Path>
 			<Subnodes>
-                
 				
 				<Node type="folder">
 					<Name>Classes</Name>
@@ -14,6 +13,8 @@
 						<NodeRef refid="1"/>
 						<NodeRef refid="2"/>
 						<NodeRef refid="3"/>
+						<NodeRef refid="4"/>
+						<NodeRef refid="5"/>
 						
 					</Subnodes>
 				</Node>
@@ -23,7 +24,7 @@
 					<Name>Categories</Name>
 					<Path>index.html</Path>
 					<Subnodes>
-						<NodeRef refid="4"/>
+						<NodeRef refid="6"/>
 						
 					</Subnodes>
 				</Node>
@@ -33,21 +34,28 @@
         </Node>
     </TOC>
 	<Library>
-		
 		<Node id="1">
 			<Name>NSRConfig</Name>
 			<Path>Classes/NSRConfig.html</Path>
 		</Node>
 		<Node id="2">
+			<Name>NSRRelationship</Name>
+			<Path>Classes/NSRRelationship.html</Path>
+		</Node>
+		<Node id="3">
+			<Name>NSRRemoteManagedObject</Name>
+			<Path>Classes/NSRRemoteManagedObject.html</Path>
+		</Node>
+		<Node id="4">
 			<Name>NSRRemoteObject</Name>
 			<Path>Classes/NSRRemoteObject.html</Path>
 		</Node>
-		<Node id="3">
+		<Node id="5">
 			<Name>NSRRequest</Name>
 			<Path>Classes/NSRRequest.html</Path>
 		</Node>
 		
-		<Node id="4">
+		<Node id="6">
 			<Name>NSMutableArray(NSRFetch)</Name>
 			<Path>Categories/NSMutableArray+NSRFetch.html</Path>
 		</Node>

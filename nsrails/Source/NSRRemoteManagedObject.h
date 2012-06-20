@@ -31,78 +31,73 @@
 #import "NSRRemoteObject.h"
 
 /**
- ### Setting up
+ # Setting up
  
- **You can either:**
+ ### You can either:
  
  - Go into **`NSRails.h`** and uncomment this line:
  
- #define NSR_USE_COREDATA
+        #define NSR_USE_COREDATA
  
  - OR, if you don't want to mess with NSRails source, you can also add **`NSR_USE_COREDATA`** to "Preprocessor Macros Not Used in Precompiled Headers" in your target's build settings:
  
  
- <div style="text-align:center"><a href="cd-flag.png"><img src="cd-flag.png" width=350></img></a></div>
+ <div style="text-align:center"><a href="../docs/img/cd-flag.png"><img src="../docs/img/cd-flag.png" width=380></img></a></div>
  
- **Why is this necessary?**
+ ### Why is this necessary?
  
  - By default, NSRRemoteObject inherits from NSObject. Because your managed, NSRails-enabled class need to inherit from NSManagedObject in order to function within CoreData, and because Objective-C does not allow multiple inheritance, NSRRemoteObject will modify its superclass to NSManagedObject during compile-time if `NSR_USE_COREDATA` is defined.
  
- ### Setting a universal context
+ # Setting a universal context
  
  - You must set your managed object context to your config's managedObjectContext property so that NSRails can automatically insert or search for CoreData objects when operations require it:
  
- [[NSRConfig defaultConfig] setManagedObjectContext:<#your MOC#>];
+        [[NSRConfig defaultConfig] setManagedObjectContext:<#your MOC#>];
  
- ### remoteID
+ # Remote ID
  
  - `remoteID` is used as a "primary key" that NSRails will use to find other instances, etc. This key also validates uniqueness, meaning saving a context with two records of the same type with the same remoteID will fail.
  
- - `remoteID` must be defined in your *.xcdatamodeld data model file. You can either create an abstract entity that defines a `remoteID` attribute and acts as a parent to your other entities (preferred), **OR** declare `remoteID` for each entity that subclasses NSRRemoteManagedObject:
+ - `remoteID` must be defined in your *.xcdatamodeld data model file. You should create an abstract entity that defines a `remoteID` attribute (Integer 16 is fine) and acts as a parent to your other entities:
  
- <div style="text-align:center; max-height:100%; height:250px; vertical-align:middle;"><a href="cd-abstract.png"><img src="cd-abstract.png" height=250></img></a> **OR** <a href="cd-no-abstract.png"><img src="cd-no-abstract.png" height=220></img></a></div>
+ <div style="text-align:center; vertical-align:middle;"><a href="../docs/img/cd-abstract.png"><img src="../docs/img/cd-abstract.png"></img></a></div>
  
- - `remoteID` should be an Integer (16 is fine) and indexed.
-
  ## Differences from NSRRemoteObject
  
  NSRRemoteManagedObject overrides some NSRRemoteObject behavior to make it more CoreData-friendly.
  
- ### Class remote requests
+ # Remote requests
  
- **All**: Each object returned in the array may be an existing or newly inserted managed object. All managed objects will reflect properties set to those returned by your server.
+ ### Class
+ 
+ **Remote All (index)**: Each object returned in the array may be an existing or newly inserted managed object. All managed objects will reflect properties set to those returned by your server.
 
  **Object with ID**: If request is successful, will attempt to find an existing local object with *objectID*, and update its properties to the server's response. If it cannot find an existing local object with that remoteID, will insert a new object into the context, with those properties.
 
- ### Instance remote requests
+ ### Instance
  
  **Fetch**: If successful and changes are present, will save its managed object context.
-
- **Update/Replace**: If successful, will save its managed object context. 
- 
- @warning Changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.
 
  **Create**: If successful, will save its managed object context to update changed properties in the server response (like remoteID).
 
  **Destroy**: If successful, will delete itself from its managed object context and save the context.
 
- ### Others
+ **Update/Replace**: If successful, will save its managed object context. *Note:* Changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.
+
+ # Others
  
- **objectWithRemoteDictionary:**: Will attempt to retrieve the object in CoreData whose remoteID matches the object for key `id` in *dictionary*.
+ **objectWithRemoteDictionary**: Will attempt to retrieve the object in CoreData whose remoteID matches the object for key `id` in *dictionary*.
  
  - If this object is found, will set its properties using *dictionary* and save the context.
  - If this object is not found (or there's no `id` key), will create & insert a new object using *dictionary* and save the context.
  
  Will search for objects of entity named with the receiver's class name.
 
- **setPropertiesUsingRemoteDictionary:**: Saves the context.
+ **setPropertiesUsingRemoteDictionary**: Saves the context.
  
  **remoteDestroyOnNesting**: This property leaves your managed object **unaffected**. You will have to delete it from your context manually if your request was successful.
  
- ### Overrides
- 
- **relationshipForProperty:**
- 
+ **relationshipForProperty:** Will search your CoreData entity relationship and use that by default. Will work with to-many but cannot "guess" belongs-to.
  */
 
 @interface NSRRemoteManagedObject : NSRRemoteObject
@@ -117,9 +112,7 @@
  @param remoteID The remoteID to search for.
  
  @return The object from CoreData, if it exists. If it does not exist, returns `nil`.
- 
- @see objectWithRemoteDictionary:
- */
+*/
 + (id) findObjectWithRemoteID:(NSNumber *)remoteID;
 
 /**

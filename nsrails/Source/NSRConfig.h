@@ -319,7 +319,7 @@ extern NSString * const NSRCoreDataException;
  - If none, will return the config set for *class* (with useForClass:).
  - If none, will return defaultConfig.
  
- @param The class - maybe has a custom config attached to it.
+ @param class he class - maybe has a custom config attached to it.
  @return The current relevant config for a given class.
  */
 + (NSRConfig *) relevantConfigForClass:(Class)class;

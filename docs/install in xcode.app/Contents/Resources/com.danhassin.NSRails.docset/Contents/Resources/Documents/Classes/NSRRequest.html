@@ -239,7 +239,7 @@
 					<div class="section section-overview">
 						<a title="Overview" name="overview"></a>
 						<h2 class="subtitle subtitle-overview">Overview</h2>
-						<p>NSRRequest is a class used internally by <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a> to make <code>remote&lt;X&gt;</code> requests, but can also be used directly to construct custom resource paths, etc.</p>
+						<p>NSRRequest is a class used internally by NSRRemoteObject to make <code>remote&lt;X&gt;</code> requests, but can also be used directly to construct custom resource paths, etc.</p>
 
 <p>The methods in this class are set up so that making requests is concise and visually logical:</p>
 
@@ -253,7 +253,7 @@ NSRRequest *request = [NSRRequest PATCH];
 id response = [request sendSynchronous:&amp;e];
 </code></pre>
 
-<p>Factory methods also exist (used by <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>) if you&rsquo;d like to make only an incremental change to an existing request:</p>
+<p>Factory methods also exist (used by NSRRemoteObject) if you&rsquo;d like to make only an incremental change to an existing request:</p>
 
 <pre><code>NSRRequest *request = [NSRRequest requestToFetchAllObjectsOfClass:[Post class]];
 [request.queryParameters setObject:@"search" forKey:@"q"];
@@ -322,35 +322,35 @@ id response = [request sendSynchronous:&amp;e];
 							<li>
 	<span class="tooltip">
 		<code><a href="#//api/name/GET">+&nbsp;GET</a></code>
-		<span class="tooltip"><p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod">httpMethod</a> set to <code>@"GET"</code>.</p></span>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object initialized with httpMethod set to <code>@"GET"</code>.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/DELETE">+&nbsp;DELETE</a></code>
-		<span class="tooltip"><p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod">httpMethod</a> set to <code>@"DELETE"</code>.</p></span>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object initialized with httpMethod set to <code>@"DELETE"</code>.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/POST">+&nbsp;POST</a></code>
-		<span class="tooltip"><p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod">httpMethod</a> set to <code>@"POST"</code>.</p></span>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object initialized with httpMethod set to <code>@"POST"</code>.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/PUT">+&nbsp;PUT</a></code>
-		<span class="tooltip"><p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod">httpMethod</a> set to <code>@"PUT"</code>.</p></span>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object initialized with httpMethod set to <code>@"PUT"</code>.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/PATCH">+&nbsp;PATCH</a></code>
-		<span class="tooltip"><p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod">httpMethod</a> set to <code>@"PATCH"</code>.</p></span>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object initialized with httpMethod set to <code>@"PATCH"</code>.</p></span>
 	</span>
 	
 	
@@ -472,7 +472,7 @@ id response = [request sendSynchronous:&amp;e];
 							<li>
 	<span class="tooltip">
 		<code><a href="#//api/name/setBodyToObject:">&ndash;&nbsp;setBodyToObject:</a></code>
-		<span class="tooltip"><p>Sets the <a href="#//api/name/body">body</a> to a given object.</p></span>
+		<span class="tooltip"><p>Sets the body to a given object.</p></span>
 	</span>
 	
 	
@@ -572,7 +572,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Uses <a href="../Classes/NSRConfig.html#//api/name/defaultConfig">[NSRConfig defaultConfig]</a> if <code>nil</code>.</p>
+		<p>Uses +[NSRConfig defaultConfig] if <code>nil</code>.</p>
 	</div>
 	
 	
@@ -611,7 +611,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>This should hardly ever be <em>set</em>. Use the <a href="#//api/name/GET">GET</a>, <a href="#//api/name/DELETE">DELETE</a>, <a href="#//api/name/POST">POST</a>, <a href="#//api/name/PUT">PUT</a>, and <a href="#//api/name/PATCH">PATCH</a> factory methods.</p>
+		<p>This should hardly ever be <em>set</em>. Use the GET, DELETE, POST, PUT, and PATCH factory methods.</p>
 	</div>
 	
 	
@@ -721,7 +721,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod">httpMethod</a> set to <code>@"DELETE"</code>.</p>
+		<p>Creates and returns an NSRRequest object initialized with httpMethod set to <code>@"DELETE"</code>.</p>
 	</div>		
 	
 	
@@ -732,7 +732,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>An NSRRequest object initialized with <a href="#//api/name/httpMethod">httpMethod</a> set to <code>@"DELETE"</code>.</p>
+		<p>An NSRRequest object initialized with httpMethod set to <code>@"DELETE"</code>.</p>
 	</div>
 	
 	
@@ -760,7 +760,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod">httpMethod</a> set to <code>@"GET"</code>.</p>
+		<p>Creates and returns an NSRRequest object initialized with httpMethod set to <code>@"GET"</code>.</p>
 	</div>		
 	
 	
@@ -771,7 +771,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>An NSRRequest object initialized with <a href="#//api/name/httpMethod">httpMethod</a> set to <code>@"GET"</code>.</p>
+		<p>An NSRRequest object initialized with httpMethod set to <code>@"GET"</code>.</p>
 	</div>
 	
 	
@@ -799,7 +799,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod">httpMethod</a> set to <code>@"PATCH"</code>.</p>
+		<p>Creates and returns an NSRRequest object initialized with httpMethod set to <code>@"PATCH"</code>.</p>
 	</div>		
 	
 	
@@ -810,7 +810,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>An NSRRequest object initialized with <a href="#//api/name/httpMethod">httpMethod</a> set to <code>@"PATCH"</code>.</p>
+		<p>An NSRRequest object initialized with httpMethod set to <code>@"PATCH"</code>.</p>
 	</div>
 	
 	
@@ -838,7 +838,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod">httpMethod</a> set to <code>@"POST"</code>.</p>
+		<p>Creates and returns an NSRRequest object initialized with httpMethod set to <code>@"POST"</code>.</p>
 	</div>		
 	
 	
@@ -849,7 +849,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>An NSRRequest object initialized with <a href="#//api/name/httpMethod">httpMethod</a> set to <code>@"POST"</code>.</p>
+		<p>An NSRRequest object initialized with httpMethod set to <code>@"POST"</code>.</p>
 	</div>
 	
 	
@@ -877,7 +877,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod">httpMethod</a> set to <code>@"PUT"</code>.</p>
+		<p>Creates and returns an NSRRequest object initialized with httpMethod set to <code>@"PUT"</code>.</p>
 	</div>		
 	
 	
@@ -888,7 +888,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>An NSRRequest object initialized with <a href="#//api/name/httpMethod">httpMethod</a> set to <code>@"PUT"</code>.</p>
+		<p>An NSRRequest object initialized with httpMethod set to <code>@"PUT"</code>.</p>
 	</div>
 	
 	
@@ -946,12 +946,12 @@ id response = [request sendSynchronous:&amp;e];
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p><a href="#//api/name/POST"><code>POST</code></a> request routed to the given object (ID is ignored).</p>
+		<p><code>POST</code> request routed to the given object (ID is ignored).</p>
 
 <pre><code>POST /posts
 </code></pre>
 
-<p>Or, if <a href="../Classes/NSRRemoteObject.html#//api/name/objectUsedToPrefixRequest:">[NSRRemoteObject objectUsedToPrefixRequest:]</a> is overriden and returns a non-nil object,</p>
+<p>Or, if &ndash;[NSRRemoteObject objectUsedToPrefixRequest:] is overriden and returns a non-nil object,</p>
 
 <pre><code>POST /users/3/posts
 </code></pre>
@@ -1008,12 +1008,12 @@ id response = [request sendSynchronous:&amp;e];
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p><a href="#//api/name/DELETE"><code>DELETE</code></a> request routed to the given object.</p>
+		<p><code>DELETE</code> request routed to the given object.</p>
 
 <pre><code>DELETE /posts/1
 </code></pre>
 
-<p>Or, if <a href="../Classes/NSRRemoteObject.html#//api/name/objectUsedToPrefixRequest:">[NSRRemoteObject objectUsedToPrefixRequest:]</a> is overriden and returns a non-nil object,</p>
+<p>Or, if &ndash;[NSRRemoteObject objectUsedToPrefixRequest:] is overriden and returns a non-nil object,</p>
 
 <pre><code>DELETE /users/3/posts/1
 </code></pre>
@@ -1052,7 +1052,7 @@ id response = [request sendSynchronous:&amp;e];
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>class</em></dt>
-			<dd><p>Class of the object you wish to fetch. Must be an <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a> subclass.</p></dd>
+			<dd><p>Class of the object you wish to fetch. Must be an NSRRemoteObject subclass.</p></dd>
 		</dl>
 		
 	</div>
@@ -1070,7 +1070,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p><a href="#//api/name/GET"><code>GET</code></a> request routed to the given class.</p>
+		<p><code>GET</code> request routed to the given class.</p>
 
 <pre><code>GET /posts
 </code></pre>
@@ -1109,12 +1109,12 @@ id response = [request sendSynchronous:&amp;e];
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>class</em></dt>
-			<dd><p>Class of the object you wish to fetch. Must be an <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a> subclass.</p></dd>
+			<dd><p>Class of the object you wish to fetch. Must be an NSRRemoteObject subclass.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>obj</em></dt>
-			<dd><p>Parent object used to prefix the <a href="#//api/name/route">route</a>.</p></dd>
+			<dd><p>Parent object used to prefix the route.</p></dd>
 		</dl>
 		
 	</div>
@@ -1132,7 +1132,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p><a href="#//api/name/GET"><code>GET</code></a> request routed to the given parent object, the custom method being the class&rsquo;s index page.</p>
+		<p><code>GET</code> request routed to the given parent object, the custom method being the class&rsquo;s index page.</p>
 
 <pre><code>GET /users/3/posts
 </code></pre>
@@ -1189,12 +1189,12 @@ id response = [request sendSynchronous:&amp;e];
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p><a href="#//api/name/GET"><code>GET</code></a> request routed to the given object.</p>
+		<p><code>GET</code> request routed to the given object.</p>
 
 <pre><code>GET /posts/1
 </code></pre>
 
-<p>Or, if <a href="../Classes/NSRRemoteObject.html#//api/name/objectUsedToPrefixRequest:">[NSRRemoteObject objectUsedToPrefixRequest:]</a> is overriden and returns a non-nil object,</p>
+<p>Or, if &ndash;[NSRRemoteObject objectUsedToPrefixRequest:] is overriden and returns a non-nil object,</p>
 
 <pre><code>GET /users/3/posts/1
 </code></pre>
@@ -1238,7 +1238,7 @@ id response = [request sendSynchronous:&amp;e];
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>class</em></dt>
-			<dd><p>Class of the object you wish to fetch. Must be an <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a> subclass.</p></dd>
+			<dd><p>Class of the object you wish to fetch. Must be an NSRRemoteObject subclass.</p></dd>
 		</dl>
 		
 	</div>
@@ -1256,7 +1256,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p><a href="#//api/name/GET"><code>GET</code></a> request routed to the given class, the custom method being the remoteID.</p>
+		<p><code>GET</code> request routed to the given class, the custom method being the remoteID.</p>
 
 <pre><code>GET /posts/1
 </code></pre>
@@ -1313,12 +1313,12 @@ id response = [request sendSynchronous:&amp;e];
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p><a href="#//api/name/PUT"><code>PUT</code></a> request routed to the given object.</p>
+		<p><code>PUT</code> request routed to the given object.</p>
 
 <pre><code>PUT /posts/1
 </code></pre>
 
-<p>Or, if <a href="../Classes/NSRRemoteObject.html#//api/name/objectUsedToPrefixRequest:">[NSRRemoteObject objectUsedToPrefixRequest:]</a> is overriden and returns a non-nil object,</p>
+<p>Or, if &ndash;[NSRRemoteObject objectUsedToPrefixRequest:] is overriden and returns a non-nil object,</p>
 
 <pre><code>PUT /users/3/posts/1
 </code></pre>
@@ -1380,7 +1380,7 @@ id response = [request sendSynchronous:&amp;e];
 <pre><code>(PUT, PATCH, etc) /posts/1
 </code></pre>
 
-<p>Or, if <a href="../Classes/NSRRemoteObject.html#//api/name/objectUsedToPrefixRequest:">[NSRRemoteObject objectUsedToPrefixRequest:]</a> is overriden and returns a non-nil object,</p>
+<p>Or, if &ndash;[NSRRemoteObject objectUsedToPrefixRequest:] is overriden and returns a non-nil object,</p>
 
 <pre><code>(PUT, PATCH, etc) /users/3/posts/1
 </code></pre>
@@ -1427,7 +1427,7 @@ id response = [request sendSynchronous:&amp;e];
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>route</em></dt>
-			<dd><p>The <a href="#//api/name/route">route</a>.</p></dd>
+			<dd><p>The route.</p></dd>
 		</dl>
 		
 	</div>
@@ -1471,7 +1471,7 @@ id response = [request sendSynchronous:&amp;e];
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>class</em></dt>
-			<dd><p>Class to which to <a href="#//api/name/route">route</a>. Must be an <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a> subclass.</p></dd>
+			<dd><p>Class to which to route. Must be an NSRRemoteObject subclass.</p></dd>
 		</dl>
 		
 	</div>
@@ -1515,7 +1515,7 @@ id response = [request sendSynchronous:&amp;e];
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>class</em></dt>
-			<dd><p>Class to <a href="#//api/name/route">route</a> to. Must be an <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a> subclass.</p></dd>
+			<dd><p>Class to route to. Must be an NSRRemoteObject subclass.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -1564,7 +1564,7 @@ id response = [request sendSynchronous:&amp;e];
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>object</em></dt>
-			<dd><p>Object to <a href="#//api/name/route">route</a> to. If this object&rsquo;s <code>remoteID</code> is <code>nil</code>, will only <a href="#//api/name/route">route</a> to its class.</p></dd>
+			<dd><p>Object to route to. If this object&rsquo;s <code>remoteID</code> is <code>nil</code>, will only route to its class.</p></dd>
 		</dl>
 		
 	</div>
@@ -1608,7 +1608,7 @@ id response = [request sendSynchronous:&amp;e];
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>object</em></dt>
-			<dd><p>Object to <a href="#//api/name/route">route</a> to. If this object&rsquo;s <code>remoteID</code> is <code>nil</code>, will only <a href="#//api/name/route">route</a> to its class.</p></dd>
+			<dd><p>Object to route to. If this object&rsquo;s <code>remoteID</code> is <code>nil</code>, will only route to its class.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -1753,7 +1753,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Sets the <a href="#//api/name/body">body</a> to a given object.</p>
+		<p>Sets the body to a given object.</p>
 	</div>		
 	
 	
@@ -1765,7 +1765,7 @@ id response = [request sendSynchronous:&amp;e];
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>object</em></dt>
-			<dd><p>Object to use as a <a href="#//api/name/body">body</a> to send the request.</p></dd>
+			<dd><p>Object to use as a body to send the request.</p></dd>
 		</dl>
 		
 	</div>
@@ -1778,7 +1778,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Will convert the object into a JSON-parsable object (an NSDictionary) by calling <a href="../Classes/NSRRemoteObject.html#//api/name/remoteDictionaryRepresentationWrapped:">[NSRRemoteObject remoteDictionaryRepresentationWrapped:]</a> on it.</p>
+		<p>Will convert the object into a JSON-parsable object (an NSDictionary) by calling &ndash;[NSRRemoteObject remoteDictionaryRepresentationWrapped:] on it.</p>
 	</div>
 	
 	
@@ -1808,7 +1808,7 @@ id response = [request sendSynchronous:&amp;e];
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-07)</span><br />
+						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-20)</span><br />
 						
 						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 789)</a>.</span></p>
 						
@@ -1898,14 +1898,6 @@ id response = [request sendSynchronous:&amp;e];
 			}
 			
 			window.onload = init;
-			
-			// If showing in Xcode, hide the TOC and Header
-			if (navigator.userAgent.match(/xcode/i)) {
-				document.getElementById("contents").className = "hideInXcode"
-				document.getElementById("tocContainer").className = "hideInXcode"
-				document.getElementById("top_header").className = "hideInXcode"
-			}
-			
 		</script>
 	</body>
 </html>

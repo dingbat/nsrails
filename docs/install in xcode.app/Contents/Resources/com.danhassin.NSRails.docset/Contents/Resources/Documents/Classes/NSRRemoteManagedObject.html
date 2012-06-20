@@ -1,0 +1,579 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
+		<title>NSRRemoteManagedObject Class Reference</title>
+		<meta id="xcode-display" name="xcode-display" content="render"/>
+		<meta name="viewport" content="width=550" />
+		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
+		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
+		<meta name="generator" content="appledoc 2.0.5 (build 789)" />
+	</head>
+	<body>
+		<header id="top_header">
+			<div id="library" class="hideInXcode">
+				<h1><a id="libraryTitle" href="../index.html">NSRails </a></h1>
+				<a id="developerHome" href="../index.html">Dan Hassin</a>
+			</div>
+			
+			<div id="title" role="banner">
+				<h1 class="hideInXcode">NSRRemoteManagedObject Class Reference</h1>
+			</div>
+			<ul id="headerButtons" role="toolbar">
+				<li id="toc_button">
+					<button aria-label="Show Table of Contents" role="checkbox" class="open" id="table_of_contents"><span class="disclosure"></span>Table of Contents</button>
+				</li>
+				<li id="jumpto_button" role="navigation">
+					<select id="jumpTo">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+	
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+	
+	
+	
+	
+	
+	<option value="class_methods">Class Methods</option>
+	
+	<option value="//api/name/entityName">&nbsp;&nbsp;&nbsp;&nbsp;+ entityName</option>
+	
+	<option value="//api/name/findObjectWithRemoteID:">&nbsp;&nbsp;&nbsp;&nbsp;+ findObjectWithRemoteID:</option>
+	
+	
+	
+	
+	<option value="instance_methods">Instance Methods</option>
+	
+	<option value="//api/name/initInserted">&nbsp;&nbsp;&nbsp;&nbsp;- initInserted</option>
+	
+	<option value="//api/name/saveContext">&nbsp;&nbsp;&nbsp;&nbsp;- saveContext</option>
+	
+	
+	
+</select>
+				</li>
+			</ul>
+		</header>
+		<nav id="tocContainer" class="isShowingTOC">
+			<ul id="toc" role="tree">
+				
+<li role="treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#overview">Overview</a></span></li>
+
+
+
+
+<li role="treeitem" id="task_treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#tasks">Tasks</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_CoreData Helpers">CoreData Helpers</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Methods to override">Methods to override</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#class_methods">Class Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/entityName">entityName</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/findObjectWithRemoteID:">findObjectWithRemoteID:</a></span></li>
+	
+</ul></li>
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initInserted">initInserted</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/saveContext">saveContext</a></span></li>
+	
+</ul></li>
+
+
+			</ul>
+		</nav>
+		<article>
+			<div id="contents" class="isShowingTOC" role="main">
+				<a title="NSRRemoteManagedObject Class Reference" name="top"></a>
+				<div class="main-navigation navigation-top">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="header">
+					<div class="section-header">
+						<h1 class="title title-header">NSRRemoteManagedObject Class Reference</h1>
+					</div>		
+				</div>
+				<div id="container">	
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<td class="specification-title">Inherits from</td>
+	<td class="specification-value"><a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a> : _NSR_SUPERCLASS</td>
+</tr><tr>
+	<td class="specification-title">Declared in</td>
+	<td class="specification-value">NSRRemoteManagedObject.h</td>
+</tr>
+						</tbody></table></div>
+					
+					
+					
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<h1>Setting up</h1>
+
+<h3>You can either:</h3>
+
+<ul>
+<li><p>Go into <strong><code>NSRails.h</code></strong> and uncomment this line:</p>
+
+<pre><code>  #define NSR_USE_COREDATA
+</code></pre></li>
+<li><p>OR, if you don&rsquo;t want to mess with NSRails source, you can also add <strong><code>NSR_USE_COREDATA</code></strong> to &ldquo;Preprocessor Macros Not Used in Precompiled Headers&rdquo; in your target&rsquo;s build settings:</p></li>
+</ul>
+
+
+<div style="text-align:center"><a href="../docs/img/cd-flag.png"><img src="../docs/img/cd-flag.png" width=380></img></a></div>
+
+
+<h3>Why is this necessary?</h3>
+
+<ul>
+<li>By default, NSRRemoteObject inherits from NSObject. Because your managed, NSRails-enabled class need to inherit from NSManagedObject in order to function within CoreData, and because Objective-C does not allow multiple inheritance, NSRRemoteObject will modify its superclass to NSManagedObject during compile-time if <code>NSR_USE_COREDATA</code> is defined.</li>
+</ul>
+
+
+<h1>Setting a universal context</h1>
+
+<ul>
+<li><p>You must set your managed object context to your config&rsquo;s managedObjectContext property so that NSRails can automatically insert or search for CoreData objects when operations require it:</p>
+
+<pre><code>  [[NSRConfig defaultConfig] setManagedObjectContext:&lt;#your MOC#&gt;];
+</code></pre></li>
+</ul>
+
+
+<h1>Remote ID</h1>
+
+<ul>
+<li><p><code>remoteID</code> is used as a &ldquo;primary key&rdquo; that NSRails will use to find other instances, etc. This key also validates uniqueness, meaning saving a context with two records of the same type with the same remoteID will fail.</p></li>
+<li><p><code>remoteID</code> must be defined in your *.xcdatamodeld data model file. You should create an abstract entity that defines a <code>remoteID</code> attribute (Integer 16 is fine) and acts as a parent to your other entities:</p></li>
+</ul>
+
+
+<div style="text-align:center; vertical-align:middle;"><a href="../docs/img/cd-abstract.png"><img src="../docs/img/cd-abstract.png"></img></a></div>
+
+
+<h2>Differences from NSRRemoteObject</h2>
+
+<p>NSRRemoteManagedObject overrides some NSRRemoteObject behavior to make it more CoreData-friendly.</p>
+
+<h1>Remote requests</h1>
+
+<h3>Class</h3>
+
+<p><strong>Remote All (index)</strong>: Each object returned in the array may be an existing or newly inserted managed object. All managed objects will reflect properties set to those returned by your server.</p>
+
+<p><strong>Object with ID</strong>: If request is successful, will attempt to find an existing local object with <em>objectID</em>, and update its properties to the server&rsquo;s response. If it cannot find an existing local object with that remoteID, will insert a new object into the context, with those properties.</p>
+
+<h3>Instance</h3>
+
+<p><strong>Fetch</strong>: If successful and changes are present, will save its managed object context.</p>
+
+<p><strong>Create</strong>: If successful, will save its managed object context to update changed properties in the server response (like remoteID).</p>
+
+<p><strong>Destroy</strong>: If successful, will delete itself from its managed object context and save the context.</p>
+
+<p><strong>Update/Replace</strong>: If successful, will save its managed object context. <em>Note:</em> Changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.</p>
+
+<h1>Others</h1>
+
+<p><strong>objectWithRemoteDictionary</strong>: Will attempt to retrieve the object in CoreData whose remoteID matches the object for key <code>id</code> in <em>dictionary</em>.</p>
+
+<ul>
+<li>If this object is found, will set its properties using <em>dictionary</em> and save the context.</li>
+<li>If this object is not found (or there&rsquo;s no <code>id</code> key), will create &amp; insert a new object using <em>dictionary</em> and save the context.</li>
+</ul>
+
+
+<p>Will search for objects of entity named with the receiver&rsquo;s class name.</p>
+
+<p><strong>setPropertiesUsingRemoteDictionary</strong>: Saves the context.</p>
+
+<p><strong>remoteDestroyOnNesting</strong>: This property leaves your managed object <strong>unaffected</strong>. You will have to delete it from your context manually if your request was successful.</p>
+
+<p><strong>relationshipForProperty:</strong> Will search your CoreData entity relationship and use that by default. Will work with to-many but cannot &ldquo;guess&rdquo; belongs-to.</p>
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						<h2 class="subtitle subtitle-tasks">Tasks</h2>
+						
+						
+						<a title="CoreData Helpers" name="task_CoreData Helpers"></a>
+						<h3 class="subsubtitle task-title">CoreData Helpers</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/findObjectWithRemoteID:">+&nbsp;findObjectWithRemoteID:</a></code>
+		<span class="tooltip"><p>Finds the object in CoreData whose remoteID is equal to the value passed in.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/initInserted">&ndash;&nbsp;initInserted</a></code>
+		<span class="tooltip"><p>Instantiates a new instance, inserts it into the default CoreData context.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/saveContext">&ndash;&nbsp;saveContext</a></code>
+		<span class="tooltip"><p>Save the CoreData object context of the receiver.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Methods to override" name="task_Methods to override"></a>
+						<h3 class="subsubtitle task-title">Methods to override</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/entityName">+&nbsp;entityName</a></code>
+		<span class="tooltip"><p>Override this method if the class entity name is different than the name of the class.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+					</div>
+					
+					
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Class Methods" name="class_methods"></a>
+						<h2 class="subtitle subtitle-methods">Class Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/entityName" title="entityName"></a>
+	<h3 class="subsubtitle method-title">entityName</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Override this method if the class entity name is different than the name of the class.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (NSString *)entityName</code></div>
+	
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>String (typically literal) to be used as entity name when inserting and fetching objects of this class.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Default behavior here is to return the name of the class.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteManagedObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/findObjectWithRemoteID:" title="findObjectWithRemoteID:"></a>
+	<h3 class="subsubtitle method-title">findObjectWithRemoteID:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Finds the object in CoreData whose remoteID is equal to the value passed in.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (id)findObjectWithRemoteID:(NSNumber *)<em>remoteID</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>remoteID</em></dt>
+			<dd><p>The remoteID to search for.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The object from CoreData, if it exists. If it does not exist, returns <code>nil</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteManagedObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Instance Methods" name="instance_methods"></a>
+						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/initInserted" title="initInserted"></a>
+	<h3 class="subsubtitle method-title">initInserted</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Instantiates a new instance, inserts it into the default CoreData context.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (id)initInserted</code></div>
+	
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The newly inserted object.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Does not save the context.</p>
+
+<p>Uses the &ldquo;global&rdquo; context defined in the relevant config&rsquo;s <code>managedObjectContext</code> property. Throws an exception if this property is <code>nil</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteManagedObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/saveContext" title="saveContext"></a>
+	<h3 class="subsubtitle method-title">saveContext</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Save the CoreData object context of the receiver.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (BOOL)saveContext</code></div>
+	
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>Whether or not the save was successful.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteManagedObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+				</div>
+				<div class="main-navigation navigation-bottom">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="footer">
+					<hr />
+					<div class="footer-copyright">
+						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-20)</span><br />
+						
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 789)</a>.</span></p>
+						
+					</div>
+				</div>
+			</div>
+		</article>
+		<script type="text/javascript">
+			function jumpToChange()
+			{
+				window.location.hash = this.options[this.selectedIndex].value;
+			}
+			
+			function toggleTOC()
+			{
+				var contents = document.getElementById('contents');
+				var tocContainer = document.getElementById('tocContainer');
+				
+				if (this.getAttribute('class') == 'open')
+				{
+					this.setAttribute('class', '');
+					contents.setAttribute('class', '');
+					tocContainer.setAttribute('class', '');
+					
+					window.name = "hideTOC";
+				}
+				else
+				{
+					this.setAttribute('class', 'open');
+					contents.setAttribute('class', 'isShowingTOC');
+					tocContainer.setAttribute('class', 'isShowingTOC');
+					
+					window.name = "";
+				}
+				return false;
+			}
+			
+			function toggleTOCEntryChildren(e)
+			{
+				e.stopPropagation();
+				var currentClass = this.getAttribute('class');
+				if (currentClass == 'children') {
+					this.setAttribute('class', 'children open');
+				}
+				else if (currentClass == 'children open') {
+					this.setAttribute('class', 'children');
+				}
+				return false;
+			}
+			
+			function tocEntryClick(e)
+			{
+				e.stopPropagation();
+				return true;
+			}
+			
+			function init()
+			{
+				var selectElement = document.getElementById('jumpTo');
+				selectElement.addEventListener('change', jumpToChange, false);
+				
+				var tocButton = document.getElementById('table_of_contents');
+				tocButton.addEventListener('click', toggleTOC, false);
+				
+				var taskTreeItem = document.getElementById('task_treeitem');
+				if (taskTreeItem.getElementsByTagName('li').length > 0)
+				{
+					taskTreeItem.setAttribute('class', 'children');
+					taskTreeItem.firstChild.setAttribute('class', 'disclosure');
+				}
+				
+				var tocList = document.getElementById('toc');
+				
+				var tocEntries = tocList.getElementsByTagName('li');
+				for (var i = 0; i < tocEntries.length; i++) {
+					tocEntries[i].addEventListener('click', toggleTOCEntryChildren, false);
+				}
+				
+				var tocLinks = tocList.getElementsByTagName('a');
+				for (var i = 0; i < tocLinks.length; i++) {
+					tocLinks[i].addEventListener('click', tocEntryClick, false);
+				}
+				
+				if (window.name == "hideTOC") {
+					toggleTOC.call(tocButton);
+				}
+			}
+			
+			window.onload = init;
+		</script>
+	</body>
+</html>

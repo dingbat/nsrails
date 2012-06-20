@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Tokens version="1.0">
+	<File path="Classes/NSRRequest.html">
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/cl/NSRRequest</TokenIdentifier>
+			<Abstract>NSRRequest is a class used internally by NSRRemoteObject to make remote<X> requests, but can also be used directly to construct custom resource paths, etc.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>
+			
+			<NodeRef refid="5"/>
+		</Token>
+		
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRequest/setConfig:</TokenIdentifier>
+			<Abstract>Config used to make the request.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSRConfig *config</Declaration>
+			
+			
+			<Anchor>//api/name/config</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instp/NSRRequest/config</TokenIdentifier>
+			<Abstract>Config used to make the request.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSRConfig *config</Declaration>
+			
+			
+			<Anchor>//api/name/config</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRequest/setRoute:</TokenIdentifier>
+			<Abstract>The path to be appended to config's appURL (the base URL of your app).</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSString *route</Declaration>
+			
+			
+			<Anchor>//api/name/route</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instp/NSRRequest/route</TokenIdentifier>
+			<Abstract>The path to be appended to config's appURL (the base URL of your app).</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSString *route</Declaration>
+			
+			
+			<Anchor>//api/name/route</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRequest/setHttpMethod:</TokenIdentifier>
+			<Abstract>The HTTP verb with which to make the request.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSString *httpMethod</Declaration>
+			
+			
+			<Anchor>//api/name/httpMethod</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instp/NSRRequest/httpMethod</TokenIdentifier>
+			<Abstract>The HTTP verb with which to make the request.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSString *httpMethod</Declaration>
+			
+			
+			<Anchor>//api/name/httpMethod</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRequest/setQueryParameters:</TokenIdentifier>
+			<Abstract>The query parameters with which to make the request.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSMutableDictionary *queryParameters</Declaration>
+			
+			
+			<Anchor>//api/name/queryParameters</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instp/NSRRequest/queryParameters</TokenIdentifier>
+			<Abstract>The query parameters with which to make the request.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSMutableDictionary *queryParameters</Declaration>
+			
+			
+			<Anchor>//api/name/queryParameters</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRequest/setBody:</TokenIdentifier>
+			<Abstract>Request body.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) id body</Declaration>
+			
+			
+			<Anchor>//api/name/body</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instp/NSRRequest/body</TokenIdentifier>
+			<Abstract>Request body.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) id body</Declaration>
+			
+			
+			<Anchor>//api/name/body</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRequest/GET</TokenIdentifier>
+			<Abstract>Creates and returns an NSRRequest object initialized with httpMethod set to @"GET".</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>+ (NSRRequest *)GET</Declaration>
+			
+			<ReturnValue><Abstract>An NSRRequest object initialized with httpMethod set to @"GET".</Abstract></ReturnValue>
+			<Anchor>//api/name/GET</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRequest/DELETE</TokenIdentifier>
+			<Abstract>Creates and returns an NSRRequest object initialized with httpMethod set to @"DELETE".</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>+ (NSRRequest *)DELETE</Declaration>
+			
+			<ReturnValue><Abstract>An NSRRequest object initialized with httpMethod set to @"DELETE".</Abstract></ReturnValue>
+			<Anchor>//api/name/DELETE</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRequest/POST</TokenIdentifier>
+			<Abstract>Creates and returns an NSRRequest object initialized with httpMethod set to @"POST".</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>+ (NSRRequest *)POST</Declaration>
+			
+			<ReturnValue><Abstract>An NSRRequest object initialized with httpMethod set to @"POST".</Abstract></ReturnValue>
+			<Anchor>//api/name/POST</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRequest/PUT</TokenIdentifier>
+			<Abstract>Creates and returns an NSRRequest object initialized with httpMethod set to @"PUT".</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>+ (NSRRequest *)PUT</Declaration>
+			
+			<ReturnValue><Abstract>An NSRRequest object initialized with httpMethod set to @"PUT".</Abstract></ReturnValue>
+			<Anchor>//api/name/PUT</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRequest/PATCH</TokenIdentifier>
+			<Abstract>Creates and returns an NSRRequest object initialized with httpMethod set to @"PATCH".</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>+ (NSRRequest *)PATCH</Declaration>
+			
+			<ReturnValue><Abstract>An NSRRequest object initialized with httpMethod set to @"PATCH".</Abstract></ReturnValue>
+			<Anchor>//api/name/PATCH</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRequest/requestToFetchObjectWithID:ofClass:</TokenIdentifier>
+			<Abstract>Creates and returns an NSRRequest object set to fetch an object with a specified ID.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>+ (NSRRequest *)requestToFetchObjectWithID:(NSNumber *)remoteID ofClass:(Class)class</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>remoteID</Name>
+					<Abstract>Remote ID of the object you wish to fetch. Will raise an exception if this is nil.</Abstract>
+				</Parameter><Parameter>
+					<Name>class</Name>
+					<Abstract>Class of the object you wish to fetch. Must be an NSRRemoteObject subclass.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>An NSRRequest object set to fetch an object with a specified ID.</Abstract></ReturnValue>
+			<Anchor>//api/name/requestToFetchObjectWithID:ofClass:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRequest/requestToFetchAllObjectsOfClass:</TokenIdentifier>
+			<Abstract>Creates and returns an NSRRequest object set to fetch all objects of a given class.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>+ (NSRRequest *)requestToFetchAllObjectsOfClass:(Class)class</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>class</Name>
+					<Abstract>Class of the object you wish to fetch. Must be an NSRRemoteObject subclass.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>An NSRRequest object set to fetch all objects of a given class.</Abstract></ReturnValue>
+			<Anchor>//api/name/requestToFetchAllObjectsOfClass:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRequest/requestToFetchAllObjectsOfClass:viaObject:</TokenIdentifier>
+			<Abstract>Creates and returns an NSRRequest object set to fetch all objects of a given class given a parent object.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>+ (NSRRequest *)requestToFetchAllObjectsOfClass:(Class)class viaObject:(NSRRemoteObject *)obj</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>class</Name>
+					<Abstract>Class of the object you wish to fetch. Must be an NSRRemoteObject subclass.</Abstract>
+				</Parameter><Parameter>
+					<Name>obj</Name>
+					<Abstract>Parent object used to prefix the route.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>An NSRRequest object set to fetch all objects of a given class given a parent object.</Abstract></ReturnValue>
+			<Anchor>//api/name/requestToFetchAllObjectsOfClass:viaObject:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRequest/requestToCreateObject:</TokenIdentifier>
+			<Abstract>Creates and returns an NSRRequest object set to remotely create a given object.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>+ (NSRRequest *)requestToCreateObject:(NSRRemoteObject *)obj</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>obj</Name>
+					<Abstract>Object you wish to create.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>An NSRRequest object set to remotely create a given object.</Abstract></ReturnValue>
+			<Anchor>//api/name/requestToCreateObject:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRequest/requestToFetchObject:</TokenIdentifier>
+			<Abstract>Creates and returns an NSRRequest object set to fetch a given object's remote correspondance.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>+ (NSRRequest *)requestToFetchObject:(NSRRemoteObject *)obj</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>obj</Name>
+					<Abstract>Object you wish to fetch.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>An NSRRequest object set to fetch a given object's remote correspondance.</Abstract></ReturnValue>
+			<Anchor>//api/name/requestToFetchObject:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRequest/requestToDestroyObject:</TokenIdentifier>
+			<Abstract>Creates and returns an NSRRequest object set to remotely destroy a given object.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>+ (NSRRequest *)requestToDestroyObject:(NSRRemoteObject *)obj</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>obj</Name>
+					<Abstract>Object you wish to fetch.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>An NSRRequest object set to destroy a given object's remote correspondance.</Abstract></ReturnValue>
+			<Anchor>//api/name/requestToDestroyObject:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRequest/requestToUpdateObject:</TokenIdentifier>
+			<Abstract>Creates and returns an NSRRequest object set to remotely update a given object.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>+ (NSRRequest *)requestToUpdateObject:(NSRRemoteObject *)obj</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>obj</Name>
+					<Abstract>Object you wish to update.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>An NSRRequest object set to remotely update a given object.</Abstract></ReturnValue>
+			<Anchor>//api/name/requestToUpdateObject:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRequest/requestToReplaceObject:</TokenIdentifier>
+			<Abstract>Creates and returns an NSRRequest object set to remotely "put" (replace) a given object.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>+ (NSRRequest *)requestToReplaceObject:(NSRRemoteObject *)obj</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>obj</Name>
+					<Abstract>Object you wish to update.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>An NSRRequest object set to remotely "put" (replace) a given object.</Abstract></ReturnValue>
+			<Anchor>//api/name/requestToReplaceObject:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRequest/routeTo:</TokenIdentifier>
+			<Abstract>Routes the request to the given string.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>- (NSRRequest *)routeTo:(NSString *)route</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>route</Name>
+					<Abstract>The route.</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/routeTo:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRequest/routeToClass:</TokenIdentifier>
+			<Abstract>Routes the request to a given class's controller.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>- (NSRRequest *)routeToClass:(Class)class</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>class</Name>
+					<Abstract>Class to which to route. Must be an NSRRemoteObject subclass.</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/routeToClass:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRequest/routeToObject:</TokenIdentifier>
+			<Abstract>Routes the request to a given object.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>- (NSRRequest *)routeToObject:(NSRRemoteObject *)object</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>object</Name>
+					<Abstract>Object to route to. If this object's remoteID is nil, will only route to its class.</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/routeToObject:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRequest/routeToClass:withCustomMethod:</TokenIdentifier>
+			<Abstract>Routes the request to a given class's controller.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>- (NSRRequest *)routeToClass:(Class)class withCustomMethod:(NSString *)customMethod</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>class</Name>
+					<Abstract>Class to route to. Must be an NSRRemoteObject subclass.</Abstract>
+				</Parameter><Parameter>
+					<Name>customMethod</Name>
+					<Abstract>Custom method to be appended to the class's controller RESTfully (can be nil.)</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/routeToClass:withCustomMethod:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRequest/routeToObject:withCustomMethod:</TokenIdentifier>
+			<Abstract>Routes the request to a given object.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>- (NSRRequest *)routeToObject:(NSRRemoteObject *)object withCustomMethod:(NSString *)customMethod</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>object</Name>
+					<Abstract>Object to route to. If this object's remoteID is nil, will only route to its class.</Abstract>
+				</Parameter><Parameter>
+					<Name>customMethod</Name>
+					<Abstract>Custom method to be appended RESTfully (can be nil.)</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>The request itself. Done to allow concise constructions (see above.</Abstract></ReturnValue>
+			<Anchor>//api/name/routeToObject:withCustomMethod:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRequest/setBodyToObject:</TokenIdentifier>
+			<Abstract>Sets the body to a given object.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>- (void)setBodyToObject:(NSRRemoteObject *)object</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>object</Name>
+					<Abstract>Object to use as a body to send the request.</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/setBodyToObject:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRequest/sendSynchronous:</TokenIdentifier>
+			<Abstract>Sends the request synchronously.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>- (id)sendSynchronous:(NSError **)error</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>error</Name>
+					<Abstract>Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>JSON response object (could be an NSArray or NSDictionary).</Abstract></ReturnValue>
+			<Anchor>//api/name/sendSynchronous:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRequest/sendAsynchronous:</TokenIdentifier>
+			<Abstract>Sends the request asynchronously.</Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>- (void)sendAsynchronous:(NSRHTTPCompletionBlock)completionBlock</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>completionBlock</Name>
+					<Abstract>Block to be executed when the request is complete.</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/sendAsynchronous:</Anchor>
+		</Token>
+		
+	</File>
+</Tokens>

@@ -79,6 +79,8 @@
 	
 	<option value="//api/name/defaultConfig">&nbsp;&nbsp;&nbsp;&nbsp;+ defaultConfig</option>
 	
+	<option value="//api/name/relevantConfigForClass:">&nbsp;&nbsp;&nbsp;&nbsp;+ relevantConfigForClass:</option>
+	
 	<option value="//api/name/setCurrentEnvironment:">&nbsp;&nbsp;&nbsp;&nbsp;+ setCurrentEnvironment:</option>
 	
 	
@@ -188,6 +190,8 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/defaultConfig">defaultConfig</a></span></li>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/relevantConfigForClass:">relevantConfigForClass:</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setCurrentEnvironment:">setCurrentEnvironment:</a></span></li>
 	
 </ul></li>
@@ -258,7 +262,7 @@
 
 <h2>Universal Config</h2>
 
-<p>This should meet the needs of the vast majority of Rails apps. Somewhere in your app setup, set your server URL (and optionally a username and password) using the <a href="#//api/name/defaultConfig"><code>defaultConfig</code></a> singleton:</p>
+<p>This should meet the needs of the vast majority of Rails apps. Somewhere in your app setup, set your server URL (and optionally a username and password) using the <code>defaultConfig</code> singleton:</p>
 
 <pre><code>//AppDelegate.m
 
@@ -296,7 +300,7 @@ prodConfig.appPassword = @"password";
 <h2>Using several configs in one project</h2>
 
 <ul>
-<li><p>If you simply need to direct different objects to different URLs, <a href="#//api/name/use">use</a> the <a href="#//api/name/useForClass:">useForClass:</a> method. Base URLs, autoinflection, date formats, and any other NSRConfig configurations will be used for NSRails actions called on this class or its instances:</p>
+<li><p>If you simply need to direct different objects to different URLs, use the useForClass: method. Base URLs, autoinflection, date formats, and any other NSRConfig configurations will be used for NSRails actions called on this class or its instances:</p>
 
 <pre><code>  NSRConfig *peopleServer = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com"];
   [peopleServer useForClass:[Person class]];
@@ -324,7 +328,7 @@ prodConfig.appPassword = @"password";
   ];
 </code></pre>
 
-<p>  In these examples, everything within the blocks will be called using the config context specified, regardless of <a href="#//api/name/defaultConfig"><code>defaultConfig</code></a> or any class-specific config (they take highest precedence).</p>
+<p>  In these examples, everything within the blocks will be called using the config context specified, regardless of <code>defaultConfig</code> or any class-specific config (they take highest precedence).</p>
 
 <p>  You can nest several config contexts within each other.</p></li>
 </ul>
@@ -335,9 +339,9 @@ prodConfig.appPassword = @"password";
 <p>When an NSRails method is called, NSRails uses the following hierarchy to find an NSRConfig to use:</p>
 
 <ul>
-<li><strong>&ldquo;Override&rdquo; config:</strong> If <a href="#//api/name/use">use</a> was called (explicitly or implicity via a block). If they are nested, whichever one is on top of the stack (latest one).</li>
-<li><strong>Instance-specific config</strong>: If the method is an instance method and the instance was initialized with initWithCustomMap:customConfig:, will <a href="#//api/name/use">use</a> that config.</li>
-<li><strong>Class-specific config</strong>: If the receiving class of the method (class or instance) defines a custom class with <a href="#//api/name/useForClass:">useForClass:</a>.</li>
+<li><strong>&ldquo;Override&rdquo; config:</strong> If use was called (explicitly or implicity via a block). If they are nested, whichever one is on top of the stack (latest one).</li>
+<li><strong>Instance-specific config</strong>: If the method is an instance method and the instance was initialized with initWithCustomMap:customConfig:, will use that config.</li>
+<li><strong>Class-specific config</strong>: If the receiving class of the method (class or instance) defines a custom class with useForClass:.</li>
 <li><strong>Default config</strong>: (Most frequent case.) Uses the config set to default of the current environment. (Current environment is <code>NSRConfigEnvironmentDevelopment</code> by default.</li>
 </ul>
 
@@ -467,7 +471,7 @@ prodConfig.appPassword = @"password";
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/dateFormat">&nbsp;&nbsp;dateFormat</a></code>
-		<span class="tooltip"><p>Date <a href="" title="[https://developer.apple.com/library/mac/](https://developer.apple.com/library/mac/)#documentation/Cocoa/Conceptual/DataFormatting/Articles/dfDateFormatting10_4.html%23//apple_ref/doc/uid/TP40002369-SW4">format</a> used if a property of type NSDate is encountered, to &ldquo;encode&rdquo; and &ldquo;decode&rdquo; NSDate objects.</p></span>
+		<span class="tooltip"><p>Date <a href="" title="https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/DataFormatting/Articles/dfDateFormatting10_4.html%23//apple_ref/doc/uid/TP40002369-SW4">format</a> used if a property of type NSDate is encountered, to &ldquo;encode&rdquo; and &ldquo;decode&rdquo; NSDate objects.</p></span>
 	</span>
 	<span class="task-item-suffix">property</span>
 	
@@ -498,6 +502,13 @@ prodConfig.appPassword = @"password";
 	<span class="tooltip">
 		<code><a href="#//api/name/defaultConfig">+&nbsp;defaultConfig</a></code>
 		<span class="tooltip"><p>Returns the current default configuration.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/relevantConfigForClass:">+&nbsp;relevantConfigForClass:</a></code>
+		<span class="tooltip"><p>Returns the current relevant config for a given class.</p></span>
 	</span>
 	
 	
@@ -548,7 +559,7 @@ prodConfig.appPassword = @"password";
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/end">&ndash;&nbsp;end</a></code>
-		<span class="tooltip"><p>Ends a context block of code to <a href="#//api/name/use">use</a> the receiver as the default config.</p></span>
+		<span class="tooltip"><p>Ends a context block of code to use the receiver as the default config.</p></span>
 	</span>
 	
 	
@@ -562,21 +573,21 @@ prodConfig.appPassword = @"password";
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/useForClass:">&ndash;&nbsp;useForClass:</a></code>
-		<span class="tooltip"><p>Specifies for all NSRails actions (instance and class methods) in a given class to <a href="#//api/name/use">use</a> the receiver.</p></span>
+		<span class="tooltip"><p>Specifies for all NSRails actions (instance and class methods) in a given class to use the receiver.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/useAsDefault">&ndash;&nbsp;useAsDefault</a></code>
-		<span class="tooltip"><p>Specifies for all NSRails actions in the current environment to <a href="#//api/name/use">use</a> the receiver.</p></span>
+		<span class="tooltip"><p>Specifies for all NSRails actions in the current environment to use the receiver.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/useAsDefaultForEnvironment:">&ndash;&nbsp;useAsDefaultForEnvironment:</a></code>
-		<span class="tooltip"><p>Specifies for all NSRails actions in a given environment to <a href="#//api/name/use">use</a> the receiver.</p></span>
+		<span class="tooltip"><p>Specifies for all NSRails actions in a given environment to use the receiver.</p></span>
 	</span>
 	
 	
@@ -591,14 +602,14 @@ prodConfig.appPassword = @"password";
 							<li>
 	<span class="tooltip">
 		<code><a href="#//api/name/stringFromDate:">&ndash;&nbsp;stringFromDate:</a></code>
-		<span class="tooltip"><p>Returns a string representation of a given date formatted using <a href="#//api/name/dateFormat">dateFormat</a>.</p></span>
+		<span class="tooltip"><p>Returns a string representation of a given date formatted using dateFormat.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/dateFromString:">&ndash;&nbsp;dateFromString:</a></code>
-		<span class="tooltip"><p>Returns a date representation of a given string interpreted using <a href="#//api/name/dateFormat">dateFormat</a>.</p></span>
+		<span class="tooltip"><p>Returns a date representation of a given string interpreted using dateFormat.</p></span>
 	</span>
 	
 	
@@ -863,7 +874,7 @@ prodConfig.appPassword = @"password";
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Date <a href="" title="[https://developer.apple.com/library/mac/](https://developer.apple.com/library/mac/)#documentation/Cocoa/Conceptual/DataFormatting/Articles/dfDateFormatting10_4.html%23//apple_ref/doc/uid/TP40002369-SW4">format</a> used if a property of type NSDate is encountered, to &ldquo;encode&rdquo; and &ldquo;decode&rdquo; NSDate objects.</p>
+		<p>Date <a href="" title="https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/DataFormatting/Articles/dfDateFormatting10_4.html%23//apple_ref/doc/uid/TP40002369-SW4">format</a> used if a property of type NSDate is encountered, to &ldquo;encode&rdquo; and &ldquo;decode&rdquo; NSDate objects.</p>
 	</div>		
 	
 	
@@ -1171,7 +1182,7 @@ prodConfig.appPassword = @"password";
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Rails is currently at 3.2.3 and using PUT, but 4.0 will <a href="#//api/name/use">use</a> PATCH by default.</p>
+		<p>Rails is currently at 3.2.3 and using PUT, but 4.0 will use PATCH by default.</p>
 
 <p><strong>Default:</strong> <code>@"PUT"</code></p><div class="warning"><p><strong>Warning:</strong> When Rails 4.0 is released, this default value will be changed to <code>@"PATCH"</code>.</p></div>
 	</div>
@@ -1331,6 +1342,65 @@ prodConfig.appPassword = @"password";
 </div>
 						
 						<div class="section-method">
+	<a name="//api/name/relevantConfigForClass:" title="relevantConfigForClass:"></a>
+	<h3 class="subsubtitle method-title">relevantConfigForClass:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns the current relevant config for a given class.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (NSRConfig *)relevantConfigForClass:(Class)<em>class</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>class</em></dt>
+			<dd><p>he class &ndash; maybe has a custom config attached to it.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The current relevant config for a given class.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<ul>
+<li>Will return the config currently being used in a context block (with use and useIn:).</li>
+<li>If none, will return the config set for <em>class</em> (with useForClass:).</li>
+<li>If none, will return defaultConfig.</li>
+</ul>
+
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRConfig.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
 	<a name="//api/name/setCurrentEnvironment:" title="setCurrentEnvironment:"></a>
 	<h3 class="subsubtitle method-title">setCurrentEnvironment:</h3>
 	
@@ -1389,7 +1459,7 @@ prodConfig.appPassword = @"password";
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Returns a date representation of a given string interpreted using <a href="#//api/name/dateFormat">dateFormat</a>.</p>
+		<p>Returns a date representation of a given string interpreted using dateFormat.</p>
 	</div>		
 	
 	
@@ -1447,7 +1517,7 @@ prodConfig.appPassword = @"password";
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Ends a context block of code to <a href="#//api/name/use">use</a> the receiver as the default config.</p>
+		<p>Ends a context block of code to use the receiver as the default config.</p>
 	</div>		
 	
 	
@@ -1539,7 +1609,7 @@ prodConfig.appPassword = @"password";
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Returns a string representation of a given date formatted using <a href="#//api/name/dateFormat">dateFormat</a>.</p>
+		<p>Returns a string representation of a given date formatted using dateFormat.</p>
 	</div>		
 	
 	
@@ -1645,7 +1715,7 @@ prodConfig.appPassword = @"password";
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Specifies for all NSRails actions in the current environment to <a href="#//api/name/use">use</a> the receiver.</p>
+		<p>Specifies for all NSRails actions in the current environment to use the receiver.</p>
 	</div>		
 	
 	
@@ -1684,7 +1754,7 @@ prodConfig.appPassword = @"password";
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Specifies for all NSRails actions in a given environment to <a href="#//api/name/use">use</a> the receiver.</p>
+		<p>Specifies for all NSRails actions in a given environment to use the receiver.</p>
 	</div>		
 	
 	
@@ -1733,7 +1803,7 @@ prodConfig.appPassword = @"password";
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Specifies for all NSRails actions (instance and class methods) in a given class to <a href="#//api/name/use">use</a> the receiver.</p>
+		<p>Specifies for all NSRails actions (instance and class methods) in a given class to use the receiver.</p>
 	</div>		
 	
 	
@@ -1745,7 +1815,7 @@ prodConfig.appPassword = @"password";
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>class</em></dt>
-			<dd><p>Class to <a href="#//api/name/use">use</a> this config.</p></dd>
+			<dd><p>Class to use this config.</p></dd>
 		</dl>
 		
 	</div>
@@ -1758,7 +1828,7 @@ prodConfig.appPassword = @"password";
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Has precedence over a <a href="#//api/name/defaultConfig"><code>defaultConfig</code></a>, but is trumped by a config specified for a block (with <a href="#//api/name/use">use</a> and <a href="#//api/name/end">end</a>, or <a href="#//api/name/useIn:">useIn:</a>). (This is the same precedence as instances which declare custom configs.)</p>
+		<p>Has precedence over a <code>defaultConfig</code>, but is trumped by a config specified for a block (with use and end, or useIn:). (This is the same precedence as instances which declare custom configs.)</p>
 
 <p>This should be used somewhere in your app setup, before any NSRails actions.</p>
 	</div>
@@ -1845,7 +1915,7 @@ prodConfig.appPassword = @"password";
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-07)</span><br />
+						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-20)</span><br />
 						
 						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 789)</a>.</span></p>
 						
@@ -1935,14 +2005,6 @@ prodConfig.appPassword = @"password";
 			}
 			
 			window.onload = init;
-			
-			// If showing in Xcode, hide the TOC and Header
-			if (navigator.userAgent.match(/xcode/i)) {
-				document.getElementById("contents").className = "hideInXcode"
-				document.getElementById("tocContainer").className = "hideInXcode"
-				document.getElementById("top_header").className = "hideInXcode"
-			}
-			
 		</script>
 	</body>
 </html>

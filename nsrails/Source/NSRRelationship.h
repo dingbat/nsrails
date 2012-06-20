@@ -30,14 +30,44 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ NSRRelationship is the class to describes relationships between objects in NSRails.
+ 
+ See <NSRRemoteObject>'s `relationshipForProperty:` for usage.
+ */
+
 @interface NSRRelationship : NSObject
 
 @property (nonatomic, readonly) Class nestedClass;
 @property (nonatomic, readonly, getter = isToMany) BOOL toMany;
 @property (nonatomic, readonly, getter = isBelongsTo) BOOL belongsTo;
 
+/**
+ Returns a relationship to describe a to-many relationship.
+ 
+ @param class The class of which your class "has many".
+ @return A relationship to describe a to-many relationship.
+ */
 + (NSRRelationship *) hasMany:(Class)class;
+
+/**
+ Returns a relationship to describe a to-one relationship.
+ 
+ Almost never used because this is the default relationship for properties with a type that's an NSRRemoteObject subclass.
+ 
+ @param class The class of which your class "has one".
+ @return A relationship to describe a to-one relationship.
+ */
 + (NSRRelationship *) hasOne:(Class)class;
+
+/**
+ Returns a relationship to describe a belongs-to relationship.
+ 
+ The difference between this and <hasOne:> is that when nesting that property, `<property>_id` would be sent (with just its `remoteID`), to correspond to the foreign key defined on the remote model. Has-one instead sends the `<property>_attributes` key with it, including the entire representation of the object.
+ 
+ @param class The class of which your class "belongs to".
+ @return A relationship to describe a belongs-to relationship.
+ */
 + (NSRRelationship *) belongsTo:(Class)class;
 
 @end

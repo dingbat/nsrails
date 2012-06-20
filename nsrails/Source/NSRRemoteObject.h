@@ -47,11 +47,15 @@
 
 /**
  
- `NSRRemoteObject` is the primary class in NSRails - any classes that inherit from it will be treated with a "remote correspondance" and ActiveResource-like APIs will be available.
+ `NSRRemoteObject` is the primary class in NSRails - any classes that subclass it will be treated with a "remote correspondance" and ActiveResource-like APIs will be available.
   
- Note that you do not have to define an `id` property for your Objective-C class, as your subclass will inherit `NSRRemoteObject`'s remoteID property. Foreign keys are optional but also unnecessary (see [nesting](https://github.com/dingbat/nsrails/wiki/Nesting) on the NSRails wiki).
+ Note that you do not have to define an `id` property for your Objective-C class, as your subclass will inherit NSRRemoteObject's `remoteID` property.
   
- ## Validation Errors
+ # CoreData
+ 
+ To use NSRails with CoreData, subclass <NSRRemoteManagedObject>.
+ 
+ # Validation Errors
  
  If a create or update failed due to validation reasons, NSRails will package the validation failures into a dictionary. This can be retrieved using the key constant `NSRValidationErrorsKey` in the `userInfo` property of the error. This dictionary contains **each failed property as a key**, with each respective object being **an array of the reasons that property failed validation**. For instance,
  
@@ -69,27 +73,13 @@
 		 }
 	 }
  
- <a name="overriding"></a>
+ # Overriding Behavior
  
- ## Overriding
+ See the "Methods to Override" section of this class reference. These methods can be overriden for custom per-property behavior.
  
- ### Custom model name
+ Remember to make a call to `super` if you're not overriding behavior for that property. **These are not delegate methods**.
  
- 
-
- ### Custom controller name
- 
- 
- ### Nested resource paths
- 
- 
- ### Custom encoding/decoding
- 
- 
- And the decoders: 
- 
- - It is important to make a call to super if your property doesn't require custom encoding/decoding, as the base class implementation will automatically encode/decode nested classes (translate dicts/arrays into instances of their respective NSRRemoteObject subclasses), as well as automatically convert to and from NSDates.
-  
+ Finally, check out the [NSRails Cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook) for quick overriding recipes.
   */
 
 #ifdef NSR_USE_COREDATA
@@ -448,14 +438,14 @@
  
  Returns the name of the subclass, lowercase and underscored if [enabled](NSRConfig.html#//api/name/autoinflectsClassNames), and with its prefix stripped if [enabled](NSRConfig.html#//api/name/ignoresClassPrefixes).
  
- @warning When overriding this method, NSRails will no longer autoinflect for determining this class name! What you enter will be used exactly.
+ @warning When overriding this method, NSRails will no longer autoinflect for determining this class name! What you enter will be used exactly, so make sure it's lowercase, etc.
  */
 + (NSString *) remoteModelName;
 
 /**
  The name of this class's controller on the server - where actions for this class should be routed.
  
- The default behavior (when not overriden) is to pluralize remoteModelName, so if your class was called `User`, by default requests involving its controller would be routed to `/users`. In the example above for custom model names, it would go to `/subscribers` since remoteModelName was overridden.
+ The default behavior (when not overriden) is to pluralize <remoteModelName>, so if your class was called `User`, by default requests involving its controller would be routed to `/users`. In the example above for custom model names, it would go to `/subscribers` since remoteModelName was overridden.
  
  However, this can be overridden as well, if, lets say, you have an irregular plural: 
  
@@ -613,7 +603,7 @@
      @property (nonatomic, strong) NSURL *URL;         //on the server this is a plain string
      @property (nonatomic, strong) NSArray *csvArray;  //on the server this is a comma-separated string
  
- @end
+     @end
  
  In the example above, we want `URL` to be decoded (saved) as an NSURL locally and `csvArray` to be decoded as an NSArray locally, but Rails sends them to us as plain strings. Here's a possible overridden implementation:
 

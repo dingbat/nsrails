@@ -33,6 +33,12 @@
 
 @class NSRRemoteObject;
 
+/**
+ This category on NSMutableArray allows mutable arrays to "fetch into themselves".
+ 
+ The translateRemoteDictionariesIntoInstancesOfClass: method can also be useful if converting a manually-received array of JSON dictionaries and should be instances of a class.
+ */
+
 @interface NSMutableArray (NSRFetch)
 
 /**

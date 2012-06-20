@@ -51,9 +51,7 @@
 	
 	<option value="class_methods">Class Methods</option>
 	
-	<option value="//api/name/findObjectWithRemoteID:">&nbsp;&nbsp;&nbsp;&nbsp;+ findObjectWithRemoteID:</option>
-	
-	<option value="//api/name/findOrInsertObjectUsingRemoteDictionary:">&nbsp;&nbsp;&nbsp;&nbsp;+ findOrInsertObjectUsingRemoteDictionary:</option>
+	<option value="//api/name/objectWithRemoteDictionary:">&nbsp;&nbsp;&nbsp;&nbsp;+ objectWithRemoteDictionary:</option>
 	
 	<option value="//api/name/remoteAll:">&nbsp;&nbsp;&nbsp;&nbsp;+ remoteAll:</option>
 	
@@ -76,17 +74,15 @@
 	
 	<option value="instance_methods">Instance Methods</option>
 	
-	<option value="//api/name/initInserted">&nbsp;&nbsp;&nbsp;&nbsp;- initInserted</option>
+	<option value="//api/name/decodeRemoteValue:forRemoteKey:change:">&nbsp;&nbsp;&nbsp;&nbsp;- decodeRemoteValue:forRemoteKey:change:</option>
 	
-	<option value="//api/name/initInsertedIntoContext:">&nbsp;&nbsp;&nbsp;&nbsp;- initInsertedIntoContext:</option>
-	
-	<option value="//api/name/initWithCustomMap:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithCustomMap:</option>
-	
-	<option value="//api/name/initWithCustomMap:customConfig:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithCustomMap:customConfig:</option>
-	
-	<option value="//api/name/initWithRemoteDictionary:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithRemoteDictionary:</option>
+	<option value="//api/name/encodeValueForProperty:remoteKey:">&nbsp;&nbsp;&nbsp;&nbsp;- encodeValueForProperty:remoteKey:</option>
 	
 	<option value="//api/name/objectUsedToPrefixRequest:">&nbsp;&nbsp;&nbsp;&nbsp;- objectUsedToPrefixRequest:</option>
+	
+	<option value="//api/name/propertyForRemoteKey:">&nbsp;&nbsp;&nbsp;&nbsp;- propertyForRemoteKey:</option>
+	
+	<option value="//api/name/relationshipForProperty:">&nbsp;&nbsp;&nbsp;&nbsp;- relationshipForProperty:</option>
 	
 	<option value="//api/name/remoteCreate:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteCreate:</option>
 	
@@ -104,6 +100,8 @@
 	
 	<option value="//api/name/remoteFetchAsync:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteFetchAsync:</option>
 	
+	<option value="//api/name/remoteProperties">&nbsp;&nbsp;&nbsp;&nbsp;- remoteProperties</option>
+	
 	<option value="//api/name/remoteReplace:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteReplace:</option>
 	
 	<option value="//api/name/remoteReplaceAsync:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteReplaceAsync:</option>
@@ -112,9 +110,9 @@
 	
 	<option value="//api/name/remoteUpdateAsync:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteUpdateAsync:</option>
 	
-	<option value="//api/name/saveContext">&nbsp;&nbsp;&nbsp;&nbsp;- saveContext</option>
-	
 	<option value="//api/name/setPropertiesUsingRemoteDictionary:">&nbsp;&nbsp;&nbsp;&nbsp;- setPropertiesUsingRemoteDictionary:</option>
+	
+	<option value="//api/name/shouldSendProperty:whenNested:">&nbsp;&nbsp;&nbsp;&nbsp;- shouldSendProperty:whenNested:</option>
 	
 	
 	
@@ -134,15 +132,13 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Properties">Properties</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Common class requests">Common class requests</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Common controller requests">Common controller requests</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_CRUD">CRUD</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Setting and retrieving JSON representations">Setting and retrieving JSON representations</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Initializers">Initializers</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_CoreData">CoreData</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Methods to override">Methods to override</a></span></li>
 	
@@ -166,9 +162,7 @@
 
 <li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#class_methods">Class Methods</a></span><ul>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/findObjectWithRemoteID:">findObjectWithRemoteID:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/findOrInsertObjectUsingRemoteDictionary:">findOrInsertObjectUsingRemoteDictionary:</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/objectWithRemoteDictionary:">objectWithRemoteDictionary:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteAll:">remoteAll:</a></span></li>
 	
@@ -192,17 +186,15 @@
 
 <li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initInserted">initInserted</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/decodeRemoteValue:forRemoteKey:change:">decodeRemoteValue:forRemoteKey:change:</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initInsertedIntoContext:">initInsertedIntoContext:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithCustomMap:">initWithCustomMap:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithCustomMap:customConfig:">initWithCustomMap:customConfig:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithRemoteDictionary:">initWithRemoteDictionary:</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/encodeValueForProperty:remoteKey:">encodeValueForProperty:remoteKey:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/objectUsedToPrefixRequest:">objectUsedToPrefixRequest:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/propertyForRemoteKey:">propertyForRemoteKey:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/relationshipForProperty:">relationshipForProperty:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteCreate:">remoteCreate:</a></span></li>
 	
@@ -220,6 +212,8 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteFetchAsync:">remoteFetchAsync:</a></span></li>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteProperties">remoteProperties</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteReplace:">remoteReplace:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteReplaceAsync:">remoteReplaceAsync:</a></span></li>
@@ -228,9 +222,9 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteUpdateAsync:">remoteUpdateAsync:</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/saveContext">saveContext</a></span></li>
-	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setPropertiesUsingRemoteDictionary:">setPropertiesUsingRemoteDictionary:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/shouldSendProperty:whenNested:">shouldSendProperty:whenNested:</a></span></li>
 	
 </ul></li>
 
@@ -272,34 +266,20 @@
 					<div class="section section-overview">
 						<a title="Overview" name="overview"></a>
 						<h2 class="subtitle subtitle-overview">Overview</h2>
-						<p><code>NSRRemoteObject</code> is the primary class in NSRails &ndash; any classes that inherit from it will be treated with a &ldquo;remote correspondance&rdquo; and ActiveResource-like APIs will be available.</p>
+						<p><code>NSRRemoteObject</code> is the primary class in NSRails &ndash; any classes that subclass it will be treated with a &ldquo;remote correspondance&rdquo; and ActiveResource-like APIs will be available.</p>
 
-<p>Note that you do not have to define an <code>id</code> property for your Objective-C class, as your subclass will inherit <code>NSRRemoteObject</code>&rsquo;s <a href="#//api/name/remoteID">remoteID</a> property. Foreign keys are optional but also unnecessary (see <a href="https://github.com/dingbat/nsrails/wiki/Nesting">nesting</a> on the NSRails wiki).</p>
+<p>Note that you do not have to define an <code>id</code> property for your Objective-C class, as your subclass will inherit NSRRemoteObject&rsquo;s <code>remoteID</code> property.</p>
 
-<h2>NSRMap</h2>
+<h1>CoreData</h1>
 
-<p>NSRMap is a macro used to define specific properties to be shared with Rails, along with configurable behaviors.</p>
+<p>To use NSRails with CoreData, subclass <a href="../Classes/NSRRemoteManagedObject.html">NSRRemoteManagedObject</a>.</p>
 
-<p>It is optional (if omitted, will default to all properties being used). Usage:</p>
-
-<pre><code>@implementation Article
-@synthesize title, content, createdAt;
-NSRMap(*, createdAt -r);
-
-…
-
-@end
-</code></pre>
-
-<p>Please see its more detailed description on <a href="https://github.com/dingbat/nsrails/wiki/NSRMap">the NSRails wiki</a>.</p>
-
-<h2>Validation Errors</h2>
+<h1>Validation Errors</h1>
 
 <p>If a create or update failed due to validation reasons, NSRails will package the validation failures into a dictionary. This can be retrieved using the key constant <code>NSRValidationErrorsKey</code> in the <code>userInfo</code> property of the error. This dictionary contains <strong>each failed property as a key</strong>, with each respective object being <strong>an array of the reasons that property failed validation</strong>. For instance,</p>
 
 <pre><code> NSError *error;
- [user createRemote:&amp;error];
- if (error)
+ if (![user createRemote:&amp;error])
  {
      NSDictionary *validationErrors = [[error userInfo] objectForKey:NSRValidationErrorsKey];
 
@@ -313,57 +293,13 @@ NSRMap(*, createdAt -r);
  }
 </code></pre>
 
-<p><a name="coredata"></a></p>
+<h1>Overriding Behavior</h1>
 
-<h2>CoreData</h2>
+<p>See the &ldquo;Methods to Override&rdquo; section of this class reference. These methods can be overriden for custom per-property behavior.</p>
 
-<h3>Setting up</h3>
+<p>Remember to make a call to <code>super</code> if you&rsquo;re not overriding behavior for that property. <strong>These are not delegate methods</strong>.</p>
 
-<p><strong>You can either:</strong></p>
-
-<ul>
-<li><p>Go into <strong><code>NSRails.h</code></strong> and uncomment this line:</p>
-
-<pre><code>  #define NSR_USE_COREDATA
-</code></pre></li>
-<li><p>OR, if you don&rsquo;t want to mess with NSRails source, you can also add <strong><code>NSR_USE_COREDATA</code></strong> to &ldquo;Preprocessor Macros Not Used in Precompiled Headers&rdquo; in your target&rsquo;s build settings:</p></li>
-</ul>
-
-
-<div style="text-align:center"><a href="cd-flag.png"><img src="cd-flag.png" width=350></img></a></div>
-
-
-<p><strong>Why is this necessary?</strong></p>
-
-<ul>
-<li>By default, NSRRemoteObject inherits from NSObject. Because your managed, NSRails-enabled class need to inherit from NSManagedObject in order to function within CoreData, and because Objective-C does not allow multiple inheritance, NSRRemoteObject will modify its superclass to NSManagedObject during compiletime if <code>NSR_USE_COREDATA</code> is defined.</li>
-</ul>
-
-
-<h3>Some things to note when using NSRails with CoreData:</h3>
-
-<ul>
-<li><p>You must set your managed object context to your config&rsquo;s managedObjectContext property so that NSRails can automatically insert or search for CoreData objects when operations require it:</p>
-
-<pre><code>  [[NSRConfig defaultConfig] setManagedObjectContext:&lt;#your MOC#&gt;];
-</code></pre></li>
-<li><p>CRUD operations in NSRails will insert into, delete into, or simply save the managed object context accordingly. For more details, see the descriptions of each CRUD method, under their &ldquo;CoreData&rdquo; headers.</p></li>
-<li><p><code>remoteID</code> is used as a &ldquo;primary key&rdquo; that NSRails will use to find other instances, etc. This means that <code>remoteID</code> has to be defined in your *.xcdatamodeld data model file.</p>
-
-<ul>
-<li>You can either create an abstract entity named NSRRemoteObject that defines a <a href="#//api/name/remoteID"><code>remoteID</code></a> attribute and acts as a parent to your other entities (preferred), <strong>OR</strong> declare <a href="#//api/name/remoteID"><code>remoteID</code></a> for each entity that subclasses NSRRemoteObject:</li>
-</ul>
-
-
-<p>  <div style="text-align:center; max-height:100%; height:250px; vertical-align:middle;"><a href="cd-abstract.png"><img src="cd-abstract.png" height=250></img></a> <strong>OR</strong> <a href="cd-no-abstract.png"><img src="cd-no-abstract.png" height=220></img></a></div></p>
-
-<ul>
-<li><p><a href="#//api/name/remoteID"><code>remoteID</code></a> should be an Integer (16 is fine) and indexed.</p></li>
-<li><p>Also ensure that you&rsquo;re using only subclasses (ie, set the Class of any entities to your desired subclass). Using generic NSManagedObjects or even NSRRemoteObjects is not supported.</p></li>
-</ul>
-</li>
-</ul>
-
+<p>Finally, check out the <a href="https://github.com/dingbat/nsrails/wiki/Cookbook">NSRails Cookbook</a> for quick overriding recipes.</p>
 					</div>
 					
 					
@@ -382,7 +318,7 @@ NSRMap(*, createdAt -r);
 							<li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteID">&nbsp;&nbsp;remoteID</a></code>
-		<span class="tooltip"><p>The corresponding local property for <code>id</code>.</p></span>
+		<span class="tooltip"><p>The corresponding local property for remote attribute <code>id</code>.</p></span>
 	</span>
 	<span class="task-item-suffix">property</span>
 	
@@ -404,8 +340,8 @@ NSRMap(*, createdAt -r);
 						</ul>
 						
 						
-						<a title="Common class requests" name="task_Common class requests"></a>
-						<h3 class="subsubtitle task-title">Common class requests</h3>
+						<a title="Common controller requests" name="task_Common controller requests"></a>
+						<h3 class="subsubtitle task-title">Common controller requests</h3>
 
 						<ul class="task-list">
 							<li>
@@ -496,14 +432,14 @@ NSRMap(*, createdAt -r);
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteCreate:">&ndash;&nbsp;remoteCreate:</a></code>
-		<span class="tooltip"><p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including <a href="#//api/name/remoteID">remoteID</a>).</p></span>
+		<span class="tooltip"><p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including remoteID).</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteCreateAsync:">&ndash;&nbsp;remoteCreateAsync:</a></code>
-		<span class="tooltip"><p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including <a href="#//api/name/remoteID">remoteID</a>).</p></span>
+		<span class="tooltip"><p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including remoteID).</p></span>
 	</span>
 	
 	
@@ -567,67 +503,8 @@ NSRMap(*, createdAt -r);
 						<ul class="task-list">
 							<li>
 	<span class="tooltip">
-		<code><a href="#//api/name/initWithRemoteDictionary:">&ndash;&nbsp;initWithRemoteDictionary:</a></code>
+		<code><a href="#//api/name/objectWithRemoteDictionary:">+&nbsp;objectWithRemoteDictionary:</a></code>
 		<span class="tooltip"><p>Initializes a new instance of the receiver&rsquo;s class with a given dictionary input.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/initWithCustomMap:">&ndash;&nbsp;initWithCustomMap:</a></code>
-		<span class="tooltip"><p>Initializes a new instance of the receiver&rsquo;s class with a custom NSRMap string.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/initWithCustomMap:customConfig:">&ndash;&nbsp;initWithCustomMap:customConfig:</a></code>
-		<span class="tooltip"><p>Initializes a new instance of the receiver&rsquo;s class with a custom NSRMap string and config.</p></span>
-	</span>
-	
-	
-</li>
-						</ul>
-						
-						
-						<a title="CoreData" name="task_CoreData"></a>
-						<h3 class="subsubtitle task-title">CoreData</h3>
-
-						<ul class="task-list">
-							<li>
-	<span class="tooltip">
-		<code><a href="#//api/name/findOrInsertObjectUsingRemoteDictionary:">+&nbsp;findOrInsertObjectUsingRemoteDictionary:</a></code>
-		<span class="tooltip"><p>Finds the existing local object (or creates a new one) based off the dictionary passed in.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/findObjectWithRemoteID:">+&nbsp;findObjectWithRemoteID:</a></code>
-		<span class="tooltip"><p>Finds the object in CoreData whose <a href="#//api/name/remoteID">remoteID</a> is equal to the value passed in.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/initInserted">&ndash;&nbsp;initInserted</a></code>
-		<span class="tooltip"><p>Instantiates a new instance, inserts it into the default CoreData context, and saves the context.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/initInsertedIntoContext:">&ndash;&nbsp;initInsertedIntoContext:</a></code>
-		<span class="tooltip"><p>Instantiates a new instance, inserts it into the specified CoreData context, and saves the context.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/saveContext">&ndash;&nbsp;saveContext</a></code>
-		<span class="tooltip"><p>Save the CoreData object context of the receiver.</p>
-
-<p>This method should not be used without CoreData enabled (see top).</p></span>
 	</span>
 	
 	
@@ -649,14 +526,56 @@ NSRMap(*, createdAt -r);
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteControllerName">+&nbsp;remoteControllerName</a></code>
-		<span class="tooltip"><p>The name of this class&rsquo;s controller on the server.</p></span>
+		<span class="tooltip"><p>The name of this class&rsquo;s controller on the server &ndash; where actions for this class should be routed.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/objectUsedToPrefixRequest:">&ndash;&nbsp;objectUsedToPrefixRequest:</a></code>
-		<span class="tooltip"><p>Used if instances of this class should have their resource path be based off an association.</p></span>
+		<span class="tooltip"><p>Should be overridden if instances of your subclass class should have their resource path be based off an association.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/encodeValueForProperty:remoteKey:">&ndash;&nbsp;encodeValueForProperty:remoteKey:</a></code>
+		<span class="tooltip"><p>Should return the remote representation for each property, optionally modifying the remote key.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/decodeRemoteValue:forRemoteKey:change:">&ndash;&nbsp;decodeRemoteValue:forRemoteKey:change:</a></code>
+		<span class="tooltip"><p>Should set what you want an Objective-C property to be set to, based off a remote representation.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/shouldSendProperty:whenNested:">&ndash;&nbsp;shouldSendProperty:whenNested:</a></code>
+		<span class="tooltip"><p>Should return whether or not a certain property should be sent in the outgoing dictionary.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/relationshipForProperty:">&ndash;&nbsp;relationshipForProperty:</a></code>
+		<span class="tooltip"><p>Should return an NSRRelationship description object for this property, or nil if none at all.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/remoteProperties">&ndash;&nbsp;remoteProperties</a></code>
+		<span class="tooltip"><p>Should return an array of all properties to be used by NSRails.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/propertyForRemoteKey:">&ndash;&nbsp;propertyForRemoteKey:</a></code>
+		<span class="tooltip"><p>Should return the equivalent Objective-C property for a given remote key.</p></span>
 	</span>
 	
 	
@@ -706,9 +625,10 @@ if ([myObj remoteFetch:&amp;error])
 {
     NSDictionary *hashSentByRails = myObj.remoteAttributes;
     …
+}
 </code></pre>
 
-<p>Methods that will update <code>remoteAttributes</code> include <a href="#//api/name/initWithRemoteDictionary:">initWithRemoteDictionary:</a>, <a href="#//api/name/remoteFetch:">remoteFetch:</a> and <a href="#//api/name/remoteCreate:">remoteCreate:</a>. Objects returned with remoteObjectWithID:, and <a href="#//api/name/remoteAll:">remoteAll:</a> will also have an accurate <code>remoteAttributes</code>.</p>
+<p>Calling setPropertiesUsingRemoteDictionary: will also update remoteAttributes to the dictionary passed in.</p>
 	</div>
 	
 	
@@ -747,15 +667,11 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>If true, this object will include a <code>_destroy</code> key on send (ie, when the model nesting it is sent during a <a href="#//api/name/remoteUpdate:">remoteUpdate:</a> or <a href="#//api/name/remoteCreate:">remoteCreate:</a>).</p>
+		<p>If true, this object will include a <code>_destroy</code> key on send (ie, when the model nesting it is sent during a remoteUpdate: or remoteCreate:).</p>
 
 <p>This can be useful if you have a lot of nested models you need to destroy &ndash; you can do it in one request instead of several repeated destroys on each object.</p>
 
 <p>Note that this is relevant for a nested object only. And, for this to work, make sure <code>:allow_destroy =&gt; true</code> <a href="https://github.com/dingbat/nsrails/wiki/Nesting">is set in your Rails model</a>.</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>This property leaves your managed object <strong>unaffected</strong>. You will have to delete it from your context manually if your request was successful.</p>
 	</div>
 	
 	
@@ -779,7 +695,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	
 	<div class="method-subsection brief-description">
-		<p>The corresponding local property for <code>id</code>.</p>
+		<p>The corresponding local property for remote attribute <code>id</code>.</p>
 	</div>		
 	
 	
@@ -794,11 +710,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>It should be noted that this property will be automatically updated after <a href="#//api/name/remoteCreate:">remoteCreate:</a>, as will anything else that is returned from that create.</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>This property is used as a &ldquo;primary key&rdquo;. Trying to insert two objects of the same subclass with the same remoteID in the same context will raise an exception.</p>
+		<p>It should be noted that this property will be automatically updated after remoteCreate:, as will anything else that is returned from that create.</p>
 	</div>
 	
 	
@@ -824,82 +736,17 @@ if ([myObj remoteFetch:&amp;error])
 						<h2 class="subtitle subtitle-methods">Class Methods</h2>
 						
 						<div class="section-method">
-	<a name="//api/name/findObjectWithRemoteID:" title="findObjectWithRemoteID:"></a>
-	<h3 class="subsubtitle method-title">findObjectWithRemoteID:</h3>
+	<a name="//api/name/objectWithRemoteDictionary:" title="objectWithRemoteDictionary:"></a>
+	<h3 class="subsubtitle method-title">objectWithRemoteDictionary:</h3>
 	
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Finds the object in CoreData whose <a href="#//api/name/remoteID">remoteID</a> is equal to the value passed in.</p>
+		<p>Initializes a new instance of the receiver&rsquo;s class with a given dictionary input.</p>
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>+ (id)findObjectWithRemoteID:(NSNumber *)<em>rID</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>rID</em></dt>
-			<dd><p>The <a href="#//api/name/remoteID">remoteID</a> to search for.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>The object from CoreData, if it exists. If it does not exist, returns <code>nil</code>.</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Will search for objects of entity named with the receiver&rsquo;s class name.</p>
-
-<p>This method should not be used without CoreData enabled (see top).</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection see-also-section">
-		<h4 class="method-subtitle">See Also</h4>
-		<ul>
-			
-			<li><code><p><a href="#//api/name/findOrInsertObjectUsingRemoteDictionary:">+ findOrInsertObjectUsingRemoteDictionary:</a></p></code></li>
-			
-		</ul>
-	</div>
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/findOrInsertObjectUsingRemoteDictionary:" title="findOrInsertObjectUsingRemoteDictionary:"></a>
-	<h3 class="subsubtitle method-title">findOrInsertObjectUsingRemoteDictionary:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Finds the existing local object (or creates a new one) based off the dictionary passed in.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>+ (id)findOrInsertObjectUsingRemoteDictionary:(NSDictionary *)<em>dictionary</em></code></div>
+	<div class="method-subsection method-declaration"><code>+ (id)objectWithRemoteDictionary:(NSDictionary *)<em>dictionary</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
@@ -907,7 +754,9 @@ if ([myObj remoteFetch:&amp;error])
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>dictionary</em></dt>
-			<dd><p>The dictionary to update existing objects or to use to create new ones. This method does nothing if the dictionary does not contain object for key <code>id</code>.</p></dd>
+			<dd><p>Dictionary to be evaluated. The keys in this dictionary (being a <em>remote</em> dictionary) should have remote keys, since this will pass through NSRMap (eg, &ldquo;id&rdquo;, not &ldquo;remoteID&rdquo;, and if a special equivalence isn&rsquo;t defined, &ldquo;my_property&rdquo;, not &ldquo;myProperty&rdquo;).</p>
+
+<p>Note that this dictionary needs to be JSON-parasable, meaning all keys are strings and all objects are instances of NSString, NSNumber, NSArray, NSDictionary, or NSNull.</p></dd>
 		</dl>
 		
 	</div>
@@ -916,7 +765,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>Either an existing object with the <a href="#//api/name/remoteID">remoteID</a> specified by <code>id</code> in <em>dictionary</em>, a new instance with properties set to those specified in <em>dictionary</em>, or <code>nil</code> if <em>dictionary</em> doesn&rsquo;t contain an object for the key <code>id</code>.</p>
+		<p>A new instance of the receiver&rsquo;s class with properties set using <em>dictionary</em>.</p>
 	</div>
 	
 	
@@ -925,17 +774,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Will attempt to retrieve the object in CoreData whose <a href="#//api/name/remoteID">remoteID</a> matches the object for key <code>id</code> in <em>dictionary</em>.</p>
-
-<ul>
-<li>If this object is found, will set its properties using <em>dictionary</em> and save the context.</li>
-<li>If this object is not found, will create &amp; insert a new object using <em>dictionary</em> and save the context.</li>
-</ul>
-
-
-<p>Will search for objects of entity named with the receiver&rsquo;s class name.</p>
-
-<p>This method should not be used without CoreData enabled (see top).</p>
+		<p>Takes into account rules in NSRMap.</p>
 	</div>
 	
 	
@@ -991,11 +830,7 @@ if ([myObj remoteFetch:&amp;error])
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Makes a GET request to <code>/objects</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name.)</p>
 
-<p>Request done synchronously. See <a href="#//api/name/remoteAllAsync:">remoteAllAsync:</a> for asynchronous operation.</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>Each object returned in the array may be an existing or newly inserted object. All objects will reflect properites set to those returned by your server.</p>
+<p>Request done synchronously. See remoteAllAsync: for asynchronous operation.</p>
 	</div>
 	
 	
@@ -1045,10 +880,6 @@ if ([myObj remoteFetch:&amp;error])
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Asynchronously makes a GET request to <code>/objects</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name.)</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>Each object returned in the array may be an existing or newly inserted object. All objects will reflect properites set to those returned by your server.</p>
 	</div>
 	
 	
@@ -1084,7 +915,7 @@ if ([myObj remoteFetch:&amp;error])
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>parentObject</em></dt>
-			<dd><p>Remote object by which to request the collection from &ndash; establishes pattern for resources depending on nesting. Raises an exception if this object&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a> is nil, as it is used to construct the route.</p></dd>
+			<dd><p>Remote object by which to request the collection from &ndash; establishes pattern for resources depending on nesting. Raises an exception if this object&rsquo;s <code>remoteID</code> is nil, as it is used to construct the route.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -1103,10 +934,6 @@ if ([myObj remoteFetch:&amp;error])
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Asynchronously makes a GET request to <code>/parents/3/objects</code> (where <code>parents/3</code> is the path for the <strong>parentObject</strong>, and <code>objects</code> is the pluralization of this model name.)</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>Each object returned in the array may be an existing or newly inserted object. All objects will reflect properites set to those returned by your server.</p>
 	</div>
 	
 	
@@ -1142,7 +969,7 @@ if ([myObj remoteFetch:&amp;error])
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>parentObject</em></dt>
-			<dd><p>Remote object by which to request the collection from &ndash; establishes pattern for resources depending on nesting. Raises an exception if this object&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a> is nil, as it is used to construct the route.</p></dd>
+			<dd><p>Remote object by which to request the collection from &ndash; establishes pattern for resources depending on nesting. Raises an exception if this object&rsquo;s <code>remoteID</code> is nil, as it is used to construct the route.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -1167,11 +994,7 @@ if ([myObj remoteFetch:&amp;error])
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Makes a GET request to <code>/parents/3/objects</code> (where <code>parents/3</code> is the path for the <strong>parentObject</strong>, and <code>objects</code> is the pluralization of this model name.)</p>
 
-<p>Request done synchronously. See <a href="#//api/name/remoteAllViaObject:async:">remoteAllViaObject:async:</a> for asynchronous operation.</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>Each object returned in the array may be an existing or newly inserted object. All objects will reflect properites set to those returned by your server.</p>
+<p>Request done synchronously. See remoteAllViaObject:async: for asynchronous operation.</p>
 	</div>
 	
 	
@@ -1195,7 +1018,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	
 	<div class="method-subsection brief-description">
-		<p>The name of this class&rsquo;s controller on the server.</p>
+		<p>The name of this class&rsquo;s controller on the server &ndash; where actions for this class should be routed.</p>
 	</div>		
 	
 	
@@ -1210,11 +1033,23 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Where actions for this class should be routed.</p>
+		<p>The default behavior (when not overriden) is to pluralize <a href="#//api/name/remoteModelName">remoteModelName</a>, so if your class was called <code>User</code>, by default requests involving its controller would be routed to <code>/users</code>. In the example above for custom model names, it would go to <code>/subscribers</code> since remoteModelName was overridden.</p>
+
+<p>However, this can be overridden as well, if, lets say, you have an irregular plural:</p>
+
+<pre><code> @implementation Cactus
+
+ + (NSString *) remoteControllerName
+ {
+    return @"cacti";
+ }
+
+ @end
+</code></pre>
 
 <p><strong>Default Behavior</strong> (when not overriden)</p>
 
-<p>Pluralizes <a href="#//api/name/remoteModelName">remoteModelName</a>.</p>
+<p>Pluralizes remoteModelName.</p>
 	</div>
 	
 	
@@ -1253,23 +1088,23 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Recommended behavior is to return a string literal:</p>
+		<p>remoteModelName should be overriden if the name of this class in Objective-C is different than its corresponding model on your server. Recommended overriding behavior is to return a string literal:</p>
 
-<pre><code>@implementation User
+<pre><code> @implementation User
 
-+ (NSString *) remoteModelName
-{
-    return @"subscriber";
-}
+ + (NSString *) remoteModelName
+ {
+     return @"subscriber";
+ }
 
-@end
+ @end
 </code></pre>
 
 <p>The above example would be needed if the same class is called <code>User</code> in Objective-C but <code>Subscriber</code> on your server.</p>
 
 <p><strong>Default Behavior</strong> (when not overriden)</p>
 
-<p>Returns the name of the subclass, lowercase and underscored if <a href="NSRConfig.html#//api/name/autoinflectsClassNames">enabled</a>, and with its prefix stripped if <a href="NSRConfig.html#//api/name/ignoresClassPrefixes">enabled</a>.</p><div class="warning"><p><strong>Warning:</strong> When overriding this method, NSRails will no longer autoinflect for determining this class name! What you enter will be used exactly.</p></div>
+<p>Returns the name of the subclass, lowercase and underscored if <a href="NSRConfig.html#//api/name/autoinflectsClassNames">enabled</a>, and with its prefix stripped if <a href="NSRConfig.html#//api/name/ignoresClassPrefixes">enabled</a>.</p><div class="warning"><p><strong>Warning:</strong> When overriding this method, NSRails will no longer autoinflect for determining this class name! What you enter will be used exactly, so make sure it&rsquo;s lowercase, etc.</p></div>
 	</div>
 	
 	
@@ -1324,10 +1159,6 @@ if ([myObj remoteFetch:&amp;error])
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Asynchronously makes a GET request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is <em>objectID</em>)</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>If request is successful, will attempt to find an existing local object with <em>objectID</em>, and update its properties to the server&rsquo;s response. If it cannot find an existing local object with that <a href="#//api/name/remoteID">remoteID</a>, will inserta  new object into the context, with those properties.</p>
 	</div>
 	
 	
@@ -1388,11 +1219,7 @@ if ([myObj remoteFetch:&amp;error])
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Makes a GET request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is <em>objectID</em></p>
 
-<p>Request done synchronously. See <a href="#//api/name/remoteObjectWithID:async:">remoteObjectWithID:async:</a> for asynchronous operation.</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>If request is successful, will attempt to find an existing local object with <em>objectID</em>, and update its properties to the server&rsquo;s response. If it cannot find an existing local object with that <a href="#//api/name/remoteID">remoteID</a>, will inserta  new object into the context, with those properties.</p>
+<p>Request done synchronously. See remoteObjectWithID:async: for asynchronous operation.</p>
 	</div>
 	
 	
@@ -1418,157 +1245,40 @@ if ([myObj remoteFetch:&amp;error])
 						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
 						
 						<div class="section-method">
-	<a name="//api/name/initInserted" title="initInserted"></a>
-	<h3 class="subsubtitle method-title">initInserted</h3>
+	<a name="//api/name/decodeRemoteValue:forRemoteKey:change:" title="decodeRemoteValue:forRemoteKey:change:"></a>
+	<h3 class="subsubtitle method-title">decodeRemoteValue:forRemoteKey:change:</h3>
 	
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Instantiates a new instance, inserts it into the default CoreData context, and saves the context.</p>
+		<p>Should set what you want an Objective-C property to be set to, based off a remote representation.</p>
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>- (id)initInserted</code></div>
-	
-	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>The newly inserted object.</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Will use entity named with the receiver&rsquo;s class name.</p>
-
-<p>Uses the &ldquo;global&rdquo; context defined in the relevant config&rsquo;s <code>managedObjectContext</code> property. Throws an exception if this property is <code>nil</code>.</p>
-
-<p>This method should not be used without CoreData enabled (see top).</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection see-also-section">
-		<h4 class="method-subtitle">See Also</h4>
-		<ul>
-			
-			<li><code><p><a href="#//api/name/initInsertedIntoContext:">&ndash; initInsertedIntoContext:</a></p></code></li>
-			
-		</ul>
-	</div>
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/initInsertedIntoContext:" title="initInsertedIntoContext:"></a>
-	<h3 class="subsubtitle method-title">initInsertedIntoContext:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Instantiates a new instance, inserts it into the specified CoreData context, and saves the context.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>- (id)initInsertedIntoContext:(NSManagedObjectContext *)<em>context</em></code></div>
+	<div class="method-subsection method-declaration"><code>- (void)decodeRemoteValue:(id)<em>remoteObject</em> forRemoteKey:(NSString *)<em>remoteKey</em> change:(BOOL *)<em>change</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
 		
 		<dl class="argument-def parameter-def">
-			<dt><em>context</em></dt>
-			<dd><p>The context into which to insert this new instance.</p></dd>
+			<dt><em>remoteObject</em></dt>
+			<dd><p>Remote representation of this key. Will be a JSON-parsed object (NSDictionary, NSArray, NSString, NSNumber, or nil).</p></dd>
 		</dl>
-		
-	</div>
-	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>The newly inserted object.</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Will use entity named with the receiver&rsquo;s class name.</p>
-
-<p>This method should not be used without CoreData enabled (see top).</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection see-also-section">
-		<h4 class="method-subtitle">See Also</h4>
-		<ul>
-			
-			<li><code><p><a href="#//api/name/initInserted">&ndash; initInserted</a></p></code></li>
-			
-		</ul>
-	</div>
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/initWithCustomMap:" title="initWithCustomMap:"></a>
-	<h3 class="subsubtitle method-title">initWithCustomMap:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Initializes a new instance of the receiver&rsquo;s class with a custom NSRMap string.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>- (id)initWithCustomMap:(NSString *)<em>str</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
 		
 		<dl class="argument-def parameter-def">
-			<dt><em>str</em></dt>
-			<dd><p>String to become this instance&rsquo;s NSRMap &ndash; pass as you would an NSRMap string (see above).</p></dd>
+			<dt><em>remoteKey</em></dt>
+			<dd><p>The remote key returned from Rails. Use propertyForRemoteKey: if you want the Objective-C property version of this key.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>change</em></dt>
+			<dd><p>Reference to a change boolean. Its value should be set on a custom-coded property based off if the decoding will introduce a change in the instance variable. This is used to set the change value in remoteFetch:changes: and setPropertiesUsingRemoteDictionary:.</p></dd>
 		</dl>
 		
 	</div>
 	
 	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>A new instance of the receiver&rsquo;s class with the given custom map string.</p>
-	</div>
 	
 	
 	
@@ -1576,76 +1286,52 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>The given NSRMap string will be used only for this <strong>instance</strong>. This instance will not use its class&rsquo;s NSRMap. This is very uncommon and triple checking is recommended before going with this implementation strategy.</p>
+		<p>This method should be overridden if you have a property whose JSON representation should be different than its actual object value when sending and retrieving to/from Rails.</p>
 
-<p>Pass in a string as you would type it into NSRMap():</p>
+<pre><code> @interface MyClass : NSRRemoteObject
 
-<pre><code>Person *zombie = [[Person alloc] initWithCustomMap:@"*, brain -x"];
+ @property (nonatomic, strong) NSURL *URL;         //on the server this is a plain string
+ @property (nonatomic, strong) NSArray *csvArray;  //on the server this is a comma-separated string
+
+ @end
 </code></pre>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/initWithCustomMap:customConfig:" title="initWithCustomMap:customConfig:"></a>
-	<h3 class="subsubtitle method-title">initWithCustomMap:customConfig:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Initializes a new instance of the receiver&rsquo;s class with a custom NSRMap string and config.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>- (id)initWithCustomMap:(NSString *)<em>str</em> customConfig:(NSRConfig *)<em>config</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>str</em></dt>
-			<dd><p>String to become this instance&rsquo;s NSRMap &ndash; pass as you would an NSRMap string (see above).</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>config</em></dt>
-			<dd><p>Config to become this instance&rsquo;s config.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>A new instance of the receiver&rsquo;s class with the given custom map string and given custom config.</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>The given NSRMap string and config will be used only for this <strong>instance</strong>. This instance will not use its class&rsquo;s NSRMap or any default or class-specific configs (although any config in a context block (with use or useIn) will take precedence). This is very uncommon and triple checking is recommended before going with this implementation strategy.</p>
 
-<p>Pass in a string as you would type it into NSRMap():</p>
+<p>In the example above, we want <code>URL</code> to be decoded (saved) as an NSURL locally and <code>csvArray</code> to be decoded as an NSArray locally, but Rails sends them to us as plain strings. Here&rsquo;s a possible overridden implementation:</p>
 
-<pre><code>Person *zombie = [[Person alloc] initWithCustomMap:@"*, brain -x" customConfig:nonInflectingConfig];
+<pre><code> - (void) decodeValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)change
+ {
+     if ([forRemoteKey isEqualToString:@"csv_array"])
+         self.csvArray = [remoteObject componentsSeparatedByString:@","];
+
+     else if ([forRemoteKey isEqualToString:@"url"])
+         self.URL = [NSURL URLWithString:remoteObject];
+
+     else
+         [super decodeValue:remoteObject forRemoteKey:remoteKey change:change];
+ }
 </code></pre>
+
+<p>Note: the default implementation of this method will automatically take care of NSDates for you, decoding them into an NSDate object using the Rails date format. The format used can be changed in <a href="NSRConfig.html#//api/name/dateFormat">this</a> NSRConfig property.</p>
+
+<p>Example implementing change detection:</p>
+
+<pre><code> - (void) decodeValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)change
+ {
+     if ([forRemoteKey isEqualToString:@"csv_array"])
+     {
+        NSArray *array = [remoteObject componentsSeparatedByString:@","];
+        *change = [array isEqualToArray:self.csvArray];
+        self.csvArray = array;
+     }
+     else if ([forRemoteKey isEqualToString:@"url"])
+     {
+        *change = [[self.URL absoluteString] isEqualToString:remoteObject];
+        self.URL = [NSURL URLWithString:remoteObject];
+     }
+     else
+        [super decodeValue:remoteObject forRemoteKey:remoteKey change:change];
+ }
+</code></pre><div class="warning"><p><strong>Warning:</strong> Make sure you make a call to super if a certain property shouldn&rsquo;t be custom-coded.</p></div>
 	</div>
 	
 	
@@ -1663,27 +1349,30 @@ if ([myObj remoteFetch:&amp;error])
 </div>
 						
 						<div class="section-method">
-	<a name="//api/name/initWithRemoteDictionary:" title="initWithRemoteDictionary:"></a>
-	<h3 class="subsubtitle method-title">initWithRemoteDictionary:</h3>
+	<a name="//api/name/encodeValueForProperty:remoteKey:" title="encodeValueForProperty:remoteKey:"></a>
+	<h3 class="subsubtitle method-title">encodeValueForProperty:remoteKey:</h3>
 	
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Initializes a new instance of the receiver&rsquo;s class with a given dictionary input.</p>
+		<p>Should return the remote representation for each property, optionally modifying the remote key.</p>
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>- (id)initWithRemoteDictionary:(NSDictionary *)<em>dictionary</em></code></div>
+	<div class="method-subsection method-declaration"><code>- (id)encodeValueForProperty:(NSString *)<em>property</em> remoteKey:(NSString **)<em>remoteKey</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
 		
 		<dl class="argument-def parameter-def">
-			<dt><em>dictionary</em></dt>
-			<dd><p>Dictionary to be evaluated. The keys in this dictionary (being a <em>remote</em> dictionary) should have remote keys, since this will pass through NSRMap (eg, &ldquo;id&rdquo;, not &ldquo;remoteID&rdquo;, and if a special equivalence isn&rsquo;t defined, &ldquo;my_property&rdquo;, not &ldquo;myProperty&rdquo;).</p>
-
-<p>Note that this dictionary needs to be JSON-parasable, meaning all keys are strings and all objects are instances of NSString, NSNumber, NSArray, NSDictionary, or NSNull.</p></dd>
+			<dt><em>property</em></dt>
+			<dd><p>Name of the property.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>remoteKey</em></dt>
+			<dd><p>Reference to an NSString that contains the key that should be put into the JSON going out. Will contain the key that would be sent by default (ie, underscored, if <a href="NSRConfig.html#//api/name/autoinflectsPropertyNames">enabled</a>).</p></dd>
 		</dl>
 		
 	</div>
@@ -1692,7 +1381,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>A new instance of the receiver&rsquo;s class with properties set using <em>dictionary</em>.</p>
+		<p>Remote representation for this property. Return value must be JSON-parsable (NSDictionary, NSArray, NSString, NSNumber, or (NSNull or nil)).</p>
 	</div>
 	
 	
@@ -1701,9 +1390,62 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Takes into account rules in NSRMap.</p>
+		<p>This method should be overridden if you have a property whose JSON representation should be different than its actual object value when sending and retrieving to/from Rails.</p>
 
-<p>If CoreData is enabled, inserts this new instance into the managed object context set in the currently relevant config.</p>
+<pre><code> @interface MyClass : NSRRemoteObject
+
+ @property (nonatomic, strong) NSURL *URL;         //on the server this is a plain string
+ @property (nonatomic, strong) NSArray *csvArray;  //on the server this is a comma-separated string
+
+ @end
+</code></pre>
+
+<p>In the example above, we can&rsquo;t send these objects to a server as-is, since the server expects strings for both of these. We want to send <code>URL</code> as its actual content (remember, NSURL is not JSON-encodable), and send the array <code>csvArray</code> as a plain, comma-separated string. Here&rsquo;s a possible overridden implementation:</p>
+
+<pre><code> @implementation MyClass
+
+ - (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
+ {
+     if ([property isEqualToString:@"csvArray"])
+         return [csvArray componentsJoinedByString:@","];
+
+     if ([property isEqualToString:@"URL"])
+         return [URL absoluteString];
+
+     return [super encodeValueForProperty:property];
+ }
+
+ @end
+</code></pre>
+
+<p>Note: the default implementation of this method will automatically take care of NSDates for you, encoding them into a date format string that&rsquo;s Rails-friendly. The format used can be changed in <a href="NSRConfig.html#//api/name/dateFormat">this</a> NSRConfig property.</p>
+
+<p>Overriding this method can also be used to define remote-only properties (ie, if your Rails server expects an attribute that you don’t want defined in your Objective-C class). Note here that <code>uniqueDeviceID</code> isn’t even a property of the Person class:</p>
+
+<pre><code> @implementation Person
+ @synthesize name, age;
+
+ - (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
+ {
+     if ([property isEqualToString:@"uniqueDeviceID"])
+         return [[UIDevice currentDevice] uniqueIdentifier];
+
+     return [super encodeValueForProperty:property];
+ }
+
+ @end
+</code></pre>
+
+<p>Moreover, custom remote keys can be defined here, if your Objective-C property and remote attribute differ. Simply set the contents of the <em>remoteKey</em> reference:</p>
+
+<pre><code> - (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
+ {
+     if ([property isEqualToString:@"objcProperty"])
+         *remoteKey = @"railsProperty";
+
+     return [super encodeValueForProperty:property];
+ }
+</code></pre><div class="warning"><p><strong>Warning:</strong> Make sure you make a call to super if a certain property shouldn&rsquo;t be custom-coded.</p></div>
 	</div>
 	
 	
@@ -1727,7 +1469,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Used if instances of this class should have their resource path be based off an association.</p>
+		<p>Should be overridden if instances of your subclass class should have their resource path be based off an association.</p>
 	</div>		
 	
 	
@@ -1760,13 +1502,26 @@ if ([myObj remoteFetch:&amp;error])
 		<p>This may be needed if you define your routes in Rails to look something like:</p>
 
 <pre><code> MySweetApp::Application.routes.draw do
-     resources :users
-         resources :invites
-     end
+   resources :users
+     resources :invites
+   end
  end
 </code></pre>
 
-<p>And invites are accessed in relation to some user:</p>
+<p>Typically, this method is overriden with an instance variable that represents a parent:</p>
+
+<pre><code> @implementation Invite
+ @synthesize user, foo;
+
+ - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request
+ {
+     return user;
+ }
+
+ @end
+</code></pre>
+
+<p>Now, invites will be accessed in relation to the given user (assume its <code>remoteID</code> is 1):</p>
 
 <pre><code> GET    /users/1/invites.json
  POST   /users/1/invites.json
@@ -1774,23 +1529,9 @@ if ([myObj remoteFetch:&amp;error])
  DELETE /users/1/invites/3.json
 </code></pre>
 
-<p>Typically, this method is overriden with an instance variable that represents a parent:</p>
+<p>Note that if <code>user</code>&rsquo;s remoteID is <code>nil</code>, an exception will be thrown (its ID is needed in constructing the route).</p>
 
-<pre><code>@implementation Invite
-@synthesize user, foo;
-NSRMap(*, user -b);
-
-- (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request
-{
-    return user;
-}
-
-…
-
-@end
-</code></pre>
-
-<p>Using the <strong>request</strong> parameter, you may filter requests that you don&rsquo;t want to prefix. Let&rsquo;s say you only want this behavior for POST and GET, but want to keep DELETE and PATCH with their traditional routes:</p>
+<p>You may also filter requests that you don&rsquo;t want to prefix using the <strong>request</strong> parameter. Let&rsquo;s say you only want this behavior for POST and GET, but want to keep DELETE and PATCH with their traditional routes:</p>
 
 <pre><code> GET    /users/3/invites.json  "get all the invites for user 3"
  POST   /users/3/invites.json  "create an invite for user 3"
@@ -1824,13 +1565,153 @@ NSRMap(*, user -b);
 </div>
 						
 						<div class="section-method">
+	<a name="//api/name/propertyForRemoteKey:" title="propertyForRemoteKey:"></a>
+	<h3 class="subsubtitle method-title">propertyForRemoteKey:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Should return the equivalent Objective-C property for a given remote key.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (NSString *)propertyForRemoteKey:(NSString *)<em>remoteKey</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>remoteKey</em></dt>
+			<dd><p>The key sent in the remote dictionary.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The Objective-C property equivalent for a remote key. If your class doesn&rsquo;t define a property for this remote key, this should return <code>nil</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>For example, will return <code>updatedAt</code> (the Objective-C property) for the <code>updated_at</code> key in an incoming dictionary, assuming that your class defines an <code>updatedAt</code> property.</p>
+
+<p>The default behavior is to autoinflect into camelCase (if <a href="NSRConfig.html#//api/name/autoinflectsPropertyNames">enabled</a>), or convert <code>id</code> to <code>remoteID</code>. If the resulting conversino is not found as a property in the class, returns <code>nil</code>.</p>
+
+<p>Overriding example:</p>
+
+<pre><code> - (NSString *) propertyForRemoteKey:(NSString *)remoteKey
+ {
+     //the "rails" key given from a Rails hash will be translated to the "objc" property when decoding
+     if ([remoteKey isEqualToString:@"rails"])
+         return @"objc";
+
+     return [super propertyForRemoteKey:remoteKey];
+ }
+</code></pre>
+
+<p>It is possible to also override decodeRemoteValue:forRemoteKey:changes: and setting the <code>objc</code> property manually for a remoteKey of &ldquo;rails&rdquo;, but since decodeRemoteValue:forRemoteKey:changes: uses this method internally, it is cleaner to just override this method.</p>
+
+<p>The inverse method remoteKeyForProperty does not exist &ndash; instead override encodeValueForProperty:remoteKey:.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/relationshipForProperty:" title="relationshipForProperty:"></a>
+	<h3 class="subsubtitle method-title">relationshipForProperty:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Should return an NSRRelationship description object for this property, or nil if none at all.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (NSRRelationship *)relationshipForProperty:(NSString *)<em>property</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>property</em></dt>
+			<dd><p>The name of the property.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An NSRRelationship description object for this property, or <code>nil</code> if none at all</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Only to-one relationships are supported by default. NSRails will return a to-one relationship for a property if its type is an NSRRemoteObject subclass. Belongs-to and to-many relationships must be manually overriden:</p>
+
+<pre><code> - (NSRRelationship *) relationshipForProperty:(NSString *)property
+ {
+    //a User belongs to a Group (ie, remote-side, User has a group_id)
+    if ([property isEqualToString:@"group"])
+        return [NSRRelationship belongsTo:[Group class]];
+
+    //a User has many posts
+    if ([property isEqualToString:@"posts"])
+        return [NSRRelationship hasMany:[Post class]];
+
+    return [super relationshipForProperty:property];
+ }
+</code></pre>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
 	<a name="//api/name/remoteCreate:" title="remoteCreate:"></a>
 	<h3 class="subsubtitle method-title">remoteCreate:</h3>
 	
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including <a href="#//api/name/remoteID">remoteID</a>).</p>
+		<p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including remoteID).</p>
 	</div>		
 	
 	
@@ -1861,11 +1742,7 @@ NSRMap(*, user -b);
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Sends a <code>POST</code> request to <code>/objects</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name), with the receiver&rsquo;s remoteDictionaryRepresentationWrapped:YES as its body.
-Request made synchronously. See <a href="#//api/name/remoteCreateAsync:">remoteCreateAsync:</a> for asynchronous operation.</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>If successful, will save its managed object context to update changed properties like <a href="#//api/name/remoteID">remoteID</a>.</p>
+Request made synchronously. See remoteCreateAsync: for asynchronous operation.</p>
 	</div>
 	
 	
@@ -1889,7 +1766,7 @@ Request made synchronously. See <a href="#//api/name/remoteCreateAsync:">remoteC
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including <a href="#//api/name/remoteID">remoteID</a>).</p>
+		<p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including remoteID).</p>
 	</div>		
 	
 	
@@ -1915,10 +1792,6 @@ Request made synchronously. See <a href="#//api/name/remoteCreateAsync:">remoteC
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Asynchronously sends a <code>POST</code> request to <code>/objects</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name), with the receiver&rsquo;s remote dictionary representation as its body.</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>If successful, will save its managed object context to update changed properties like <a href="#//api/name/remoteID">remoteID</a>.</p>
 	</div>
 	
 	
@@ -1972,12 +1845,8 @@ Request made synchronously. See <a href="#//api/name/remoteCreateAsync:">remoteC
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Sends a <code>DELETE</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID">remoteID</a>).
-Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:">remoteDestroyAsync:</a> for asynchronous operation.</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>If successful, will delete itself from its managed object context and save the context.</p>
+		<p>Sends a <code>DELETE</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).
+Request made synchronously. See remoteDestroyAsync: for asynchronous operation.</p>
 	</div>
 	
 	
@@ -2026,11 +1895,7 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:">remote
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Asynchronously sends a <code>DELETE</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID">remoteID</a>).</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>If successful, will delete itself from its managed object context and save the context.</p>
+		<p>Asynchronously sends a <code>DELETE</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).</p>
 	</div>
 	
 	
@@ -2136,14 +2001,10 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:">remote
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Sends a <code>GET</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID">remoteID</a>).
-Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFetchAsync:</a> for asynchronous operation.</p>
+		<p>Sends a <code>GET</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).
+Request made synchronously. See remoteFetchAsync: for asynchronous operation.</p>
 
-<p>Requires presence of <a href="#//api/name/remoteID">remoteID</a>, or will throw an <code>NSRNullRemoteIDException</code>.</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>If successful and changes are present, will save its managed object context.</p>
+<p>Requires presence of remoteID, or will throw an <code>NSRNullRemoteIDException</code>.</p>
 	</div>
 	
 	
@@ -2195,7 +2056,7 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 			<dt><em>changesPtr</em></dt>
 			<dd><p>Pointer to boolean value set to whether or not the receiver changed in any way after the fetch (ie, if this fetch modified one of receiver&rsquo;s local properties due to a change in value server-side). This will also take into account diffs to any nested <code>NSRRemoteObject</code> objects that are affected by this fetch (done recursively).</p>
 
-<p>Note that because this only tracks differences in local changes, properties that changed server-side that are not defined in the receiver&rsquo;s class will <em>not</em> report back a change (ie, if receiver&rsquo;s class doesn&rsquo;t implement an <code>updated_at</code> property and <code>updated_at</code> is changed in your remote DB, no change will be reported.) This parameter may be <code>NULL</code> if this information is not useful, or use <a href="#//api/name/remoteFetch:">remoteFetch:</a>.</p></dd>
+<p>Note that because this only tracks differences in local changes, properties that changed server-side that are not defined in the receiver&rsquo;s class will <em>not</em> report back a change (ie, if receiver&rsquo;s class doesn&rsquo;t implement an <code>updated_at</code> property and <code>updated_at</code> is changed in your remote DB, no change will be reported.) This parameter may be <code>NULL</code> if this information is not useful, or use remoteFetch:.</p></dd>
 		</dl>
 		
 	</div>
@@ -2213,14 +2074,10 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Sends a <code>GET</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID">remoteID</a>).
-Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFetchAsync:</a> for asynchronous operation.</p>
+		<p>Sends a <code>GET</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).
+Request made synchronously. See remoteFetchAsync: for asynchronous operation.</p>
 
-<p>Requires presence of <a href="#//api/name/remoteID">remoteID</a>, or will throw an <code>NSRNullRemoteIDException</code>.</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>If successful and changes are present, will save its managed object context.</p>
+<p>Requires presence of remoteID, or will throw an <code>NSRNullRemoteIDException</code>.</p>
 	</div>
 	
 	
@@ -2278,13 +2135,69 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Asynchronously sends a <code>GET</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID">remoteID</a>).</p>
+		<p>Asynchronously sends a <code>GET</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).</p>
 
-<p>Requires presence of <a href="#//api/name/remoteID">remoteID</a>, or will throw an <code>NSRNullRemoteIDException</code>.</p>
+<p>Requires presence of remoteID, or will throw an <code>NSRNullRemoteIDException</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/remoteProperties" title="remoteProperties"></a>
+	<h3 class="subsubtitle method-title">remoteProperties</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Should return an array of all properties to be used by NSRails.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (NSMutableArray *)remoteProperties</code></div>
+	
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An array of all properties to be used by NSRails.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Default behavior is to introspect into the class and return an array of all non-primitive type properties. This also escalates up the class hierarchy to NSRRemoteObject&rsquo;s properties as well (ie, <code>remoteID</code>).</p>
 
-<p><strong>CoreData</strong></p>
+<p>If you want to override this, you should add or remove objects from super:</p>
 
-<p>If successful and changes are present, will save its managed object context.</p>
+<pre><code> - (NSMutableArray *) remoteProperties
+ {
+    NSMutableArray *props = [super remoteProperties];
+
+    //remove an object from NSRails entirely
+    [props removeObject:@"totallyLocal"];
+
+    //can even add a property not defined in your class - encodable in encodeValueForProperty:remoteKey:
+    [props addObject:@"totallyRemote"];
+
+    return props;
+ }
+</code></pre>
 	</div>
 	
 	
@@ -2338,17 +2251,13 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Sends an <code>PUT</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID">remoteID</a>).</p>
+		<p>Sends an <code>PUT</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).</p>
 
-<p>The distinction between this method and <a href="#//api/name/remoteUpdate:">remoteUpdate:</a> is that this method will always use the <code>PUT</code> HTTP method, while <a href="#//api/name/remoteUpdate:">remoteUpdate:</a> is configurable. This is to allow servers that use <code>PATCH</code> to update attributes using <a href="#//api/name/remoteUpdate:">remoteUpdate:</a> and keep remoteReplace: for a more accurate &ldquo;placement&rdquo; procedure that should occur with the <code>PUT</code> method. More discussion <a href="http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/">here</a>.</p>
+<p>The distinction between this method and remoteUpdate: is that this method will always use the <code>PUT</code> HTTP method, while remoteUpdate: is configurable. This is to allow servers that use <code>PATCH</code> to update attributes using remoteUpdate: and keep remoteReplace: for a more accurate &ldquo;placement&rdquo; procedure that should occur with the <code>PUT</code> method. More discussion <a href="http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/">here</a>.</p>
 
-<p>Request made synchronously. See <a href="#//api/name/remoteReplaceAsync:">remoteReplaceAsync:</a> for asynchronous operation.</p>
+<p>Request made synchronously. See remoteReplaceAsync: for asynchronous operation.</p>
 
-<p>Requires presence of <a href="#//api/name/remoteID">remoteID</a>, or will throw an <code>NSRNullRemoteIDException</code>.</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>If successful, will save its managed object context. Note that changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
+<p>Requires presence of remoteID, or will throw an <code>NSRNullRemoteIDException</code>.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
 	</div>
 	
 	
@@ -2397,15 +2306,11 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Asynchronously sends an <code>PUT</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID">remoteID</a>).</p>
+		<p>Asynchronously sends an <code>PUT</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).</p>
 
-<p>The distinction between this method and <a href="#//api/name/remoteUpdateAsync:">remoteUpdateAsync:</a> is that this method will always use the <code>PUT</code> HTTP method, while <a href="#//api/name/remoteUpdateAsync:">remoteUpdateAsync:</a> is configurable. This is to allow servers that use <code>PATCH</code> to update attributes using <a href="#//api/name/remoteUpdateAsync:">remoteUpdateAsync:</a> and keep remoteReplaceAsync: for a more accurate &ldquo;placement&rdquo; procedure that should occur with the <code>PUT</code> method. More discussion <a href="http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/">here</a>.</p>
+<p>The distinction between this method and remoteUpdateAsync: is that this method will always use the <code>PUT</code> HTTP method, while remoteUpdateAsync: is configurable. This is to allow servers that use <code>PATCH</code> to update attributes using remoteUpdateAsync: and keep remoteReplaceAsync: for a more accurate &ldquo;placement&rdquo; procedure that should occur with the <code>PUT</code> method. More discussion <a href="http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/">here</a>.</p>
 
-<p>Requires presence of <a href="#//api/name/remoteID">remoteID</a>, or will throw an <code>NSRNullRemoteIDException</code>.</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>If successful, will save its managed object context. Note that changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
+<p>Requires presence of remoteID, or will throw an <code>NSRNullRemoteIDException</code>.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
 	</div>
 	
 	
@@ -2459,16 +2364,12 @@ Request made synchronously. See <a href="#//api/name/remoteFetchAsync:">remoteFe
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Sends a request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID">remoteID</a>).
+		<p>Sends a request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).
 Will use the HTTP method defined in the relevant config&rsquo;s <a href="NSRConfig.html#//api/name/updateMethod">updateMethod</a> property (default <code>PUT</code>).</p>
 
-<p>Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:">remoteUpdateAsync:</a> for asynchronous operation.</p>
+<p>Request made synchronously. See remoteUpdateAsync: for asynchronous operation.</p>
 
-<p>Requires presence of <a href="#//api/name/remoteID">remoteID</a>, or will throw an <code>NSRNullRemoteIDException</code>.</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>If successful, will save its managed object context. Note that changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
+<p>Requires presence of remoteID, or will throw an <code>NSRNullRemoteIDException</code>.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
 	</div>
 	
 	
@@ -2517,56 +2418,11 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="NSRConf
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Sends a request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <a href="#//api/name/remoteID">remoteID</a>).
+		<p>Sends a request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).
 Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRConfig.html#//api/name/updateMethod">updateMethod</a> property(default <code>PUT</code>).</p>
 
-<p>Requires presence of <a href="#//api/name/remoteID">remoteID</a>, or will throw an <code>NSRNullRemoteIDException</code>.</p>
-
-<p><strong>CoreData</strong></p>
-
-<p>If successful, will save its managed object context. Note that changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
+<p>Requires presence of remoteID, or will throw an <code>NSRNullRemoteIDException</code>.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
 	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/saveContext" title="saveContext"></a>
-	<h3 class="subsubtitle method-title">saveContext</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Save the CoreData object context of the receiver.</p>
-
-<p>This method should not be used without CoreData enabled (see top).</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>- (BOOL)saveContext</code></div>
-	
-	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>Whether or not the save was successful.</p>
-	</div>
-	
-	
-	
-	
 	
 	
 	
@@ -2620,6 +2476,93 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Takes into account rules in NSRMap.</p>
+
+<p>Will set remoteAttributes to <em>dictionary</em>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/shouldSendProperty:whenNested:" title="shouldSendProperty:whenNested:"></a>
+	<h3 class="subsubtitle method-title">shouldSendProperty:whenNested:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Should return whether or not a certain property should be sent in the outgoing dictionary.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (BOOL)shouldSendProperty:(NSString *)<em>property</em> whenNested:(BOOL)<em>nested</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>property</em></dt>
+			<dd><p>The name of the property.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>nested</em></dt>
+			<dd><p>Whether or not the receiving object is being nested.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>YES if the property should be included in the dictionary, NO if it shouldn&rsquo;t.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Default behavior is to <strong>not</strong> send if:</p>
+
+<ul>
+<li>Property is <code>remoteID</code> and it is <code>nil</code>, or, <code>nested</code> is false. (Sending <code>id</code> is only relevant to ensure nested objects are not re-created.)</li>
+<li>Property is not a timestamp (<code>created at</code>, <code>updated at</code>).</li>
+<li>Property is a non belongs-to relationship (to-many or to-one) and the <code>nested</code> is true (ie, only send &ldquo;shallow&rdquo; copies of objects when they are being nested. This is to prevent infinite loops when recursively sending nested properties that could also include this object).</li>
+<li>Property is a non belongs-to relationship, <code>nested</code> is false, but the value of the property is either <code>nil</code> or an empty collection. (No reason to send empty _attributes).</li>
+</ul>
+
+
+<p>Otherwise the property is sent. So typically, this method is overridden if you do not wish to have a property in an outgoing dictionary. Overriding this method would look like this:</p>
+
+<pre><code> - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
+ {
+    //never send retrieveOnlyProperty to your server
+    if ([property isEqualToString:@"retrieveOnlyProperty"])
+        return NO;
+
+    //deepNest is a property with a has-one/has-many relationship that would otherwise not be sent when this object is nested
+    if ([property isEqualToString:@"deepNest"] &amp;&amp; nested)
+        return YES;
+
+    return [super shouldSendProperty:property whenNested:nested];
+ }
+</code></pre>
+
+<p>The &ldquo;shouldSetProperty&rdquo; equivalent is done through decodeRemoteValue:forRemoteKey:change:. Simply override it and do nothing for that property if you do not want to decode that property.</p><div class="warning"><p><strong>Warning:</strong> Make sure you make a call to super if a certain property shouldn&rsquo;t be manually managed.</p></div>
 	</div>
 	
 	
@@ -2649,7 +2592,7 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-07)</span><br />
+						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-20)</span><br />
 						
 						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 789)</a>.</span></p>
 						
@@ -2739,14 +2682,6 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 			}
 			
 			window.onload = init;
-			
-			// If showing in Xcode, hide the TOC and Header
-			if (navigator.userAgent.match(/xcode/i)) {
-				document.getElementById("contents").className = "hideInXcode"
-				document.getElementById("tocContainer").className = "hideInXcode"
-				document.getElementById("top_header").className = "hideInXcode"
-			}
-			
 		</script>
 	</body>
 </html>
