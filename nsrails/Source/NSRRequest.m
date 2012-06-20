@@ -59,7 +59,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 @end
 
 @implementation NSRRequest
-@synthesize route, httpMethod, body, config, queryParameters, baseURL;
+@synthesize route, httpMethod, body, config, queryParameters;
 
 - (NSMutableDictionary *) queryParameters
 {
@@ -67,11 +67,6 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 		queryParameters = [[NSMutableDictionary alloc] init];
 
 	return queryParameters;
-}
-
-- (NSURL *) baseURL
-{
-	return [NSURL URLWithString:self.config.appURL];
 }
 
 # pragma mark - Config
@@ -211,9 +206,13 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	if (!obj.remoteID)
     {
 		if (obj)
+        {
 			[NSException raise:NSRNullRemoteIDException format:@"Attempt to fetch all %@s via object %@, but the object's remoteID was nil.",[self class],[obj class]];
+        }
 		else
+        {
 			return [NSRRequest requestToFetchAllObjectsOfClass:c];
+        }
     }
 	
 	return [[NSRRequest GET] routeToObject:obj withCustomMethod:[c remoteControllerName]];
@@ -286,7 +285,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 		appendedRoute = [appendedRoute stringByAppendingFormat:@"?%@",[params componentsJoinedByString:@"&"]];
 	}
 	
-	NSURL *base = self.baseURL;
+	NSURL *base = [NSURL URLWithString:self.config.appURL];
 	if (!base)
 	{
 		[NSException raise:NSRMissingURLException format:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup. (env=%@)", [NSRConfig currentEnvironment]];

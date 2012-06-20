@@ -74,12 +74,6 @@
  */
 @property (nonatomic, strong) NSString *route;
 
-/*
- Base URL
- Undocumented
- */
-@property (nonatomic, readonly) NSURL *baseURL;
-
 /**
  The HTTP verb with which to make the request.
  

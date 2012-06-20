@@ -31,8 +31,6 @@
 #import "NSRRemoteObject.h"
 
 /**
- Incomplete documentation
- 
  ### Setting up
  
  **You can either:**
@@ -50,7 +48,6 @@
  
  - By default, NSRRemoteObject inherits from NSObject. Because your managed, NSRails-enabled class need to inherit from NSManagedObject in order to function within CoreData, and because Objective-C does not allow multiple inheritance, NSRRemoteObject will modify its superclass to NSManagedObject during compile-time if `NSR_USE_COREDATA` is defined.
  
- 
  ### Setting a universal context
  
  - You must set your managed object context to your config's managedObjectContext property so that NSRails can automatically insert or search for CoreData objects when operations require it:
@@ -59,14 +56,53 @@
  
  ### remoteID
  
- - `remoteID` is used as a "primary key" that NSRails will use to find other instances, etc. This means that `remoteID` has to be defined in your *.xcdatamodeld data model file. 
+ - `remoteID` is used as a "primary key" that NSRails will use to find other instances, etc. This key also validates uniqueness, meaning saving a context with two records of the same type with the same remoteID will fail.
  
- - You can either create an abstract entity that defines a `remoteID` attribute and acts as a parent to your other entities (preferred), **OR** declare `remoteID` for each entity that subclasses NSRRemoteManagedObject:
+ - `remoteID` must be defined in your *.xcdatamodeld data model file. You can either create an abstract entity that defines a `remoteID` attribute and acts as a parent to your other entities (preferred), **OR** declare `remoteID` for each entity that subclasses NSRRemoteManagedObject:
  
  <div style="text-align:center; max-height:100%; height:250px; vertical-align:middle;"><a href="cd-abstract.png"><img src="cd-abstract.png" height=250></img></a> **OR** <a href="cd-no-abstract.png"><img src="cd-no-abstract.png" height=220></img></a></div>
  
  - `remoteID` should be an Integer (16 is fine) and indexed.
 
+ ## Differences from NSRRemoteObject
+ 
+ NSRRemoteManagedObject overrides some NSRRemoteObject behavior to make it more CoreData-friendly.
+ 
+ ### Class remote requests
+ 
+ **All**: Each object returned in the array may be an existing or newly inserted managed object. All managed objects will reflect properties set to those returned by your server.
+
+ **Object with ID**: If request is successful, will attempt to find an existing local object with *objectID*, and update its properties to the server's response. If it cannot find an existing local object with that remoteID, will insert a new object into the context, with those properties.
+
+ ### Instance remote requests
+ 
+ **Fetch**: If successful and changes are present, will save its managed object context.
+
+ **Update/Replace**: If successful, will save its managed object context. 
+ 
+ @warning Changes to the local object will remain even if the request was unsuccessful. It is recommended to implement an undo manager for your managed object context to rollback any changes in this case.
+
+ **Create**: If successful, will save its managed object context to update changed properties in the server response (like remoteID).
+
+ **Destroy**: If successful, will delete itself from its managed object context and save the context.
+
+ ### Others
+ 
+ **objectWithRemoteDictionary:**: Will attempt to retrieve the object in CoreData whose remoteID matches the object for key `id` in *dictionary*.
+ 
+ - If this object is found, will set its properties using *dictionary* and save the context.
+ - If this object is not found (or there's no `id` key), will create & insert a new object using *dictionary* and save the context.
+ 
+ Will search for objects of entity named with the receiver's class name.
+
+ **setPropertiesUsingRemoteDictionary:**: Saves the context.
+ 
+ **remoteDestroyOnNesting**: This property leaves your managed object **unaffected**. You will have to delete it from your context manually if your request was successful.
+ 
+ ### Overrides
+ 
+ **relationshipForProperty:**
+ 
  */
 
 @interface NSRRemoteManagedObject : NSRRemoteObject
@@ -110,7 +146,11 @@
 /// =============================================================================================
 
 /**
- Undocumented
+ Override this method if the class entity name is different than the name of the class.
+ 
+ Default behavior here is to return the name of the class.
+ 
+ @return String (typically literal) to be used as entity name when inserting and fetching objects of this class.
  */
 + (NSString *) entityName;
 

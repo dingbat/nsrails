@@ -313,9 +313,14 @@ extern NSString * const NSRCoreDataException;
 + (NSRConfig *) defaultConfig;
 
 /**
- Returns the current relevant config
+ Returns the current relevant config for a given class.
  
- Undocumented
+ - Will return the config currently being used in a context block (with use and useIn:).
+ - If none, will return the config set for *class* (with useForClass:).
+ - If none, will return defaultConfig.
+ 
+ @param The class - maybe has a custom config attached to it.
+ @return The current relevant config for a given class.
  */
 + (NSRConfig *) relevantConfigForClass:(Class)class;
 
