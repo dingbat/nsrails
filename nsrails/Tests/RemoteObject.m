@@ -270,12 +270,12 @@
 	STAssertEqualObjects(p.retrieveOnly, @"retrieve", @"Should've set retrieve... -r");
 	STAssertEqualObjects(p.shared, @"shared", @"Should've set shared... blank");
 	STAssertEqualObjects(p.sharedExplicit, @"shared explicit", @"Should've set sharedExplicit... -rs");
-	STAssertEqualObjects(p.undefined, @"local", @"Shouldn't have set undefined... not in NSRMap");
+	STAssertEqualObjects(p.undefined, @"local", @"Shouldn't have set undefined...");
 	
 	NSDictionary *sendDict = [p remoteDictionaryRepresentationWrapped:NO];
 	STAssertNil([sendDict objectForKey:@"retrieve_only"], @"Shouldn't send retrieve-only... -r");
 	STAssertNil([sendDict objectForKey:@"local"], @"Shouldn't send local-only... -x");
-	STAssertNil([sendDict objectForKey:@"undefined"], @"Shouldn't send undefined... not in NSRMap");
+	STAssertNil([sendDict objectForKey:@"undefined"], @"Shouldn't send undefined...");
 	STAssertEqualObjects([sendDict objectForKey:@"send_only"], @"send--local", @"Should've sent send... -s");
 	STAssertEqualObjects([sendDict objectForKey:@"shared"], @"shared", @"Should've sent shared... blank");
 	STAssertEqualObjects([sendDict objectForKey:@"shared_explicit"], @"shared explicit", @"Should've sent sharedExplicit... -rs");

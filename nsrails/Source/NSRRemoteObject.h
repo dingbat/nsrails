@@ -77,7 +77,7 @@
  
  See the "Methods to Override" section of this class reference. These methods can be overriden for custom per-property behavior.
  
- Remember to make a call to `super` if you're not overriding behavior for that property. **These are not delegate methods**.
+ Remember, **these are not delegate methods**. You **must** make a call to `super` if you're not overriding behavior for that property.
  
  Finally, check out the [NSRails Cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook) for quick overriding recipes.
   */
@@ -97,16 +97,14 @@
 /**
  The corresponding local property for remote attribute `id`.
  
- It should be noted that this property will be automatically updated after remoteCreate:, as will anything else that is returned from that create.
+ It should be noted that this property will be automatically updated after remoteCreate, as will anything else that is returned from that create.
  */
 @property (nonatomic, strong) NSNumber *remoteID;
 
 /**
  The most recent dictionary of all properties returned by Rails, exactly as it returned it. (read-only)
  
- This will include properties that you may not have defined in your Objective-C class, allowing you to dynamically add fields to your app if the server-side model changes.
- 
- Moreover, this will not take into account anything in NSRMap - it is exactly the hash as was sent by Rails.
+ This will include properties that you may not have defined in your Objective-C class, allowing you to dynamically add fields to your app if the server-side model changes. This dictionary won't go through any of the encoding methods - it'll be exactly the dictionary as was sent in JSON.
  
  You're safe to use this property after any method that sets your object's properties from remote. For example:
 	
@@ -117,7 +115,7 @@
 		…
 	}
  
- Calling setPropertiesUsingRemoteDictionary: will also update remoteAttributes to the dictionary passed in.
+ Calling <setPropertiesUsingRemoteDictionary:> will also update remoteAttributes to the dictionary passed in.
  */
 @property (nonatomic, strong, readonly) NSDictionary *remoteAttributes;
 
@@ -372,18 +370,20 @@
 /**
  Serializes the receiver's properties into a dictionary.
   
+ Uses the coding methods.
+
  @param wrapped If `YES`, wraps the dictionary with a key of the model name:
  
 	{"user"=>{"name"=>"x", "email"=>"y"}}
  
- @return The receiver's properties as a dictionary (takes into account rules in NSRMap).
+ @return The receiver's properties as a dictionary.
  */
 - (NSDictionary *) remoteDictionaryRepresentationWrapped:(BOOL)wrapped;
 
 /**
  Sets the receiver's properties given a dictionary.
  
- Takes into account rules in NSRMap.
+ Uses the coding methods.
  
  Will set remoteAttributes to *dictionary*.
 
@@ -399,15 +399,13 @@
 
 /**
  Initializes a new instance of the receiver's class with a given dictionary input.
- 
- Takes into account rules in NSRMap.
-  
- @param dictionary Dictionary to be evaluated. The keys in this dictionary (being a *remote* dictionary) should have remote keys, since this will pass through NSRMap (eg, "id", not "remoteID", and if a special equivalence isn't defined, "my_property", not "myProperty").
+   
+ @param remoteDictionary Remote dictionary to be evaluated. (e.g., keys are "id", not "remoteID"; "my_property", not "myProperty").
  
  Note that this dictionary needs to be JSON-parasable, meaning all keys are strings and all objects are instances of NSString, NSNumber, NSArray, NSDictionary, or NSNull.
  @return A new instance of the receiver's class with properties set using *dictionary*.
  */
-+ (id) objectWithRemoteDictionary:(NSDictionary *)dictionary;
++ (id) objectWithRemoteDictionary:(NSDictionary *)remoteDictionary;
 
 
 /// =============================================================================================
@@ -551,7 +549,7 @@
          if ([property isEqualToString:@"URL"])
              return [URL absoluteString];
          
-         return [super encodeValueForProperty:property];
+         return [super encodeValueForProperty:property remoteKey:remoteKey];
      }
  
      @end
@@ -568,7 +566,7 @@
          if ([property isEqualToString:@"uniqueDeviceID"])
              return [[UIDevice currentDevice] uniqueIdentifier];
      
-         return [super encodeValueForProperty:property];
+         return [super encodeValueForProperty:property remoteKey:remoteKey];
      }
      
      @end
@@ -580,7 +578,7 @@
          if ([property isEqualToString:@"objcProperty"])
              *remoteKey = @"railsProperty";
          
-         return [super encodeValueForProperty:property];
+         return [super encodeValueForProperty:property remoteKey:remoteKey];
      }
 
  

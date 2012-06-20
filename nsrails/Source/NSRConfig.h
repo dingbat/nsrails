@@ -53,9 +53,7 @@ extern NSString * const NSRValidationErrorsKey;
 
 //Exceptions+Domains
 extern NSString * const NSRRemoteErrorDomain;
-extern NSString * const NSRMapException;
 extern NSString * const NSRJSONParsingException;
-extern NSString * const NSRInternalError;
 extern NSString * const NSRMissingURLException;
 extern NSString * const NSRNullRemoteIDException;
 extern NSString * const NSRCoreDataException;
@@ -225,11 +223,11 @@ extern NSString * const NSRCoreDataException;
 /**
  When true, all Objective-C property names will have a default equivalence to their under_scored versions.
  
- For instance, `myProperty` in Obj-C will change to `my_property` when sending/receiving to/from Rails.
+ For instance, `myProperty` in Obj-C will change to `my_property` when sending/receiving to/from Rails. `the_id` = `theID`; `the_ids` = `theIDs`.
  
  When false, names must be identical to their corresponding attributes in Rails.
  
- If there are just a few cases where you don't want this, see the NSRMap macro to override equivalents.
+ If there are just a few cases where you don't want this, see <NSRRemoteObject>'s overridable methods.
  
  **Default:** `YES`.
  */

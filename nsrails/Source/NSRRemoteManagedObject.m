@@ -209,12 +209,7 @@
 
 + (id) findObjectWithRemoteID:(NSNumber *)rID
 {
-	if ([self class] == [NSRRemoteObject class])
-	{
-		[NSException raise:NSRCoreDataException format:@"Attempt to call %@ on NSRRemoteObject. Call this on your subclass!",NSStringFromSelector(_cmd)];
-	}
-	
-	return [self findFirstObjectByAttribute:@"remoteID" 
+    return [self findFirstObjectByAttribute:@"remoteID" 
 								  withValue:rID
 								  inContext:[self getGlobalManagedObjectContextFromCmd:_cmd]];
 }
