@@ -277,7 +277,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setDateFormat:</TokenIdentifier>
-			<Abstract>Date format used if a property of type NSDate is encountered, to "encode" and "decode" NSDate objects.</Abstract>
+			<Abstract>Date format used if a property of type NSDate is encountered, to encode and decode NSDate objects.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSString *dateFormat</Declaration>
@@ -288,7 +288,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/dateFormat</TokenIdentifier>
-			<Abstract>Date format used if a property of type NSDate is encountered, to "encode" and "decode" NSDate objects.</Abstract>
+			<Abstract>Date format used if a property of type NSDate is encountered, to encode and decode NSDate objects.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSString *dateFormat</Declaration>
@@ -493,6 +493,7 @@
 			
 	<RelatedTokens>
 		<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/dateFromString:</TokenIdentifier>
+		<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/dateFormat</TokenIdentifier>
 		
 	</RelatedTokens>
 	
@@ -514,6 +515,7 @@
 			
 	<RelatedTokens>
 		<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/stringFromDate:</TokenIdentifier>
+		<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/dateFormat</TokenIdentifier>
 		
 	</RelatedTokens>
 	

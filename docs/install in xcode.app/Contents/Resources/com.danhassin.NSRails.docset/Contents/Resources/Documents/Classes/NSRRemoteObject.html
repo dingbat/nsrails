@@ -297,7 +297,7 @@
 
 <p>See the &ldquo;Methods to Override&rdquo; section of this class reference. These methods can be overriden for custom per-property behavior.</p>
 
-<p>Remember to make a call to <code>super</code> if you&rsquo;re not overriding behavior for that property. <strong>These are not delegate methods</strong>.</p>
+<p>Remember, <strong>these are not delegate methods</strong>. You <strong>must</strong> make a call to <code>super</code> if you&rsquo;re not overriding behavior for that property.</p>
 
 <p>Finally, check out the <a href="https://github.com/dingbat/nsrails/wiki/Cookbook">NSRails Cookbook</a> for quick overriding recipes.</p>
 					</div>
@@ -439,7 +439,7 @@
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteCreateAsync:">&ndash;&nbsp;remoteCreateAsync:</a></code>
-		<span class="tooltip"><p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including remoteID).</p></span>
+		<span class="tooltip"><p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including <code>remoteID</code>).</p></span>
 	</span>
 	
 	
@@ -482,7 +482,9 @@
 							<li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteDictionaryRepresentationWrapped:">&ndash;&nbsp;remoteDictionaryRepresentationWrapped:</a></code>
-		<span class="tooltip"><p>Serializes the receiver&rsquo;s properties into a dictionary.</p></span>
+		<span class="tooltip"><p>Serializes the receiver&rsquo;s properties into a dictionary.</p>
+
+<p>Uses the coding methods.</p></span>
 	</span>
 	
 	
@@ -561,7 +563,7 @@
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/relationshipForProperty:">&ndash;&nbsp;relationshipForProperty:</a></code>
-		<span class="tooltip"><p>Should return an NSRRelationship description object for this property, or nil if none at all.</p></span>
+		<span class="tooltip"><p>Should return an NSRRelationship description object for this property, or <code>nil</code> if none at all.</p></span>
 	</span>
 	
 	
@@ -614,9 +616,7 @@
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>This will include properties that you may not have defined in your Objective-C class, allowing you to dynamically add fields to your app if the server-side model changes.</p>
-
-<p>Moreover, this will not take into account anything in NSRMap &ndash; it is exactly the hash as was sent by Rails.</p>
+		<p>This will include properties that you may not have defined in your Objective-C class, allowing you to dynamically add fields to your app if the server-side model changes. This dictionary won&rsquo;t go through any of the encoding methods &ndash; it&rsquo;ll be exactly the dictionary as was sent in JSON.</p>
 
 <p>You&rsquo;re safe to use this property after any method that sets your object&rsquo;s properties from remote. For example:</p>
 
@@ -628,7 +628,7 @@ if ([myObj remoteFetch:&amp;error])
 }
 </code></pre>
 
-<p>Calling setPropertiesUsingRemoteDictionary: will also update remoteAttributes to the dictionary passed in.</p>
+<p>Calling <a href="#//api/name/setPropertiesUsingRemoteDictionary:"><code>setPropertiesUsingRemoteDictionary:</code></a> will also update remoteAttributes to the dictionary passed in.</p>
 	</div>
 	
 	
@@ -667,7 +667,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>If true, this object will include a <code>_destroy</code> key on send (ie, when the model nesting it is sent during a remoteUpdate: or remoteCreate:).</p>
+		<p>If true, this object will include a <code>_destroy</code> key on send (ie, when the model nesting it is sent during a <a href="#//api/name/remoteUpdate:"><code>remoteUpdate:</code></a> or <a href="#//api/name/remoteCreate:"><code>remoteCreate:</code></a>).</p>
 
 <p>This can be useful if you have a lot of nested models you need to destroy &ndash; you can do it in one request instead of several repeated destroys on each object.</p>
 
@@ -710,7 +710,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>It should be noted that this property will be automatically updated after remoteCreate:, as will anything else that is returned from that create.</p>
+		<p>It should be noted that this property will be automatically updated after remoteCreate, as will anything else that is returned from that create.</p>
 	</div>
 	
 	
@@ -746,15 +746,15 @@ if ([myObj remoteFetch:&amp;error])
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>+ (id)objectWithRemoteDictionary:(NSDictionary *)<em>dictionary</em></code></div>
+	<div class="method-subsection method-declaration"><code>+ (id)objectWithRemoteDictionary:(NSDictionary *)<em>remoteDictionary</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
 		
 		<dl class="argument-def parameter-def">
-			<dt><em>dictionary</em></dt>
-			<dd><p>Dictionary to be evaluated. The keys in this dictionary (being a <em>remote</em> dictionary) should have remote keys, since this will pass through NSRMap (eg, &ldquo;id&rdquo;, not &ldquo;remoteID&rdquo;, and if a special equivalence isn&rsquo;t defined, &ldquo;my_property&rdquo;, not &ldquo;myProperty&rdquo;).</p>
+			<dt><em>remoteDictionary</em></dt>
+			<dd><p>Remote dictionary to be evaluated. (e.g., keys are &ldquo;id&rdquo;, not &ldquo;remoteID&rdquo;; &ldquo;my_property&rdquo;, not &ldquo;myProperty&rdquo;).</p>
 
 <p>Note that this dictionary needs to be JSON-parasable, meaning all keys are strings and all objects are instances of NSString, NSNumber, NSArray, NSDictionary, or NSNull.</p></dd>
 		</dl>
@@ -771,11 +771,6 @@ if ([myObj remoteFetch:&amp;error])
 	
 	
 	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Takes into account rules in NSRMap.</p>
-	</div>
 	
 	
 	
@@ -830,7 +825,7 @@ if ([myObj remoteFetch:&amp;error])
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Makes a GET request to <code>/objects</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name.)</p>
 
-<p>Request done synchronously. See remoteAllAsync: for asynchronous operation.</p>
+<p>Request made synchronously. See <a href="#//api/name/remoteAllAsync:"><code>remoteAllAsync:</code></a> for asynchronous operation.</p>
 	</div>
 	
 	
@@ -994,7 +989,7 @@ if ([myObj remoteFetch:&amp;error])
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Makes a GET request to <code>/parents/3/objects</code> (where <code>parents/3</code> is the path for the <strong>parentObject</strong>, and <code>objects</code> is the pluralization of this model name.)</p>
 
-<p>Request done synchronously. See remoteAllViaObject:async: for asynchronous operation.</p>
+<p>Request made synchronously. See <a href="#//api/name/remoteAllViaObject:async:"><code>remoteAllViaObject:async:</code></a> for asynchronous operation.</p>
 	</div>
 	
 	
@@ -1033,7 +1028,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>The default behavior (when not overriden) is to pluralize <a href="#//api/name/remoteModelName">remoteModelName</a>, so if your class was called <code>User</code>, by default requests involving its controller would be routed to <code>/users</code>. In the example above for custom model names, it would go to <code>/subscribers</code> since remoteModelName was overridden.</p>
+		<p>The default behavior (when not overriden) is to pluralize <code></code>remoteModelName<code>, so if your class was called</code>User<code>, by default requests involving its controller would be routed to</code>/users<code>. In the example above for custom model names, it would go to</code>/subscribers` since remoteModelName was overridden.</p>
 
 <p>However, this can be overridden as well, if, lets say, you have an irregular plural:</p>
 
@@ -1219,7 +1214,7 @@ if ([myObj remoteFetch:&amp;error])
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Makes a GET request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is <em>objectID</em></p>
 
-<p>Request done synchronously. See remoteObjectWithID:async: for asynchronous operation.</p>
+<p>Request made synchronously. See <a href="#//api/name/remoteObjectWithID:async:"><code>remoteObjectWithID:async:</code></a> for asynchronous operation.</p>
 	</div>
 	
 	
@@ -1268,12 +1263,12 @@ if ([myObj remoteFetch:&amp;error])
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>remoteKey</em></dt>
-			<dd><p>The remote key returned from Rails. Use propertyForRemoteKey: if you want the Objective-C property version of this key.</p></dd>
+			<dd><p>The remote key returned from Rails. Use <a href="#//api/name/propertyForRemoteKey:"><code>propertyForRemoteKey:</code></a> if you want the Objective-C property version of this key.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>change</em></dt>
-			<dd><p>Reference to a change boolean. Its value should be set on a custom-coded property based off if the decoding will introduce a change in the instance variable. This is used to set the change value in remoteFetch:changes: and setPropertiesUsingRemoteDictionary:.</p></dd>
+			<dd><p>Reference to a change boolean. Its value should be set on a custom-coded property based off if the decoding will introduce a change in the instance variable. This is used to set the change value in <a href="#//api/name/remoteFetch:changes:"><code>remoteFetch:changes:</code></a> and `<a href="#//api/name/setPropertiesUsingRemoteDictionary:">setPropertiesUsingRemoteDictionary:</a>.</p></dd>
 		</dl>
 		
 	</div>
@@ -1412,7 +1407,7 @@ if ([myObj remoteFetch:&amp;error])
      if ([property isEqualToString:@"URL"])
          return [URL absoluteString];
 
-     return [super encodeValueForProperty:property];
+     return [super encodeValueForProperty:property remoteKey:remoteKey];
  }
 
  @end
@@ -1430,7 +1425,7 @@ if ([myObj remoteFetch:&amp;error])
      if ([property isEqualToString:@"uniqueDeviceID"])
          return [[UIDevice currentDevice] uniqueIdentifier];
 
-     return [super encodeValueForProperty:property];
+     return [super encodeValueForProperty:property remoteKey:remoteKey];
  }
 
  @end
@@ -1443,7 +1438,7 @@ if ([myObj remoteFetch:&amp;error])
      if ([property isEqualToString:@"objcProperty"])
          *remoteKey = @"railsProperty";
 
-     return [super encodeValueForProperty:property];
+     return [super encodeValueForProperty:property remoteKey:remoteKey];
  }
 </code></pre><div class="warning"><p><strong>Warning:</strong> Make sure you make a call to super if a certain property shouldn&rsquo;t be custom-coded.</p></div>
 	</div>
@@ -1529,7 +1524,7 @@ if ([myObj remoteFetch:&amp;error])
  DELETE /users/1/invites/3.json
 </code></pre>
 
-<p>Note that if <code>user</code>&rsquo;s remoteID is <code>nil</code>, an exception will be thrown (its ID is needed in constructing the route).</p>
+<p>Note that if <code>user</code>&rsquo;s <a href="#//api/name/remoteID"><code>remoteID</code></a> is <code>nil</code>, an exception will be thrown (its ID is needed in constructing the route).</p>
 
 <p>You may also filter requests that you don&rsquo;t want to prefix using the <strong>request</strong> parameter. Let&rsquo;s say you only want this behavior for POST and GET, but want to keep DELETE and PATCH with their traditional routes:</p>
 
@@ -1617,9 +1612,9 @@ if ([myObj remoteFetch:&amp;error])
  }
 </code></pre>
 
-<p>It is possible to also override decodeRemoteValue:forRemoteKey:changes: and setting the <code>objc</code> property manually for a remoteKey of &ldquo;rails&rdquo;, but since decodeRemoteValue:forRemoteKey:changes: uses this method internally, it is cleaner to just override this method.</p>
+<p>It is possible to also override decodeRemoteValue:forRemoteKey:changes: and setting the <code>objc</code> property manually for a remoteKey of &ldquo;rails&rdquo;, but since <code>&lt;decodeRemoteValue:forRemoteKey:changes:&gt;</code> uses this method internally, it is cleaner to just override this method.</p>
 
-<p>The inverse method remoteKeyForProperty does not exist &ndash; instead override encodeValueForProperty:remoteKey:.</p>
+<p>The inverse method remoteKeyForProperty does not exist &ndash; instead override <a href="#//api/name/encodeValueForProperty:remoteKey:"><code>encodeValueForProperty:remoteKey:</code></a> and modify the remote key.</p>
 	</div>
 	
 	
@@ -1643,7 +1638,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Should return an NSRRelationship description object for this property, or nil if none at all.</p>
+		<p>Should return an NSRRelationship description object for this property, or <code>nil</code> if none at all.</p>
 	</div>		
 	
 	
@@ -1766,7 +1761,7 @@ Request made synchronously. See remoteCreateAsync: for asynchronous operation.</
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including remoteID).</p>
+		<p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including <code>remoteID</code>).</p>
 	</div>		
 	
 	
@@ -1845,8 +1840,8 @@ Request made synchronously. See remoteCreateAsync: for asynchronous operation.</
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Sends a <code>DELETE</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).
-Request made synchronously. See remoteDestroyAsync: for asynchronous operation.</p>
+		<p>Sends a <code>DELETE</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <code>remoteID</code>).
+Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:"><code>remoteDestroyAsync:</code></a> for asynchronous operation.</p>
 	</div>
 	
 	
@@ -1895,7 +1890,7 @@ Request made synchronously. See remoteDestroyAsync: for asynchronous operation.<
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Asynchronously sends a <code>DELETE</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).</p>
+		<p>Asynchronously sends a <code>DELETE</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <code>remoteID</code>).</p>
 	</div>
 	
 	
@@ -1920,6 +1915,8 @@ Request made synchronously. See remoteDestroyAsync: for asynchronous operation.<
 	
 	<div class="method-subsection brief-description">
 		<p>Serializes the receiver&rsquo;s properties into a dictionary.</p>
+
+<p>Uses the coding methods.</p>
 	</div>		
 	
 	
@@ -1943,7 +1940,7 @@ Request made synchronously. See remoteDestroyAsync: for asynchronous operation.<
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>The receiver&rsquo;s properties as a dictionary (takes into account rules in NSRMap).</p>
+		<p>The receiver&rsquo;s properties as a dictionary.</p>
 	</div>
 	
 	
@@ -2001,10 +1998,11 @@ Request made synchronously. See remoteDestroyAsync: for asynchronous operation.<
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Sends a <code>GET</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).
-Request made synchronously. See remoteFetchAsync: for asynchronous operation.</p>
+		<p>Sends a <code>GET</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).</p>
 
-<p>Requires presence of remoteID, or will throw an <code>NSRNullRemoteIDException</code>.</p>
+<p>Request made synchronously. See <a href="#//api/name/remoteFetchAsync:"><code>remoteFetchAsync:</code></a> for asynchronous operation.</p>
+
+<p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRNullRemoteIDException</code>.</p>
 	</div>
 	
 	
@@ -2074,10 +2072,11 @@ Request made synchronously. See remoteFetchAsync: for asynchronous operation.</p
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Sends a <code>GET</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).
-Request made synchronously. See remoteFetchAsync: for asynchronous operation.</p>
+		<p>Sends a <code>GET</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).</p>
 
-<p>Requires presence of remoteID, or will throw an <code>NSRNullRemoteIDException</code>.</p>
+<p>Request made synchronously. See <a href="#//api/name/remoteFetchAsync:"><code>remoteFetchAsync:</code></a> for asynchronous operation.</p>
+
+<p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRNullRemoteIDException</code>.</p>
 	</div>
 	
 	
@@ -2137,7 +2136,7 @@ Request made synchronously. See remoteFetchAsync: for asynchronous operation.</p
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Asynchronously sends a <code>GET</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).</p>
 
-<p>Requires presence of remoteID, or will throw an <code>NSRNullRemoteIDException</code>.</p>
+<p>Requires presence of <code></code>remoteID<code>, or will throw an</code>NSRNullRemoteIDException`.</p>
 	</div>
 	
 	
@@ -2251,13 +2250,13 @@ Request made synchronously. See remoteFetchAsync: for asynchronous operation.</p
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Sends an <code>PUT</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).</p>
+		<p>Sends an <code>PUT</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <code>remoteID</code>).</p>
 
-<p>The distinction between this method and remoteUpdate: is that this method will always use the <code>PUT</code> HTTP method, while remoteUpdate: is configurable. This is to allow servers that use <code>PATCH</code> to update attributes using remoteUpdate: and keep remoteReplace: for a more accurate &ldquo;placement&rdquo; procedure that should occur with the <code>PUT</code> method. More discussion <a href="http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/">here</a>.</p>
+<p>The distinction between this method and <a href="#//api/name/remoteUpdateAsync:"><code>remoteUpdateAsync:</code></a> is that this method will always use the <code>PUT</code> HTTP method, while <a href="#//api/name/remoteUpdateAsync:"><code>remoteUpdateAsync:</code></a> is configurable. This is to allow servers that use <code>PATCH</code> to update attributes using <a href="#//api/name/remoteUpdateAsync:"><code>remoteUpdateAsync:</code></a> and keep <a href="#//api/name/remoteReplaceAsync:"><code>remoteReplaceAsync:</code></a> for a more accurate &ldquo;placement&rdquo; procedure that should occur with the <code>PUT</code> method. More discussion <a href="http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/">here</a>.</p>
 
 <p>Request made synchronously. See remoteReplaceAsync: for asynchronous operation.</p>
 
-<p>Requires presence of remoteID, or will throw an <code>NSRNullRemoteIDException</code>.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
+<p>Requires presence of <code></code>remoteID<code>, or will throw an</code>NSRNullRemoteIDException`.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
 	</div>
 	
 	
@@ -2306,11 +2305,11 @@ Request made synchronously. See remoteFetchAsync: for asynchronous operation.</p
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Asynchronously sends an <code>PUT</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).</p>
+		<p>Asynchronously sends an <code>PUT</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <code>remoteID</code>).</p>
 
-<p>The distinction between this method and remoteUpdateAsync: is that this method will always use the <code>PUT</code> HTTP method, while remoteUpdateAsync: is configurable. This is to allow servers that use <code>PATCH</code> to update attributes using remoteUpdateAsync: and keep remoteReplaceAsync: for a more accurate &ldquo;placement&rdquo; procedure that should occur with the <code>PUT</code> method. More discussion <a href="http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/">here</a>.</p>
+<p>The distinction between this method and <a href="#//api/name/remoteUpdateAsync:"><code>remoteUpdateAsync:</code></a> is that this method will always use the <code>PUT</code> HTTP method, while <a href="#//api/name/remoteUpdateAsync:"><code>remoteUpdateAsync:</code></a> is configurable. This is to allow servers that use <code>PATCH</code> to update attributes using <a href="#//api/name/remoteUpdateAsync:"><code>remoteUpdateAsync:</code></a> and keep <code>&lt;remoteReplaceAsync:&gt;</code> for a more accurate &ldquo;placement&rdquo; procedure that should occur with the <code>PUT</code> method. More discussion <a href="http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/">here</a>.</p>
 
-<p>Requires presence of remoteID, or will throw an <code>NSRNullRemoteIDException</code>.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
+<p>Requires presence of <code></code>remoteID<code>, or will throw an</code>NSRNullRemoteIDException`.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
 	</div>
 	
 	
@@ -2367,9 +2366,9 @@ Request made synchronously. See remoteFetchAsync: for asynchronous operation.</p
 		<p>Sends a request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).
 Will use the HTTP method defined in the relevant config&rsquo;s <a href="NSRConfig.html#//api/name/updateMethod">updateMethod</a> property (default <code>PUT</code>).</p>
 
-<p>Request made synchronously. See remoteUpdateAsync: for asynchronous operation.</p>
+<p>Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:"><code>remoteUpdateAsync:</code></a> for asynchronous operation.</p>
 
-<p>Requires presence of remoteID, or will throw an <code>NSRNullRemoteIDException</code>.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
+<p>Requires presence of <code></code>remoteID<code>, or will throw an</code>NSRNullRemoteIDException`.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
 	</div>
 	
 	
@@ -2421,7 +2420,7 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="NSRConf
 		<p>Sends a request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).
 Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRConfig.html#//api/name/updateMethod">updateMethod</a> property(default <code>PUT</code>).</p>
 
-<p>Requires presence of remoteID, or will throw an <code>NSRNullRemoteIDException</code>.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
+<p>Requires presence of <code></code>remoteID<code>, or will throw an</code>NSRNullRemoteIDException`.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
 	</div>
 	
 	
@@ -2475,7 +2474,7 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Takes into account rules in NSRMap.</p>
+		<p>Uses the coding methods.</p>
 
 <p>Will set remoteAttributes to <em>dictionary</em>.</p>
 	</div>
@@ -2539,7 +2538,7 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 		<p>Default behavior is to <strong>not</strong> send if:</p>
 
 <ul>
-<li>Property is <code>remoteID</code> and it is <code>nil</code>, or, <code>nested</code> is false. (Sending <code>id</code> is only relevant to ensure nested objects are not re-created.)</li>
+<li>Property is <a href="#//api/name/remoteID"><code>remoteID</code></a> and it is <code>nil</code>, or, <code>nested</code> is false. (Sending <code>id</code> is only relevant to ensure nested objects are not re-created.)</li>
 <li>Property is not a timestamp (<code>created at</code>, <code>updated at</code>).</li>
 <li>Property is a non belongs-to relationship (to-many or to-one) and the <code>nested</code> is true (ie, only send &ldquo;shallow&rdquo; copies of objects when they are being nested. This is to prevent infinite loops when recursively sending nested properties that could also include this object).</li>
 <li>Property is a non belongs-to relationship, <code>nested</code> is false, but the value of the property is either <code>nil</code> or an empty collection. (No reason to send empty _attributes).</li>
@@ -2562,7 +2561,7 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
  }
 </code></pre>
 
-<p>The &ldquo;shouldSetProperty&rdquo; equivalent is done through decodeRemoteValue:forRemoteKey:change:. Simply override it and do nothing for that property if you do not want to decode that property.</p><div class="warning"><p><strong>Warning:</strong> Make sure you make a call to super if a certain property shouldn&rsquo;t be manually managed.</p></div>
+<p>The &ldquo;shouldSetProperty&rdquo; equivalent is done through `<a href="#//api/name/decodeRemoteValue:forRemoteKey:change:">decodeRemoteValue:forRemoteKey:change:</a>. Simply override it and do nothing for that property if you do not want to decode it.</p><div class="warning"><p><strong>Warning:</strong> Make sure you make a call to super if a certain property shouldn&rsquo;t be manually managed.</p></div>
 	</div>
 	
 	

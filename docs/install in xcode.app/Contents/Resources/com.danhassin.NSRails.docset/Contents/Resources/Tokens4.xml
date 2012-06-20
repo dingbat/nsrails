@@ -383,7 +383,8 @@ Note that because this only tracks differences in local changes, properties that
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteDictionaryRepresentationWrapped:</TokenIdentifier>
 			<Abstract>Serializes the receiver's properties into a dictionary.
-  </Abstract>
+  
+Uses the coding methods.</Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (NSDictionary *)remoteDictionaryRepresentationWrapped:(BOOL)wrapped</Declaration>
@@ -395,7 +396,7 @@ Note that because this only tracks differences in local changes, properties that
 	{"user"=>{"name"=>"x", "email"=>"y"}}</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract>The receiver's properties as a dictionary (takes into account rules in NSRMap).</Abstract></ReturnValue>
+			<ReturnValue><Abstract>The receiver's properties as a dictionary.</Abstract></ReturnValue>
 			<Anchor>//api/name/remoteDictionaryRepresentationWrapped:</Anchor>
 		</Token>
 		
@@ -417,14 +418,15 @@ Note that because this only tracks differences in local changes, properties that
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/objectWithRemoteDictionary:</TokenIdentifier>
-			<Abstract>Initializes a new instance of the receiver's class with a given dictionary input.</Abstract>
+			<Abstract>Initializes a new instance of the receiver's class with a given dictionary input.
+   </Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>+ (id)objectWithRemoteDictionary:(NSDictionary *)dictionary</Declaration>
+			<Declaration>+ (id)objectWithRemoteDictionary:(NSDictionary *)remoteDictionary</Declaration>
 			<Parameters>
 				<Parameter>
-					<Name>dictionary</Name>
-					<Abstract>Dictionary to be evaluated. The keys in this dictionary (being a remote dictionary) should have remote keys, since this will pass through NSRMap (eg, "id", not "remoteID", and if a special equivalence isn't defined, "my_property", not "myProperty").
+					<Name>remoteDictionary</Name>
+					<Abstract>Remote dictionary to be evaluated. (e.g., keys are "id", not "remoteID"; "my_property", not "myProperty").
 
 Note that this dictionary needs to be JSON-parasable, meaning all keys are strings and all objects are instances of NSString, NSNumber, NSArray, NSDictionary, or NSNull.</Abstract>
 				</Parameter>
@@ -505,7 +507,7 @@ Note that this dictionary needs to be JSON-parasable, meaning all keys are strin
 					<Abstract>The remote key returned from Rails. Use propertyForRemoteKey: if you want the Objective-C property version of this key.</Abstract>
 				</Parameter><Parameter>
 					<Name>change</Name>
-					<Abstract>Reference to a change boolean. Its value should be set on a custom-coded property based off if the decoding will introduce a change in the instance variable. This is used to set the change value in remoteFetch:changes: and setPropertiesUsingRemoteDictionary:.
+					<Abstract>Reference to a change boolean. Its value should be set on a custom-coded property based off if the decoding will introduce a change in the instance variable. This is used to set the change value in remoteFetch:changes: and `setPropertiesUsingRemoteDictionary:.
   </Abstract>
 				</Parameter>
 			</Parameters>

@@ -105,7 +105,7 @@ Works in a very similar way to remoteFetch: in NSRRemoteObject.</Abstract>
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/intfm/NSMutableArray(NSRFetch)/translateRemoteDictionariesIntoInstancesOfClass:</TokenIdentifier>
-			<Abstract>Replaces each dictionary in this array with an instance of the given class, setting respective properties to those defined in that dictionary (using the class's NSRMap).</Abstract>
+			<Abstract>Replaces each dictionary in this array with an instance of the given class, setting respective properties to those defined in that dictionary.</Abstract>
 			<DeclaredIn>NSMutableArray+NSRails.h</DeclaredIn>			
 			
 			<Declaration>- (void)translateRemoteDictionariesIntoInstancesOfClass:(Class)class</Declaration>

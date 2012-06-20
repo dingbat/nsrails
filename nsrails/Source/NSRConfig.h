@@ -62,11 +62,11 @@ extern NSString * const NSRCoreDataException;
 
 /**
  
- The NSRails configuration class is `NSRConfig`, a class that stores your Rails app's configuration settings (server URL, etc) for either your app globally or in specific instances. It also supports basic HTTP authentication and very simple OAuth authentication.
+ The NSRails configuration class is NSRConfig, a class that stores your Rails app's configuration settings (server URL, etc) for either your app globally or in specific instances. It also supports basic HTTP authentication and very simple OAuth authentication.
  
  ## Universal Config
  
- This should meet the needs of the vast majority of Rails apps. Somewhere in your app setup, set your server URL (and optionally a username and password) using the `defaultConfig` singleton:
+ This should meet the needs of the vast majority of Rails apps. Somewhere in your app setup, set your server URL (and optionally a username and password) using the `<defaultConfig>` singleton:
 
 	//AppDelegate.m
 
@@ -84,7 +84,7 @@ extern NSString * const NSRCoreDataException;
  
  ## Config environments
  
- `NSRConfig` supports several environments if you have a test and production server and don't want to switch between the two all the time. The constants `NSRConfigEnvironmentDevelopment` and `NSRConfigEnvironmentProduction` can be used, but any string will do.
+ NSRConfig supports several environments if you have a test and production server and don't want to switch between the two all the time. The constants `NSRConfigEnvironmentDevelopment` and `NSRConfigEnvironmentProduction` can be used, but any string will do.
  
 	NSRConfig *devConfig = [[NSRConfig alloc] initWithAppURL:@"http://localhost:3000"];
 	[devConfig useAsDefaultForEnvironment:NSRConfigEnvironmentDevelopment];
@@ -96,18 +96,18 @@ extern NSString * const NSRCoreDataException;
 	 
 	// Now set your environment for the rest of the app... (set to Development by default so this isn't even necessary)
 	[NSRConfig setCurrentEnvironment:NSRConfigEnvironmentDevelopment];
-	// And the relevant config will be used in future calls to "defaultConfig" or in any "remote<X>" methods.
+	// And the relevant config will be used in future calls to `<defaultConfig>` or in any `remote<X>` methods.
  
  The environment in which a config exists (production, development, or your own) has no bearing on its behavior in sending/receiving from your server.
  
  ## Using several configs in one project
  
- - If you simply need to direct different objects to different URLs, use the useForClass: method. Base URLs, autoinflection, date formats, and any other NSRConfig configurations will be used for NSRails actions called on this class or its instances:
+ - If you simply need to direct different objects to different URLs, use the `<useForClass:>` method. Base URLs, autoinflection, date formats, and any other NSRConfig configurations will be used for NSRails actions called on this class or its instances:
  
 		NSRConfig *peopleServer = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com"];
 		[peopleServer useForClass:[Person class]];
 
- - If specific actions must be called using a separate config, an `NSRConfig` instance can be used to define a context block in which to call those config-specific methods:
+ - If specific actions must be called using a separate config, an NSRConfig instance can be used to define a context block in which to call those config-specific methods:
 		
 		NSRConfig *myConfig = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com/"];
 		
@@ -128,7 +128,7 @@ extern NSString * const NSRCoreDataException;
 			}
 		];
  
-	In these examples, everything within the blocks will be called using the config context specified, regardless of `defaultConfig` or any class-specific config (they take highest precedence).
+	In these examples, everything within the blocks will be called using the config context specified, regardless of `<defaultConfig>` or any class-specific config (they take highest precedence).
  
 	You can nest several config contexts within each other.
  
@@ -137,8 +137,7 @@ extern NSString * const NSRCoreDataException;
  When an NSRails method is called, NSRails uses the following hierarchy to find an NSRConfig to use:
  
  - **"Override" config:** If use was called (explicitly or implicity via a block). If they are nested, whichever one is on top of the stack (latest one).
- - **Instance-specific config**: If the method is an instance method and the instance was initialized with initWithCustomMap:customConfig:, will use that config.
- - **Class-specific config**: If the receiving class of the method (class or instance) defines a custom class with useForClass:.
+ - **Class-specific config**: If the receiving class of the method (class or instance) defines a custom class with `<useForClass:>`.
  - **Default config**: (Most frequent case.) Uses the config set to default of the current environment. (Current environment is `NSRConfigEnvironmentDevelopment` by default.
  */
 
@@ -277,7 +276,7 @@ extern NSString * const NSRCoreDataException;
 @property (nonatomic, strong) NSString *updateMethod;
 
 /**
- Date [format]("https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/DataFormatting/Articles/dfDateFormatting10_4.html%23//apple_ref/doc/uid/TP40002369-SW4") used if a property of type NSDate is encountered, to "encode" and "decode" NSDate objects.
+ Date [format]("https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/DataFormatting/Articles/dfDateFormatting10_4.html%23//apple_ref/doc/uid/TP40002369-SW4") used if a property of type NSDate is encountered, to encode and decode NSDate objects.
  
  This should not be changed unless the format is also changed server-side; the default is the default Rails format.
  
@@ -313,9 +312,9 @@ extern NSString * const NSRCoreDataException;
 /**
  Returns the current relevant config for a given class.
  
- - Will return the config currently being used in a context block (with use and useIn:).
- - If none, will return the config set for *class* (with useForClass:).
- - If none, will return defaultConfig.
+ - Will return the config currently being used in a context block (with `<use>` and `<useIn:>`).
+ - If none, will return the config set for *class* (with `<useForClass:>`).
+ - If none, will return `<defaultConfig>`.
  
  @param class he class - maybe has a custom config attached to it.
  @return The current relevant config for a given class.
@@ -337,7 +336,7 @@ extern NSString * const NSRCoreDataException;
 + (NSRConfig *) configForEnvironment: (NSString *)environment;
 
 /**
- Sets the global environment for `NSRConfig`.
+ Sets the global environment for NSRConfig.
  
  @param environment Environment identifier. Can be your own custom string or the constants NSRConfigEnvironmentDevelopment or NSRConfigEnvironmentProduction.
  */
@@ -384,7 +383,7 @@ extern NSString * const NSRCoreDataException;
 /**
  Specifies for all NSRails actions (instance and class methods) in a given class to use the receiver.
  
- Has precedence over a `defaultConfig`, but is trumped by a config specified for a block (with use and end, or useIn:). (This is the same precedence as instances which declare custom configs.)
+ Has precedence over a `<defaultConfig>`, but is trumped by a config specified for a block (with `<use>` and `<end>`, or `<useIn:>`). (This is the same precedence as instances which declare custom configs.)
  
  This should be used somewhere in your app setup, before any NSRails actions. 
  
@@ -416,20 +415,22 @@ extern NSString * const NSRCoreDataException;
 /**
  Returns a string representation of a given date formatted using dateFormat.
  
- This method is used internally to convert an `NSDate` property in an object to a Rails-readable string.
+ This method is used internally to convert an NSDate property in an object to a Rails-readable string.
  
  @param date The date to format.
  @see dateFromString:.
+ @see dateFormat.
  */
 - (NSString *) stringFromDate:(NSDate *)date;
 
 /**
  Returns a date representation of a given string interpreted using dateFormat.
  
- This method is used internally to convert a Rails-sent datetime string representation into an `NSDate` for an object property.
+ This method is used internally to convert a Rails-sent datetime string representation into an NSDate for an object property.
  
  @param string The string to parse.
  @see stringFromDate:.
+ @see dateFormat.
  */
 - (NSDate *) dateFromString:(NSString *)string;
 
@@ -439,7 +440,7 @@ extern NSString * const NSRCoreDataException;
 /// =============================================================================================
 
 /**
- Initializes a new `NSRConfig` instance with an app URL.
+ Initializes a new NSRConfig instance with an app URL.
  
  @param url App URL to be set to the new instance.
  */

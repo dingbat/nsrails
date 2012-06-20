@@ -115,14 +115,14 @@
 		…
 	}
  
- Calling <setPropertiesUsingRemoteDictionary:> will also update remoteAttributes to the dictionary passed in.
+ Calling `<setPropertiesUsingRemoteDictionary:>` will also update remoteAttributes to the dictionary passed in.
  */
 @property (nonatomic, strong, readonly) NSDictionary *remoteAttributes;
 
 /**
  If true, will remotely destroy this object if sent nested.
  
- If true, this object will include a `_destroy` key on send (ie, when the model nesting it is sent during a remoteUpdate: or remoteCreate:).
+ If true, this object will include a `_destroy` key on send (ie, when the model nesting it is sent during a `<remoteUpdate:>` or `<remoteCreate:>`).
  
  This can be useful if you have a lot of nested models you need to destroy - you can do it in one request instead of several repeated destroys on each object.
  
@@ -140,7 +140,7 @@
  
  Makes a GET request to `/objects` (where `objects` is the pluralization of receiver's model name.)
  
- Request done synchronously. See remoteAllAsync: for asynchronous operation.
+ Request made synchronously. See `<remoteAllAsync:>` for asynchronous operation.
 
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return NSArray of instances of receiver's class. Each object’s properties will be set to those returned by Rails.
@@ -152,7 +152,7 @@
  
  Makes a GET request to `/parents/3/objects` (where `parents/3` is the path for the **parentObject**, and `objects` is the pluralization of this model name.)
  
- Request done synchronously. See remoteAllViaObject:async: for asynchronous operation.
+ Request made synchronously. See `<remoteAllViaObject:async:>` for asynchronous operation.
  
  @param parentObject Remote object by which to request the collection from - establishes pattern for resources depending on nesting. Raises an exception if this object's `remoteID` is nil, as it is used to construct the route.
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
@@ -185,7 +185,7 @@
  
  Makes a GET request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is *objectID*
  
- Request done synchronously. See remoteObjectWithID:async: for asynchronous operation.
+ Request made synchronously. See `<remoteObjectWithID:async:>` for asynchronous operation.
  
  @param objectID The ID of the remote object.
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
@@ -213,9 +213,10 @@
  Retrieves the latest remote data for receiver and sets its properties to received response.
  
  Sends a `GET` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
- Request made synchronously. See remoteFetchAsync: for asynchronous operation.
  
- Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
+ Request made synchronously. See `<remoteFetchAsync:>` for asynchronous operation.
+ 
+ Requires presence of `<remoteID>`, or will throw an `NSRNullRemoteIDException`.
  
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`. 
  @return `YES` if fetch was successful. Returns `NO` if an error occurred.
@@ -228,9 +229,10 @@
  Retrieves the latest remote data for receiver and sets its properties to received response.
  
  Sends a `GET` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
- Request made synchronously. See remoteFetchAsync: for asynchronous operation.
  
- Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
+ Request made synchronously. See `<remoteFetchAsync:>` for asynchronous operation.
+ 
+ Requires presence of `<remoteID>`, or will throw an `NSRNullRemoteIDException`.
  
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`. 
  @param changesPtr Pointer to boolean value set to whether or not the receiver changed in any way after the fetch (ie, if this fetch modified one of receiver's local properties due to a change in value server-side). This will also take into account diffs to any nested `NSRRemoteObject` objects that are affected by this fetch (done recursively).
@@ -248,7 +250,7 @@
  
  Asynchronously sends a `GET` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
  
- Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
+ Requires presence of `<remoteID>, or will throw an `NSRNullRemoteIDException`.
  
  @param completionBlock Block to be executed when the request is complete. The second parameter passed in is a BOOL whether or not there was a *local* change. This means changes in `updated_at`, etc, will only apply if your Objective-C class implement this as a property as well. This also applies when updating any of its nested objects (done recursively).
  */
@@ -261,9 +263,9 @@
  Sends a request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
  Will use the HTTP method defined in the relevant config's [updateMethod](NSRConfig.html#//api/name/updateMethod) property (default `PUT`).
  
- Request made synchronously. See remoteUpdateAsync: for asynchronous operation.
+ Request made synchronously. See `<remoteUpdateAsync:>` for asynchronous operation.
 
- Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
+ Requires presence of `<remoteID>, or will throw an `NSRNullRemoteIDException`.
 
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return `YES` if update was successful. Returns `NO` if an error occurred.
@@ -278,7 +280,7 @@
  Sends a request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
  Will use the HTTP method defined in the relevant config's [updateMethod](../NSRConfig.html#//api/name/updateMethod) property(default `PUT`).
  
- Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
+ Requires presence of `<remoteID>, or will throw an `NSRNullRemoteIDException`.
  
  @param completionBlock Block to be executed when the request is complete.
  
@@ -299,7 +301,7 @@
 - (BOOL) remoteCreate:(NSError **)error;
 
 /**
- Creates the receiver remotely. Receiver's properties will be set to those given by Rails (including remoteID).
+ Creates the receiver remotely. Receiver's properties will be set to those given by Rails (including `remoteID`).
  
  Asynchronously sends a `POST` request to `/objects` (where `objects` is the pluralization of receiver's model name), with the receiver's remote dictionary representation as its body.
  
@@ -311,8 +313,8 @@
 /**
  Destroys receiver's corresponding remote object. Local object will be unaffected.
  
- Sends a `DELETE` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
- Request made synchronously. See remoteDestroyAsync: for asynchronous operation.
+ Sends a `DELETE` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
+ Request made synchronously. See `<remoteDestroyAsync:>` for asynchronous operation.
   
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return `YES` if destroy was successful. Returns `NO` if an error occurred.
@@ -322,7 +324,7 @@
 /**
  Destroys receiver's corresponding remote object. Local object will be unaffected.
  
- Asynchronously sends a `DELETE` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
+ Asynchronously sends a `DELETE` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
   
  @param completionBlock Block to be executed when the request is complete.
  */
@@ -331,13 +333,13 @@
 /**
  "Places" receiver's corresponding remote object.
  
- Sends an `PUT` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
+ Sends an `PUT` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
  
- The distinction between this method and remoteUpdate: is that this method will always use the `PUT` HTTP method, while remoteUpdate: is configurable. This is to allow servers that use `PATCH` to update attributes using remoteUpdate: and keep remoteReplace: for a more accurate "placement" procedure that should occur with the `PUT` method. More discussion [here](http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/).
+ The distinction between this method and `<remoteUpdateAsync:>` is that this method will always use the `PUT` HTTP method, while `<remoteUpdateAsync:>` is configurable. This is to allow servers that use `PATCH` to update attributes using `<remoteUpdateAsync:>` and keep `<remoteReplaceAsync:>` for a more accurate "placement" procedure that should occur with the `PUT` method. More discussion [here](http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/).
  
  Request made synchronously. See remoteReplaceAsync: for asynchronous operation.
  
- Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
+ Requires presence of `<remoteID>, or will throw an `NSRNullRemoteIDException`.
  
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return `YES` if place was successful. Returns `NO` if an error occurred.
@@ -349,11 +351,11 @@
 /**
  "Places" receiver's corresponding remote object.
  
- Asynchronously sends an `PUT` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
+ Asynchronously sends an `PUT` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
  
- The distinction between this method and remoteUpdateAsync: is that this method will always use the `PUT` HTTP method, while remoteUpdateAsync: is configurable. This is to allow servers that use `PATCH` to update attributes using remoteUpdateAsync: and keep remoteReplaceAsync: for a more accurate "placement" procedure that should occur with the `PUT` method. More discussion [here](http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/).
+ The distinction between this method and `<remoteUpdateAsync:>` is that this method will always use the `PUT` HTTP method, while `<remoteUpdateAsync:>` is configurable. This is to allow servers that use `PATCH` to update attributes using `<remoteUpdateAsync:>` and keep `<remoteReplaceAsync:>` for a more accurate "placement" procedure that should occur with the `PUT` method. More discussion [here](http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/).
  
- Requires presence of remoteID, or will throw an `NSRNullRemoteIDException`.
+ Requires presence of `<remoteID>, or will throw an `NSRNullRemoteIDException`.
  
  @param completionBlock Block to be executed when the request is complete.
  
@@ -443,7 +445,7 @@
 /**
  The name of this class's controller on the server - where actions for this class should be routed.
  
- The default behavior (when not overriden) is to pluralize <remoteModelName>, so if your class was called `User`, by default requests involving its controller would be routed to `/users`. In the example above for custom model names, it would go to `/subscribers` since remoteModelName was overridden.
+ The default behavior (when not overriden) is to pluralize `<remoteModelName>, so if your class was called `User`, by default requests involving its controller would be routed to `/users`. In the example above for custom model names, it would go to `/subscribers` since remoteModelName was overridden.
  
  However, this can be overridden as well, if, lets say, you have an irregular plural: 
  
@@ -456,7 +458,6 @@
      
      @end
      
- 
  **Default Behavior** (when not overriden)
  
  Pluralizes remoteModelName.
@@ -497,7 +498,7 @@
      GET    /users/1/invites/3.json
      DELETE /users/1/invites/3.json
 
- Note that if `user`'s remoteID is `nil`, an exception will be thrown (its ID is needed in constructing the route). 
+ Note that if `user`'s `<remoteID>` is `nil`, an exception will be thrown (its ID is needed in constructing the route). 
  
  You may also filter requests that you don't want to prefix using the **request** parameter. Let's say you only want this behavior for POST and GET, but want to keep DELETE and PATCH with their traditional routes:
  
@@ -640,8 +641,8 @@
 
  
  @param remoteObject Remote representation of this key. Will be a JSON-parsed object (NSDictionary, NSArray, NSString, NSNumber, or nil).
- @param remoteKey The remote key returned from Rails. Use propertyForRemoteKey: if you want the Objective-C property version of this key.
- @param change Reference to a change boolean. Its value should be set on a custom-coded property based off if the decoding will introduce a change in the instance variable. This is used to set the change value in remoteFetch:changes: and setPropertiesUsingRemoteDictionary:.
+ @param remoteKey The remote key returned from Rails. Use `<propertyForRemoteKey:>` if you want the Objective-C property version of this key.
+ @param change Reference to a change boolean. Its value should be set on a custom-coded property based off if the decoding will introduce a change in the instance variable. This is used to set the change value in `<remoteFetch:changes:>` and `<setPropertiesUsingRemoteDictionary:>.
   
  @warning Make sure you make a call to super if a certain property shouldn't be custom-coded.
  */
@@ -652,7 +653,7 @@
  
  Default behavior is to **not** send if:
  
- - Property is `remoteID` and it is `nil`, or, `nested` is false. (Sending `id` is only relevant to ensure nested objects are not re-created.)
+ - Property is `<remoteID>` and it is `nil`, or, `nested` is false. (Sending `id` is only relevant to ensure nested objects are not re-created.)
  - Property is not a timestamp (`created at`, `updated at`).
  - Property is a non belongs-to relationship (to-many or to-one) and the `nested` is true (ie, only send "shallow" copies of objects when they are being nested. This is to prevent infinite loops when recursively sending nested properties that could also include this object).
  - Property is a non belongs-to relationship, `nested` is false, but the value of the property is either `nil` or an empty collection. (No reason to send empty _attributes).
@@ -672,7 +673,7 @@
         return [super shouldSendProperty:property whenNested:nested];
      }
  
- The "shouldSetProperty" equivalent is done through decodeRemoteValue:forRemoteKey:change:. Simply override it and do nothing for that property if you do not want to decode that property.
+ The "shouldSetProperty" equivalent is done through `<decodeRemoteValue:forRemoteKey:change:>. Simply override it and do nothing for that property if you do not want to decode it.
  
  @param property The name of the property.
  @param nested Whether or not the receiving object is being nested.
@@ -683,7 +684,7 @@
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested;
 
 /**
- Should return an NSRRelationship description object for this property, or nil if none at all.
+ Should return an NSRRelationship description object for this property, or `nil` if none at all.
  
  Only to-one relationships are supported by default. NSRails will return a to-one relationship for a property if its type is an NSRRemoteObject subclass. Belongs-to and to-many relationships must be manually overriden:
  
@@ -747,9 +748,9 @@
          return [super propertyForRemoteKey:remoteKey];
      }
 
- It is possible to also override decodeRemoteValue:forRemoteKey:changes: and setting the `objc` property manually for a remoteKey of "rails", but since decodeRemoteValue:forRemoteKey:changes: uses this method internally, it is cleaner to just override this method.
+ It is possible to also override decodeRemoteValue:forRemoteKey:changes: and setting the `objc` property manually for a remoteKey of "rails", but since `<decodeRemoteValue:forRemoteKey:changes:>` uses this method internally, it is cleaner to just override this method.
 
- The inverse method remoteKeyForProperty does not exist - instead override encodeValueForProperty:remoteKey:.
+ The inverse method remoteKeyForProperty does not exist - instead override `<encodeValueForProperty:remoteKey:>` and modify the remote key.
  
  @param remoteKey The key sent in the remote dictionary.
  @return The Objective-C property equivalent for a remote key. If your class doesn't define a property for this remote key, this should return `nil`.

@@ -63,7 +63,7 @@
 /**
  Returns a relationship to describe a belongs-to relationship.
  
- The difference between this and <hasOne:> is that when nesting that property, `<property>_id` would be sent (with just its `remoteID`), to correspond to the foreign key defined on the remote model. Has-one instead sends the `<property>_attributes` key with it, including the entire representation of the object.
+ The difference between this and `<hasOne:>` is that when nesting that property, `<property>_id` would be sent (with just its `remoteID`), to correspond to the foreign key defined on the remote model. Has-one instead sends the `<property>_attributes` key with it, including the entire representation of the object.
  
  @param class The class of which your class "belongs to".
  @return A relationship to describe a belongs-to relationship.

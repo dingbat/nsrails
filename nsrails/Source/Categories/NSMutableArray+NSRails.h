@@ -46,7 +46,7 @@
  
  Makes a GET request to `/objects` (where `objects` is the pluralization of *class*'s model name.)
  
- Request done synchronously. See remoteFetchAll:async: for asynchronous operation.
+ Request made synchronously. See remoteFetchAll:async: for asynchronous operation.
  
  @param class Class with which to build instances to insert into this array. Raises an exception if this class does not subclass NSRRemoteObject.
  @param errorPtr Out parameter used if an error occurs while processing the request. May be `NULL`.
@@ -62,7 +62,7 @@
  
  Makes a GET request to `/parents/3/objects` (where `parents/3` is the path for the **parentObject**, and `objects` is the pluralization of *class*'s model name.)
  
- Request done synchronously. See remoteFetchAll:viaObject:async: for asynchronous operation.
+ Request made synchronously. See remoteFetchAll:viaObject:async: for asynchronous operation.
  
  @param class Class with which to build instances to insert into this array. Raises an exception if this class does not subclass NSRRemoteObject.
  @param parentObject Remote object by which to request the collection from - establishes pattern for resources depending on nesting. Raises an exception if this object's `remoteID` is nil, as it is used to construct the route.
