@@ -143,14 +143,28 @@ class Model
     if synth
       str += "\n"+synth
       if @property_collection.has_relationships?
-        str += "\n\n- (NSRRelationship *) relationshipForProperty:(NSString *)property\n{\n"
+        str += "\n\n- (Class) nestedClassForProperty:(NSString *)property\n{\n"
         @property_collection.properties.each do |p|
           if p.prints_relationship?
             str += "#{p.print_relationship}\n"
           end
         end
-        str += "\n    return [super relationshipForProperty:property];\n}"
+        str += "\n    return [super nestedClassForProperty:property];\n}"
         
+      end
+      
+      if @property_collection.has_belong_tos?
+        str += "\n\n- (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property\n{\n"
+        belong_tos = []
+        @property_collection.properties.each do |p|
+          if p.belongs_to
+            belong_tos << "[property isEqualToString:\"#{p.name}\"]"
+          end
+        end
+        conditional = belong_tos.join(" || ")
+        conditional = "(#{conditional})" if (belong_tos.size > 1)
+        str += "    return "+conditional+";"
+        str += "\n}"
       end
     end
     
@@ -167,14 +181,25 @@ class Model
       str += "\n  def remoteProperties\n    super + [\"#{names.join('", "')}\"]\n  end"
       
       if @property_collection.has_relationships?
-        str += "\n\n  def relationshipForProperty(property)\n"
-        str += "    case property\n"
+        str += "\n\n  def nestedClassForProperty(property)\n"
         @property_collection.properties.each do |p|
           if p.prints_relationship?
             str += "#{p.print_relationship}\n"
           end
         end
-        str += "    else\n      super\n    end\n  end"
+        str += "  end"
+      end
+
+      if @property_collection.has_belong_tos?
+        str += "\n\n  def shouldOnlySendIDKeyForNestedObjectProperty(property)\n"
+        belong_tos = []
+        @property_collection.properties.each do |p|
+          if p.belongs_to
+            belong_tos << "(property == \"#{p.name}\")"
+          end
+        end
+        str += "    "+belong_tos.join(" || ")
+        str += "\n  end"
       end
     end
     
@@ -210,6 +235,15 @@ class PropertyCollection
     end
     false
   end
+  
+  def has_belong_tos?
+    @properties.each do |prop|
+      if prop.belongs_to
+        return true
+      end
+    end
+    false
+  end
 end
 
 class Property
@@ -224,17 +258,20 @@ class Property
   end
   
   def prints_relationship?
-    (has_many || belongs_to)
+    if $options[:ruby]
+      nested_class
+    else
+      has_many
+    end
   end
   
   def print_relationship
     method = has_many ? "hasMany" : "belongsTo"
     if $options[:ruby]
-      str = "    when \"#{name}\"\n"
-      str += "      NSRRelationship.#{method}(#{nested_class})"
+      str = "    return #{nested_class} if property == \"#{name}\""
     else
       str = "    if ([property isEqualToString:@\"#{name}\"])\n"
-      str += "        return [NSRRelationship #{method}:[#{nested_class} class]];"
+      str += "        return [#{nested_class} class];"
     end 
     str
   end
