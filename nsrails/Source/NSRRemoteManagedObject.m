@@ -42,11 +42,8 @@
 #pragma clang diagnostic push
 
 @implementation NSRRemoteManagedObject
-//just to supress compiler warning when redefining the property in the .h
-@synthesize remoteDestroyOnNesting;
-@dynamic remoteID;
 
-#pragma mark - RemoteID
+#pragma mark - RemoteID CoreData getter/setters
 
 - (void) setRemoteID:(NSNumber *)rID
 {
@@ -209,26 +206,14 @@
 
 + (id) findObjectWithRemoteID:(NSNumber *)rID
 {
-    return [self findFirstObjectByAttribute:@"remoteID" 
-								  withValue:rID
-								  inContext:[self getGlobalManagedObjectContextFromCmd:_cmd]];
-}
-
-+ (id) findFirstObjectByAttribute:(NSString *)attrName withValue:(id)value inContext:(NSManagedObjectContext *)context
-{
-	NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:self.entityName];
-	
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K == %@", attrName, value];
-	fetch.predicate = predicate;
+    NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:self.entityName];
+	fetch.predicate = [NSPredicate predicateWithFormat:@"remoteID == %@", rID];
 	fetch.fetchLimit = 1;
 	
-	NSError *error = nil;
-	NSArray *results = [context executeFetchRequest:fetch error:&error];
-	if (results.count > 0) 
-	{
-		return [results objectAtIndex:0];
-	}
-	return nil;
+    NSManagedObjectContext *context = [self getGlobalManagedObjectContextFromCmd:_cmd];
+    
+	NSArray *results = [context executeFetchRequest:fetch error:nil];
+    return [results lastObject];
 }
 
 + (NSManagedObjectContext *) getGlobalManagedObjectContextFromCmd:(SEL)cmd
@@ -263,9 +248,7 @@
 	NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:self.class.entityName];
 	fetch.includesPropertyValues = NO;
 	fetch.fetchLimit = 1;
-	
-	NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(remoteID == %@) && (self != %@)", *value, self];
-	fetch.predicate = predicate;
+	fetch.predicate = [NSPredicate predicateWithFormat:@"(remoteID == %@) && (self != %@)", *value, self];
 	
 	NSArray *results = [[(id)self managedObjectContext] executeFetchRequest:fetch error:NULL];
 	
