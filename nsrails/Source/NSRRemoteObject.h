@@ -790,15 +790,6 @@
  */
 - (BOOL) propertyIsDate:(NSString *)property;
 
-/**
- Should return whether or not this property is an array.
- 
- NSRails has no idea what types your properties are in Ruby, so this is necessary when nesting to-many relationships.
- 
- @return Whether or not this property is an array.
- */
-- (BOOL) propertyIsArray:(NSString *)property;
-
 
 @end
 

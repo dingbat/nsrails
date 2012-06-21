@@ -107,13 +107,11 @@
 			[property isEqualToString:@"created_at"] || [property isEqualToString:@"updated_at"]);
 }
 
-- (BOOL) propertyIsArray:(NSString *)property
+- (BOOL) valueIsArray:(id)value
 {
-    Class c = [self.class typeClassForProperty:property];
-    
-    return ([c isSubclassOfClass:[NSArray class]] || 
-            [c isSubclassOfClass:[NSSet class]] || 
-            [c isSubclassOfClass:[NSOrderedSet class]]);
+    return ([value isKindOfClass:[NSArray class]] || 
+            [value isKindOfClass:[NSSet class]] || 
+            [value isKindOfClass:[NSOrderedSet class]]);
 }
 
 - (BOOL) propertyIsDate:(NSString *)property
@@ -225,7 +223,7 @@
 		
 		*remoteKey = [*remoteKey stringByAppendingString:@"_attributes"];
 		
-		if ([self propertyIsArray:property])
+		if ([self valueIsArray:val])
 		{
 			NSMutableArray *new = [NSMutableArray arrayWithCapacity:[val count]];
 			
@@ -294,7 +292,7 @@
 	{
         if (nestedClass)
         {
-            if ([self propertyIsArray:property])
+            if ([self valueIsArray:railsObject])
             {
                 changes = NO;
                 
@@ -421,7 +419,7 @@
         
 		//TODO
 		//the NSNull check is part of an RM bug
-		if (val == [NSNull null] || !val || ([self propertyIsArray:property] && [val count] == 0))
+		if (val == [NSNull null] || !val || ([self valueIsArray:val] && [val count] == 0))
 		{
 			return NO;
 		}
