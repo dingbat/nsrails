@@ -260,7 +260,7 @@
  Updates receiver's corresponding remote object.
  
  Sends a request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
- Will use the HTTP method defined in the relevant config's [updateMethod](NSRConfig.html#//api/name/updateMethod) property (default `PUT`).
+ Will use the HTTP method defined in the relevant config's [`updateMethod`](NSRConfig.html#//api/name/updateMethod) property (default `PUT`).
  
  Request made synchronously. See `<remoteUpdateAsync:>` for asynchronous operation.
 
@@ -277,7 +277,7 @@
  Updates receiver's corresponding remote object.
  
  Sends a request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
- Will use the HTTP method defined in the relevant config's [updateMethod](../NSRConfig.html#//api/name/updateMethod) property(default `PUT`).
+ Will use the HTTP method defined in the relevant config's [`updateMethod`](../NSRConfig.html#//api/name/updateMethod) property(default `PUT`).
  
  Requires presence of `<remoteID>, or will throw an `NSRNullRemoteIDException`.
  
@@ -334,7 +334,7 @@
  
  Sends an `PUT` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
  
- The distinction between this method and `<remoteUpdateAsync:>` is that this method will always use the `PUT` HTTP method, while `<remoteUpdateAsync:>` is configurable. This is to allow servers that use `PATCH` to update attributes using `<remoteUpdateAsync:>` and keep `<remoteReplaceAsync:>` for a more accurate "placement" procedure that should occur with the `PUT` method. More discussion [here](http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/).
+ The distinction between this method and `<remoteUpdate:>` is that this method will always use the `PUT` HTTP method, while `<remoteUpdate:>` is configurable. This is to allow servers that use `PATCH` to update attributes using `<remoteUpdate:>` and keep `remoteReplace:` for a more accurate "placement" procedure that should occur with the `PUT` method. More discussion [here](http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/).
  
  Request made synchronously. See remoteReplaceAsync: for asynchronous operation.
  
@@ -352,7 +352,7 @@
  
  Asynchronously sends an `PUT` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's `remoteID`).
  
- The distinction between this method and `<remoteUpdateAsync:>` is that this method will always use the `PUT` HTTP method, while `<remoteUpdateAsync:>` is configurable. This is to allow servers that use `PATCH` to update attributes using `<remoteUpdateAsync:>` and keep `<remoteReplaceAsync:>` for a more accurate "placement" procedure that should occur with the `PUT` method. More discussion [here](http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/).
+ The distinction between this method and `<remoteUpdateAsync:>` is that this method will always use the `PUT` HTTP method, while `<remoteUpdateAsync:>` is configurable. This is to allow servers that use `PATCH` to update attributes using `<remoteUpdateAsync:>` and keep `remoteReplaceAsync:` for a more accurate "placement" procedure that should occur with the `PUT` method. More discussion [here](http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/).
  
  Requires presence of `<remoteID>, or will throw an `NSRNullRemoteIDException`.
  
@@ -386,7 +386,7 @@
  
  Uses the coding methods.
  
- Will set remoteAttributes to *dictionary*.
+ Will set `<remoteAttributes>` to *dictionary*.
 
  @param dictionary Dictionary to be evaluated. 
  @return YES if any changes were made to the local object, NO if object was identical before/after.
@@ -672,7 +672,7 @@
         return [super shouldSendProperty:property whenNested:nested];
      }
  
- The "shouldSetProperty" equivalent is done through `<decodeRemoteValue:forRemoteKey:change:>. Simply override it and do nothing for that property if you do not want to decode it.
+ The "shouldSetProperty" equivalent is done through `<decodeRemoteValue:forRemoteKey:change:>`. Simply override it and do nothing for that property if you do not want to decode it.
  
  @param property The name of the property.
  @param nested Whether or not the receiving object is being nested.
@@ -689,13 +689,27 @@
  
  This must be overriden for any to-many relationships (since the property type is just an array, and NSRails doesn't know what kind of object should be stored).
  
+     - (Class) nestedClassForProperty:(NSString *)property
+     {
+         if ([property isEqualToString:@"responses"])
+             return [Response class];
+         
+         return [super nestedClassForProperty:property];
+     }
+
  **Ruby**:
  
- This must be overriden for all relationships - Ruby is not statically typed to NSRails can't "guess" what class you want to nest in a property.
+     def nestedClassForProperty(property)
+       return Response if property == "responses"
+       return Author if property == "author"
+     end
  
+ Because Ruby is not statically typed, this must be overriden for all relationships -  NSRails can't "guess" what class you want to nest in a property.
+ 
+ @param property Name of the property.
  @return The class for the nested object stored in the property, or nil if it is not a nested object.
  
- @warning Make sure you make a call to super.
+ @warning In Objective-C, make sure you make a call to super.
  */
 - (Class) nestedClassForProperty:(NSString *)property;
 
@@ -706,6 +720,12 @@
  
  This is useful if you have a property whose relationship is "belongs to". Meaning, the receiving object on the server holds the foreign key - it has, say, a `parent_id`, which you want sent instead of `parent_attributes` (which would anger Rails).
  
+     - (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property
+     {
+        return [property isEqualToString:"group"];
+     }
+ 
+ @param property Name of the property.
  @return YES if only the `<x>_id` key should be sent for this nested property, NO if the full `<x>_attributes` should be sent.
  */
 - (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property;
@@ -784,6 +804,7 @@
        (property == "birthday") || super
      end
 
+ @param property Name of the property.
  @return Whether or not this property should be encoded/decoded to/from a Date object.
  
  @warning Make a call to super.

@@ -1,62 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Tokens version="1.0">
-	<File path="Classes/NSRRelationship.html">
+	<File path="Classes/NSRRemoteManagedObject.html">
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/cl/NSRRelationship</TokenIdentifier>
-			<Abstract>NSRRelationship is the class to describes relationships between objects in NSRails.</Abstract>
-			<DeclaredIn>NSRRelationship.h</DeclaredIn>
+			<TokenIdentifier>//apple_ref/occ/cl/NSRRemoteManagedObject</TokenIdentifier>
+			<Abstract># Setting up</Abstract>
+			<DeclaredIn>NSRRemoteManagedObject.h</DeclaredIn>
 			
 			<NodeRef refid="2"/>
 		</Token>
 		
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRRelationship/hasMany:</TokenIdentifier>
-			<Abstract>Returns a relationship to describe a to-many relationship.</Abstract>
-			<DeclaredIn>NSRRelationship.h</DeclaredIn>			
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteManagedObject/findObjectWithRemoteID:</TokenIdentifier>
+			<Abstract>Finds the object in CoreData whose remoteID is equal to the value passed in.
+  </Abstract>
+			<DeclaredIn>NSRRemoteManagedObject.h</DeclaredIn>			
 			
-			<Declaration>+ (NSRRelationship *)hasMany:(Class)class</Declaration>
+			<Declaration>+ (id)findObjectWithRemoteID:(NSNumber *)remoteID</Declaration>
 			<Parameters>
 				<Parameter>
-					<Name>class</Name>
-					<Abstract>The class of which your class "has many".</Abstract>
+					<Name>remoteID</Name>
+					<Abstract>The remoteID to search for.</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract>A relationship to describe a to-many relationship.</Abstract></ReturnValue>
-			<Anchor>//api/name/hasMany:</Anchor>
+			<ReturnValue><Abstract>The object from CoreData, if it exists. If it does not exist, returns nil.</Abstract></ReturnValue>
+			<Anchor>//api/name/findObjectWithRemoteID:</Anchor>
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRRelationship/hasOne:</TokenIdentifier>
-			<Abstract>Returns a relationship to describe a to-one relationship.</Abstract>
-			<DeclaredIn>NSRRelationship.h</DeclaredIn>			
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteManagedObject/initInserted</TokenIdentifier>
+			<Abstract>Instantiates a new instance, inserts it into the default CoreData context.</Abstract>
+			<DeclaredIn>NSRRemoteManagedObject.h</DeclaredIn>			
 			
-			<Declaration>+ (NSRRelationship *)hasOne:(Class)class</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>class</Name>
-					<Abstract>The class of which your class "has one".</Abstract>
-				</Parameter>
-			</Parameters>
-			<ReturnValue><Abstract>A relationship to describe a to-one relationship.</Abstract></ReturnValue>
-			<Anchor>//api/name/hasOne:</Anchor>
+			<Declaration>- (id)initInserted</Declaration>
+			
+			<ReturnValue><Abstract>The newly inserted object.</Abstract></ReturnValue>
+			<Anchor>//api/name/initInserted</Anchor>
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRRelationship/belongsTo:</TokenIdentifier>
-			<Abstract>Returns a relationship to describe a belongs-to relationship.</Abstract>
-			<DeclaredIn>NSRRelationship.h</DeclaredIn>			
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteManagedObject/saveContext</TokenIdentifier>
+			<Abstract>Save the CoreData object context of the receiver.
+  </Abstract>
+			<DeclaredIn>NSRRemoteManagedObject.h</DeclaredIn>			
 			
-			<Declaration>+ (NSRRelationship *)belongsTo:(Class)class</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>class</Name>
-					<Abstract>The class of which your class "belongs to".</Abstract>
-				</Parameter>
-			</Parameters>
-			<ReturnValue><Abstract>A relationship to describe a belongs-to relationship.</Abstract></ReturnValue>
-			<Anchor>//api/name/belongsTo:</Anchor>
+			<Declaration>- (BOOL)saveContext</Declaration>
+			
+			<ReturnValue><Abstract>Whether or not the save was successful.</Abstract></ReturnValue>
+			<Anchor>//api/name/saveContext</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteManagedObject/entityName</TokenIdentifier>
+			<Abstract>Override this method if the class entity name is different than the name of the class.</Abstract>
+			<DeclaredIn>NSRRemoteManagedObject.h</DeclaredIn>			
+			
+			<Declaration>+ (NSString *)entityName</Declaration>
+			
+			<ReturnValue><Abstract>String (typically literal) to be used as entity name when inserting and fetching objects of this class.</Abstract></ReturnValue>
+			<Anchor>//api/name/entityName</Anchor>
 		</Token>
 		
 	</File>

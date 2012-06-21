@@ -78,11 +78,13 @@
 	
 	<option value="//api/name/encodeValueForProperty:remoteKey:">&nbsp;&nbsp;&nbsp;&nbsp;- encodeValueForProperty:remoteKey:</option>
 	
+	<option value="//api/name/nestedClassForProperty:">&nbsp;&nbsp;&nbsp;&nbsp;- nestedClassForProperty:</option>
+	
 	<option value="//api/name/objectUsedToPrefixRequest:">&nbsp;&nbsp;&nbsp;&nbsp;- objectUsedToPrefixRequest:</option>
 	
 	<option value="//api/name/propertyForRemoteKey:">&nbsp;&nbsp;&nbsp;&nbsp;- propertyForRemoteKey:</option>
 	
-	<option value="//api/name/relationshipForProperty:">&nbsp;&nbsp;&nbsp;&nbsp;- relationshipForProperty:</option>
+	<option value="//api/name/propertyIsDate:">&nbsp;&nbsp;&nbsp;&nbsp;- propertyIsDate:</option>
 	
 	<option value="//api/name/remoteCreate:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteCreate:</option>
 	
@@ -111,6 +113,8 @@
 	<option value="//api/name/remoteUpdateAsync:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteUpdateAsync:</option>
 	
 	<option value="//api/name/setPropertiesUsingRemoteDictionary:">&nbsp;&nbsp;&nbsp;&nbsp;- setPropertiesUsingRemoteDictionary:</option>
+	
+	<option value="//api/name/shouldOnlySendIDKeyForNestedObjectProperty:">&nbsp;&nbsp;&nbsp;&nbsp;- shouldOnlySendIDKeyForNestedObjectProperty:</option>
 	
 	<option value="//api/name/shouldSendProperty:whenNested:">&nbsp;&nbsp;&nbsp;&nbsp;- shouldSendProperty:whenNested:</option>
 	
@@ -141,6 +145,8 @@
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Initializers">Initializers</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Methods to override">Methods to override</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Methods to override (Ruby-specific)">Methods to override (Ruby-specific)</a></span></li>
 	
 </ul></li>
 
@@ -190,11 +196,13 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/encodeValueForProperty:remoteKey:">encodeValueForProperty:remoteKey:</a></span></li>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/nestedClassForProperty:">nestedClassForProperty:</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/objectUsedToPrefixRequest:">objectUsedToPrefixRequest:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/propertyForRemoteKey:">propertyForRemoteKey:</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/relationshipForProperty:">relationshipForProperty:</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/propertyIsDate:">propertyIsDate:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteCreate:">remoteCreate:</a></span></li>
 	
@@ -223,6 +231,8 @@
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteUpdateAsync:">remoteUpdateAsync:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setPropertiesUsingRemoteDictionary:">setPropertiesUsingRemoteDictionary:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/shouldOnlySendIDKeyForNestedObjectProperty:">shouldOnlySendIDKeyForNestedObjectProperty:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/shouldSendProperty:whenNested:">shouldSendProperty:whenNested:</a></span></li>
 	
@@ -562,12 +572,34 @@
 	
 </li><li>
 	<span class="tooltip">
-		<code><a href="#//api/name/relationshipForProperty:">&ndash;&nbsp;relationshipForProperty:</a></code>
-		<span class="tooltip"><p>Should return an NSRRelationship description object for this property, or <code>nil</code> if none at all.</p></span>
+		<code><a href="#//api/name/nestedClassForProperty:">&ndash;&nbsp;nestedClassForProperty:</a></code>
+		<span class="tooltip"><p>Should return the class for the nested object stored in the property, or nil if it is not a nested object.</p></span>
 	</span>
 	
 	
 </li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/shouldOnlySendIDKeyForNestedObjectProperty:">&ndash;&nbsp;shouldOnlySendIDKeyForNestedObjectProperty:</a></code>
+		<span class="tooltip"><p>Should return whether or not a nested object should be sent with its entire body (<code>&lt;x&gt;_attributes</code>), or just ID (<code>&lt;x&gt;_id</code>).</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/propertyForRemoteKey:">&ndash;&nbsp;propertyForRemoteKey:</a></code>
+		<span class="tooltip"><p>Should return the equivalent Objective-C property for a given remote key.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Methods to override (Ruby-specific)" name="task_Methods to override (Ruby-specific)"></a>
+						<h3 class="subsubtitle task-title">Methods to override (Ruby-specific)</h3>
+
+						<ul class="task-list">
+							<li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteProperties">&ndash;&nbsp;remoteProperties</a></code>
 		<span class="tooltip"><p>Should return an array of all properties to be used by NSRails.</p></span>
@@ -576,8 +608,8 @@
 	
 </li><li>
 	<span class="tooltip">
-		<code><a href="#//api/name/propertyForRemoteKey:">&ndash;&nbsp;propertyForRemoteKey:</a></code>
-		<span class="tooltip"><p>Should return the equivalent Objective-C property for a given remote key.</p></span>
+		<code><a href="#//api/name/propertyIsDate:">&ndash;&nbsp;propertyIsDate:</a></code>
+		<span class="tooltip"><p>Should return whether or not this property should be encoded/decoded to/from a Date object.</p></span>
 	</span>
 	
 	
@@ -1458,6 +1490,81 @@ if ([myObj remoteFetch:&amp;error])
 </div>
 						
 						<div class="section-method">
+	<a name="//api/name/nestedClassForProperty:" title="nestedClassForProperty:"></a>
+	<h3 class="subsubtitle method-title">nestedClassForProperty:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Should return the class for the nested object stored in the property, or nil if it is not a nested object.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (Class)nestedClassForProperty:(NSString *)<em>property</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>property</em></dt>
+			<dd><p>Name of the property.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The class for the nested object stored in the property, or nil if it is not a nested object.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The default behavior is to simply return the <em>type</em> of the property if it is a subclass of NSRRemoteObject. Otherwise, returns <code>nil</code>.</p>
+
+<p>This must be overriden for any to-many relationships (since the property type is just an array, and NSRails doesn&rsquo;t know what kind of object should be stored).</p>
+
+<pre><code> - (Class) nestedClassForProperty:(NSString *)property
+ {
+     if ([property isEqualToString:@"responses"])
+         return [Response class];
+
+     return [super nestedClassForProperty:property];
+ }
+</code></pre>
+
+<p><strong>Ruby</strong>:</p>
+
+<pre><code> def nestedClassForProperty(property)
+   return Response if property == "responses"
+   return Author if property == "author"
+ end
+</code></pre>
+
+<p>Because Ruby is not statically typed, this must be overriden for all relationships &ndash;  NSRails can&rsquo;t &ldquo;guess&rdquo; what class you want to nest in a property.</p><div class="warning"><p><strong>Warning:</strong> In Objective-C, make sure you make a call to super.</p></div>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
 	<a name="//api/name/objectUsedToPrefixRequest:" title="objectUsedToPrefixRequest:"></a>
 	<h3 class="subsubtitle method-title">objectUsedToPrefixRequest:</h3>
 	
@@ -1632,17 +1739,17 @@ if ([myObj remoteFetch:&amp;error])
 </div>
 						
 						<div class="section-method">
-	<a name="//api/name/relationshipForProperty:" title="relationshipForProperty:"></a>
-	<h3 class="subsubtitle method-title">relationshipForProperty:</h3>
+	<a name="//api/name/propertyIsDate:" title="propertyIsDate:"></a>
+	<h3 class="subsubtitle method-title">propertyIsDate:</h3>
 	
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Should return an NSRRelationship description object for this property, or <code>nil</code> if none at all.</p>
+		<p>Should return whether or not this property should be encoded/decoded to/from a Date object.</p>
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>- (NSRRelationship *)relationshipForProperty:(NSString *)<em>property</em></code></div>
+	<div class="method-subsection method-declaration"><code>- (BOOL)propertyIsDate:(NSString *)<em>property</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
@@ -1650,7 +1757,7 @@ if ([myObj remoteFetch:&amp;error])
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>property</em></dt>
-			<dd><p>The name of the property.</p></dd>
+			<dd><p>Name of the property.</p></dd>
 		</dl>
 		
 	</div>
@@ -1659,7 +1766,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>An NSRRelationship description object for this property, or <code>nil</code> if none at all</p>
+		<p>Whether or not this property should be encoded/decoded to/from a Date object.</p>
 	</div>
 	
 	
@@ -1668,21 +1775,14 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Only to-one relationships are supported by default. NSRails will return a to-one relationship for a property if its type is an NSRRemoteObject subclass. Belongs-to and to-many relationships must be manually overriden:</p>
+		<p>NSRails has no idea what types your properties are in Ruby, so to benefit from automatic Date &ndash;> string and string &ndash;> Date, it needs to know what properties are dates.</p>
 
-<pre><code> - (NSRRelationship *) relationshipForProperty:(NSString *)property
- {
-    //a User belongs to a Group (ie, remote-side, User has a group_id)
-    if ([property isEqualToString:@"group"])
-        return [NSRRelationship belongsTo:[Group class]];
+<p>Note that <code>created_at</code> and <code>updated_at</code> are already taken care of as dates.</p>
 
-    //a User has many posts
-    if ([property isEqualToString:@"posts"])
-        return [NSRRelationship hasMany:[Post class]];
-
-    return [super relationshipForProperty:property];
- }
-</code></pre>
+<pre><code> def propertyIsDate(property)
+   (property == "birthday") || super
+ end
+</code></pre><div class="warning"><p><strong>Warning:</strong> Make a call to super.</p></div>
 	</div>
 	
 	
@@ -2186,16 +2286,25 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:"><code>
 
 <pre><code> - (NSMutableArray *) remoteProperties
  {
-    NSMutableArray *props = [super remoteProperties];
+     NSMutableArray *props = [super remoteProperties];
 
-    //remove an object from NSRails entirely
-    [props removeObject:@"totallyLocal"];
+     //remove an object from NSRails entirely
+     [props removeObject:@"totallyLocal"];
 
-    //can even add a property not defined in your class - encodable in encodeValueForProperty:remoteKey:
-    [props addObject:@"totallyRemote"];
+     //can even add a property not defined in your class - encodable in encodeValueForProperty:remoteKey:
+     [props addObject:@"totallyRemote"];
 
-    return props;
+     return props;
  }
+</code></pre>
+
+<p><strong>Ruby</strong>:</p>
+
+<p>Overriding this method, adding on all of your instance variables is necessary in RubyMotion because properties are created on runtime and Objective-C introspection won&rsquo;t apply.</p>
+
+<pre><code> def remoteProperties
+   super + ["author", "content", "created_at"]
+ end
 </code></pre>
 	</div>
 	
@@ -2252,7 +2361,7 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:"><code>
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Sends an <code>PUT</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <code>remoteID</code>).</p>
 
-<p>The distinction between this method and <a href="#//api/name/remoteUpdateAsync:"><code>remoteUpdateAsync:</code></a> is that this method will always use the <code>PUT</code> HTTP method, while <a href="#//api/name/remoteUpdateAsync:"><code>remoteUpdateAsync:</code></a> is configurable. This is to allow servers that use <code>PATCH</code> to update attributes using <a href="#//api/name/remoteUpdateAsync:"><code>remoteUpdateAsync:</code></a> and keep <a href="#//api/name/remoteReplaceAsync:"><code>remoteReplaceAsync:</code></a> for a more accurate &ldquo;placement&rdquo; procedure that should occur with the <code>PUT</code> method. More discussion <a href="http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/">here</a>.</p>
+<p>The distinction between this method and <a href="#//api/name/remoteUpdate:"><code>remoteUpdate:</code></a> is that this method will always use the <code>PUT</code> HTTP method, while <a href="#//api/name/remoteUpdate:"><code>remoteUpdate:</code></a> is configurable. This is to allow servers that use <code>PATCH</code> to update attributes using <a href="#//api/name/remoteUpdate:"><code>remoteUpdate:</code></a> and keep <code>remoteReplace:</code> for a more accurate &ldquo;placement&rdquo; procedure that should occur with the <code>PUT</code> method. More discussion <a href="http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/">here</a>.</p>
 
 <p>Request made synchronously. See remoteReplaceAsync: for asynchronous operation.</p>
 
@@ -2307,7 +2416,7 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:"><code>
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Asynchronously sends an <code>PUT</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s <code>remoteID</code>).</p>
 
-<p>The distinction between this method and <a href="#//api/name/remoteUpdateAsync:"><code>remoteUpdateAsync:</code></a> is that this method will always use the <code>PUT</code> HTTP method, while <a href="#//api/name/remoteUpdateAsync:"><code>remoteUpdateAsync:</code></a> is configurable. This is to allow servers that use <code>PATCH</code> to update attributes using <a href="#//api/name/remoteUpdateAsync:"><code>remoteUpdateAsync:</code></a> and keep <code>&lt;remoteReplaceAsync:&gt;</code> for a more accurate &ldquo;placement&rdquo; procedure that should occur with the <code>PUT</code> method. More discussion <a href="http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/">here</a>.</p>
+<p>The distinction between this method and <a href="#//api/name/remoteUpdateAsync:"><code>remoteUpdateAsync:</code></a> is that this method will always use the <code>PUT</code> HTTP method, while <a href="#//api/name/remoteUpdateAsync:"><code>remoteUpdateAsync:</code></a> is configurable. This is to allow servers that use <code>PATCH</code> to update attributes using <a href="#//api/name/remoteUpdateAsync:"><code>remoteUpdateAsync:</code></a> and keep <code>remoteReplaceAsync:</code> for a more accurate &ldquo;placement&rdquo; procedure that should occur with the <code>PUT</code> method. More discussion <a href="http://weblog.rubyonrails.org/2012/2/25/edge-rails-patch-is-the-new-primary-http-method-for-updates/">here</a>.</p>
 
 <p>Requires presence of <code></code>remoteID<code>, or will throw an</code>NSRNullRemoteIDException`.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
 	</div>
@@ -2364,7 +2473,7 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:"><code>
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Sends a request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).
-Will use the HTTP method defined in the relevant config&rsquo;s <a href="NSRConfig.html#//api/name/updateMethod">updateMethod</a> property (default <code>PUT</code>).</p>
+Will use the HTTP method defined in the relevant config&rsquo;s <a href="NSRConfig.html#//api/name/updateMethod"><code>updateMethod</code></a> property (default <code>PUT</code>).</p>
 
 <p>Request made synchronously. See <a href="#//api/name/remoteUpdateAsync:"><code>remoteUpdateAsync:</code></a> for asynchronous operation.</p>
 
@@ -2418,7 +2527,7 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="NSRConf
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Sends a request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).
-Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRConfig.html#//api/name/updateMethod">updateMethod</a> property(default <code>PUT</code>).</p>
+Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRConfig.html#//api/name/updateMethod"><code>updateMethod</code></a> property(default <code>PUT</code>).</p>
 
 <p>Requires presence of <code></code>remoteID<code>, or will throw an</code>NSRNullRemoteIDException`.</p><div class="warning"><p><strong>Warning:</strong> No local properties will be set, as (by default) Rails does not return anything for this action. This means that if you update an object with the creation of new nested objects, those nested objects will not locally update with their respective IDs.</p></div>
 	</div>
@@ -2476,7 +2585,69 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Uses the coding methods.</p>
 
-<p>Will set remoteAttributes to <em>dictionary</em>.</p>
+<p>Will set <a href="#//api/name/remoteAttributes"><code>remoteAttributes</code></a> to <em>dictionary</em>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/shouldOnlySendIDKeyForNestedObjectProperty:" title="shouldOnlySendIDKeyForNestedObjectProperty:"></a>
+	<h3 class="subsubtitle method-title">shouldOnlySendIDKeyForNestedObjectProperty:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Should return whether or not a nested object should be sent with its entire body (<code>&lt;x&gt;_attributes</code>), or just ID (<code>&lt;x&gt;_id</code>).</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (BOOL)shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)<em>property</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>property</em></dt>
+			<dd><p>Name of the property.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>YES if only the <code>&lt;x&gt;_id</code> key should be sent for this nested property, NO if the full <code>&lt;x&gt;_attributes</code> should be sent.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The default behavior is to return <code>NO</code>. (You don&rsquo;t have to make a call to super here.)</p>
+
+<p>This is useful if you have a property whose relationship is &ldquo;belongs to&rdquo;. Meaning, the receiving object on the server holds the foreign key &ndash; it has, say, a <code>parent_id</code>, which you want sent instead of <code>parent_attributes</code> (which would anger Rails).</p>
+
+<pre><code> - (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property
+ {
+    return [property isEqualToString:"group"];
+ }
+</code></pre>
 	</div>
 	
 	
@@ -2540,8 +2711,8 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 <ul>
 <li>Property is <a href="#//api/name/remoteID"><code>remoteID</code></a> and it is <code>nil</code>, or, <code>nested</code> is false. (Sending <code>id</code> is only relevant to ensure nested objects are not re-created.)</li>
 <li>Property is not a timestamp (<code>created at</code>, <code>updated at</code>).</li>
-<li>Property is a non belongs-to relationship (to-many or to-one) and the <code>nested</code> is true (ie, only send &ldquo;shallow&rdquo; copies of objects when they are being nested. This is to prevent infinite loops when recursively sending nested properties that could also include this object).</li>
-<li>Property is a non belongs-to relationship, <code>nested</code> is false, but the value of the property is either <code>nil</code> or an empty collection. (No reason to send empty _attributes).</li>
+<li>Property is a relationship, would send the full <code>_attributes</code>, and <code>nested</code> is true (ie, only send &ldquo;shallow&rdquo; copies of objects when they are being nested. This is to prevent infinite loops when recursively sending nested properties that could also include this object).</li>
+<li>Property is a relationship, but the value of the property is either <code>nil</code> or an empty collection. (No reason to send empty <code>_attributes</code>).</li>
 </ul>
 
 
@@ -2561,7 +2732,7 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
  }
 </code></pre>
 
-<p>The &ldquo;shouldSetProperty&rdquo; equivalent is done through `<a href="#//api/name/decodeRemoteValue:forRemoteKey:change:">decodeRemoteValue:forRemoteKey:change:</a>. Simply override it and do nothing for that property if you do not want to decode it.</p><div class="warning"><p><strong>Warning:</strong> Make sure you make a call to super if a certain property shouldn&rsquo;t be manually managed.</p></div>
+<p>The &ldquo;shouldSetProperty&rdquo; equivalent is done through <a href="#//api/name/decodeRemoteValue:forRemoteKey:change:"><code>decodeRemoteValue:forRemoteKey:change:</code></a>. Simply override it and do nothing for that property if you do not want to decode it.</p><div class="warning"><p><strong>Warning:</strong> Make sure you make a call to super if a certain property shouldn&rsquo;t be manually managed.</p></div>
 	</div>
 	
 	
@@ -2591,7 +2762,7 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-20)</span><br />
+						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-21)</span><br />
 						
 						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 789)</a>.</span></p>
 						

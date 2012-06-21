@@ -1,65 +1,612 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Tokens version="1.0">
-	<File path="Classes/NSRRemoteManagedObject.html">
+	<File path="Classes/NSRRemoteObject.html">
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/cl/NSRRemoteManagedObject</TokenIdentifier>
-			<Abstract># Setting up</Abstract>
-			<DeclaredIn>NSRRemoteManagedObject.h</DeclaredIn>
+			<TokenIdentifier>//apple_ref/occ/cl/NSRRemoteObject</TokenIdentifier>
+			<Abstract>NSRRemoteObject is the primary class in NSRails - any classes that subclass it will be treated with a "remote correspondance" and ActiveResource-like APIs will be available.
+  
+Note that you do not have to define an id property for your Objective-C class, as your subclass will inherit NSRRemoteObject's remoteID property.
+  
+# CoreData</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>
 			
 			<NodeRef refid="3"/>
 		</Token>
 		
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteManagedObject/findObjectWithRemoteID:</TokenIdentifier>
-			<Abstract>Finds the object in CoreData whose remoteID is equal to the value passed in.
-  </Abstract>
-			<DeclaredIn>NSRRemoteManagedObject.h</DeclaredIn>			
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/setRemoteID:</TokenIdentifier>
+			<Abstract>The corresponding local property for remote attribute id.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>+ (id)findObjectWithRemoteID:(NSNumber *)remoteID</Declaration>
+			<Declaration>@property (nonatomic, strong) NSNumber *remoteID</Declaration>
+			
+			
+			<Anchor>//api/name/remoteID</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instp/NSRRemoteObject/remoteID</TokenIdentifier>
+			<Abstract>The corresponding local property for remote attribute id.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSNumber *remoteID</Declaration>
+			
+			
+			<Anchor>//api/name/remoteID</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/setRemoteAttributes:</TokenIdentifier>
+			<Abstract>The most recent dictionary of all properties returned by Rails, exactly as it returned it. (read-only)</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong, readonly) NSDictionary *remoteAttributes</Declaration>
+			
+			
+			<Anchor>//api/name/remoteAttributes</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instp/NSRRemoteObject/remoteAttributes</TokenIdentifier>
+			<Abstract>The most recent dictionary of all properties returned by Rails, exactly as it returned it. (read-only)</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong, readonly) NSDictionary *remoteAttributes</Declaration>
+			
+			
+			<Anchor>//api/name/remoteAttributes</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/setRemoteDestroyOnNesting:</TokenIdentifier>
+			<Abstract>If true, will remotely destroy this object if sent nested.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic) BOOL remoteDestroyOnNesting</Declaration>
+			
+			
+			<Anchor>//api/name/remoteDestroyOnNesting</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instp/NSRRemoteObject/remoteDestroyOnNesting</TokenIdentifier>
+			<Abstract>If true, will remotely destroy this object if sent nested.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic) BOOL remoteDestroyOnNesting</Declaration>
+			
+			
+			<Anchor>//api/name/remoteDestroyOnNesting</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteAll:</TokenIdentifier>
+			<Abstract>Returns an array of all remote objects (as instances of receiver's class.) Each instance’s properties will be set to those returned by Rails.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>+ (NSArray *)remoteAll:(NSError **)error</Declaration>
 			<Parameters>
 				<Parameter>
-					<Name>remoteID</Name>
-					<Abstract>The remoteID to search for.</Abstract>
+					<Name>error</Name>
+					<Abstract>Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract>The object from CoreData, if it exists. If it does not exist, returns nil.</Abstract></ReturnValue>
-			<Anchor>//api/name/findObjectWithRemoteID:</Anchor>
+			<ReturnValue><Abstract>NSArray of instances of receiver's class. Each object’s properties will be set to those returned by Rails.</Abstract></ReturnValue>
+			<Anchor>//api/name/remoteAll:</Anchor>
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteManagedObject/initInserted</TokenIdentifier>
-			<Abstract>Instantiates a new instance, inserts it into the default CoreData context.</Abstract>
-			<DeclaredIn>NSRRemoteManagedObject.h</DeclaredIn>			
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteAllViaObject:error:</TokenIdentifier>
+			<Abstract>Returns an array of all remote objects (as instances of receiver's class), constructed with a parent prefix. Each instance’s properties will be set to those returned by Rails.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>- (id)initInserted</Declaration>
-			
-			<ReturnValue><Abstract>The newly inserted object.</Abstract></ReturnValue>
-			<Anchor>//api/name/initInserted</Anchor>
+			<Declaration>+ (NSArray *)remoteAllViaObject:(NSRRemoteObject *)parentObject error:(NSError **)error</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>parentObject</Name>
+					<Abstract>Remote object by which to request the collection from - establishes pattern for resources depending on nesting. Raises an exception if this object's remoteID is nil, as it is used to construct the route.</Abstract>
+				</Parameter><Parameter>
+					<Name>error</Name>
+					<Abstract>Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>NSArray of instances of receiver's class. Each object’s properties will be set to those returned by Rails.</Abstract></ReturnValue>
+			<Anchor>//api/name/remoteAllViaObject:error:</Anchor>
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteManagedObject/saveContext</TokenIdentifier>
-			<Abstract>Save the CoreData object context of the receiver.
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteAllAsync:</TokenIdentifier>
+			<Abstract>Retrieves an array of all remote objects (as instances of receiver's class.) Each instance’s properties will be set to those returned by Rails.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>+ (void)remoteAllAsync:(NSRFetchAllCompletionBlock)completionBlock</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>completionBlock</Name>
+					<Abstract>Block to be executed when the request is complete.</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/remoteAllAsync:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteAllViaObject:async:</TokenIdentifier>
+			<Abstract>Retrieves an array of all remote objects (as instances of receiver's class.) Each instance’s properties will be set to those returned by Rails.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>+ (void)remoteAllViaObject:(NSRRemoteObject *)parentObject async:(NSRFetchAllCompletionBlock)completionBlock</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>parentObject</Name>
+					<Abstract>Remote object by which to request the collection from - establishes pattern for resources depending on nesting. Raises an exception if this object's remoteID is nil, as it is used to construct the route.</Abstract>
+				</Parameter><Parameter>
+					<Name>completionBlock</Name>
+					<Abstract>Block to be executed when the request is complete.</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/remoteAllViaObject:async:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteObjectWithID:error:</TokenIdentifier>
+			<Abstract>Returns an instance of receiver's class corresponding to the remote object with that ID.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>+ (id)remoteObjectWithID:(NSNumber *)objectID error:(NSError **)error</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>objectID</Name>
+					<Abstract>The ID of the remote object.</Abstract>
+				</Parameter><Parameter>
+					<Name>error</Name>
+					<Abstract>Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>Instance of receiver's class with properties from the remote object with that ID.</Abstract></ReturnValue>
+			<Anchor>//api/name/remoteObjectWithID:error:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteObjectWithID:async:</TokenIdentifier>
+			<Abstract>Retrieves an instance receiver's class corresponding to the remote object with that ID.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>+ (void)remoteObjectWithID:(NSNumber *)objectID async:(NSRFetchObjectCompletionBlock)completionBlock</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>objectID</Name>
+					<Abstract>The ID of the remote object.</Abstract>
+				</Parameter><Parameter>
+					<Name>completionBlock</Name>
+					<Abstract>Block to be executed when the request is complete.</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/remoteObjectWithID:async:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteFetch:</TokenIdentifier>
+			<Abstract>Retrieves the latest remote data for receiver and sets its properties to received response.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+	<RelatedTokens>
+		<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteFetch:changes:</TokenIdentifier>
+		
+	</RelatedTokens>
+	
+			<Declaration>- (BOOL)remoteFetch:(NSError **)error</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>error</Name>
+					<Abstract>Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>YES if fetch was successful. Returns NO if an error occurred.</Abstract></ReturnValue>
+			<Anchor>//api/name/remoteFetch:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteFetch:changes:</TokenIdentifier>
+			<Abstract>Retrieves the latest remote data for receiver and sets its properties to received response.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+	<RelatedTokens>
+		<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteFetch:</TokenIdentifier>
+		
+	</RelatedTokens>
+	
+			<Declaration>- (BOOL)remoteFetch:(NSError **)error changes:(BOOL *)changesPtr</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>error</Name>
+					<Abstract>Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
+				</Parameter><Parameter>
+					<Name>changesPtr</Name>
+					<Abstract>Pointer to boolean value set to whether or not the receiver changed in any way after the fetch (ie, if this fetch modified one of receiver's local properties due to a change in value server-side). This will also take into account diffs to any nested NSRRemoteObject objects that are affected by this fetch (done recursively).
+
+Note that because this only tracks differences in local changes, properties that changed server-side that are not defined in the receiver's class will not report back a change (ie, if receiver's class doesn't implement an updatedat property and updatedat is changed in your remote DB, no change will be reported.) This parameter may be NULL if this information is not useful, or use remoteFetch:.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>YES if fetch was successful. Returns NO if an error occurred.</Abstract></ReturnValue>
+			<Anchor>//api/name/remoteFetch:changes:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteFetchAsync:</TokenIdentifier>
+			<Abstract>Retrieves the latest remote data for receiver and sets its properties to received response.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (void)remoteFetchAsync:(NSRFetchCompletionBlock)completionBlock</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>completionBlock</Name>
+					<Abstract>Block to be executed when the request is complete. The second parameter passed in is a BOOL whether or not there was a local change. This means changes in updated_at, etc, will only apply if your Objective-C class implement this as a property as well. This also applies when updating any of its nested objects (done recursively).</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/remoteFetchAsync:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteUpdate:</TokenIdentifier>
+			<Abstract>Updates receiver's corresponding remote object.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (BOOL)remoteUpdate:(NSError **)error</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>error</Name>
+					<Abstract>Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>YES if update was successful. Returns NO if an error occurred.</Abstract></ReturnValue>
+			<Anchor>//api/name/remoteUpdate:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteUpdateAsync:</TokenIdentifier>
+			<Abstract>Updates receiver's corresponding remote object.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (void)remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>completionBlock</Name>
+					<Abstract>Block to be executed when the request is complete.</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/remoteUpdateAsync:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteCreate:</TokenIdentifier>
+			<Abstract>Creates the receiver remotely. Receiver's properties will be set to those given by Rails (including remoteID).</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (BOOL)remoteCreate:(NSError **)error</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>error</Name>
+					<Abstract>Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>YES if create was successful. Returns NO if an error occurred.</Abstract></ReturnValue>
+			<Anchor>//api/name/remoteCreate:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteCreateAsync:</TokenIdentifier>
+			<Abstract>Creates the receiver remotely. Receiver's properties will be set to those given by Rails (including remoteID).</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (void)remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>completionBlock</Name>
+					<Abstract>Block to be executed when the request is complete.</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/remoteCreateAsync:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteDestroy:</TokenIdentifier>
+			<Abstract>Destroys receiver's corresponding remote object. Local object will be unaffected.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (BOOL)remoteDestroy:(NSError **)error</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>error</Name>
+					<Abstract>Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>YES if destroy was successful. Returns NO if an error occurred.</Abstract></ReturnValue>
+			<Anchor>//api/name/remoteDestroy:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteDestroyAsync:</TokenIdentifier>
+			<Abstract>Destroys receiver's corresponding remote object. Local object will be unaffected.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (void)remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>completionBlock</Name>
+					<Abstract>Block to be executed when the request is complete.</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/remoteDestroyAsync:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteReplace:</TokenIdentifier>
+			<Abstract>"Places" receiver's corresponding remote object.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (BOOL)remoteReplace:(NSError **)error</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>error</Name>
+					<Abstract>Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>YES if place was successful. Returns NO if an error occurred.</Abstract></ReturnValue>
+			<Anchor>//api/name/remoteReplace:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteReplaceAsync:</TokenIdentifier>
+			<Abstract>"Places" receiver's corresponding remote object.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (void)remoteReplaceAsync:(NSRBasicCompletionBlock)completionBlock</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>completionBlock</Name>
+					<Abstract>Block to be executed when the request is complete.</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/remoteReplaceAsync:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteDictionaryRepresentationWrapped:</TokenIdentifier>
+			<Abstract>Serializes the receiver's properties into a dictionary.
+  
+Uses the coding methods.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (NSDictionary *)remoteDictionaryRepresentationWrapped:(BOOL)wrapped</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>wrapped</Name>
+					<Abstract>If YES, wraps the dictionary with a key of the model name:
+
+	{"user"=>{"name"=>"x", "email"=>"y"}}</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>The receiver's properties as a dictionary.</Abstract></ReturnValue>
+			<Anchor>//api/name/remoteDictionaryRepresentationWrapped:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/setPropertiesUsingRemoteDictionary:</TokenIdentifier>
+			<Abstract>Sets the receiver's properties given a dictionary.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (BOOL)setPropertiesUsingRemoteDictionary:(NSDictionary *)dictionary</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>dictionary</Name>
+					<Abstract>Dictionary to be evaluated.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>YES if any changes were made to the local object, NO if object was identical before/after.</Abstract></ReturnValue>
+			<Anchor>//api/name/setPropertiesUsingRemoteDictionary:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/objectWithRemoteDictionary:</TokenIdentifier>
+			<Abstract>Initializes a new instance of the receiver's class with a given dictionary input.
+   </Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>+ (id)objectWithRemoteDictionary:(NSDictionary *)remoteDictionary</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>remoteDictionary</Name>
+					<Abstract>Remote dictionary to be evaluated. (e.g., keys are "id", not "remoteID"; "my_property", not "myProperty").
+
+Note that this dictionary needs to be JSON-parasable, meaning all keys are strings and all objects are instances of NSString, NSNumber, NSArray, NSDictionary, or NSNull.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>A new instance of the receiver's class with properties set using dictionary.</Abstract></ReturnValue>
+			<Anchor>//api/name/objectWithRemoteDictionary:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteModelName</TokenIdentifier>
+			<Abstract>The equivalent name of this class on your server.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>+ (NSString *)remoteModelName</Declaration>
+			
+			
+			<Anchor>//api/name/remoteModelName</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteControllerName</TokenIdentifier>
+			<Abstract>The name of this class's controller on the server - where actions for this class should be routed.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>+ (NSString *)remoteControllerName</Declaration>
+			
+			
+			<Anchor>//api/name/remoteControllerName</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/objectUsedToPrefixRequest:</TokenIdentifier>
+			<Abstract>Should be overridden if instances of your subclass class should have their resource path be based off an association.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (NSRRemoteObject *)objectUsedToPrefixRequest:(NSRRequest *)request</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>request</Name>
+					<Abstract>The request whose path is currently being evalutated. Its route will be the route before adding the prefix (ie, the route used if the behavior is not desired).</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>An object (typically an instance variable) that represents a parent to this class, or nil if this behavior is not desired.</Abstract></ReturnValue>
+			<Anchor>//api/name/objectUsedToPrefixRequest:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/encodeValueForProperty:remoteKey:</TokenIdentifier>
+			<Abstract>Should return the remote representation for each property, optionally modifying the remote key.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (id)encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>property</Name>
+					<Abstract>Name of the property.</Abstract>
+				</Parameter><Parameter>
+					<Name>remoteKey</Name>
+					<Abstract>Reference to an NSString that contains the key that should be put into the JSON going out. Will contain the key that would be sent by default (ie, underscored, if enabled.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>Remote representation for this property. Return value must be JSON-parsable (NSDictionary, NSArray, NSString, NSNumber, or (NSNull or nil)).</Abstract></ReturnValue>
+			<Anchor>//api/name/encodeValueForProperty:remoteKey:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/decodeRemoteValue:forRemoteKey:change:</TokenIdentifier>
+			<Abstract>Should set what you want an Objective-C property to be set to, based off a remote representation.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (void)decodeRemoteValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)change</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>remoteObject</Name>
+					<Abstract>Remote representation of this key. Will be a JSON-parsed object (NSDictionary, NSArray, NSString, NSNumber, or nil).</Abstract>
+				</Parameter><Parameter>
+					<Name>remoteKey</Name>
+					<Abstract>The remote key returned from Rails. Use propertyForRemoteKey: if you want the Objective-C property version of this key.</Abstract>
+				</Parameter><Parameter>
+					<Name>change</Name>
+					<Abstract>Reference to a change boolean. Its value should be set on a custom-coded property based off if the decoding will introduce a change in the instance variable. This is used to set the change value in remoteFetch:changes: and `setPropertiesUsingRemoteDictionary:.
   </Abstract>
-			<DeclaredIn>NSRRemoteManagedObject.h</DeclaredIn>			
+				</Parameter>
+			</Parameters>
 			
-			<Declaration>- (BOOL)saveContext</Declaration>
-			
-			<ReturnValue><Abstract>Whether or not the save was successful.</Abstract></ReturnValue>
-			<Anchor>//api/name/saveContext</Anchor>
+			<Anchor>//api/name/decodeRemoteValue:forRemoteKey:change:</Anchor>
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteManagedObject/entityName</TokenIdentifier>
-			<Abstract>Override this method if the class entity name is different than the name of the class.</Abstract>
-			<DeclaredIn>NSRRemoteManagedObject.h</DeclaredIn>			
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/shouldSendProperty:whenNested:</TokenIdentifier>
+			<Abstract>Should return whether or not a certain property should be sent in the outgoing dictionary.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>+ (NSString *)entityName</Declaration>
+			<Declaration>- (BOOL)shouldSendProperty:(NSString *)property whenNested:(BOOL)nested</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>property</Name>
+					<Abstract>The name of the property.</Abstract>
+				</Parameter><Parameter>
+					<Name>nested</Name>
+					<Abstract>Whether or not the receiving object is being nested.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>YES if the property should be included in the dictionary, NO if it shouldn't.</Abstract></ReturnValue>
+			<Anchor>//api/name/shouldSendProperty:whenNested:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/nestedClassForProperty:</TokenIdentifier>
+			<Abstract>Should return the class for the nested object stored in the property, or nil if it is not a nested object.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<ReturnValue><Abstract>String (typically literal) to be used as entity name when inserting and fetching objects of this class.</Abstract></ReturnValue>
-			<Anchor>//api/name/entityName</Anchor>
+			<Declaration>- (Class)nestedClassForProperty:(NSString *)property</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>property</Name>
+					<Abstract>Name of the property.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>The class for the nested object stored in the property, or nil if it is not a nested object.</Abstract></ReturnValue>
+			<Anchor>//api/name/nestedClassForProperty:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/shouldOnlySendIDKeyForNestedObjectProperty:</TokenIdentifier>
+			<Abstract>Should return whether or not a nested object should be sent with its entire body (<x>attributes), or just ID (<x>id).</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (BOOL)shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>property</Name>
+					<Abstract>Name of the property.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>YES if only the <x>id key should be sent for this nested property, NO if the full <x>attributes should be sent.</Abstract></ReturnValue>
+			<Anchor>//api/name/shouldOnlySendIDKeyForNestedObjectProperty:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/propertyForRemoteKey:</TokenIdentifier>
+			<Abstract>Should return the equivalent Objective-C property for a given remote key.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (NSString *)propertyForRemoteKey:(NSString *)remoteKey</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>remoteKey</Name>
+					<Abstract>The key sent in the remote dictionary.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>The Objective-C property equivalent for a remote key. If your class doesn't define a property for this remote key, this should return nil.</Abstract></ReturnValue>
+			<Anchor>//api/name/propertyForRemoteKey:</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteProperties</TokenIdentifier>
+			<Abstract>Should return an array of all properties to be used by NSRails.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (NSMutableArray *)remoteProperties</Declaration>
+			
+			<ReturnValue><Abstract>An array of all properties to be used by NSRails.</Abstract></ReturnValue>
+			<Anchor>//api/name/remoteProperties</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/propertyIsDate:</TokenIdentifier>
+			<Abstract>Should return whether or not this property should be encoded/decoded to/from a Date object.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>- (BOOL)propertyIsDate:(NSString *)property</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>property</Name>
+					<Abstract>Name of the property.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>Whether or not this property should be encoded/decoded to/from a Date object.</Abstract></ReturnValue>
+			<Anchor>//api/name/propertyIsDate:</Anchor>
 		</Token>
 		
 	</File>
