@@ -43,8 +43,6 @@
 - (NSDictionary *) remoteDictionaryRepresentationWrapped:(BOOL)wrapped fromNesting:(BOOL)nesting;
 
 - (BOOL) propertyIsTimestamp:(NSString *)property;
-- (BOOL) propertyIsDate:(NSString *)property;
-- (BOOL) propertyIsArray:(NSString *)property;
 
 @end
 

@@ -689,6 +689,10 @@
  
  This must be overriden for any to-many relationships (since the property type is just an array, and NSRails doesn't know what kind of object should be stored).
  
+ **Ruby**:
+ 
+ This must be overriden for all relationships - Ruby is not statically typed to NSRails can't "guess" what class you want to nest in a property.
+ 
  @return The class for the nested object stored in the property, or nil if it is not a nested object.
  
  @warning Make sure you make a call to super.
@@ -705,30 +709,6 @@
  @return YES if only the `<x>_id` key should be sent for this nested property, NO if the full `<x>_attributes` should be sent.
  */
 - (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property;
-
-/**
- Should return an array of all properties to be used by NSRails.
- 
- Default behavior is to introspect into the class and return an array of all non-primitive type properties. This also escalates up the class hierarchy to NSRRemoteObject's properties as well (ie, `remoteID`).
- 
- If you want to override this, you should add or remove objects from super:
- 
-     - (NSMutableArray *) remoteProperties
-     {
-        NSMutableArray *props = [super remoteProperties];
- 
-        //remove an object from NSRails entirely
-        [props removeObject:@"totallyLocal"];
- 
-        //can even add a property not defined in your class - encodable in encodeValueForProperty:remoteKey:
-        [props addObject:@"totallyRemote"];
- 
-        return props;
-     }
- 
- @return An array of all properties to be used by NSRails.
- */
-- (NSMutableArray *) remoteProperties;
 
 /**
  Should return the equivalent Objective-C property for a given remote key.
@@ -756,6 +736,69 @@
  @return The Objective-C property equivalent for a remote key. If your class doesn't define a property for this remote key, this should return `nil`.
  */
 - (NSString *) propertyForRemoteKey:(NSString *)remoteKey;
+
+/// =============================================================================================
+/// @name Methods to override (Ruby-specific)
+/// =============================================================================================
+
+/**
+ Should return an array of all properties to be used by NSRails.
+ 
+ Default behavior is to introspect into the class and return an array of all non-primitive type properties. This also escalates up the class hierarchy to NSRRemoteObject's properties as well (ie, `remoteID`).
+ 
+ If you want to override this, you should add or remove objects from super:
+ 
+     - (NSMutableArray *) remoteProperties
+     {
+         NSMutableArray *props = [super remoteProperties];
+         
+         //remove an object from NSRails entirely
+         [props removeObject:@"totallyLocal"];
+         
+         //can even add a property not defined in your class - encodable in encodeValueForProperty:remoteKey:
+         [props addObject:@"totallyRemote"];
+         
+         return props;
+     }
+ 
+ **Ruby**:
+ 
+ Overriding this method, adding on all of your instance variables is necessary in RubyMotion because properties are created on runtime and Objective-C introspection won't apply.
+ 
+     def remoteProperties
+       super + ["author", "content", "created_at"]
+     end
+ 
+ @return An array of all properties to be used by NSRails.
+ */
+- (NSMutableArray *) remoteProperties;
+
+/**
+ Should return whether or not this property should be encoded/decoded to/from a Date object.
+ 
+ NSRails has no idea what types your properties are in Ruby, so to benefit from automatic Date -> string and string -> Date, it needs to know what properties are dates.
+ 
+ Note that `created_at` and `updated_at` are already taken care of as dates.
+ 
+     def propertyIsDate(property)
+       (property == "birthday") || super
+     end
+
+ @return Whether or not this property should be encoded/decoded to/from a Date object.
+ 
+ @warning Make a call to super.
+ */
+- (BOOL) propertyIsDate:(NSString *)property;
+
+/**
+ Should return whether or not this property is an array.
+ 
+ NSRails has no idea what types your properties are in Ruby, so this is necessary when nesting to-many relationships.
+ 
+ @return Whether or not this property is an array.
+ */
+- (BOOL) propertyIsArray:(NSString *)property;
+
 
 @end
 
