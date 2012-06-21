@@ -33,7 +33,6 @@
 //needed for block typedefs
 #import "NSRConfig.h"
 
-@class NSRRelationship;
 @class NSRRequest;
 
 /*************************************************************************
@@ -655,8 +654,8 @@
  
  - Property is `<remoteID>` and it is `nil`, or, `nested` is false. (Sending `id` is only relevant to ensure nested objects are not re-created.)
  - Property is not a timestamp (`created at`, `updated at`).
- - Property is a non belongs-to relationship (to-many or to-one) and the `nested` is true (ie, only send "shallow" copies of objects when they are being nested. This is to prevent infinite loops when recursively sending nested properties that could also include this object).
- - Property is a non belongs-to relationship, `nested` is false, but the value of the property is either `nil` or an empty collection. (No reason to send empty _attributes).
+ - Property is a relationship, would send the full `_attributes`, and `nested` is true (ie, only send "shallow" copies of objects when they are being nested. This is to prevent infinite loops when recursively sending nested properties that could also include this object).
+ - Property is a relationship, but the value of the property is either `nil` or an empty collection. (No reason to send empty `_attributes`).
  
  Otherwise the property is sent. So typically, this method is overridden if you do not wish to have a property in an outgoing dictionary. Overriding this method would look like this:
  
@@ -684,12 +683,26 @@
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested;
 
 /**
- Undocumented
+ Should return the class for the nested object stored in the property, or nil if it is not a nested object.
+ 
+ The default behavior is to simply return the *type* of the property if it is a subclass of NSRRemoteObject. Otherwise, returns `nil`.
+ 
+ This must be overriden for any to-many relationships (since the property type is just an array, and NSRails doesn't know what kind of object should be stored).
+ 
+ @return The class for the nested object stored in the property, or nil if it is not a nested object.
+ 
+ @warning Make sure you make a call to super.
  */
 - (Class) nestedClassForProperty:(NSString *)property;
 
 /**
- Undocumented
+ Should return whether or not a nested object should be sent with its entire body (`<x>_attributes`), or just ID (`<x>_id`).
+ 
+ The default behavior is to return `NO`. (You don't have to make a call to super here.)
+ 
+ This is useful if you have a property whose relationship is "belongs to". Meaning, the receiving object on the server holds the foreign key - it has, say, a `parent_id`, which you want sent instead of `parent_attributes` (which would anger Rails).
+ 
+ @return YES if only the `<x>_id` key should be sent for this nested property, NO if the full `<x>_attributes` should be sent.
  */
 - (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property;
 

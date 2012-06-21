@@ -97,7 +97,7 @@
  
  **remoteDestroyOnNesting**: This property leaves your managed object **unaffected**. You will have to delete it from your context manually if your request was successful.
  
- **relationshipForProperty:** Will search your CoreData entity relationship and use that by default. Will work with to-many but cannot "guess" belongs-to.
+ **nestedClassForProperty:** Will search your CoreData entity relationships, and if one is found for that property, will return that relationship's destination class.
  */
 
 @interface NSRRemoteManagedObject : NSRRemoteObject
