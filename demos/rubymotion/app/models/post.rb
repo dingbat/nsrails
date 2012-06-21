@@ -5,12 +5,7 @@ class Post < NSRRemoteObject
     super + ["author", "content", "responses", "created_at"]
   end
   
-  def relationshipForProperty(property)
-    case property
-    when "responses"
-      NSRRelationship.hasMany(Response)
-    else
-      super
-    end
+  def nestedClassForProperty(property)
+    Response if property == "responses"
   end
 end

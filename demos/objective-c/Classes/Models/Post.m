@@ -12,12 +12,12 @@
 @implementation Post
 @synthesize content, author, createdAt, responses;
 
-- (NSRRelationship *) relationshipForProperty:(NSString *)property
+- (Class) nestedClassForProperty:(NSString *)property
 {
 	if ([property isEqualToString:@"responses"])
-		return [NSRRelationship hasMany:[Response class]];
+		return [Response class];
 	
-	return [super relationshipForProperty:property];
+	return [super nestedClassForProperty:property];    
 }
 
 @end
