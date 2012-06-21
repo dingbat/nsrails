@@ -44,6 +44,7 @@
 
 - (BOOL) propertyIsTimestamp:(NSString *)property;
 - (BOOL) propertyIsDate:(NSString *)property;
+- (BOOL) propertyIsArray:(NSString *)property;
 
 @end
 
@@ -108,6 +109,15 @@
 			[property isEqualToString:@"created_at"] || [property isEqualToString:@"updated_at"]);
 }
 
+- (BOOL) propertyIsArray:(NSString *)property
+{
+    Class c = [self.class typeClassForProperty:property];
+    
+    return ([c isSubclassOfClass:[NSArray class]] || 
+            [c isSubclassOfClass:[NSSet class]] || 
+            [c isSubclassOfClass:[NSOrderedSet class]]);
+}
+
 - (BOOL) propertyIsDate:(NSString *)property
 {
 	//give rubymotion the _at dates for frees
@@ -131,6 +141,13 @@
 			return [att substringFromIndex:1];
 	
 	return nil;
+}
+
++ (Class) typeClassForProperty:(NSString *)property
+{
+    NSString *propType = [[[self.class typeForProperty:property] stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
+    
+    return NSClassFromString(propType);
 }
 
 + (NSMutableArray *) remotePropertiesForClass:(Class)c
@@ -180,17 +197,16 @@
 	return nil;
 }
 
-- (NSRRelationship *) relationshipForProperty:(NSString *)property
-{	
-	NSString *propType = [[[self.class typeForProperty:property] stringByReplacingOccurrencesOfString:@"\"" withString:@""] stringByReplacingOccurrencesOfString:@"@" withString:@""];
+- (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property
+{
+    return NO;
+}
 
-	Class class = NSClassFromString(propType);
-	if ([class isSubclassOfClass:[NSRRemoteObject class]])
-	{
-		return [NSRRelationship hasOne:class];
-	}
-	
-	return nil;
+- (Class) nestedClassForProperty:(NSString *)property
+{ 
+	Class class = [self.class typeClassForProperty:property];
+    
+    return [class isSubclassOfClass:[NSRRemoteObject class]] ? class : nil;
 }
 
 - (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
@@ -198,14 +214,12 @@
 	if ([property isEqualToString:@"remoteID"])
 		*remoteKey = @"id";
 	
-	NSRRelationship *relationship = [self relationshipForProperty:property];
-		
-	id val = [self valueForKey:property];
-
-	if (relationship)
-	{
-		//if it's belongs_to, only return the ID
-		if (relationship.isBelongsTo)
+    Class nestedClass = [self nestedClassForProperty:property];
+    id val = [self valueForKey:property];
+    
+    if (nestedClass)
+    {
+		if ([self shouldOnlySendIDKeyForNestedObjectProperty:property])
 		{			
 			*remoteKey = [*remoteKey stringByAppendingString:@"_id"];
 			return [val remoteID];
@@ -213,7 +227,7 @@
 		
 		*remoteKey = [*remoteKey stringByAppendingString:@"_attributes"];
 		
-		if (relationship.isToMany)
+		if ([self propertyIsArray:property])
 		{
 			NSMutableArray *new = [NSMutableArray arrayWithCapacity:[val count]];
 			
@@ -265,90 +279,95 @@
 	if (!property)
 		return;
 
-	NSRRelationship *relationship = [self relationshipForProperty:property];
+	Class nestedClass = [self nestedClassForProperty:property];
 	
 	id previousVal = [self valueForKey:property];
+    
 	//TODO
 	//RUBYMOTION BUG...... returns NSNull instead of nil in a really specific case
 	if (previousVal == [NSNull null])
 		previousVal = nil;
+    
 	id decodedObj = nil;
 	
 	BOOL changes = -1;
 	
 	if (railsObject)
 	{
-		if (relationship.isToMany)
-		{
-			changes = NO;
-			
-			BOOL checkForChange = ([railsObject count] == [previousVal count]);
-			if (!checkForChange)
-				changes = YES;
-			
-			decodedObj = [[[self containerClassForRelationProperty:property] alloc] init];
-			
-			//array of NSRRemoteObjects is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
-			
-			id previousArray = ([previousVal isKindOfClass:[NSSet class]] ? 
-								[previousVal allObjects] :
-								[previousVal isKindOfClass:[NSOrderedSet class]] ?
-								[previousVal array] :
-								previousVal);
-			
-			for (id railsElement in railsObject)
-			{
-				id decodedElement;
-				
-				//see if there's a nester that matches this ID - we'd just have to update it w/this dict
-				NSNumber *railsID = [railsElement objectForKey:@"id"];
-				id existing = nil;
-				
-				if (railsID)
-					existing = [[previousArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"remoteID == %@",railsID]] lastObject];
-				
-				if (!existing)
-				{
-					//didn't previously exist - make a new one
-					decodedElement = [relationship.nestedClass objectWithRemoteDictionary:railsElement];
-					
-					changes = YES;
-				}
-				else
-				{
-					//existed - simply update that one (recursively)
-					decodedElement = existing;
-					BOOL neededChange = [decodedElement setPropertiesUsingRemoteDictionary:railsElement];
-					
-					if (neededChange)
-						changes = YES;
-				}
-				
-				[decodedObj addObject:decodedElement];
-			}
-		}
-		else if ([self propertyIsDate:property])
+        if (nestedClass)
+        {
+            if ([self propertyIsArray:property])
+            {
+                changes = NO;
+                
+                BOOL checkForChange = ([railsObject count] == [previousVal count]);
+                if (!checkForChange)
+                    changes = YES;
+                
+                decodedObj = [[[self containerClassForRelationProperty:property] alloc] init];
+                
+                //array of NSRRemoteObjects is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
+                
+                id previousArray = ([previousVal isKindOfClass:[NSSet class]] ? 
+                                    [previousVal allObjects] :
+                                    [previousVal isKindOfClass:[NSOrderedSet class]] ?
+                                    [previousVal array] :
+                                    previousVal);
+                
+                for (id railsElement in railsObject)
+                {
+                    id decodedElement;
+                    
+                    //see if there's a nester that matches this ID - we'd just have to update it w/this dict
+                    NSNumber *railsID = [railsElement objectForKey:@"id"];
+                    id existing = nil;
+                    
+                    if (railsID)
+                        existing = [[previousArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"remoteID == %@",railsID]] lastObject];
+                    
+                    if (!existing)
+                    {
+                        //didn't previously exist - make a new one
+                        decodedElement = [nestedClass objectWithRemoteDictionary:railsElement];
+                        
+                        changes = YES;
+                    }
+                    else
+                    {
+                        //existed - simply update that one (recursively)
+                        decodedElement = existing;
+                        BOOL neededChange = [decodedElement setPropertiesUsingRemoteDictionary:railsElement];
+                        
+                        if (neededChange)
+                            changes = YES;
+                    }
+                    
+                    [decodedObj addObject:decodedElement];
+                }
+            }
+            else
+            {
+                //if the nested object didn't exist before, make it & set it
+                if (!previousVal)
+                {
+                    decodedObj = [nestedClass objectWithRemoteDictionary:railsObject];
+                }
+                //otherwise, keep the old object & only mark as change if its properties changed (recursive)
+                else
+                {
+                    decodedObj = previousVal;
+                    
+                    changes = [decodedObj setPropertiesUsingRemoteDictionary:railsObject];
+                }
+            }
+        }
+        else if ([self propertyIsDate:property])
 		{
 			decodedObj = [[NSRConfig relevantConfigForClass:self.class] dateFromString:railsObject];
 			
 			//account for any discrepancies between NSDate object and a string (which doesn't include milliseconds) 
 			CGFloat diff = fabs([decodedObj timeIntervalSinceDate:previousVal]);
 			changes = (!previousVal || (diff > 1.25));
-		}
-		else if (relationship)
-		{
-			//if the nested object didn't exist before, make it & set it
-			if (!previousVal)
-			{
-				decodedObj = [relationship.nestedClass objectWithRemoteDictionary:railsObject];
-			}
-			//otherwise, keep the old object & only mark as change if its properties changed (recursive)
-			else
-			{
-				decodedObj = previousVal;
-				
-				changes = [decodedObj setPropertiesUsingRemoteDictionary:railsObject];
-			}
 		}
 		//otherwise, if not nested or anything, just use what we got (number, string, dictionary, array)
 		else
@@ -387,10 +406,10 @@
 	//don't include updated_at or created_at
 	if ([self propertyIsTimestamp:property])
 		return NO;
+    
+    Class nestedClass = [self nestedClassForProperty:property];
 	
-	NSRRelationship *relationship = [self relationshipForProperty:property];
-
-	if (relationship && !relationship.isBelongsTo)
+	if (nestedClass && ![self shouldOnlySendIDKeyForNestedObjectProperty:property])
 	{
 		//this is recursion-protection. we don't want to include every nested class in this class because one of those nested class could nest us, causing infinite loop. of course, overridable
 		if (nested)
@@ -401,9 +420,10 @@
 		id val = [self valueForKey:property];
 
 		//it's an _attributes. don't send if there's no val or empty (is okay on belongs_to bc we send a null id)
+        
 		//TODO
 		//the NSNull check is part of an RM bug
-		if (val == [NSNull null] || !val || (relationship.isToMany && [val count] == 0))
+		if (val == [NSNull null] || !val || ([self propertyIsArray:property] && [val count] == 0))
 		{
 			return NO;
 		}

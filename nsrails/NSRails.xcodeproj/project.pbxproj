@@ -37,7 +37,6 @@
 		595B028B158E82B1002B23D4 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF801575CD6E00DA25F4 /* NSRConfig.m */; };
 		595B028C158E82B1002B23D4 /* NSRRemoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF851575CD6E00DA25F4 /* NSRRemoteObject.m */; };
 		595B028D158E82B1002B23D4 /* NSRRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 598D217515800AC2002CC996 /* NSRRequest.m */; };
-		595B028E158E82B1002B23D4 /* NSRRelationship.m in Sources */ = {isa = PBXBuildFile; fileRef = 597C80051586A1C300950019 /* NSRRelationship.m */; };
 		595B028F158E82BF002B23D4 /* Test.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 59EC6A661572A24900AA6D79 /* Test.xcdatamodeld */; };
 		595B0290158E82C4002B23D4 /* CoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A2AFA315871160002765BA /* CoreData.m */; };
 		595B0291158E8440002B23D4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59CF24641571901B00476966 /* CoreData.framework */; };
@@ -47,10 +46,6 @@
 		5974F24D158FA9A60068B5B8 /* NSRRemoteManagedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 5974F249158FA9A60068B5B8 /* NSRRemoteManagedObject.m */; };
 		5974F24E158FA9A60068B5B8 /* NSRRemoteManagedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 5974F249158FA9A60068B5B8 /* NSRRemoteManagedObject.m */; };
 		5974F24F158FA9A60068B5B8 /* NSRRemoteManagedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 5974F249158FA9A60068B5B8 /* NSRRemoteManagedObject.m */; };
-		597C80061586A1C300950019 /* NSRRelationship.h in Headers */ = {isa = PBXBuildFile; fileRef = 597C80041586A1C300950019 /* NSRRelationship.h */; };
-		597C80071586A1C300950019 /* NSRRelationship.h in Headers */ = {isa = PBXBuildFile; fileRef = 597C80041586A1C300950019 /* NSRRelationship.h */; };
-		597C80091586A1C300950019 /* NSRRelationship.m in Sources */ = {isa = PBXBuildFile; fileRef = 597C80051586A1C300950019 /* NSRRelationship.m */; };
-		597C800A1586A1C300950019 /* NSRRelationship.m in Sources */ = {isa = PBXBuildFile; fileRef = 597C80051586A1C300950019 /* NSRRelationship.m */; };
 		597C80151586B09400950019 /* NSString+Inflection.h in Headers */ = {isa = PBXBuildFile; fileRef = 597C80131586B09400950019 /* NSString+Inflection.h */; };
 		597C80161586B09400950019 /* NSString+Inflection.h in Headers */ = {isa = PBXBuildFile; fileRef = 597C80131586B09400950019 /* NSString+Inflection.h */; };
 		597C80181586B09400950019 /* NSString+Inflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 597C80141586B09400950019 /* NSString+Inflection.m */; };
@@ -137,8 +132,6 @@
 		595B0271158E826F002B23D4 /* NSRailsCDTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NSRailsCDTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5974F248158FA9A60068B5B8 /* NSRRemoteManagedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRRemoteManagedObject.h; sourceTree = "<group>"; };
 		5974F249158FA9A60068B5B8 /* NSRRemoteManagedObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRemoteManagedObject.m; sourceTree = "<group>"; };
-		597C80041586A1C300950019 /* NSRRelationship.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRRelationship.h; sourceTree = "<group>"; };
-		597C80051586A1C300950019 /* NSRRelationship.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRelationship.m; sourceTree = "<group>"; };
 		597C80131586B09400950019 /* NSString+Inflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Inflection.h"; sourceTree = "<group>"; };
 		597C80141586B09400950019 /* NSString+Inflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Inflection.m"; sourceTree = "<group>"; };
 		598D217415800AC2002CC996 /* NSRRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRRequest.h; sourceTree = "<group>"; };
@@ -286,8 +279,6 @@
 				5974F249158FA9A60068B5B8 /* NSRRemoteManagedObject.m */,
 				598D217415800AC2002CC996 /* NSRRequest.h */,
 				598D217515800AC2002CC996 /* NSRRequest.m */,
-				597C80041586A1C300950019 /* NSRRelationship.h */,
-				597C80051586A1C300950019 /* NSRRelationship.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -356,7 +347,6 @@
 				5993AFA11575CD6E00DA25F4 /* NSRConfig.h in Headers */,
 				5993AFB01575CD6E00DA25F4 /* NSRRemoteObject.h in Headers */,
 				598D217615800AC2002CC996 /* NSRRequest.h in Headers */,
-				597C80061586A1C300950019 /* NSRRelationship.h in Headers */,
 				597C80151586B09400950019 /* NSString+Inflection.h in Headers */,
 				5974F24A158FA9A60068B5B8 /* NSRRemoteManagedObject.h in Headers */,
 			);
@@ -372,7 +362,6 @@
 				5993AFA21575CD6E00DA25F4 /* NSRConfig.h in Headers */,
 				5993AFB11575CD6E00DA25F4 /* NSRRemoteObject.h in Headers */,
 				598D217715800AC2002CC996 /* NSRRequest.h in Headers */,
-				597C80071586A1C300950019 /* NSRRelationship.h in Headers */,
 				597C80161586B09400950019 /* NSString+Inflection.h in Headers */,
 				5974F24B158FA9A60068B5B8 /* NSRRemoteManagedObject.h in Headers */,
 			);
@@ -610,7 +599,6 @@
 				5993AFA41575CD6E00DA25F4 /* NSRConfig.m in Sources */,
 				5993AFB31575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */,
 				598D217915800AC2002CC996 /* NSRRequest.m in Sources */,
-				597C80091586A1C300950019 /* NSRRelationship.m in Sources */,
 				597C80181586B09400950019 /* NSString+Inflection.m in Sources */,
 				5974F24D158FA9A60068B5B8 /* NSRRemoteManagedObject.m in Sources */,
 			);
@@ -640,7 +628,6 @@
 				5993AFA51575CD6E00DA25F4 /* NSRConfig.m in Sources */,
 				5993AFB41575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */,
 				598D217A15800AC2002CC996 /* NSRRequest.m in Sources */,
-				597C800A1586A1C300950019 /* NSRRelationship.m in Sources */,
 				597C80191586B09400950019 /* NSString+Inflection.m in Sources */,
 				5974F24E158FA9A60068B5B8 /* NSRRemoteManagedObject.m in Sources */,
 			);
@@ -671,7 +658,6 @@
 				595B028B158E82B1002B23D4 /* NSRConfig.m in Sources */,
 				595B028C158E82B1002B23D4 /* NSRRemoteObject.m in Sources */,
 				595B028D158E82B1002B23D4 /* NSRRequest.m in Sources */,
-				595B028E158E82B1002B23D4 /* NSRRelationship.m in Sources */,
 				5974F24F158FA9A60068B5B8 /* NSRRemoteManagedObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

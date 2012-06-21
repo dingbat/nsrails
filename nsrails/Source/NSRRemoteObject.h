@@ -684,27 +684,14 @@
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested;
 
 /**
- Should return an NSRRelationship description object for this property, or `nil` if none at all.
- 
- Only to-one relationships are supported by default. NSRails will return a to-one relationship for a property if its type is an NSRRemoteObject subclass. Belongs-to and to-many relationships must be manually overriden:
- 
-     - (NSRRelationship *) relationshipForProperty:(NSString *)property
-     {
-        //a User belongs to a Group (ie, remote-side, User has a group_id)
-        if ([property isEqualToString:@"group"])
-            return [NSRRelationship belongsTo:[Group class]];
-
-        //a User has many posts
-        if ([property isEqualToString:@"posts"])
-            return [NSRRelationship hasMany:[Post class]];
-
-        return [super relationshipForProperty:property];
-     }
-
- @param property The name of the property.
- @return An NSRRelationship description object for this property, or `nil` if none at all
+ Undocumented
  */
-- (NSRRelationship *) relationshipForProperty:(NSString *)property;
+- (Class) nestedClassForProperty:(NSString *)property;
+
+/**
+ Undocumented
+ */
+- (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property;
 
 /**
  Should return an array of all properties to be used by NSRails.

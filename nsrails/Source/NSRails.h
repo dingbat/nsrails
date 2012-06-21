@@ -50,5 +50,4 @@
 #import "NSRRemoteManagedObject.h"
 #import "NSMutableArray+NSRails.h"
 #import "NSRRequest.h"
-#import "NSRRelationship.h"
 

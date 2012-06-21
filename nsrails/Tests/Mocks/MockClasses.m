@@ -33,13 +33,13 @@
 @implementation Post
 @synthesize author, content, updatedAt, responses, noResponseRelationship;
 
-- (NSRRelationship *) relationshipForProperty:(NSString *)property
+- (Class) nestedClassForProperty:(NSString *)property
 {
 	if ([property isEqualToString:@"responses"] && !noResponseRelationship)
 	{
-		return [NSRRelationship hasMany:[Response class]];
+		return [Response class];
 	}
-	return [super relationshipForProperty:property];
+	return [super nestedClassForProperty:property];
 }
 
 @end
@@ -47,13 +47,9 @@
 @implementation Response
 @synthesize post, content, author, belongsToPost;
 
-- (NSRRelationship *) relationshipForProperty:(NSString *)property
+- (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property
 {
-	if ([property isEqualToString:@"post"] && belongsToPost)
-	{
-		return [NSRRelationship belongsTo:[Post class]];
-	}
-	return [super relationshipForProperty:property];
+	return [property isEqualToString:@"post"] && belongsToPost;
 }
 
 @end
@@ -112,13 +108,13 @@
 @implementation Book
 @synthesize owners, nestPerson;
 
-- (NSRRelationship *) relationshipForProperty:(NSString *)property
+- (Class) nestedClassForProperty:(NSString *)property
 {
 	if ([property isEqualToString:@"owners"])
 	{
-		return [NSRRelationship hasMany:[Person class]];
+		return [Person class];
 	}
-	return [super relationshipForProperty:property];
+	return [super nestedClassForProperty:property];
 }
 
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
@@ -134,12 +130,12 @@
 @implementation Person
 @synthesize books;
 
-- (NSRRelationship *) relationshipForProperty:(NSString *)property
+- (Class) nestedClassForProperty:(NSString *)property
 {
 	if ([property isEqualToString:@"books"])
-		return [NSRRelationship hasMany:[Book class]];
+		return [Book class];
 	
-	return [super relationshipForProperty:property];
+	return [super nestedClassForProperty:property];
 }
 
 @end
@@ -147,11 +143,11 @@
 @implementation Bird
 @synthesize eggs, nestEggs;
 
-- (NSRRelationship *) relationshipForProperty:(NSString *)property
+- (Class) nestedClassForProperty:(NSString *)property
 {
 	if ([property isEqualToString:@"eggs"])
-		return [NSRRelationship hasMany:[Egg class]];
-	return [super relationshipForProperty:property];
+		return [Egg class];
+	return [super nestedClassForProperty:property];
 }
 
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
@@ -166,11 +162,9 @@
 @implementation Egg
 @synthesize bird, nest, nestBird, hasOneBird;
 
-- (NSRRelationship *) relationshipForProperty:(NSString *)property
+- (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property
 {
-	if ([property isEqualToString:@"bird"] && !hasOneBird)
-		return [NSRRelationship belongsTo:[Bird class]];
-	return [super relationshipForProperty:property];
+	return ([property isEqualToString:@"bird"] && !hasOneBird);
 }
 
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested

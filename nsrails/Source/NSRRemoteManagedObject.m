@@ -103,19 +103,15 @@
 
 #pragma mark - Standard overrides
 
-- (NSRRelationship *) relationshipForProperty:(NSString *)property
+- (Class) nestedClassForProperty:(NSString *)property
 {
 	NSRelationshipDescription *cdRelation = [[[(id)self entity] relationshipsByName] objectForKey:property];
 	if (cdRelation)
 	{
-		Class class = NSClassFromString(cdRelation.destinationEntity.name);
-		if (cdRelation.isToMany)
-			return [NSRRelationship hasMany:class];
-		if (cdRelation.maxCount == 1)
-			return [NSRRelationship belongsTo:class];
+		return cdRelation.destinationEntity.class;
 	}
-	
-	return [super relationshipForProperty:property];
+    
+    return [super nestedClassForProperty:property];
 }
 
 #pragma mark - Overridden operations (w/coredata)

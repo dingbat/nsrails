@@ -32,12 +32,12 @@
 	return @"Post";
 }
 
-- (NSRRelationship *) relationshipForProperty:(NSString *)property
+- (Class) nestedClassForProperty:(NSString *)property
 {
 	if ([property isEqualToString:@"responses"])
-		return [NSRRelationship hasMany:[CDResponse class]];
+		return [CDResponse class];
 	
-	return [super relationshipForProperty:property];
+	return [super nestedClassForProperty:property];
 }
 
 @end
@@ -50,12 +50,9 @@
 	return @"Response";
 }
 
-- (NSRRelationship *) relationshipForProperty:(NSString *)property
+- (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property
 {
-	if ([property isEqualToString:@"post"])
-		return [NSRRelationship belongsTo:[CDPost class]];
-	
-	return [super relationshipForProperty:property];
+    return [property isEqualToString:@"post"];
 }
 
 @end
