@@ -516,7 +516,8 @@
 		STAssertEqualObjects([error domain], NSRRemoteErrorDomain, @"Succinct error messages failed");
 		STAssertTrue([[[error userInfo] objectForKey:NSLocalizedDescriptionKey] isEqualToString:shortError], @"Succinct message extraction failed for short message: `%@` (is %@)",shortError, [error.userInfo objectForKey:NSLocalizedDescriptionKey]);
 		STAssertNil([[error userInfo] objectForKey:NSRValidationErrorsKey], @"Validation errors dict should not have been created for 404");
-		
+		STAssertEquals([[error userInfo] objectForKey:NSRRequestObjectKey],r,@"Should include itself as the request");
+        
 		//Test without succinct
 		[[NSRConfig defaultConfig] setSuccinctErrorMessages:NO];
 		
@@ -524,7 +525,8 @@
 		STAssertEqualObjects([error2 domain], NSRRemoteErrorDomain, @"Succinct error messages failed");
 		STAssertTrue([[[error2 userInfo] objectForKey:NSLocalizedDescriptionKey] isEqualToString:fullError], @"NO succinct error messages failed (bad!)");
 		STAssertNil([[error2 userInfo] objectForKey:NSRValidationErrorsKey], @"Validation errors dict should not have been created for 404");
-	}
+        STAssertEquals([[error userInfo] objectForKey:NSRRequestObjectKey],r,@"Should include itself as the request");
+    }
 	
 	// 422 Validation
 	
@@ -533,7 +535,8 @@
 	NSError *valError = [r errorForResponse:response statusCode:422];
 	STAssertTrue([valError code] == 422, @"422 was returned, not picked up by config");
 	STAssertEqualObjects([valError domain], NSRRemoteErrorDomain, @"Succinct error messages failed");
-	
+    STAssertEquals([[valError userInfo] objectForKey:NSRRequestObjectKey],r,@"Should include itself as the request");
+
 	id valDict = [[valError userInfo] objectForKey:NSRValidationErrorsKey];
 	STAssertNotNil(valDict, @"Validation errors dict not compiled");
 	STAssertTrue([valDict isKindOfClass:[NSDictionary class]], @"Object for validation key needs to be a dict");

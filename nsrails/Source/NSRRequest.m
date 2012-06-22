@@ -393,6 +393,8 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 			}
 			[inf setObject:response forKey:NSLocalizedDescriptionKey];
 		}
+        
+        [inf setObject:self forKey:NSRRequestObjectKey];
 		
 		NSError *error = [NSError errorWithDomain:NSRRemoteErrorDomain
 											 code:statusCode
@@ -406,7 +408,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (id) receiveResponse:(NSHTTPURLResponse *)response data:(NSData *)data error:(NSError **)error
 {
-	NSInteger code = [(NSHTTPURLResponse *)response statusCode];
+	NSInteger code = [response statusCode];
 	
 	id jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments | NSJSONReadingMutableContainers error:nil];
 	

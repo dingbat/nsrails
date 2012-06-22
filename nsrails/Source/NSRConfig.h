@@ -50,6 +50,7 @@ extern NSString * const NSRConfigEnvironmentProduction;
 
 //Keys
 extern NSString * const NSRValidationErrorsKey;
+extern NSString * const NSRRequestObjectKey;
 
 //Exceptions+Domains
 extern NSString * const NSRRemoteErrorDomain;

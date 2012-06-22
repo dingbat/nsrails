@@ -58,11 +58,11 @@
 @end
 
 
-//Environments
 NSString * const NSRConfigEnvironmentDevelopment		= @"com.nsrails.NSRConfigEnvironmentDevelopment";
 NSString * const NSRConfigEnvironmentProduction			= @"com.nsrails.NSRConfigEnvironmentProduction";
 
 NSString * const NSRValidationErrorsKey					= @"NSRValidationErrorsKey";
+NSString * const NSRRequestObjectKey                    = @"NSRRequestObjectKey";
 
 NSString * const NSRRemoteErrorDomain				= @"NSRRemoteErrorDomain";
 NSString * const NSRJSONParsingException			= @"NSRJSONParsingException";
