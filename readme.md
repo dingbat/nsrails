@@ -30,6 +30,7 @@ Features
 * Asynchronous requests
 * [Autogenerate](https://github.com/dingbat/nsrails/tree/master/autogen) NSRails-ready classes from a Rails project
 * Fully supported in RubyMotion and MacRuby
+* Written with ARC
 
 Quick links
 --------
@@ -38,10 +39,8 @@ Quick links
 * [CoreData guide](http://dingbat.github.com/nsrails/Classes/NSRRemoteManagedObject.html)
 * [Cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook)
 
-Getting started
+Getting started - Objective-C
 ---------
-
-### Objective-C
 
 1. Drop the `Source` folder into your Xcode project. You'll also need the CoreData framework linked in Build Phases.
   * If you're using Git, you should add NSRails as a submodule to your project so you can `git pull` and always be up to date:
@@ -77,37 +76,38 @@ Getting started
   }
   ```
 
-4. By subclassing NSRRemoteObject, your class gets tons of instance and class methods that'll act on your remote objects. Here are a few of the things you can do with your new class:
+You're done! By subclassing NSRRemoteObject, your class gets instance and class methods that'll act on your remote objects. Here are a few of the things you can do with your new class:
 
-	```objc
-	// Retrieve post with ID 1
-	Post *post = [Post remoteObjectWithID:1 error:&error];
+```objc
+// Retrieve post with ID 1
+Post *post = [Post remoteObjectWithID:1 error:&error];
 
-	// Update this post remotely
-	post.content = @"Changed!";
-	[post remoteUpdate:&error];
+// Update this post remotely
+post.content = @"Changed!";
+[post remoteUpdate:&error];
 
-	// Fetch any latest data for this post (and know if anything changed)
-	BOOL objectDidChange;
-	[post remoteFetch:&error changes:&objectDidChange];
+// Fetch any latest data for this post (and know if anything changed)
+BOOL objectDidChange;
+[post remoteFetch:&error changes:&objectDidChange];
 
-	// Retrieve a collection based on an object - will GET /posts/1/responses.json
-	NSArray *responses = [Response remoteAllViaObject:post error:&error];
+// Retrieve a collection based on an object - will GET /posts/1/responses.json
+NSArray *responses = [Response remoteAllViaObject:post error:&error];
 
-	// Async is also available:
-	[post remoteDestroyAsync: ^(NSError *error) {  if (!error) ... }];
-	```
+// Async is also available:
+[post remoteDestroyAsync: ^(NSError *error) {  if (!error) ... }];
+```
 
-	See the [documentation](http://dingbat.github.com/nsrails/) for more on what you can do with your new class, or the [cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook) for quick NSRRemoteObject recipes.
-    
-### Ruby
+See the [documentation](http://dingbat.github.com/nsrails/) for more on what you can do with your new class, or the [cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook) for quick NSRRemoteObject recipes.
 
-1. Vendor NSRails. The following steps are for **RubyMotion**. **MacRuby** is easier to configure - simply drag the `Source` folder into Xcode in your MacRuby project, and NSRails should be built with your project as normal.
+Getting started - Ruby
+---------
+
+1. In **MacRuby**, simply drag the `Source` folder into Xcode in your MacRuby project, and NSRails should be built with your project as normal. For **RubyMotion**, follow these steps to vendor NSRails:
   * Add a `vendor` directory on the main level of your RubyMotion app if you don't have one already
   * Copy the `nsrails` directory ([the one with the main Xcode project](https://github.com/dingbat/nsrails/tree/master/nsrails)) into `vendor`. (You can delete `Tests/`, but keep `Source/` and the Xcode project file).
   * Modify your Rakefile to include NSRails and the CoreData framework:
 
-	  ```ruby
+	    ```ruby
 	  Motion::Project::App.setup do |app|
 	      # Add CoreData as a linked framework (required even if CoreData isn't used)
 	      app.frameworks << "CoreData"
@@ -120,14 +120,14 @@ Getting started
 	      ...
 	  end
 	  ```
-
-2. Make a Ruby class for your Rails model and have it subclass **NSRRemoteObject**
+2. Make a Ruby class for your Rails model and have it subclass **NSRRemoteObject**:
 
 	```ruby
 	class Post < NSRRemoteObject
 	  attr_accessor :author, :content, :created_at
 
-	  # Since Ruby only creates instance variables during runtime, properties have to be explicit
+	  # Since Ruby only creates instance variables during runtime, properties
+	  # have to be explicitly defined by overriding 'remoteProperties'
 	  def remoteProperties
 	    super + ["author", "content", "created_at"]
 	  end
@@ -139,28 +139,28 @@ Getting started
 	```ruby
 	NSRConfig.defaultConfig.appURL = "http://localhost:3000"
 
-	# don't look for camelCase when receiving remote underscored_properties, since we're in ruby
+	# Don't look for camelCase when receiving remote underscored_properties, since we're in Ruby
 	NSRConfig.defaultConfig.autoinflectsPropertyNames = false
 	```
 	
-4. Have fun!
+Now have fun!
 
-	```ruby
-	# get all posts (synchronously)
-	error_ptr = Pointer.new(:object)
-	posts = Post.remoteAll(error_ptr)
-	if !posts
-	  error = error_ptr[0]
-	  ...
-	end
+```ruby
+# Get all posts (synchronously)
+error_ptr = Pointer.new(:object)
+posts = Post.remoteAll(error_ptr)
+if !posts
+  error = error_ptr[0]
+  ...
+end
 
-	# get all posts (asynchronously)
-	Post.remoteAllAsync(lambda do |posts, error| 
-	                      ...
-	                    end)
-	```
+# Get all posts (asynchronously)
+Post.remoteAllAsync(lambda do |posts, error| 
+                      ...
+                    end)
+```
 	
-	See the [documentation](http://dingbat.github.com/nsrails/) for more on what you can do with your new class, or the [cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook) for quick NSRRemoteObject recipes.
+See the [documentation](http://dingbat.github.com/nsrails/) for more on what you can do with your new class, or the [cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook) for quick NSRRemoteObject recipes.
 
 
 Dependencies
