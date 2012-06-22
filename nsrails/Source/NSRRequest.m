@@ -49,7 +49,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 @interface NSRRequest (private)
 
-+ (NSRRequest *) requestWithHTTPMethod:(NSString *)method;
+- (id) initWithHTTPMethod:(NSString *)method;
 
 - (NSURLRequest *) HTTPRequest;
 
@@ -154,6 +154,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
     self = [super init];
     if (self)
     {
+        config = [NSRConfig defaultConfig];
         httpMethod = method;
     }
     
@@ -252,7 +253,8 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 {
 	[self assertPresentRemoteID:obj forMethod:@"update"];
 
-	NSRRequest *req = [[NSRRequest requestWithHTTPMethod:[NSRConfig relevantConfigForClass:obj.class].updateMethod] routeToObject:obj];
+	NSRRequest *req = [[NSRRequest alloc] initWithHTTPMethod:obj.config.updateMethod];
+    [req routeToObject:obj];
 	[req setBodyToObject:obj];
 	
 	return req;
@@ -510,10 +512,9 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (id) initWithCoder:(NSCoder *)aDecoder
 {
-    if ((self = [super init]))
+    if ((self = [self initWithHTTPMethod:[aDecoder decodeObjectForKey:@"httpMethod"]]))
     {
         route = [aDecoder decodeObjectForKey:@"route"];
-        httpMethod = [aDecoder decodeObjectForKey:@"httpMethod"];
         self.body = [aDecoder decodeObjectForKey:@"body"];
         self.config = [aDecoder decodeObjectForKey:@"config"];
         self.queryParameters = [aDecoder decodeObjectForKey:@"queryParameters"];

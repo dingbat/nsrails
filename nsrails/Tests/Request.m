@@ -101,7 +101,7 @@
 	request = [req HTTPRequest];
 	STAssertEqualObjects([request HTTPBody], [@"[]" dataUsingEncoding:NSUTF8StringEncoding], nil);
 
-	req.route = @"hello";
+	[req routeTo:@"hello"];
 	request = [req HTTPRequest];
 	STAssertEqualObjects([request.URL description], @"http://myapp.com/hello", nil);
 
@@ -256,15 +256,15 @@
 		[request routeToObject:smth2 withCustomMethod:@"action"];
 		STAssertEqualObjects(request.route, @"pref2s/15/action", nil);
 		
-		request.httpMethod = @"DELETE";
+		request = [NSRRequest DELETE];
 	}
 	
 	for (int i = 0; i < 2; i++)
 	{
 		if (i == 0)
-			request.httpMethod = @"PATCH";
+            request = [NSRRequest PATCH];
 		else
-			request.httpMethod = @"GET";
+            request = [NSRRequest GET];
 		
 		smth2.remoteID = nil;
 		smth2.childParent = nil;
@@ -443,8 +443,6 @@
 	
 	[NSRConfig defaultConfig].appURL = @"http://myapp.com";
 	
-	req.config = nil;
-	STAssertEquals(req.config, [NSRConfig defaultConfig], nil);
 	STAssertEqualObjects([req.HTTPRequest URL], [NSURL URLWithString:@"http://myapp.com"], nil);
 	
 	NSRConfig *customConfig = [[NSRConfig alloc] initWithAppURL:@"http://custom"];
@@ -472,9 +470,8 @@
 	
 	[[NSRConfig defaultConfig] setPerformsCompletionBlocksOnMainThread:YES];
 	
-	NSRRequest *request = [[NSRRequest alloc] init];
-	request.httpMethod = @"GET";
-	request.route = @"posts";
+	NSRRequest *request = [NSRRequest GET];
+	[request routeTo:@"posts"];
 	
 	[request sendAsynchronous:
 	 ^(id jsonRep, NSError *error) 
@@ -499,7 +496,7 @@
 
 - (void) test_error_detection
 {	
-	NSRRequest *r = [[NSRRequest alloc] init];
+	NSRRequest *r = [NSRRequest GET];
 	
 	// 404 Not Found
 	
@@ -514,7 +511,7 @@
 		
 		NSError *error = [r errorForResponse:fullError statusCode:code];
 		STAssertEqualObjects([error domain], NSRRemoteErrorDomain, @"Succinct error messages failed");
-		STAssertTrue([[[error userInfo] objectForKey:NSLocalizedDescriptionKey] isEqualToString:shortError], @"Succinct message extraction failed for short message: `%@` (is %@)",shortError, [error.userInfo objectForKey:NSLocalizedDescriptionKey]);
+		STAssertEqualObjects([[error userInfo] objectForKey:NSLocalizedDescriptionKey], shortError, @"Succinct message extraction failed for short message");
 		STAssertNil([[error userInfo] objectForKey:NSRValidationErrorsKey], @"Validation errors dict should not have been created for 404");
 		STAssertEquals([[error userInfo] objectForKey:NSRRequestObjectKey],r,@"Should include itself as the request");
         

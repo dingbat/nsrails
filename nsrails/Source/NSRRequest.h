@@ -65,21 +65,25 @@
 /**
  Config used to make the request.
  
- Uses <NSRConfig>'s `defaultConfig` if `nil`.
+ This property is automatically set when a `routeTo` method is invoked (will set it to the config of the class/instance).
+ 
+ Will use <NSRConfig>'s `defaultConfig` by default (ie, is not routed to an object or class).
  */
 @property (nonatomic, strong) NSRConfig *config;
 
 /**
  The path to be appended to config's [appURL](NSRConfig.html#//api/name/appURL) (the base URL of your app).
+ 
+ You cannot set this variable directly - use the `routeTo` methods below.
  */
-@property (nonatomic, strong) NSString *route;
+@property (nonatomic, readonly) NSString *route;
 
 /**
  The HTTP verb with which to make the request.
  
  This should hardly ever be *set*. Use the <GET>, <DELETE>, <POST>, <PUT>, and <PATCH> factory methods.
  */
-@property (nonatomic, strong) NSString *httpMethod;
+@property (nonatomic, readonly) NSString *httpMethod;
 
 /**
  The query parameters with which to make the request.
