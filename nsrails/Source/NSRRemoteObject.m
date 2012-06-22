@@ -61,6 +61,16 @@
 
 #pragma mark Encouraged
 
++ (NSRConfig *) config
+{
+    return [NSRConfig relevantConfigForClass:self];
+}
+
+- (NSRConfig *) config
+{
+    return [self.class config];
+}
+
 + (NSString *) remoteModelName
 {
 	if (self == [NSRRemoteObject class])
@@ -70,9 +80,9 @@
 	
 	NSString *class = NSStringFromClass(self);
 	
-	if ([NSRConfig relevantConfigForClass:self].autoinflectsClassNames)
+	if ([self config].autoinflectsClassNames)
 	{
-		return [class nsr_stringByUnderscoringIgnoringPrefix:[NSRConfig relevantConfigForClass:self].ignoresClassPrefixes];
+		return [class nsr_stringByUnderscoringIgnoringPrefix:[self config].ignoresClassPrefixes];
 	}
 	else
 	{
@@ -241,7 +251,7 @@
 
 	if ([val isKindOfClass:[NSDate class]])
 	{
-		return [[NSRConfig relevantConfigForClass:self.class] stringFromDate:val];
+		return [[self config] stringFromDate:val];
 	}
 
 	return val;
@@ -251,7 +261,7 @@
 {
 	NSString *property = remoteKey;
 	
-	if ([NSRConfig defaultConfig].autoinflectsPropertyNames)
+	if ([self config].autoinflectsPropertyNames)
 		property = [property nsr_stringByCamelizing];
 	
 	if ([remoteKey isEqualToString:@"id"])
@@ -359,7 +369,7 @@
         }
         else if ([self propertyIsDate:property])
 		{
-			decodedObj = [[NSRConfig relevantConfigForClass:self.class] dateFromString:railsObject];
+			decodedObj = [[self config] dateFromString:railsObject];
 			
 			//account for any discrepancies between NSDate object and a string (which doesn't include milliseconds) 
 			CGFloat diff = fabs([decodedObj timeIntervalSinceDate:previousVal]);
@@ -474,7 +484,7 @@
 			continue;
 		
 		NSString *remoteKey = objcProperty;
-		if ([NSRConfig defaultConfig].autoinflectsPropertyNames)
+		if ([self config].autoinflectsPropertyNames)
 			remoteKey = [remoteKey nsr_stringByUnderscoring];
 		
 		id remoteRep = [self encodeValueForProperty:objcProperty remoteKey:&remoteKey];

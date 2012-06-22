@@ -77,28 +77,17 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
     return additionalHTTPHeaders;
 }
 
-# pragma mark - Config
-
-- (NSRConfig *) config
-{
-	//have a nil config mean the default
-	if (!config)
-		return [NSRConfig defaultConfig];
-	
-	return config;
-}
-
 # pragma mark - Convenient routing
 
 - (id) routeTo:(NSString *)r
 {
-	self.route = r;
+	route = r;
 	return self;
 }
 
 - (id) routeToClass:(Class)c withCustomMethod:(NSString *)optionalRESTMethod
 {
-	self.config = [NSRConfig relevantConfigForClass:c];
+	self.config = [c config];
 
 	NSString *controller = [c remoteControllerName];
 	if (!controller)
@@ -114,7 +103,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (id) routeToObject:(NSRRemoteObject *)o withCustomMethod:(NSString *)method ignoreID:(BOOL)ignoreID
 {
-	self.config = [NSRConfig relevantConfigForClass:o.class];
+	self.config = [o config];
 	
 	//prepend the ID: action -> 1/action
 	if (o.remoteID && !ignoreID)
@@ -160,37 +149,40 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 # pragma mark - Factory requests
 
-+ (NSRRequest *) requestWithHTTPMethod:(NSString *)method
+- (id) initWithHTTPMethod:(NSString *)method
 {
-	NSRRequest *req = [[NSRRequest alloc] init];
-	req.httpMethod = method;
-	
-	return req;
+    self = [super init];
+    if (self)
+    {
+        httpMethod = method;
+    }
+    
+    return self;
 }
 
 + (NSRRequest *) GET
 {
-	return [self requestWithHTTPMethod:@"GET"];
+	return [[self alloc] initWithHTTPMethod:@"GET"];
 }
 
 + (NSRRequest *) DELETE
 {
-	return [self requestWithHTTPMethod:@"DELETE"];	
+	return [[self alloc] initWithHTTPMethod:@"DELETE"];	
 }
 
 + (NSRRequest *) POST
 {
-	return [self requestWithHTTPMethod:@"POST"];
+	return [[self alloc] initWithHTTPMethod:@"POST"];
 }
 
 + (NSRRequest *) PUT
 {
-	return [self requestWithHTTPMethod:@"PUT"];
+	return [[self alloc] initWithHTTPMethod:@"PUT"];
 }
 
 + (NSRRequest *) PATCH
 {
-	return [self requestWithHTTPMethod:@"PATCH"];
+	return [[self alloc] initWithHTTPMethod:@"PATCH"];
 }
 
 
@@ -520,9 +512,9 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 {
     if ((self = [super init]))
     {
-        self.route = [aDecoder decodeObjectForKey:@"route"];
+        route = [aDecoder decodeObjectForKey:@"route"];
+        httpMethod = [aDecoder decodeObjectForKey:@"httpMethod"];
         self.body = [aDecoder decodeObjectForKey:@"body"];
-        self.httpMethod = [aDecoder decodeObjectForKey:@"httpMethod"];
         self.config = [aDecoder decodeObjectForKey:@"config"];
         self.queryParameters = [aDecoder decodeObjectForKey:@"queryParameters"];
         self.additionalHTTPHeaders = [aDecoder decodeObjectForKey:@"additionalHTTPHeaders"];

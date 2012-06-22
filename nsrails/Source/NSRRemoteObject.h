@@ -757,6 +757,16 @@
  */
 - (NSString *) propertyForRemoteKey:(NSString *)remoteKey;
 
+/**
+ Undocumented
+ */
++ (NSRConfig *) config;
+
+/**
+ Undocumented
+ */
+- (NSRConfig *) config;
+
 /// =============================================================================================
 /// @name Methods to override (Ruby-specific)
 /// =============================================================================================
