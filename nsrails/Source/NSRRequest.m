@@ -514,4 +514,30 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	 }];
 }
 
+#pragma mark - NSCoding
+
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+    if ((self = [super init]))
+    {
+        self.route = [aDecoder decodeObjectForKey:@"route"];
+        self.body = [aDecoder decodeObjectForKey:@"body"];
+        self.httpMethod = [aDecoder decodeObjectForKey:@"httpMethod"];
+        self.config = [aDecoder decodeObjectForKey:@"config"];
+        self.queryParameters = [aDecoder decodeObjectForKey:@"queryParameters"];
+        self.additionalHTTPHeaders = [aDecoder decodeObjectForKey:@"additionalHTTPHeaders"];
+    }
+    return self;
+}
+
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+    [aCoder encodeObject:route forKey:@"route"];
+    [aCoder encodeObject:httpMethod forKey:@"httpMethod"];
+    [aCoder encodeObject:body forKey:@"body"];
+    [aCoder encodeObject:config forKey:@"config"];
+    [aCoder encodeObject:queryParameters forKey:@"queryParameters"];
+    [aCoder encodeObject:additionalHTTPHeaders forKey:@"additionalHTTPHeaders"];
+}
+
 @end

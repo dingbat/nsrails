@@ -56,7 +56,7 @@
 	id response = [request sendSynchronous:&e];
 */
 
-@interface NSRRequest : NSObject
+@interface NSRRequest : NSObject <NSCoding>
 
 /// =============================================================================================
 /// @name Properties

@@ -601,6 +601,30 @@
 	STAssertNotNil([request valueForHTTPHeaderField:@"Authorization"], @"Should send w/authorization if username+password");
 }
 
+- (void) test_serialization
+{
+    NSString *file = [NSHomeDirectory() stringByAppendingPathComponent:@"test.dat"];
+
+    NSRConfig *config = [[NSRConfig alloc] initWithAppURL:@"hi"];
+    
+    NSRRequest *req = [[NSRRequest GET] routeTo:@"hi"];
+    req.config = config;
+    req.body = @"test";
+    
+    [req.queryParameters setObject:@"hi" forKey:@"t"];
+    [req.additionalHTTPHeaders setObject:@"hi" forKey:@"t"];
+		
+	STAssertTrue([NSKeyedArchiver archiveRootObject:req toFile:file], @"Archiving should've worked (serialize)");
+	
+	NSRRequest *req2 = [NSKeyedUnarchiver unarchiveObjectWithFile:file];
+	STAssertEqualObjects(req.httpMethod, req2.httpMethod, @"Should've carried over");	
+	STAssertEqualObjects(req.route, req2.route, @"Should've carried over");	
+	STAssertEqualObjects(req.queryParameters, req2.queryParameters, @"Should've carried over");	
+	STAssertEqualObjects(req.additionalHTTPHeaders, req2.additionalHTTPHeaders, @"Should've carried over");	
+	STAssertEqualObjects(req.config.appURL, req2.config.appURL, @"Should've carried over");	
+	STAssertEqualObjects(req.body, req2.body, @"Should've carried over");	
+}
+
 - (void) test_additional_headers
 {
 	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
