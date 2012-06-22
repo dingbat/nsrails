@@ -33,6 +33,12 @@
 
 @class NSRRemoteObject;
 
+/**
+ This category on NSMutableArray allows mutable arrays to "fetch into themselves".
+ 
+ The translateRemoteDictionariesIntoInstancesOfClass: method can also be useful if converting a manually-received array of JSON dictionaries and should be instances of a class.
+ */
+
 @interface NSMutableArray (NSRFetch)
 
 /**
@@ -40,7 +46,7 @@
  
  Makes a GET request to `/objects` (where `objects` is the pluralization of *class*'s model name.)
  
- Request done synchronously. See remoteFetchAll:async: for asynchronous operation.
+ Request made synchronously. See remoteFetchAll:async: for asynchronous operation.
  
  @param class Class with which to build instances to insert into this array. Raises an exception if this class does not subclass NSRRemoteObject.
  @param errorPtr Out parameter used if an error occurs while processing the request. May be `NULL`.
@@ -56,7 +62,7 @@
  
  Makes a GET request to `/parents/3/objects` (where `parents/3` is the path for the **parentObject**, and `objects` is the pluralization of *class*'s model name.)
  
- Request done synchronously. See remoteFetchAll:viaObject:async: for asynchronous operation.
+ Request made synchronously. See remoteFetchAll:viaObject:async: for asynchronous operation.
  
  @param class Class with which to build instances to insert into this array. Raises an exception if this class does not subclass NSRRemoteObject.
  @param parentObject Remote object by which to request the collection from - establishes pattern for resources depending on nesting. Raises an exception if this object's `remoteID` is nil, as it is used to construct the route.
@@ -94,7 +100,7 @@
 
 
 /**
- Replaces each dictionary in this array with an instance of the given class, setting respective properties to those defined in that dictionary (using the class's NSRMap).
+ Replaces each dictionary in this array with an instance of the given class, setting respective properties to those defined in that dictionary.
  
  This method can be useful when interpreting a retrieved array (representation of your server's JSON out) from a remoteGET method or similar.
  

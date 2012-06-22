@@ -1,44 +1,66 @@
 //
-//  NSRRemoteObject+CoreData.m
+//  CoreData.m
 //  NSRails
 //
-//  Created by Dan Hassin on 5/27/12.
-//  Copyright (c) 2012 InContext LLC. All rights reserved.
+//  Created by Dan Hassin on 6/12/12.
+//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
-
-#import <SenTestingKit/SenTestingKit.h>
 
 #import "NSRAsserts.h"
 
+/** CoreData Mock Classes **/
 
-@interface Post : NSRRemoteObject
+@interface CDPost : NSRRemoteManagedObject
 
 @property (nonatomic, strong) NSString *author, *content;
-@property (nonatomic, strong) NSMutableSet *responses;
+@property (nonatomic, strong) NSSet *responses;
 
 @end
 
-@implementation Post
-@synthesize author, content, responses;
-NSRMap(*, responses:Response);
-
-@end
-
-
-@interface Response : NSRRemoteObject
+@interface CDResponse : NSRRemoteManagedObject
 
 @property (nonatomic, strong) NSString *content, *author;
-@property (nonatomic, strong) Post *post;
+@property (nonatomic, strong) CDPost *post;
 
 @end
 
-@implementation Response
-@synthesize author, content, post;
-NSRMap(*, post -b);
+@implementation CDPost
+@dynamic author, content, responses;
+
++ (NSString *) entityName
+{
+	return @"Post";
+}
+
+- (Class) nestedClassForProperty:(NSString *)property
+{
+	if ([property isEqualToString:@"responses"])
+		return [CDResponse class];
+	
+	return [super nestedClassForProperty:property];
+}
 
 @end
 
-@interface NSRRemoteObject_CoreData : SenTestCase
+@implementation CDResponse
+@dynamic author, content, post;
+
++ (NSString *) entityName
+{
+	return @"Response";
+}
+
+- (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property
+{
+    return [property isEqualToString:@"post"];
+}
+
+@end
+
+
+/******** **********/
+
+@interface CoreData : SenTestCase
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
@@ -46,45 +68,32 @@ NSRMap(*, post -b);
 
 @end
 
-
-@implementation NSRRemoteObject_CoreData
+@implementation CoreData
 @synthesize managedObjectContext = __managedObjectContext;
 @synthesize managedObjectModel = __managedObjectModel;
 @synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
 
-- (void) test_coredata_enabled
-{
-	STAssertTrue([NSRRemoteObject isSubclassOfClass:[NSManagedObject class]], @"");
-}
-
-#ifdef NSR_USE_COREDATA
-
 - (void) test_exceptions
 {
-	STAssertThrows([[NSRRemoteObject alloc] initInserted], @"");
-
 	[[NSRConfig defaultConfig] setManagedObjectContext:nil];
 	
-	STAssertThrows([[Post alloc] initInserted], @"");
-	STAssertThrows([[NSRRemoteObject alloc] initInserted], @"");
-	STAssertThrows([[Post alloc] initWithCustomMap:nil customConfig:nil], @"");
-	STAssertThrows([[Post alloc] initWithCustomMap:nil customConfig:[[NSRConfig alloc] initWithAppURL:@"hufihiufh"]], @"");
-	
-	Post *p = [[Post alloc] initInsertedIntoContext:__managedObjectContext];
+	STAssertThrows(([[CDPost alloc] initInserted]), @"");
+	STAssertThrows([[NSRRemoteManagedObject alloc] initInserted], @"");
+
+	[[NSRConfig defaultConfig] setManagedObjectContext:__managedObjectContext];
+
+	CDPost *p = [[CDPost alloc] initInserted];
 	p.remoteID = NSRNumber(15);
 	[p saveContext];
-	
-	Post *p2 = [[Post alloc] initInsertedIntoContext:__managedObjectContext];
-	p2.remoteID = NSRNumber(15);
-	STAssertThrows([p2 saveContext],@"");	
 }
 
 - (void) test_crud
 {
-	Post *p = [[Post alloc] initInserted];
+	CDPost *p = [[CDPost alloc] initInserted];
 	
-	STAssertFalse(p.hasChanges, @"");
-
+	//shouldn't save the context
+	STAssertTrue(p.hasChanges, @"");
+	
 	p.author = @"hi";
 	p.content = @"hello";
 	p.remoteID = NSRNumber(15);
@@ -92,74 +101,73 @@ NSRMap(*, post -b);
 	STAssertTrue(p.hasChanges, @"");
 	
 	STAssertTrue([p remoteCreate:nil], @"");
-	STAssertTrue(p == [Post findObjectWithRemoteID:NSRNumber(p.remoteID.integerValue)], @"should find obj with that ID (just made)");
+	STAssertTrue(p == [CDPost findObjectWithRemoteID:NSRNumber(p.remoteID.integerValue)], @"should find obj with that ID (just made)");
 	
 	STAssertFalse(p.hasChanges, @"");
-
 	
-	Response *r = [[Response alloc] initInserted];
+	
+	CDResponse *r = [[CDResponse alloc] initInserted];
 	r.author = @"yo";
 	r.content = @"po";
 	r.post = p;
 	
 	STAssertTrue([r remoteCreate:nil],@"");
-	STAssertTrue(r == [Response findObjectWithRemoteID:NSRNumber(r.remoteID.integerValue)], @"should find obj with that ID (just made)");
-
+	STAssertTrue(r == [CDResponse findObjectWithRemoteID:NSRNumber(r.remoteID.integerValue)], @"should find obj with that ID (just made)");
+	
 	
 	STAssertTrue([p remoteFetch:nil], @"");
 	STAssertEquals(p.responses.count, (NSUInteger)1, @"");
-	STAssertTrue([[p.responses anyObject] isKindOfClass:[Response class]], @"");
+	STAssertTrue([[p.responses anyObject] isKindOfClass:[CDResponse class]], @"");
 	STAssertTrue([p.responses anyObject] == r, @"");
-	STAssertTrue([[p.responses anyObject] post] == p, @"");
+	STAssertEquals([[p.responses anyObject] post], p, @"");
 	
 	
 	p.content = @"changed!";
-
-	//TODO
-	//Not even close to being an expert with CoreData... anyone know why this is failing?
-	//STAssertTrue(p.isUpdated, @"");
+	
+	STAssertTrue(p.isUpdated, @"");
 	STAssertTrue([p remoteUpdate:nil], @"");
 	STAssertFalse(p.hasChanges, @"");
 	
-	Post *retrieved = [Post findObjectWithRemoteID:NSRNumber(p.remoteID.integerValue)];
+	CDPost *retrieved = [CDPost findObjectWithRemoteID:NSRNumber(p.remoteID.integerValue)];
 	STAssertTrue(p == retrieved, @"");
 	STAssertEqualObjects(retrieved.content, p.content, @"");
 	STAssertEqualObjects(retrieved.author, p.author, @"");
 	
 	STAssertTrue([p remoteDestroy:nil],@"");
 	
-	STAssertNil([Post findObjectWithRemoteID:p.remoteID], @"");
+	STAssertNil([CDPost findObjectWithRemoteID:p.remoteID], @"");
 }
 
 - (void) test_finds
 {
-	STAssertThrows([NSRRemoteObject findObjectWithRemoteID:NSRNumber(12)], @"should crash");
+	STAssertNil([CDPost findObjectWithRemoteID:NSRNumber(12)], @"should be nothing with rID 12");
 	
-	STAssertNil([Post findObjectWithRemoteID:NSRNumber(12)], @"should be nothing with rID 12");
-
-	Post *p = [Post findOrInsertObjectUsingRemoteDictionary:NSRDictionary(NSRNumber(12),@"id")];
+	CDPost *p = [CDPost objectWithRemoteDictionary:NSRDictionary(NSRNumber(12),@"id")];
 	
 	STAssertNotNil(p, @"");
 	STAssertEqualObjects(p.remoteID, NSRNumber(12), @"");
 	STAssertFalse(p.hasChanges, @"");
-
-	Post *p2 = [Post findObjectWithRemoteID:NSRNumber(12)];
+	
+	CDPost *p2 = [CDPost findObjectWithRemoteID:NSRNumber(12)];
 	STAssertNotNil(p2,@"");
 	STAssertTrue(p2 == p, @"");
 	STAssertEqualObjects(p2.remoteID, NSRNumber(12), @"");
 	STAssertFalse(p2.hasChanges, @"");
-
-	Post *p3 = [Post findOrInsertObjectUsingRemoteDictionary:NSRDictionary(NSRNumber(12),@"id",@"hi",@"content")];
+	
+	CDPost *p3 = [CDPost objectWithRemoteDictionary:NSRDictionary(NSRNumber(12),@"id",@"hi",@"content")];
 	
 	STAssertNotNil(p3,@"");
 	STAssertTrue(p3 == p2,@"");
 	STAssertEqualObjects(p3.content, @"hi", @"");
 	STAssertFalse(p3.hasChanges, @"");
 	
-	STAssertNil([Post findOrInsertObjectUsingRemoteDictionary:NSRDictionary(@"hi",@"content")], @"should be nil if no rID");
+	CDPost *p4 = [CDPost objectWithRemoteDictionary:NSRDictionary(@"hi",@"content")];
+	
+	STAssertNotNil(p4,@"");
+	STAssertEqualObjects(p4.remoteID, NSRNumber(0), nil);
+	STAssertEqualObjects(p4.content, @"hi", @"");
+	STAssertFalse(p4.hasChanges, @"");
 }
-
-#endif
 
 - (void) setUp
 {
@@ -206,7 +214,7 @@ NSRMap(*, post -b);
     if (__persistentStoreCoordinator != nil) {
         return __persistentStoreCoordinator;
     }
-        
+	
     __persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
     [__persistentStoreCoordinator addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:NULL];
     

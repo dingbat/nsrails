@@ -24,4 +24,10 @@
 + (NSArray *) shortErrors;
 + (NSArray *) statusCodes;
 
+/****/
+
++ (NSDictionary *) newCustomCoder;
++ (NSDictionary *) newCustomSender;
++ (NSDictionary *) newDictionaryNester;
+
 @end

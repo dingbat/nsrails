@@ -30,15 +30,11 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSString (NSR_Inflection)
+@interface NSString (NSRInflection)
 
-- (NSString *) underscore;
-- (NSString *) underscoreIgnorePrefix:(BOOL)b;
+- (NSString *) nsr_stringByCamelizing;
 
-- (NSString *) camelize;
-
-- (NSString *) pluralize;
-
-- (NSString *) firstLetterCapital;
+- (NSString *) nsr_stringByUnderscoring;
+- (NSString *) nsr_stringByUnderscoringIgnoringPrefix:(BOOL)ignorePrefix;
 
 @end

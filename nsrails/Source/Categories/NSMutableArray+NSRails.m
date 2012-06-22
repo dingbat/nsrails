@@ -50,7 +50,7 @@
 		NSDictionary *dict = [self objectAtIndex:i];
 		if ([dict isKindOfClass:[NSDictionary class]])
 		{
-			NSRRemoteObject *obj = [class findOrInsertObjectUsingRemoteDictionary:dict];	
+			NSRRemoteObject *obj = [class objectWithRemoteDictionary:dict];	
 			
 			[self replaceObjectAtIndex:i withObject:obj];
 		}
@@ -75,7 +75,7 @@
 		
 		if (!existing)
 		{
-			id new = [class findOrInsertObjectUsingRemoteDictionary:dict];
+			id new = [class objectWithRemoteDictionary:dict];
 			[self addObject:new];
 			changes = YES;
 		}

@@ -25,19 +25,24 @@ Post *postNumber1 = [Post remoteObjectWithID:1 error:&error];
 Features
 --------
 
-* [High-level API](http://dingbat.github.com/nsrails/Classes/NSRRemoteObject.html#tasks), yet flexible enough even to work with any RESTful server
-* [CoreData integration](http://dingbat.github.com/nsrails/Classes/NSRRemoteObject.html#coredata)
-* [Highly customizable “syncing”](https://github.com/dingbat/nsrails/wiki/NSRMap) with your Rails attributes (+ [nesting](https://github.com/dingbat/nsrails/wiki/Nesting) for relations like has-many, belongs-to, etc)
-* [Asynchronous requests](http://dingbat.github.com/nsrails/Classes/NSRRemoteObject.html#tasks)
+* High-level API, yet flexible enough even to work with any RESTful server
+* Highly customizable property behaviors and nesting
+* Asynchronous requests
 * [Autogenerate](https://github.com/dingbat/nsrails/tree/master/autogen) NSRails-ready classes from a Rails project
-* [Supported in RubyMotion and MacRuby](https://github.com/dingbat/nsrails/tree/master/demos/rubymotion)
+* Fully supported in RubyMotion and MacRuby
+* Written with ARC
 
-Getting started
+Quick links
+--------
+
+* [Documentation](http://dingbat.github.com/nsrails)
+* [CoreData guide](http://dingbat.github.com/nsrails/Classes/NSRRemoteManagedObject.html)
+* [Cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook)
+
+Getting started - Objective-C
 ---------
 
-### Objective-C
-
-1. Drop the `Source` folder into your Xcode project. You'll also need the CoreData framework included.
+1. Drop the `Source` folder into your Xcode project. You'll also need the CoreData framework linked in Build Phases.
   * If you're using Git, you should add NSRails as a submodule to your project so you can `git pull` and always be up to date:
    
       ```
@@ -45,6 +50,7 @@ Getting started
       ```
   
       This will clone the entire NSRails repo, but you'll only need to add `nsrails/Source` to your project in Xcode.
+
 2. Make an Objective-C class for your Rails model and have it subclass **NSRRemoteObject** (you'll need to `#import NSRails.h`)
 
   ```objc
@@ -65,18 +71,12 @@ Getting started
 
   - (BOOL)application:(UIApplication *)app didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
   {
-        [[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
+        [NSRConfig defaultConfig].appURL = @"http://localhost:3000";
         ...
+  }
   ```
-    
-### RubyMotion & MacRuby
 
-  * See [this](https://github.com/dingbat/nsrails/tree/master/demos/rubymotion) readme for instructions on getting started in Ruby
-
-Getting warmed up
-----------
-
-By subclassing NSRRemoteObject, your class gets tons of instance and class methods that'll act on your remote objects. Here are a few of the things you can do with your new class:
+You're done! By subclassing NSRRemoteObject, your class gets instance and class methods that'll act on your remote objects. Here are a few of the things you can do with your new class:
 
 ```objc
 // Retrieve post with ID 1
@@ -97,43 +97,84 @@ NSArray *responses = [Response remoteAllViaObject:post error:&error];
 [post remoteDestroyAsync: ^(NSError *error) {  if (!error) ... }];
 ```
 
-See the [documentation](http://dingbat.github.com/nsrails/) for more details.
+See the [documentation](http://dingbat.github.com/nsrails/) for more on what you can do with your new class, or the [cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook) for quick NSRRemoteObject recipes.
 
-### NSRMap
+Getting started - Ruby
+---------
 
-Use the **NSRMap()** macro if you want to define special behaviors for certain properties:
+1. In **MacRuby**, simply drag the `Source` folder into Xcode in your MacRuby project, and NSRails should be built with your project as normal. For **RubyMotion**, follow these steps to vendor NSRails:
+  * Add a `vendor` directory on the main level of your RubyMotion app if you don't have one already
+  * Copy the `nsrails` directory ([the one with the main Xcode project](https://github.com/dingbat/nsrails/tree/master/nsrails)) into `vendor`. (You can delete `Tests/`, but keep `Source/` and the Xcode project file).
+  * Modify your Rakefile to include NSRails and the CoreData framework:
 
-```objc
-@implementation Post
-@synthesize author, content, createdAt, responses;
-NSRMap(*, createdAt -r, responses:Response);
+	    ```ruby
+	  Motion::Project::App.setup do |app|
+	      # Add CoreData as a linked framework (required even if CoreData isn't used)
+	      app.frameworks << "CoreData"
 
-...
+	      # Add this line:
+	      app.vendor_project('vendor/nsrails', :xcode, :target => 'NSRails', :headers_dir => 'Source')
+	      # OR this line, if you wish to use NSRails with CoreData
+	      #app.vendor_project('vendor/nsrails', :xcode, :target => 'NSRailsCD', :headers_dir => 'Source')
+
+	      ...
+	  end
+	  ```
+2. Make a Ruby class for your Rails model and have it subclass **NSRRemoteObject**:
+
+	```ruby
+	class Post < NSRRemoteObject
+	  attr_accessor :author, :content, :created_at
+
+	  # Since Ruby only creates instance variables during runtime, properties
+	  # have to be explicitly defined by overriding 'remoteProperties'
+	  def remoteProperties
+	    super + ["author", "content", "created_at"]
+	  end
+	end
+	```
+
+3. Setup. This can go in `app_delegate.rb`:
+
+	```ruby
+	NSRConfig.defaultConfig.appURL = "http://localhost:3000"
+
+	# Don't look for camelCase when receiving remote underscored_properties, since we're in Ruby
+	NSRConfig.defaultConfig.autoinflectsPropertyNames = false
+	```
+	
+Now have fun!
+
+```ruby
+# Get all posts (synchronously)
+error_ptr = Pointer.new(:object)
+posts = Post.remoteAll(error_ptr)
+if !posts
+  error = error_ptr[0]
+  ...
+end
+
+# Get all posts (asynchronously)
+Post.remoteAllAsync(lambda do |posts, error| 
+                      ...
+                    end)
 ```
+	
+See the [documentation](http://dingbat.github.com/nsrails/) for more on what you can do with your new class, or the [cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook) for quick NSRRemoteObject recipes.
 
-- The `*` includes all of this class's properties as remote-relevant (default if NSRMap isn't defined). 
-- `createdAt -r` makes `createdAt` retrievable-only (so that it's never *sent* to Rails - only retrieved).
-- `responses:Response` tells NSRails to fill the `responses` array with instances of the Response class (also an NSRRemoteObject subclass, whose NSRMap will also be considered when nested).
-
-
-See the [NSRMap wiki page](https://github.com/dingbat/nsrails/wiki/NSRMap) for even more options!
 
 Dependencies
 --------
 
 * **iOS 5.0+**
-* **CoreData** framework linked
-* **Automatic Reference Counting (ARC)**
-  * If your project isn't using ARC, you'll need to selectively specify it for NSRails. Go to your active target, select the "Build Phases" tab, and in the "Compile Sources" section, set `-fobjc-arc` as a compiler flag for each NSRails source file.
+* **Automatic Reference Counting (ARC)**: If your project isn't using ARC, you'll need to selectively specify it for NSRails. Go to your active target, select the "Build Phases" tab, and in the "Compile Sources" section, set `-fobjc-arc` as a compiler flag for each NSRails source file.
 
 Credits
 ----------
 
-Version 1.2.
+Version 2.0.
 
-A lot of NSRails was inspired by the [ObjectiveResource](https://github.com/yfactorial/objectiveresource) project. CoreData integration help from jdjennin of Twin Engine Labs.
-
-Thanks!
+A lot of NSRails was inspired by the [ObjectiveResource](https://github.com/yfactorial/objectiveresource) project. Thanks!
 
 License (MIT)
 ---------
