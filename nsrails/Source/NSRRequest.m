@@ -31,7 +31,7 @@
 #import "NSRails.h"
 
 #import "NSRRequest.h"
-#import "NSData+Additions.h"
+#import "NSData+Base64.h"
 
 
 #if NSRLog > 0
@@ -46,15 +46,6 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 #define NSRLogTagged(...)
 #define NSRLogInOut(...)
 #endif
-
-@interface NSRRemoteObject (internal)
-
-+ (NSRConfig *) getRelevantConfig;
-- (NSRConfig *) getRelevantConfig;
-
-+ (NSRPropertyCollection *) propertyCollection;
-
-@end
 
 @interface NSRRequest (private)
 
@@ -99,7 +90,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (id) routeToClass:(Class)c withCustomMethod:(NSString *)optionalRESTMethod
 {
-	self.config = [c getRelevantConfig];
+	self.config = [NSRConfig relevantConfigForClass:c];
 
 	NSString *controller = [c remoteControllerName];
 	if (!controller)
@@ -115,7 +106,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (id) routeToObject:(NSRRemoteObject *)o withCustomMethod:(NSString *)method ignoreID:(BOOL)ignoreID
 {
-	self.config = [o getRelevantConfig];
+	self.config = [NSRConfig relevantConfigForClass:o.class];
 	
 	//prepend the ID: action -> 1/action
 	if (o.remoteID && !ignoreID)
@@ -213,10 +204,16 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 + (NSRRequest *) requestToFetchAllObjectsOfClass:(Class)c viaObject:(NSRRemoteObject *)obj
 {
 	if (!obj.remoteID)
+    {
 		if (obj)
+        {
 			[NSException raise:NSRNullRemoteIDException format:@"Attempt to fetch all %@s via object %@, but the object's remoteID was nil.",[self class],[obj class]];
+        }
 		else
+        {
 			return [NSRRequest requestToFetchAllObjectsOfClass:c];
+        }
+    }
 	
 	return [[NSRRequest GET] routeToObject:obj withCustomMethod:[c remoteControllerName]];
 }
@@ -255,7 +252,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 {
 	[self assertPresentRemoteID:obj forMethod:@"update"];
 
-	NSRRequest *req = [[NSRRequest requestWithHTTPMethod:obj.getRelevantConfig.updateMethod] routeToObject:obj];
+	NSRRequest *req = [[NSRRequest requestWithHTTPMethod:[NSRConfig relevantConfigForClass:obj.class].updateMethod] routeToObject:obj];
 	[req setBodyToObject:obj];
 	
 	return req;
@@ -274,15 +271,6 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (NSURLRequest *) HTTPRequest
 {	
-	if (!self.config.appURL)
-	{
-		[NSException raise:NSRMissingURLException format:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup. (env=%@)", [NSRConfig currentEnvironment]];
-		
-		return nil;
-	}
-
-	NSURL *url = [NSURL URLWithString:self.config.appURL];
-	
 	NSString *appendedRoute = (route ? route : @"");
 	if (queryParameters.count > 0)
 	{
@@ -297,7 +285,14 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 		appendedRoute = [appendedRoute stringByAppendingFormat:@"?%@",[params componentsJoinedByString:@"&"]];
 	}
 	
-	url = [NSURL URLWithString:appendedRoute relativeToURL:url];
+	NSURL *base = [NSURL URLWithString:self.config.appURL];
+	if (!base)
+	{
+		[NSException raise:NSRMissingURLException format:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup. (env=%@)", [NSRConfig currentEnvironment]];
+	}
+
+	
+	NSURL *url = [NSURL URLWithString:appendedRoute relativeToURL:base];
 	
 	NSRLogInOut(@"OUT", body, @"===> %@ to %@", httpMethod, [url absoluteString]);	
 	
@@ -314,7 +309,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 		//add auth header encoded in base64
 		NSString *authStr = [NSString stringWithFormat:@"%@:%@", self.config.appUsername, self.config.appPassword];
 		NSData *authData = [authStr dataUsingEncoding:NSUTF8StringEncoding];
-		NSString *authHeader = [NSString stringWithFormat:@"Basic %@", [authData base64Encoding]];
+		NSString *authHeader = [NSString stringWithFormat:@"Basic %@", [authData nsr_base64Encoding]];
 		
 		[request setValue:authHeader forHTTPHeaderField:@"Authorization"]; 
 	}

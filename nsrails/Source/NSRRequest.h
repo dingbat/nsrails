@@ -65,7 +65,7 @@
 /**
  Config used to make the request.
  
- Uses +[NSRConfig defaultConfig] if `nil`.
+ Uses <NSRConfig>'s `defaultConfig` if `nil`.
  */
 @property (nonatomic, strong) NSRConfig *config;
 
@@ -77,7 +77,7 @@
 /**
  The HTTP verb with which to make the request.
  
- This should hardly ever be *set*. Use the GET, DELETE, POST, PUT, and PATCH factory methods.
+ This should hardly ever be *set*. Use the <GET>, <DELETE>, <POST>, <PUT>, and <PATCH> factory methods.
  */
 @property (nonatomic, strong) NSString *httpMethod;
 
@@ -107,37 +107,37 @@
 /// =============================================================================================
 
 /**
- Creates and returns an NSRRequest object initialized with httpMethod set to `@"GET"`.
+ Creates and returns an NSRRequest object initialized with `<httpMethod>` set to `@"GET"`.
  
- @return An NSRRequest object initialized with httpMethod set to `@"GET"`.
+ @return An NSRRequest object initialized with `<httpMethod>` set to `@"GET"`.
  */
 + (NSRRequest *) GET;
 
 /**
- Creates and returns an NSRRequest object initialized with httpMethod set to `@"DELETE"`.
+ Creates and returns an NSRRequest object initialized with `<httpMethod>` set to `@"DELETE"`.
  
- @return An NSRRequest object initialized with httpMethod set to `@"DELETE"`.
+ @return An NSRRequest object initialized with `<httpMethod>` set to `@"DELETE"`.
  */
 + (NSRRequest *) DELETE;
 
 /**
- Creates and returns an NSRRequest object initialized with httpMethod set to `@"POST"`.
+ Creates and returns an NSRRequest object initialized with `<httpMethod>` set to `@"POST"`.
  
- @return An NSRRequest object initialized with httpMethod set to `@"POST"`.
+ @return An NSRRequest object initialized with `<httpMethod>` set to `@"POST"`.
  */
 + (NSRRequest *) POST;
 
 /**
- Creates and returns an NSRRequest object initialized with httpMethod set to `@"PUT"`.
+ Creates and returns an NSRRequest object initialized with `<httpMethod>` set to `@"PUT"`.
  
- @return An NSRRequest object initialized with httpMethod set to `@"PUT"`.
+ @return An NSRRequest object initialized with `<httpMethod>` set to `@"PUT"`.
  */
 + (NSRRequest *) PUT;
 
 /**
- Creates and returns an NSRRequest object initialized with httpMethod set to `@"PATCH"`.
+ Creates and returns an NSRRequest object initialized with `<httpMethod>` set to `@"PATCH"`.
  
- @return An NSRRequest object initialized with httpMethod set to `@"PATCH"`.
+ @return An NSRRequest object initialized with `<httpMethod>` set to `@"PATCH"`.
  */
 + (NSRRequest *) PATCH;
 
@@ -191,7 +191,7 @@
  
 	POST /posts
  
- Or, if -[NSRRemoteObject objectUsedToPrefixRequest:] is overriden and returns a non-nil object,
+ Or, if <NSRRemoteObject>'s `objectUsedToPrefixRequest:` is overriden and returns a non-nil object,
  
 	POST /users/3/posts
  
@@ -207,7 +207,7 @@
  
 	GET /posts/1
  
- Or, if -[NSRRemoteObject objectUsedToPrefixRequest:] is overriden and returns a non-nil object,
+ Or, if <NSRRemoteObject>'s `objectUsedToPrefixRequest:` is overriden and returns a non-nil object,
  
 	GET /users/3/posts/1
  
@@ -223,7 +223,7 @@
  
 	DELETE /posts/1
  
- Or, if -[NSRRemoteObject objectUsedToPrefixRequest:] is overriden and returns a non-nil object,
+ Or, if <NSRRemoteObject>'s `objectUsedToPrefixRequest:` is overriden and returns a non-nil object,
  
 	DELETE /users/3/posts/1
  
@@ -235,11 +235,11 @@
 /**
  Creates and returns an NSRRequest object set to remotely update a given object.
  
- Request routed to the given object. HTTP method depends on config's [updateMethod](NSRConfig.html#//api/name/updateMethod).
+ Request routed to the given object. HTTP method depends on config's [`updateMethod`](NSRConfig.html#//api/name/updateMethod).
  
 	(PUT, PATCH, etc) /posts/1
  
- Or, if -[NSRRemoteObject objectUsedToPrefixRequest:] is overriden and returns a non-nil object,
+ Or, if <NSRRemoteObject>'s `objectUsedToPrefixRequest:` is overriden and returns a non-nil object,
  
 	(PUT, PATCH, etc) /users/3/posts/1
  
@@ -255,7 +255,7 @@
  
 	PUT /posts/1
  
- Or, if -[NSRRemoteObject objectUsedToPrefixRequest:] is overriden and returns a non-nil object,
+ Or, if <NSRRemoteObject>'s `objectUsedToPrefixRequest:` is overriden and returns a non-nil object,
  
 	PUT /users/3/posts/1
  
@@ -314,7 +314,7 @@
 /**
  Sets the body to a given object.
  
- Will convert the object into a JSON-parsable object (an NSDictionary) by calling -[NSRRemoteObject remoteDictionaryRepresentationWrapped:] on it.
+ Will convert the object into a JSON-parsable object (an NSDictionary) by calling <NSRRemoteObject>'s `remoteDictionaryRepresentationWrapped:` on it.
  
  @param object Object to use as a body to send the request.
  */

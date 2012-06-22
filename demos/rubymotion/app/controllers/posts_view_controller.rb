@@ -42,7 +42,7 @@ class PostsViewController < UITableViewController
       self.tableView.reloadData
     end
     
-    # This could also be done by setting @posts to the result of Post.(e_ptr), but using the Array method will persist the same objects and update their respective properties instead of replacing everything, which could be desirable
+    # This could also be done by setting @posts to the result of Post.remoteAll(e_ptr), but using the Array method will persist the same objects and update their respective properties instead of replacing everything, which could be desirable
   end
   
   def deletePostAtIndexPath(indexPath)

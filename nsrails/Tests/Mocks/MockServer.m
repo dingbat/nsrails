@@ -7,6 +7,7 @@
 //
 
 #import "MockServer.h"
+#import "NSRAsserts.h"
 
 @implementation MockServer
 
@@ -85,6 +86,25 @@
 {	
 	return [NSArray arrayWithObjects:[self short404Error], [self short404Error2], [self short500Error], @"Unprocessable Entity", nil];
 }
+
+
+/**/
+
++ (NSDictionary *) newDictionaryNester
+{
+	return NSRDictionary(NSRArray(NSRDictionary(@"im",@"so"),NSRDictionary(@"hip",@"!")), @"dictionaries");
+}
+
++ (NSDictionary *) newCustomCoder
+{
+	return NSRDictionary(@"LoweRCasE?",@"locally_lowercase",@"upper",@"remotely_uppercase",@"http://nsrails.com",@"locally_url",@"one,two,three",@"csv_array",@"invisible",@"remote_only",@"something",@"code_to_nil",@"2012-05-07T04:41:52Z",@"date_override_send",@"afsofauh",@"date_override_ret",NSRDictionary(@"COMP LOWERCASE?", @"component_name"),@"component",@"renamed",@"rails");
+}
+
++ (NSDictionary *) newCustomSender
+{
+	return NSRDictionary(@"retrieve", @"retrieve_only",@"send",@"send_only",@"shared",@"shared", @"shared explicit",@"shared_explicit", @"x",@"undefined");
+}
+
 
 
 @end

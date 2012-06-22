@@ -31,9 +31,6 @@
 #import "NSRails.h"
 #import "NSRConfig.h"
 
-#import "NSRPropertyCollection.h"
-#import "NSData+Additions.h"
-
 //NSRConfigStackElement implementation
 
 //this small helper class is used to keep track of which config is contextually relevant
@@ -61,24 +58,14 @@
 @end
 
 
-@interface NSRRemoteObject (internal)
-
-+ (NSRPropertyCollection *) propertyCollection;
-
-@end
-
-
 //Environments
-NSString * const NSRConfigEnvironmentDevelopment		= @"NSRConfigEnvironmentDevelopment";
-NSString * const NSRConfigEnvironmentProduction			= @"NSRConfigEnvironmentProduction";
-
+NSString * const NSRConfigEnvironmentDevelopment		= @"com.nsrails.NSRConfigEnvironmentDevelopment";
+NSString * const NSRConfigEnvironmentProduction			= @"com.nsrails.NSRConfigEnvironmentProduction";
 
 NSString * const NSRValidationErrorsKey					= @"NSRValidationErrorsKey";
 
 NSString * const NSRRemoteErrorDomain				= @"NSRRemoteErrorDomain";
-NSString * const NSRMapException					= @"NSRMapException";
 NSString * const NSRJSONParsingException			= @"NSRJSONParsingException";
-NSString * const NSRInternalError					= @"NSRInternalError";
 NSString * const NSRMissingURLException				= @"NSRMissingURLException";
 NSString * const NSRNullRemoteIDException			= @"NSRNullRemoteIDException";
 NSString * const NSRCoreDataException				= @"NSRCoreDataException";
@@ -104,7 +91,7 @@ static NSString *currentEnvironment = nil;
 	currentEnvironment = NSRConfigEnvironmentDevelopment;
 }
 
-+ (NSRConfig *) configForEnvironment: (NSString *)environment
++ (NSRConfig *) configForEnvironment:(NSString *)environment
 {
 	NSRConfig *config = [configEnvironments objectForKey:environment];
 	if (!config)
@@ -113,6 +100,22 @@ static NSString *currentEnvironment = nil;
 		[config useAsDefaultForEnvironment:environment];
 	}
 	return config;
+}
+
++ (NSString *) environmentKeyForClass:(Class)class
+{
+	return [NSString stringWithFormat:@"com.nsrails.class.%@",class];
+}
+
++ (NSRConfig *) relevantConfigForClass:(Class)class
+{
+	if ([self overrideConfig])
+		return [self overrideConfig];
+	
+	if (class && [configEnvironments objectForKey:[self environmentKeyForClass:class]])
+		return [self configForEnvironment:[self environmentKeyForClass:class]];
+
+	return [self defaultConfig];
 }
 
 + (NSRConfig *) defaultConfig
@@ -137,7 +140,7 @@ static NSString *currentEnvironment = nil;
 
 - (void) useForClass:(Class)class
 {
-	[[class propertyCollection] setCustomConfig:self];
+	[self useAsDefaultForEnvironment:[self.class environmentKeyForClass:class]];
 }
 
 + (void) setCurrentEnvironment:(NSString *)environment
@@ -215,8 +218,7 @@ static NSString *currentEnvironment = nil;
 	
 	if (!date && string)
 	{
-		[NSException raise:NSRInternalError format:@"Attempted to convert remote date string (\"%@\") into an NSDate object, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation).",string,dateFormatter.dateFormat];
-		return nil;
+        NSLog(@"NSR Warning: Attempted to convert remote date string (\"%@\") into an NSDate object, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation). Setting to nil",string,dateFormatter.dateFormat);
 	}
 	
 	return date;

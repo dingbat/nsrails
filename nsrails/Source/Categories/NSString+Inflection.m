@@ -28,53 +28,77 @@
  
  */
 
-// Credit for some code here goes to Ryan Daigle (2008 yFactorial, LLC) - thank you!
-
 #import "NSString+Inflection.h"
 
-@implementation NSString (NSR_Inflection)
+@implementation NSString (NSRInflection)
 
-- (NSCharacterSet *) capitals 
+- (NSString *) nsr_stringByCamelizing
 {
-	return [NSCharacterSet uppercaseLetterCharacterSet];
+	NSMutableString *camelized = [NSMutableString string];
+	BOOL capitalizeNext = NO;
+	for (int i = 0; i < self.length; i++) 
+	{
+		NSString *str = [self substringWithRange:NSMakeRange(i, 1)];
+		
+		if ([str isEqualToString:@"_"])
+		{
+			capitalizeNext = YES;
+			continue;
+		}
+		
+		if (capitalizeNext) 
+		{
+			[camelized appendString:[str uppercaseString]];
+			capitalizeNext = NO;
+		} 
+		else
+		{
+			[camelized appendString:str];
+		}
+	}
+	
+	// replace items that end in Id with ID
+	if ([camelized hasSuffix:@"Id"])
+		[camelized replaceCharactersInRange:NSMakeRange(camelized.length - 2, 2) withString:@"ID"];
+	
+	// replace items that end in Ids with IDs
+	if ([camelized hasSuffix:@"Ids"])
+		[camelized replaceCharactersInRange:NSMakeRange(camelized.length - 3, 3) withString:@"IDs"];
+	
+	return camelized;
 }
 
-- (NSCharacterSet *) camelcaseDelimiters 
+- (NSString *) nsr_stringByUnderscoring
 {
-	return [NSCharacterSet characterSetWithCharactersInString:@"-_"];
+	return [self nsr_stringByUnderscoringIgnoringPrefix:NO];
 }
 
-- (NSString *) underscore
+- (NSString *) nsr_stringByUnderscoringIgnoringPrefix:(BOOL)stripPrefix
 {
-	return [self underscoreIgnorePrefix:NO];
-}
-
-- (NSString *) underscoreIgnorePrefix:(BOOL)ignorePrefix
-{	
-	NSString *delimiter = @"_";
+	NSCharacterSet *caps = [NSCharacterSet uppercaseLetterCharacterSet];
 	
 	NSMutableString *underscored = [NSMutableString string];
-	
 	BOOL isPrefix = YES;
-	
 	BOOL previousLetterWasCaps = NO;
-	for (int i = 0; i < [self length]; i++) 
+	
+	for (int i = 0; i < self.length; i++) 
 	{
 		unichar c = [self characterAtIndex:i];
 		NSString *currChar = [NSString stringWithFormat:@"%C",c];
-		if ([[self capitals] characterIsMember:c]) 
+		if ([caps characterIsMember:c]) 
 		{
-			BOOL nextLetterIsCaps = (i+1 == self.length || [[self capitals] characterIsMember:[self characterAtIndex:i+1]]);
-			//only add the delimiter if, it's not the first letter, it's not in the middle of a bunch of caps, and it's not a repeat
-			if (i != 0 && !(previousLetterWasCaps && nextLetterIsCaps) && ![[self camelcaseDelimiters] characterIsMember:[self characterAtIndex:i-1]])
+			BOOL nextLetterIsCaps = (i+1 == self.length || [caps characterIsMember:[self characterAtIndex:i+1]]);
+			
+			//only add the delimiter if, it's not the first letter, it's not in the middle of a bunch of caps, and it's not a _ repeat
+			if (i != 0 && !(previousLetterWasCaps && nextLetterIsCaps) && [self characterAtIndex:i-1] != '_')
 			{
-				if (isPrefix && ignorePrefix)
+				if (isPrefix && stripPrefix)
 				{
 					underscored = [NSMutableString string];
 				}
 				else 
 				{
-					[underscored appendString:delimiter];
+					[underscored appendString:@"_"];
 				}
 			}
 			[underscored appendString:[currChar lowercaseString]];
@@ -92,73 +116,5 @@
 	return underscored;
 }
 
-- (NSString *) firstLetterCapital
-{
-	if (self.length == 0)
-		return self;
-	
-	return [self stringByReplacingCharactersInRange:NSMakeRange(0,1) 
-										 withString:[[self substringWithRange:NSMakeRange(0,1)] uppercaseString]];
-}
-
-- (NSString *) camelize
-{
-	NSMutableString *underscored = [NSMutableString string];
-	
-	BOOL capitalizeNext = NO;
-	NSCharacterSet *delimiters = [self camelcaseDelimiters];
-	for (int i = 0; i < [self length]; i++) 
-	{
-		unichar c = [self characterAtIndex:i];
-
-		if ([delimiters characterIsMember:c])
-		{
-			capitalizeNext = YES;
-		} 
-		else 
-		{
-			NSString *str = [NSString stringWithFormat:@"%C", c];
-			if (capitalizeNext) 
-			{
-				[underscored appendString:[str uppercaseString]];
-				capitalizeNext = NO;
-			} 
-			else 
-			{
-				[underscored appendString:str];
-			}
-		}
-	}
-	
-	// replace items that end in Id with ID
-	if ([underscored hasSuffix:@"Id"])
-		[underscored replaceCharactersInRange:NSMakeRange(underscored.length - 2, 2) withString:@"ID"];
-
-	// replace items that end in Ids with IDs
-	if ([underscored hasSuffix:@"Ids"])
-		[underscored replaceCharactersInRange:NSMakeRange(underscored.length - 3, 3) withString:@"IDs"];
-
-	return underscored;
-}
-
-- (NSString *) pluralize
-{
-	if (self.length == 0)
-		return self;
-	
-	if ([self isEqualToString:@"person"])
-		return @"people";
-	
-	if ([self isEqualToString:@"Person"])
-		return @"People";
-	
-	if ([self hasSuffix:@"y"] && ![self hasSuffix:@"ey"])
-		return [[self substringToIndex:self.length-1] stringByAppendingString:@"ies"];
-	
-	if ([self hasSuffix:@"s"])
-		return [self stringByAppendingString:@"es"];
-	
-	return [self stringByAppendingString:@"s"];
-}
 
 @end

@@ -27,6 +27,8 @@
 					<select id="jumpTo">
 	<option value="top">Jump To&#133;</option>
 	
+	<option value="overview">Overview</option>
+	
 	
 	
 	
@@ -61,6 +63,8 @@
 		<nav id="tocContainer" class="isShowingTOC">
 			<ul id="toc" role="tree">
 				
+<li role="treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#overview">Overview</a></span></li>
+
 
 
 
@@ -119,6 +123,16 @@
 					
 					
 					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p>This category on NSMutableArray allows mutable arrays to &ldquo;fetch into themselves&rdquo;.</p>
+
+<p>The translateRemoteDictionariesIntoInstancesOfClass: method can also be useful if converting a manually-received array of JSON dictionaries and should be instances of a class.</p>
+					</div>
+					
+					
+					
 					
 					
 					<div class="section section-tasks">
@@ -161,7 +175,7 @@
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/translateRemoteDictionariesIntoInstancesOfClass:">&ndash;&nbsp;translateRemoteDictionariesIntoInstancesOfClass:</a></code>
-		<span class="tooltip"><p>Replaces each dictionary in this array with an instance of the given class, setting respective properties to those defined in that dictionary (using the class&rsquo;s NSRMap).</p></span>
+		<span class="tooltip"><p>Replaces each dictionary in this array with an instance of the given class, setting respective properties to those defined in that dictionary.</p></span>
 	</span>
 	
 	
@@ -201,7 +215,7 @@
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>class</em></dt>
-			<dd><p>Class with which to build instances to insert into this array. Raises an exception if this class does not subclass <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>.</p></dd>
+			<dd><p>Class with which to build instances to insert into this array. Raises an exception if this class does not subclass NSRRemoteObject.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -255,7 +269,7 @@
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>class</em></dt>
-			<dd><p>Class with which to build instances to insert into this array. Raises an exception if this class does not subclass <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>.</p></dd>
+			<dd><p>Class with which to build instances to insert into this array. Raises an exception if this class does not subclass NSRRemoteObject.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -267,7 +281,7 @@
 			<dt><em>changesPtr</em></dt>
 			<dd><p>Reference to a BOOL. Will indicate whether or not there were local changes to the array after this operation. Returns <code>YES</code> if no elements were added or deleted, and if no element changed when updating its respective properties.</p>
 
-<p>Works in a very similar way to remoteFetch: in <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>.</p></dd>
+<p>Works in a very similar way to remoteFetch: in NSRRemoteObject.</p></dd>
 		</dl>
 		
 	</div>
@@ -287,7 +301,7 @@
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Makes a GET request to <code>/objects</code> (where <code>objects</code> is the pluralization of <em>class</em>&rsquo;s model name.)</p>
 
-<p>Request done synchronously. See <a href="#//api/name/remoteFetchAll:async:">remoteFetchAll:async:</a> for asynchronous operation.</p>
+<p>Request made synchronously. See remoteFetchAll:async: for asynchronous operation.</p>
 	</div>
 	
 	
@@ -323,7 +337,7 @@
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>class</em></dt>
-			<dd><p>Class with which to build instances to insert into this array. Raises an exception if this class does not subclass <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>.</p></dd>
+			<dd><p>Class with which to build instances to insert into this array. Raises an exception if this class does not subclass NSRRemoteObject.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -384,7 +398,7 @@
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>class</em></dt>
-			<dd><p>Class with which to build instances to insert into this array. Raises an exception if this class does not subclass <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>.</p></dd>
+			<dd><p>Class with which to build instances to insert into this array. Raises an exception if this class does not subclass NSRRemoteObject.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -401,7 +415,7 @@
 			<dt><em>changesPtr</em></dt>
 			<dd><p>Reference to a BOOL. Will indicate whether or not there were local changes to the array after this operation. Returns <code>YES</code> if no elements were added or deleted, and if no element changed when updating its respective properties.</p>
 
-<p>Works in a very similar way to remoteFetch: in <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>.</p></dd>
+<p>Works in a very similar way to remoteFetch: in NSRRemoteObject.</p></dd>
 		</dl>
 		
 	</div>
@@ -421,7 +435,7 @@
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Makes a GET request to <code>/parents/3/objects</code> (where <code>parents/3</code> is the path for the <strong>parentObject</strong>, and <code>objects</code> is the pluralization of <em>class</em>&rsquo;s model name.)</p>
 
-<p>Request done synchronously. See <a href="#//api/name/remoteFetchAll:viaObject:async:">remoteFetchAll:viaObject:async:</a> for asynchronous operation.</p>
+<p>Request made synchronously. See remoteFetchAll:viaObject:async: for asynchronous operation.</p>
 	</div>
 	
 	
@@ -445,7 +459,7 @@
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Replaces each dictionary in this array with an instance of the given class, setting respective properties to those defined in that dictionary (using the class&rsquo;s NSRMap).</p>
+		<p>Replaces each dictionary in this array with an instance of the given class, setting respective properties to those defined in that dictionary.</p>
 	</div>		
 	
 	
@@ -457,7 +471,7 @@
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>class</em></dt>
-			<dd><p>Class with which to build instances to replace this array&rsquo;s dictionaries. Raises an exception if this class does not subclass <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>.</p></dd>
+			<dd><p>Class with which to build instances to replace this array&rsquo;s dictionaries. Raises an exception if this class does not subclass NSRRemoteObject.</p></dd>
 		</dl>
 		
 	</div>
@@ -500,7 +514,7 @@
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-07)</span><br />
+						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-21)</span><br />
 						
 						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 789)</a>.</span></p>
 						
@@ -590,14 +604,6 @@
 			}
 			
 			window.onload = init;
-			
-			// If showing in Xcode, hide the TOC and Header
-			if (navigator.userAgent.match(/xcode/i)) {
-				document.getElementById("contents").className = "hideInXcode"
-				document.getElementById("tocContainer").className = "hideInXcode"
-				document.getElementById("top_header").className = "hideInXcode"
-			}
-			
 		</script>
 	</body>
 </html>

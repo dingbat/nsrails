@@ -19,4 +19,4 @@ build-iPhoneOS
 build-iPhoneSimulator
 build
 *.bridgesupport
-.repl_history
+.*

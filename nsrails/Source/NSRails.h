@@ -1,7 +1,7 @@
 /*
  
  _|_|_|    _|_|  _|_|  _|_|  _|  _|      _|_|   
- _|  _|  _|_|    _|    _|_|  _|  _|_|  _|_|    v1.2
+ _|  _|  _|_|    _|    _|_|  _|  _|_|  _|_|    v2.0
  
  NSRails.h
  
@@ -36,7 +36,6 @@
 // You can also add NSR_USE_COREDATA to "Preprocessor Macros Not Used in Precompiled Headers" in your target's build settings
 //   See http://dingbat.github.com/nsrails/Classes/NSRRemoteObject.html#coredata for more details
 
-
 // Logging
 // =============
 //					As undefined, NSRails will log nothing
@@ -48,7 +47,7 @@
 // =============
 #import "NSRConfig.h"
 #import "NSRRemoteObject.h"
+#import "NSRRemoteManagedObject.h"
 #import "NSMutableArray+NSRails.h"
-#import "NSRMacros.h"
 #import "NSRRequest.h"
 
