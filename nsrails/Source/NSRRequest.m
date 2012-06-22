@@ -59,7 +59,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 @end
 
 @implementation NSRRequest
-@synthesize route, httpMethod, body, config, queryParameters;
+@synthesize route, httpMethod, body, config, queryParameters, additionalHTTPHeaders;
 
 - (NSMutableDictionary *) queryParameters
 {
@@ -67,6 +67,14 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 		queryParameters = [[NSMutableDictionary alloc] init];
 
 	return queryParameters;
+}
+
+- (NSMutableDictionary *) additionalHTTPHeaders
+{
+    if (!additionalHTTPHeaders)
+        additionalHTTPHeaders = [[NSMutableDictionary alloc] init];
+    
+    return additionalHTTPHeaders;
 }
 
 # pragma mark - Config
@@ -303,6 +311,12 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	[request setHTTPMethod:httpMethod];
 	[request setHTTPShouldHandleCookies:NO];
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    
+    [additionalHTTPHeaders enumerateKeysAndObjectsUsingBlock:
+     ^(id key, id obj, BOOL *stop) 
+     {
+         [request setValue:obj forHTTPHeaderField:key];
+     }];
 	
 	if (self.config.appUsername && self.config.appPassword)
 	{

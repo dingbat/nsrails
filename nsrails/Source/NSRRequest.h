@@ -95,6 +95,11 @@
 @property (nonatomic, strong) NSMutableDictionary *queryParameters;
 
 /**
+ A dictionary of additional HTTP headers to send with the request.
+  */
+@property (nonatomic, strong) NSMutableDictionary *additionalHTTPHeaders;
+
+/**
  Request body.
  
  Must be a JSON-parsable object (NSArray, NSDictionary, NSString) or will throw an exception.

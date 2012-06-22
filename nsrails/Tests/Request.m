@@ -598,4 +598,24 @@
 	STAssertNotNil([request valueForHTTPHeaderField:@"Authorization"], @"Should send w/authorization if username+password");
 }
 
+- (void) test_additional_headers
+{
+	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
+	
+	NSRRequest *req = [NSRRequest GET];
+    [req.additionalHTTPHeaders setObject:@"hi" forKey:@"test"];
+    NSURLRequest *request = [req HTTPRequest];
+    STAssertEqualObjects([request valueForHTTPHeaderField:@"test"], @"hi", @"Should send custom key");
+
+    [req.additionalHTTPHeaders setObject:@"hi" forKey:@"test2"];
+    request = [req HTTPRequest];
+    STAssertEqualObjects([request valueForHTTPHeaderField:@"test2"], @"hi", @"Should send custom key");
+    STAssertEqualObjects([request valueForHTTPHeaderField:@"test"], @"hi", @"Should still send custom key");
+
+    [req.additionalHTTPHeaders removeAllObjects];
+    request = [req HTTPRequest];
+    STAssertNil([request valueForHTTPHeaderField:@"test2"], @"Should've cleared custom key");
+    STAssertNil([request valueForHTTPHeaderField:@"test"], @"Should've cleared custom key");
+}
+
 @end
