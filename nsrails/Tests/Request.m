@@ -436,7 +436,7 @@
 }
 
 - (void) test_configs
-{	
+{
 	NSRRequest *req = [NSRRequest POST];
 	STAssertEquals(req.config, [NSRConfig defaultConfig], nil);
 	STAssertThrows([req.HTTPRequest URL], nil);
@@ -450,16 +450,13 @@
 	STAssertEquals(req.config, customConfig, nil);
 	STAssertEqualObjects([req.HTTPRequest URL], [NSURL URLWithString:@"http://custom"], nil);
 	
-	NSRConfig *classConfig = [[NSRConfig alloc] initWithAppURL:@"http://class"];
-	[classConfig useForClass:[CustomClass class]];
-	
-	[req routeToClass:[CustomClass class]];
-	STAssertEquals(req.config, classConfig, nil);
-	STAssertEqualObjects([req.HTTPRequest URL], [NSURL URLWithString:@"http://class/customs"], nil);
+	[req routeToClass:[CustomConfigClass class]];
+	STAssertEqualObjects(req.config.appURL, [CustomConfigClass config].appURL, nil);
+	STAssertEqualObjects([req.HTTPRequest URL], [NSURL URLWithString:@"http://class/CustomConfigClasses"], nil);
 
-	[req routeToObject:[[CustomClass alloc] init]];
-	STAssertEquals(req.config, classConfig, nil);
-	STAssertEqualObjects([req.HTTPRequest URL], [NSURL URLWithString:@"http://class/customs"], nil);
+	[req routeToObject:[[CustomConfigClass alloc] init]];
+	STAssertEqualObjects(req.config.appURL, [[[CustomConfigClass alloc] init].class config].appURL, nil);
+	STAssertEqualObjects([req.HTTPRequest URL], [NSURL URLWithString:@"http://class/CustomConfigClasses"], nil);
 }
 
 - (void) test_completion_block_threads

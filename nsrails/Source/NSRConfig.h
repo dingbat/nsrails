@@ -43,11 +43,6 @@ typedef void(^NSRFetchCompletionBlock)(BOOL changed, NSError *error);
 typedef void(^NSRFetchAllCompletionBlock)(NSArray *allRemote, NSError *error);
 typedef void(^NSRFetchObjectCompletionBlock)(id object, NSError *error);
 
-
-//Environments
-extern NSString * const NSRConfigEnvironmentDevelopment;
-extern NSString * const NSRConfigEnvironmentProduction;
-
 //Keys
 extern NSString * const NSRValidationErrorsKey;
 extern NSString * const NSRRequestObjectKey;
@@ -300,55 +295,24 @@ extern NSString * const NSRCoreDataException;
 
 
 /// =============================================================================================
-/// @name Retrieving the default config
+/// @name Retrieving global configs
 /// =============================================================================================
 
 /**
  Returns the current default configuration.
  
- @return The configuration set for the current environment.
+ @return The default configuration.
  */
 + (NSRConfig *) defaultConfig;
 
 /**
- Returns the current relevant config for a given class.
+ Returns the contextually relevant configuration.
  
- - Will return the config currently being used in a context block (with `<use>` and `<useIn:>`).
- - If none, will return the config set for *class* (with `<useForClass:>`).
- - If none, will return `<defaultConfig>`.
+ This is like `<defaultConfig>`, but will return any configuration currently being used in a `<use>`/`<end>` or `<useIn:>` block before going to the default.
  
- @param class he class - maybe has a custom config attached to it.
- @return The current relevant config for a given class.
+ @return The contextually relevant configuration, or default configuration is no explicit context is set.
  */
-+ (NSRConfig *) relevantConfigForClass:(Class)class;
-
-/// =============================================================================================
-/// @name Managing the global environment
-/// =============================================================================================
-
-/**
- Returns the default configuration for a given environment.
- 
- Creates and sets one if one for the given environment hasn't been set yet.
- 
- @param environment Environment identifier.
- @return Configuration set for *environment*.
- */
-+ (NSRConfig *) configForEnvironment: (NSString *)environment;
-
-/**
- Sets the global environment for NSRConfig.
- 
- @param environment Environment identifier. Can be your own custom string or the constants NSRConfigEnvironmentDevelopment or NSRConfigEnvironmentProduction.
- */
-+ (void) setCurrentEnvironment:(NSString *)environment;
-
-/**
- Returns the identifier for the current global environment.
- 
- @return The identifier for the current global environment.
- */
-+ (NSString *) currentEnvironment;
++ (NSRConfig *) contextuallyRelevantConfig;
 
 /// =============================================================================================
 /// @name Using configs in specific locations
@@ -382,31 +346,11 @@ extern NSString * const NSRCoreDataException;
 - (void) useIn:(void(^)(void))block;
 
 /**
- Specifies for all NSRails actions (instance and class methods) in a given class to use the receiver.
+ Specifies for all NSRails actions to use the receiver.
  
- Has precedence over a `<defaultConfig>`, but is trumped by a config specified for a block (with `<use>` and `<end>`, or `<useIn:>`). (This is the same precedence as instances which declare custom configs.)
- 
- This should be used somewhere in your app setup, before any NSRails actions. 
- 
- @param class Class to use this config.
- */
-- (void) useForClass:(Class)class;
-
-/**
- Specifies for all NSRails actions in the current environment to use the receiver.
- 
- Lowest config precedence.
+ `<defaultConfig>` will now return the receiver.
  */
 - (void) useAsDefault;
-
-/**
- Specifies for all NSRails actions in a given environment to use the receiver.
- 
- Lowest config precedence.
- 
- @param environment Environment identifier. Can be your own custom string or the constants NSRConfigEnvironmentDevelopment or NSRConfigEnvironmentProduction.
- */
-- (void) useAsDefaultForEnvironment:(NSString *)environment;
 
 
 /// =============================================================================================

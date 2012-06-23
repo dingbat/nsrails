@@ -58,9 +58,6 @@
 @end
 
 
-NSString * const NSRConfigEnvironmentDevelopment		= @"com.nsrails.NSRConfigEnvironmentDevelopment";
-NSString * const NSRConfigEnvironmentProduction			= @"com.nsrails.NSRConfigEnvironmentProduction";
-
 NSString * const NSRValidationErrorsKey					= @"NSRValidationErrorsKey";
 NSString * const NSRRequestObjectKey                    = @"NSRRequestObjectKey";
 
@@ -79,84 +76,31 @@ NSString * const NSRCoreDataException				= @"NSRCoreDataException";
 #pragma mark -
 #pragma mark Config inits
 
-static NSMutableDictionary *configEnvironments = nil;
+static NSRConfig *defaultConfig = nil;
 static NSMutableArray *overrideConfigStack = nil;
-static NSString *currentEnvironment = nil;
 
-//purely for test purposes
+//purely for testing purposes
 + (void) resetConfigs
 {
-	[configEnvironments removeAllObjects];
 	[overrideConfigStack removeAllObjects];
-	currentEnvironment = NSRConfigEnvironmentDevelopment;
-}
-
-+ (NSRConfig *) configForEnvironment:(NSString *)environment
-{
-	NSRConfig *config = [configEnvironments objectForKey:environment];
-	if (!config)
-	{
-		config = [[NSRConfig alloc] init];
-		[config useAsDefaultForEnvironment:environment];
-	}
-	return config;
-}
-
-+ (NSString *) environmentKeyForClass:(Class)class
-{
-	return [NSString stringWithFormat:@"com.nsrails.class.%@",class];
-}
-
-+ (NSRConfig *) relevantConfigForClass:(Class)class
-{
-	if ([self overrideConfig])
-		return [self overrideConfig];
-	
-	if (class && [configEnvironments objectForKey:[self environmentKeyForClass:class]])
-		return [self configForEnvironment:[self environmentKeyForClass:class]];
-
-	return [self defaultConfig];
-}
-
-+ (NSRConfig *) defaultConfig
-{
-	return [self configForEnvironment:[self currentEnvironment]];
-}
-
-- (void) useAsDefaultForEnvironment:(NSString *)environment
-{
-	static dispatch_once_t onceToken;
-	dispatch_once(&onceToken, ^{
-		configEnvironments = [[NSMutableDictionary alloc] init];
-	});
-	
-	[configEnvironments setObject:self forKey:environment];
+	defaultConfig = [[NSRConfig alloc] init];
 }
 
 - (void) useAsDefault
 {
-	[self useAsDefaultForEnvironment:[[self class] currentEnvironment]];
+    defaultConfig = self;
 }
 
-- (void) useForClass:(Class)class
++ (NSRConfig *) defaultConfig
 {
-	[self useAsDefaultForEnvironment:[self.class environmentKeyForClass:class]];
-}
-
-+ (void) setCurrentEnvironment:(NSString *)environment
-{
-	if (!environment)
-		return;
-	currentEnvironment = environment;
-}
-
-+ (NSString *) currentEnvironment
-{
-	static dispatch_once_t onceToken;
-	dispatch_once(&onceToken, ^{
-		currentEnvironment = NSRConfigEnvironmentDevelopment;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^
+    {
+        NSRConfig *newConfig = [[NSRConfig alloc] init];
+        [newConfig useAsDefault];
 	});
-	return currentEnvironment;
+
+	return defaultConfig;
 }
 
 - (id) init
@@ -164,6 +108,7 @@ static NSString *currentEnvironment = nil;
 	if ((self = [super init]))
 	{
 		dateFormatter = [[NSDateFormatter alloc] init];
+		asyncOperationQueue = [[NSOperationQueue alloc] init];
 		
 		//by default, set to accept datestring like "2012-02-01T00:56:24Z"
 		//this format (ISO 8601) is default in rails
@@ -179,8 +124,6 @@ static NSString *currentEnvironment = nil;
 		
 		//by default, use PUT for updates
 		self.updateMethod = @"PUT";
-		
-		asyncOperationQueue = [[NSOperationQueue alloc] init];
 	}
 	return self;
 }
@@ -227,12 +170,16 @@ static NSString *currentEnvironment = nil;
 #pragma mark -
 #pragma mark Contextual stuff
 
-+ (NSRConfig *) overrideConfig
++ (NSRConfig *) contextuallyRelevantConfig
 {
-	//return the last config on the stack (last in first out)
-	//if stack is nil or empty, this will be nil, signifying that there's no overriding context
-	
-	return [[overrideConfigStack lastObject] config];
+    //get the last config on the stack (last in first out)
+	NSRConfig *override = [[overrideConfigStack lastObject] config];
+    
+    //if stack is nil or empty, this will be nil, signifying that there's no overriding context, so return default
+    if (override)
+        return override;
+    
+    return [self defaultConfig];
 }
 
 - (void) use
@@ -244,9 +191,7 @@ static NSString *currentEnvironment = nil;
 	});
 	
 	// make a new stack element for this config (explained at top of the file) and push it to the stack
-
-	NSRConfigStackElement *c = [NSRConfigStackElement elementForConfig:self];
-	[overrideConfigStack addObject:c];
+	[overrideConfigStack addObject:[NSRConfigStackElement elementForConfig:self]];
 }
 
 - (void) end

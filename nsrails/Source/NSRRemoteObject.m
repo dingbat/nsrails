@@ -63,12 +63,7 @@
 
 + (NSRConfig *) config
 {
-    return [NSRConfig relevantConfigForClass:self];
-}
-
-- (NSRConfig *) config
-{
-    return [self.class config];
+    return [NSRConfig contextuallyRelevantConfig];
 }
 
 + (NSString *) remoteModelName
@@ -251,7 +246,7 @@
 
 	if ([val isKindOfClass:[NSDate class]])
 	{
-		return [[self config] stringFromDate:val];
+		return [[self.class config] stringFromDate:val];
 	}
 
 	return val;
@@ -261,7 +256,7 @@
 {
 	NSString *property = remoteKey;
 	
-	if ([self config].autoinflectsPropertyNames)
+	if ([self.class config].autoinflectsPropertyNames)
 		property = [property nsr_stringByCamelizing];
 	
 	if ([remoteKey isEqualToString:@"id"])
@@ -369,7 +364,7 @@
         }
         else if ([self propertyIsDate:property])
 		{
-			decodedObj = [[self config] dateFromString:railsObject];
+			decodedObj = [[self.class config] dateFromString:railsObject];
 			
 			//account for any discrepancies between NSDate object and a string (which doesn't include milliseconds) 
 			CGFloat diff = fabs([decodedObj timeIntervalSinceDate:previousVal]);
@@ -484,7 +479,7 @@
 			continue;
 		
 		NSString *remoteKey = objcProperty;
-		if ([self config].autoinflectsPropertyNames)
+		if ([self.class config].autoinflectsPropertyNames)
 			remoteKey = [remoteKey nsr_stringByUnderscoring];
 		
 		id remoteRep = [self encodeValueForProperty:objcProperty remoteKey:&remoteKey];

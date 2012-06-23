@@ -107,3 +107,6 @@
 
 @interface CustomClass : NSRRemoteObject
 @end
+
+@interface CustomConfigClass : NSRRemoteObject
+@end

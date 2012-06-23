@@ -43,8 +43,10 @@ NSLog(@"[NSRails][%@] %@", tag, [NSString stringWithFormat:__VA_ARGS__])
 NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 1) ? (json ? json : @"") : @"")
 
 #else
+
 #define NSRLogTagged(...)
 #define NSRLogInOut(...)
+
 #endif
 
 @interface NSRRequest (private)
@@ -103,7 +105,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (id) routeToObject:(NSRRemoteObject *)o withCustomMethod:(NSString *)method ignoreID:(BOOL)ignoreID
 {
-	self.config = [o config];
+	self.config = [o.class config];
 	
 	//prepend the ID: action -> 1/action
 	if (o.remoteID && !ignoreID)
@@ -253,7 +255,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 {
 	[self assertPresentRemoteID:obj forMethod:@"update"];
 
-	NSRRequest *req = [[NSRRequest alloc] initWithHTTPMethod:obj.config.updateMethod];
+	NSRRequest *req = [[NSRRequest alloc] initWithHTTPMethod:[obj.class config].updateMethod];
     [req routeToObject:obj];
 	[req setBodyToObject:obj];
 	
@@ -290,7 +292,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	NSURL *base = [NSURL URLWithString:self.config.appURL];
 	if (!base)
 	{
-		[NSException raise:NSRMissingURLException format:@"No server root URL specified. Set your rails app's root with +[[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup. (env=%@)", [NSRConfig currentEnvironment]];
+		[NSException raise:NSRMissingURLException format:@"No server root URL specified. Set your rails app's root with [[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup."];
 	}
 
 	

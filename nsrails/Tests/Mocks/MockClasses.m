@@ -296,3 +296,14 @@
 }
 
 @end
+
+@implementation CustomConfigClass
+
++ (NSRConfig *) config
+{
+    NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"http://class"];
+    c.autoinflectsClassNames = NO;
+    return c;
+}
+
+@end

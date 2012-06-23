@@ -50,7 +50,3 @@ if (![a containsObject:obj] && ![a containsObject:strip]) STFail(@"%@ should be 
 if ([a count] != length) STFail(@"%@ should be equal (order/blanks don't matter) to %@",a,b); \
 }
 
-
-#define NSRAssertEqualConfigs(config,string, ...) STAssertEqualObjects(config.appURL, string, [NSString stringWithFormat:__VA_ARGS__])
-
-

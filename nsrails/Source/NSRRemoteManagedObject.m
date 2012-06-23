@@ -214,7 +214,7 @@
 
 + (NSManagedObjectContext *) getGlobalManagedObjectContextFromCmd:(SEL)cmd
 {
-	NSManagedObjectContext *ctx = [NSRConfig relevantConfigForClass:self].managedObjectContext;
+	NSManagedObjectContext *ctx = [self config].managedObjectContext;
 	if (!ctx)
 	{
 		[NSException raise:NSRCoreDataException format:@"-[%@ %@] called when the current config's managedObjectContext is nil. A vaild managedObjectContext is necessary when using CoreData. Set your managed object context like so: [[NSRConfig defaultConfig] setManagedObjectContext:<#your moc#>].", self.class, NSStringFromSelector(cmd)];
