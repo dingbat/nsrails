@@ -273,7 +273,7 @@
 	return [NSMutableArray class];
 }
 
-- (void) decodeRemoteValue:(id)railsObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)change
+- (void) decodeRemoteValue:(id)railsObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)changes
 {
 	NSString *property = [self propertyForRemoteKey:remoteKey];
 	
@@ -291,19 +291,15 @@
     
 	id decodedObj = nil;
 	
-	BOOL changes = -1;
-	
 	if (railsObject)
 	{
         if (nestedClass)
         {
             if ([self valueIsArray:railsObject])
             {
-                changes = NO;
-                
                 BOOL checkForChange = ([railsObject count] == [previousVal count]);
                 if (!checkForChange)
-                    changes = YES;
+                    *changes = YES;
                 
                 decodedObj = [[[self containerClassForRelationProperty:property] alloc] init];
                 
@@ -330,8 +326,7 @@
                     {
                         //didn't previously exist - make a new one
                         decodedElement = [nestedClass objectWithRemoteDictionary:railsElement];
-                        
-                        changes = YES;
+                        *changes = YES;
                     }
                     else
                     {
@@ -340,7 +335,7 @@
                         BOOL neededChange = [decodedElement setPropertiesUsingRemoteDictionary:railsElement];
                         
                         if (neededChange)
-                            changes = YES;
+                            *changes = YES;
                     }
                     
                     [decodedObj addObject:decodedElement];
@@ -352,13 +347,13 @@
                 if (!previousVal)
                 {
                     decodedObj = [nestedClass objectWithRemoteDictionary:railsObject];
+                    *changes = YES;
                 }
                 //otherwise, keep the old object & only mark as change if its properties changed (recursive)
                 else
                 {
                     decodedObj = previousVal;
-                    
-                    changes = [decodedObj setPropertiesUsingRemoteDictionary:railsObject];
+                    *changes = [decodedObj setPropertiesUsingRemoteDictionary:railsObject];
                 }
             }
         }
@@ -368,32 +363,25 @@
 			
 			//account for any discrepancies between NSDate object and a string (which doesn't include milliseconds) 
 			CGFloat diff = fabs([decodedObj timeIntervalSinceDate:previousVal]);
-			changes = (!previousVal || (diff > 1.25));
+			*changes = (!previousVal || (diff > 1.25));
 		}
 		//otherwise, if not nested or anything, just use what we got (number, string, dictionary, array)
 		else
 		{
 			decodedObj = railsObject;
+            
+            //check for change with straight equality
+            //if it existed before but now nil, mark change
+            if (!decodedObj && previousVal)
+            {
+                *changes = YES;
+            }
+            else if (decodedObj)
+            {
+                *changes = ![decodedObj isEqual:previousVal];
+            }
 		}
 	}
-	
-	//means we should check for straight equality (no *change was set)
-	if (changes == -1)
-	{
-		changes = NO;
-
-		//if it existed before but now nil, mark change
-		if (!decodedObj && previousVal)
-		{
-			changes = YES;
-		}
-		else if (decodedObj)
-		{
-			changes = ![decodedObj isEqual:previousVal];
-		}
-	}
-	
-	*change = changes;
 	
 	[self setValue:decodedObj forKey:property];
 }
