@@ -70,9 +70,7 @@
 {
 	if (self == [NSRRemoteObject class])
 		return nil;
-	
-	//Default behavior is to return name of this class
-	
+		
 	NSString *class = NSStringFromClass(self);
 	
 	if ([self config].autoinflectsClassNames)
@@ -88,15 +86,7 @@
 + (NSString *) remoteControllerName
 {
 	NSString *singular = [self remoteModelName];
-	
-	//Default behavior is to return pluralized model name
-	
-	//Arbitrary pluralization - should probably support more
-	if ([singular isEqualToString:@"person"])
-		return @"people";
-	if ([singular isEqualToString:@"Person"])
-		return @"People";
-	
+	    
 	if ([singular hasSuffix:@"y"] && ![singular hasSuffix:@"ey"])
 		return [[singular substringToIndex:singular.length-1] stringByAppendingString:@"ies"];
 	
@@ -151,46 +141,31 @@
     return NSClassFromString(propType);
 }
 
-+ (NSMutableArray *) remotePropertiesForClass:(Class)c
-{
-	unsigned int propertyCount;
-	
-	objc_property_t *properties = class_copyPropertyList(c, &propertyCount);
-	NSMutableArray *results = [NSMutableArray arrayWithCapacity:propertyCount];
-	
-	if (properties)
-	{
-		while (propertyCount--)
-		{
-			NSString *name = [NSString stringWithCString:property_getName(properties[propertyCount]) encoding:NSASCIIStringEncoding];
-			
-			// makes sure it's not primitive
-			if ([[self typeForProperty:name] rangeOfString:@"@"].location != NSNotFound)
- 			{
-				[results addObject:name];
-			}
-		}
-		
-		free(properties);
-	}
-	
-	if (c == [NSRRemoteObject class])
-	{
-		return results;
-	}
-	else
-	{
-		NSMutableArray *superProps = [self remotePropertiesForClass:c.superclass];
-		[superProps addObjectsFromArray:results];
-		return superProps;
-	}
-}
-
 - (NSMutableArray *) remoteProperties
 {
-	NSMutableArray *master = [self.class remotePropertiesForClass:self.class];
-	[master removeObject:@"remoteAttributes"];
-	return master;
+    NSMutableArray *results = [NSMutableArray array];
+    
+    for (Class c = self.class; c != [NSRRemoteObject class]; c = c.superclass)
+    {
+        unsigned int propertyCount;
+        objc_property_t *properties = class_copyPropertyList(c, &propertyCount);
+        
+        if (properties)
+        {
+            while (propertyCount--)
+            {
+                NSString *name = [NSString stringWithCString:property_getName(properties[propertyCount]) encoding:NSASCIIStringEncoding];
+                // makes sure it's not primitive
+                if ([[self.class typeForProperty:name] rangeOfString:@"@"].location != NSNotFound)
+                    [results addObject:name];
+            }
+            
+            free(properties);
+        }
+    }
+    
+    [results addObject:@"remoteID"];
+    return results;
 }
 
 - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)verb
@@ -206,8 +181,7 @@
 - (Class) nestedClassForProperty:(NSString *)property
 { 
 	Class class = [self.class typeClassForProperty:property];
-    
-    return [class isSubclassOfClass:[NSRRemoteObject class]] ? class : nil;
+    return ([class isSubclassOfClass:[NSRRemoteObject class]] ? class : nil);
 }
 
 - (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
@@ -254,18 +228,14 @@
 
 - (NSString *) propertyForRemoteKey:(NSString *)remoteKey
 {
+	if ([remoteKey isEqualToString:@"id"])
+		return @"remoteID";
+
 	NSString *property = remoteKey;
-	
 	if ([self.class config].autoinflectsPropertyNames)
 		property = [property nsr_stringByCamelizing];
 	
-	if ([remoteKey isEqualToString:@"id"])
-		property = @"remoteID";
-	
-	if (![self.remoteProperties containsObject:property])
-		return nil;
-	
-	return property;
+	return ([self.remoteProperties containsObject:property] ? property : nil);
 }
 
 - (Class) containerClassForRelationProperty:(NSString *)property
@@ -284,8 +254,7 @@
 	
 	id previousVal = [self valueForKey:property];
     
-	//TODO
-	//RUBYMOTION BUG...... returns NSNull instead of nil in a really specific case
+	//TODO - rubymotion bug workaround - returns NSNull instead of nil in valueForKey
 	if (previousVal == [NSNull null])
 		previousVal = nil;
     
@@ -302,9 +271,7 @@
                     *changes = YES;
                 
                 decodedObj = [[[self containerClassForRelationProperty:property] alloc] init];
-                
-                //array of NSRRemoteObjects is tricky, we need to go through each existing element, see if it needs an update (or delete), and then add any new ones
-                
+                                
                 id previousArray = ([previousVal isKindOfClass:[NSSet class]] ? 
                                     [previousVal allObjects] :
                                     [previousVal isKindOfClass:[NSOrderedSet class]] ?
@@ -408,10 +375,8 @@
 		
 		id val = [self valueForKey:property];
 
-		//it's an _attributes. don't send if there's no val or empty (is okay on belongs_to bc we send a null id)
-        
-		//TODO
-		//the NSNull check is part of an RM bug
+		//don't send if there's no val or empty (is okay on belongs_to bc we send a null id)
+		//TODO - the NSNull check is a rubymotion bug workaround
 		if (val == [NSNull null] || !val || ([self valueIsArray:val] && [val count] == 0))
 		{
 			return NO;
@@ -425,7 +390,8 @@
 
 - (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict
 {
-	remoteAttributes = dict;
+    if (dict)
+        remoteAttributes = dict;
 	
 	//support JSON that comes in like {"post"=>{"something":"something"}}
 	NSDictionary *innerDict = [dict objectForKey:[self.class remoteModelName]];
@@ -505,7 +471,6 @@
 {
 	NSRRemoteObject *obj = [[self alloc] init];
 	[obj setPropertiesUsingRemoteDictionary:dict];
-
 	return obj;
 }
 
@@ -515,9 +480,7 @@
 {
 	NSDictionary *jsonResponse = [[NSRRequest requestToCreateObject:self] sendSynchronous:error];
 	
-	if (jsonResponse)
-		[self setPropertiesUsingRemoteDictionary:jsonResponse];
-	
+	[self setPropertiesUsingRemoteDictionary:jsonResponse];
 	return !!jsonResponse;
 }
 
@@ -526,9 +489,7 @@
 	[[NSRRequest requestToCreateObject:self] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
-		 if (result)
-			 [self setPropertiesUsingRemoteDictionary:result];
-		 
+		 [self setPropertiesUsingRemoteDictionary:result];
 		 completionBlock(error);
 	 }];
 }
@@ -587,18 +548,11 @@
 {
 	NSDictionary *jsonResponse = [[NSRRequest requestToFetchObject:self] sendSynchronous:error];
 	
-	if (!jsonResponse)
-	{
-		if (changesPtr)
-			*changesPtr = NO;
-		return NO;
-	}
-	
-	BOOL changes = [self setPropertiesUsingRemoteDictionary:jsonResponse];
+    BOOL change = [self setPropertiesUsingRemoteDictionary:jsonResponse];
 	if (changesPtr)
-		*changesPtr = changes;
+		*changesPtr = change;
 	
-	return YES;
+	return !!jsonResponse;
 }
 
 - (BOOL) remoteFetch:(NSError **)error
@@ -611,9 +565,7 @@
 	[[NSRRequest requestToFetchObject:self] sendAsynchronous:
 	 ^(id jsonRep, NSError *error) 
 	 {
-		 BOOL change = NO;
-		 if (jsonRep)
-			 change = [self setPropertiesUsingRemoteDictionary:jsonRep];
+		 BOOL change = [self setPropertiesUsingRemoteDictionary:jsonRep];
 		 completionBlock(change, error);
 	 }];
 }
@@ -624,12 +576,7 @@
 {
 	NSDictionary *objData = [[NSRRequest requestToFetchObjectWithID:mID ofClass:self] sendSynchronous:error];
 	
-	if (objData)
-	{
-		return [[self class] objectWithRemoteDictionary:objData];
-	}
-	
-	return nil;
+    return (objData ? [self objectWithRemoteDictionary:objData] : nil);
 }
 
 + (void) remoteObjectWithID:(NSNumber *)mID async:(NSRFetchObjectCompletionBlock)completionBlock
@@ -637,15 +584,8 @@
 	[[NSRRequest requestToFetchObjectWithID:mID ofClass:self] sendAsynchronous:
 	 ^(id jsonRep, NSError *error) 
 	 {
-		 if (!jsonRep)
-		 {
-			 completionBlock(nil, error);
-		 }
-		 else
-		 {
-			 id obj = [[self class] objectWithRemoteDictionary:jsonRep];
-			 completionBlock(obj, nil);
-		 }
+         id obj = (jsonRep ? [self objectWithRemoteDictionary:jsonRep] : nil);
+         completionBlock(obj, error);
 	 }];
 }
 
@@ -659,11 +599,7 @@
 + (NSArray *) remoteAllViaObject:(NSRRemoteObject *)obj error:(NSError **)error
 {
     id json = [[NSRRequest requestToFetchAllObjectsOfClass:self viaObject:obj] sendSynchronous:error];
-    if (!json)
-		return nil;
-	
-	[json translateRemoteDictionariesIntoInstancesOfClass:self.class];
-    
+	[json translateRemoteDictionariesIntoInstancesOfClass:self];
     return json;
 }
 
@@ -677,9 +613,7 @@
     [[NSRRequest requestToFetchAllObjectsOfClass:self viaObject:obj] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
-		 if (result)
-			 [result translateRemoteDictionariesIntoInstancesOfClass:[self class]];
-
+		 [result translateRemoteDictionariesIntoInstancesOfClass:self];
 		 completionBlock(result,error);
 	 }];
 }
