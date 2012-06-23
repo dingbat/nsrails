@@ -206,16 +206,13 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 + (NSRRequest *) requestToFetchAllObjectsOfClass:(Class)c viaObject:(NSRRemoteObject *)obj
 {
-	if (!obj.remoteID)
+    if (!obj)
     {
-		if (obj)
-        {
-			[NSException raise:NSRNullRemoteIDException format:@"Attempt to fetch all %@s via object %@, but the object's remoteID was nil.",[self class],[obj class]];
-        }
-		else
-        {
-			return [NSRRequest requestToFetchAllObjectsOfClass:c];
-        }
+        return [NSRRequest requestToFetchAllObjectsOfClass:c];
+    }
+    else if (!obj.remoteID)
+    {
+        [NSException raise:NSRNullRemoteIDException format:@"Attempt to fetch all %@s via object %@, but the object's remoteID was nil.",[self class],[obj class]];
     }
 	
 	return [[NSRRequest GET] routeToObject:obj withCustomMethod:[c remoteControllerName]];
@@ -224,16 +221,13 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 + (void) assertPresentRemoteID:(NSRRemoteObject *)obj forMethod:(NSString *)str
 {
 	if (!obj.remoteID)
-	{
 		[NSException raise:NSRNullRemoteIDException format:@"Attempt to %@ a %@ with a nil remoteID.",str,[obj class]];
-	}	
 }
 
 + (NSRRequest *) requestToCreateObject:(NSRRemoteObject *)obj
 {
 	NSRRequest *req = [[NSRRequest POST] routeToObject:obj ignoreID:YES];	
 	[req setBodyToObject:obj];
-	
 	return req;
 }
 
@@ -347,68 +341,69 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	return request;
 }
 
+- (NSString *) findSubstringInString:(NSString *)string surroundedByTag:(NSString *)tag
+{
+    NSUInteger start = [string rangeOfString:[NSString stringWithFormat:@"<%@>",tag]].location;
+    if (start != NSNotFound)
+    {
+        start += tag.length+2; //offset the "<pre>"
+        NSUInteger end = [[string substringFromIndex:start] rangeOfString:[NSString stringWithFormat:@"</%@>",tag]].location;
+        return [string substringWithRange:NSMakeRange(start, end)];
+    }
+
+    return nil;
+}
+
 - (NSError *) errorForResponse:(id)response statusCode:(NSInteger)statusCode
 {
-	BOOL err = (statusCode < 0 || statusCode >= 400);
+    //everything ok
+	if (statusCode >= 0 && statusCode < 400)
+        return nil;
 	
-	if (err)
-	{
-		NSMutableDictionary *inf = [NSMutableDictionary dictionary];
-		
-		//422 means there was a validation error
-		if (statusCode == 422)
-		{
-			if ([response isKindOfClass:[NSDictionary class]])
-				[inf setObject:response forKey:NSRValidationErrorsKey];
-			[inf setObject:@"Unprocessable Entity" forKey:NSLocalizedDescriptionKey];
-		}
-		else 
-		{
-			if (self.config.succinctErrorMessages)
-			{
-				//if error message is in HTML,
-				if ([response rangeOfString:@"</html>"].location != NSNotFound)
-				{
-					NSArray *pres = [response componentsSeparatedByString:@"<pre>"];
-					if (pres.count > 1)
-					{
-						//get the value between <pre> and </pre>
-						response = [[[pres objectAtIndex:1] componentsSeparatedByString:@"</pre"] objectAtIndex:0];
-					}
-					else
-					{
-						NSArray *h1s = [response componentsSeparatedByString:@"<h1>"];
-						if (h1s.count > 1)
-						{
-							//get the value between <h1> and </h1>
-							response = [[[h1s objectAtIndex:1] componentsSeparatedByString:@"</h1"] objectAtIndex:0];
-						}
-					}
-					response = [response stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
-				}
-			}
-			[inf setObject:response forKey:NSLocalizedDescriptionKey];
-		}
-        
-        [inf setObject:self forKey:NSRRequestObjectKey];
-		
-		NSError *error = [NSError errorWithDomain:NSRRemoteErrorDomain
-											 code:statusCode
-										 userInfo:inf];
-		
-		return error;
-	}
-	
-	return nil;
+	NSString *errorMessage = response;
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    
+    //422 means there was a validation error
+    if (statusCode == 422)
+    {
+        errorMessage = @"Unprocessable Entity";
+        if ([response isKindOfClass:[NSDictionary class]])
+            [userInfo setObject:response forKey:NSRValidationErrorsKey];
+    }
+    else 
+    {
+        if (self.config.succinctErrorMessages)
+        {
+            //if error message is in HTML, parse between <pre></pre> or <h1></h1> for error message
+            if ([response rangeOfString:@"</html>"].location != NSNotFound)
+            {
+                NSString *succinctText = [self findSubstringInString:response surroundedByTag:@"pre"];
+                if (!succinctText)
+                    succinctText = [self findSubstringInString:response surroundedByTag:@"h1"];
+                
+                if (succinctText)
+                {
+                    errorMessage = [succinctText stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
+                }
+            }
+        }
+    }
+    
+    [userInfo setObject:errorMessage forKey:NSLocalizedDescriptionKey];
+    [userInfo setObject:self forKey:NSRRequestObjectKey];
+    
+    return [NSError errorWithDomain:NSRRemoteErrorDomain code:statusCode userInfo:userInfo];
 }
 
 - (id) receiveResponse:(NSHTTPURLResponse *)response data:(NSData *)data error:(NSError **)error
 {
 	NSInteger code = [response statusCode];
 	
-	id jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments | NSJSONReadingMutableContainers error:nil];
+	id jsonResponse = [NSJSONSerialization JSONObjectWithData:data 
+                                                      options:NSJSONReadingAllowFragments | NSJSONReadingMutableContainers 
+                                                        error:nil];
 	
-	//right now there's a bug with NSJSONReadingMutableContainers. it simply... doesn't work???
+	//TODO - workaround for bug with NSJSONReadingMutableContainers. it simply... doesn't work???
 	if ([jsonResponse isKindOfClass:[NSArray class]] && ![jsonResponse isKindOfClass:[NSMutableArray class]])
 		jsonResponse = [NSMutableArray arrayWithArray:jsonResponse];
 	
@@ -422,7 +417,6 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	
 	if (railsError)
 	{
-		
 		if (error)
 			*error = railsError;
 		
@@ -505,7 +499,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 			 NSError *e = nil;
 			 id jsonResp = [self receiveResponse:(NSHTTPURLResponse *)response data:data error:&e];
 			 
-			 dispatch_sync(queue, ^{ block((e ? nil : jsonResp), e); } );
+			 dispatch_sync(queue, ^{ block(jsonResp, e); } );
 		 }
 	 }];
 }
