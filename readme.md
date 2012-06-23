@@ -108,7 +108,7 @@ Getting started - Ruby
   * Copy the `nsrails` directory ([the one with the main Xcode project](https://github.com/dingbat/nsrails/tree/master/nsrails)) into `vendor`. (You can delete `Tests/`, but keep `Source/` and the Xcode project file).
   * Modify your Rakefile to include NSRails and the CoreData framework:
 
-	    ```ruby
+	  ```ruby
 	  Motion::Project::App.setup do |app|
 	      # Add CoreData as a linked framework (required even if CoreData isn't used)
 	      app.frameworks << "CoreData"
