@@ -583,6 +583,17 @@ Note that this dictionary needs to be JSON-parasable, meaning all keys are strin
 		</Token>
 		
 		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/config</TokenIdentifier>
+			<Abstract>Should return a configuration for this class and its members.</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>+ (NSRConfig *)config</Declaration>
+			
+			<ReturnValue><Abstract>A configuration for this class and its members.</Abstract></ReturnValue>
+			<Anchor>//api/name/config</Anchor>
+		</Token>
+		
+		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteProperties</TokenIdentifier>
 			<Abstract>Should return an array of all properties to be used by NSRails.</Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			

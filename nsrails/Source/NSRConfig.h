@@ -57,7 +57,6 @@ extern NSString * const NSRCoreDataException;
 ////////////////////////////////
 
 /**
- 
  The NSRails configuration class is NSRConfig, a class that stores your Rails app's configuration settings (server URL, etc) for either your app globally or in specific instances. It also supports basic HTTP authentication and very simple OAuth authentication.
  
  ## Universal Config
@@ -77,32 +76,11 @@ extern NSString * const NSRCoreDataException;
 	 //[[NSRConfig defaultConfig] setAppPassword:@"password"];
 	 ...
 	}
- 
- ## Config environments
- 
- NSRConfig supports several environments if you have a test and production server and don't want to switch between the two all the time. The constants `NSRConfigEnvironmentDevelopment` and `NSRConfigEnvironmentProduction` can be used, but any string will do.
- 
-	NSRConfig *devConfig = [[NSRConfig alloc] initWithAppURL:@"http://localhost:3000"];
-	[devConfig useAsDefaultForEnvironment:NSRConfigEnvironmentDevelopment];
-	
-	NSRConfig *prodConfig = [[NSRConfig alloc] initWithAppURL:@"http://myapp.com"];
-	prodConfig.appUsername = @"username";
-	prodConfig.appPassword = @"password";
-	[prodConfig useAsDefaultForEnvironment:NSRConfigEnvironmentProduction];
-	 
-	// Now set your environment for the rest of the app... (set to Development by default so this isn't even necessary)
-	[NSRConfig setCurrentEnvironment:NSRConfigEnvironmentDevelopment];
-	// And the relevant config will be used in future calls to `<defaultConfig>` or in any `remote<X>` methods.
- 
- The environment in which a config exists (production, development, or your own) has no bearing on its behavior in sending/receiving from your server.
- 
+  
  ## Using several configs in one project
  
- - If you simply need to direct different objects to different URLs, use the `<useForClass:>` method. Base URLs, autoinflection, date formats, and any other NSRConfig configurations will be used for NSRails actions called on this class or its instances:
+ - When NSRails needs to retrieve configuration settings, it calls the <NSRRemoteObject> `config` method. The default behavior is to return `<contextuallyRelevantConfig>`, but this can be overridden by your NSRRemoteObject subclass. Simply initialize your own NSRConfig instance and return it, and base URLs, autoinflection, date formats, and any other NSRConfig configurations will be used for NSRails actions called on this class or its instances.
  
-		NSRConfig *peopleServer = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com"];
-		[peopleServer useForClass:[Person class]];
-
  - If specific actions must be called using a separate config, an NSRConfig instance can be used to define a context block in which to call those config-specific methods:
 		
 		NSRConfig *myConfig = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com/"];
@@ -124,17 +102,9 @@ extern NSString * const NSRCoreDataException;
 			}
 		];
  
-	In these examples, everything within the blocks will be called using the config context specified, regardless of `<defaultConfig>` or any class-specific config (they take highest precedence).
+	In these examples, everything within the blocks will be called using the config context specified, regardless of `<defaultConfig>`. The config for the current context can be retrieved using the `<contextuallyRelevantConfig>` class method.
  
 	You can nest several config contexts within each other.
- 
- ## Config precedence
- 
- When an NSRails method is called, NSRails uses the following hierarchy to find an NSRConfig to use:
- 
- - **"Override" config:** If use was called (explicitly or implicity via a block). If they are nested, whichever one is on top of the stack (latest one).
- - **Class-specific config**: If the receiving class of the method (class or instance) defines a custom class with `<useForClass:>`.
- - **Default config**: (Most frequent case.) Uses the config set to default of the current environment. (Current environment is `NSRConfigEnvironmentDevelopment` by default.
  */
 
 @interface NSRConfig : NSObject <NSCoding>

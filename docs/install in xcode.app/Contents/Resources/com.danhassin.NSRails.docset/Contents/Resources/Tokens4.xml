@@ -38,7 +38,7 @@
 			<Abstract>The path to be appended to config's appURL (the base URL of your app).</Abstract>
 			<DeclaredIn>NSRRequest.h</DeclaredIn>			
 			
-			<Declaration>@property (nonatomic, strong) NSString *route</Declaration>
+			<Declaration>@property (nonatomic, readonly) NSString *route</Declaration>
 			
 			
 			<Anchor>//api/name/route</Anchor>
@@ -49,7 +49,7 @@
 			<Abstract>The path to be appended to config's appURL (the base URL of your app).</Abstract>
 			<DeclaredIn>NSRRequest.h</DeclaredIn>			
 			
-			<Declaration>@property (nonatomic, strong) NSString *route</Declaration>
+			<Declaration>@property (nonatomic, readonly) NSString *route</Declaration>
 			
 			
 			<Anchor>//api/name/route</Anchor>
@@ -60,7 +60,7 @@
 			<Abstract>The HTTP verb with which to make the request.</Abstract>
 			<DeclaredIn>NSRRequest.h</DeclaredIn>			
 			
-			<Declaration>@property (nonatomic, strong) NSString *httpMethod</Declaration>
+			<Declaration>@property (nonatomic, readonly) NSString *httpMethod</Declaration>
 			
 			
 			<Anchor>//api/name/httpMethod</Anchor>
@@ -71,7 +71,7 @@
 			<Abstract>The HTTP verb with which to make the request.</Abstract>
 			<DeclaredIn>NSRRequest.h</DeclaredIn>			
 			
-			<Declaration>@property (nonatomic, strong) NSString *httpMethod</Declaration>
+			<Declaration>@property (nonatomic, readonly) NSString *httpMethod</Declaration>
 			
 			
 			<Anchor>//api/name/httpMethod</Anchor>
@@ -97,6 +97,30 @@
 			
 			
 			<Anchor>//api/name/queryParameters</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRequest/setAdditionalHTTPHeaders:</TokenIdentifier>
+			<Abstract>A dictionary of additional HTTP headers to send with the request.
+  </Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSMutableDictionary *additionalHTTPHeaders</Declaration>
+			
+			
+			<Anchor>//api/name/additionalHTTPHeaders</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instp/NSRRequest/additionalHTTPHeaders</TokenIdentifier>
+			<Abstract>A dictionary of additional HTTP headers to send with the request.
+  </Abstract>
+			<DeclaredIn>NSRRequest.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSMutableDictionary *additionalHTTPHeaders</Declaration>
+			
+			
+			<Anchor>//api/name/additionalHTTPHeaders</Anchor>
 		</Token>
 		
 		<Token>

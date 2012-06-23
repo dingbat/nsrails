@@ -326,67 +326,19 @@
 			
 			<Declaration>+ (NSRConfig *)defaultConfig</Declaration>
 			
-			<ReturnValue><Abstract>The configuration set for the current environment.</Abstract></ReturnValue>
+			<ReturnValue><Abstract>The default configuration.</Abstract></ReturnValue>
 			<Anchor>//api/name/defaultConfig</Anchor>
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRConfig/relevantConfigForClass:</TokenIdentifier>
-			<Abstract>Returns the current relevant config for a given class.</Abstract>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRConfig/contextuallyRelevantConfig</TokenIdentifier>
+			<Abstract>Returns the contextually relevant configuration.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
-			<Declaration>+ (NSRConfig *)relevantConfigForClass:(Class)class</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>class</Name>
-					<Abstract>he class - maybe has a custom config attached to it.</Abstract>
-				</Parameter>
-			</Parameters>
-			<ReturnValue><Abstract>The current relevant config for a given class.</Abstract></ReturnValue>
-			<Anchor>//api/name/relevantConfigForClass:</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRConfig/configForEnvironment:</TokenIdentifier>
-			<Abstract>Returns the default configuration for a given environment.</Abstract>
-			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			<Declaration>+ (NSRConfig *)contextuallyRelevantConfig</Declaration>
 			
-			<Declaration>+ (NSRConfig *)configForEnvironment:(NSString *)environment</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>environment</Name>
-					<Abstract>Environment identifier.</Abstract>
-				</Parameter>
-			</Parameters>
-			<ReturnValue><Abstract>Configuration set for environment.</Abstract></ReturnValue>
-			<Anchor>//api/name/configForEnvironment:</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRConfig/setCurrentEnvironment:</TokenIdentifier>
-			<Abstract>Sets the global environment for NSRConfig.</Abstract>
-			<DeclaredIn>NSRConfig.h</DeclaredIn>			
-			
-			<Declaration>+ (void)setCurrentEnvironment:(NSString *)environment</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>environment</Name>
-					<Abstract>Environment identifier. Can be your own custom string or the constants NSRConfigEnvironmentDevelopment or NSRConfigEnvironmentProduction.</Abstract>
-				</Parameter>
-			</Parameters>
-			
-			<Anchor>//api/name/setCurrentEnvironment:</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/clm/NSRConfig/currentEnvironment</TokenIdentifier>
-			<Abstract>Returns the identifier for the current global environment.</Abstract>
-			<DeclaredIn>NSRConfig.h</DeclaredIn>			
-			
-			<Declaration>+ (NSString *)currentEnvironment</Declaration>
-			
-			<ReturnValue><Abstract>The identifier for the current global environment.</Abstract></ReturnValue>
-			<Anchor>//api/name/currentEnvironment</Anchor>
+			<ReturnValue><Abstract>The contextually relevant configuration, or default configuration is no explicit context is set.</Abstract></ReturnValue>
+			<Anchor>//api/name/contextuallyRelevantConfig</Anchor>
 		</Token>
 		
 		<Token>
@@ -444,46 +396,14 @@
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/useForClass:</TokenIdentifier>
-			<Abstract>Specifies for all NSRails actions (instance and class methods) in a given class to use the receiver.</Abstract>
-			<DeclaredIn>NSRConfig.h</DeclaredIn>			
-			
-			<Declaration>- (void)useForClass:(Class)class</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>class</Name>
-					<Abstract>Class to use this config.</Abstract>
-				</Parameter>
-			</Parameters>
-			
-			<Anchor>//api/name/useForClass:</Anchor>
-		</Token>
-		
-		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/useAsDefault</TokenIdentifier>
-			<Abstract>Specifies for all NSRails actions in the current environment to use the receiver.</Abstract>
+			<Abstract>Specifies for all NSRails actions to use the receiver.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>- (void)useAsDefault</Declaration>
 			
 			
 			<Anchor>//api/name/useAsDefault</Anchor>
-		</Token>
-		
-		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/useAsDefaultForEnvironment:</TokenIdentifier>
-			<Abstract>Specifies for all NSRails actions in a given environment to use the receiver.</Abstract>
-			<DeclaredIn>NSRConfig.h</DeclaredIn>			
-			
-			<Declaration>- (void)useAsDefaultForEnvironment:(NSString *)environment</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>environment</Name>
-					<Abstract>Environment identifier. Can be your own custom string or the constants NSRConfigEnvironmentDevelopment or NSRConfigEnvironmentProduction.</Abstract>
-				</Parameter>
-			</Parameters>
-			
-			<Anchor>//api/name/useAsDefaultForEnvironment:</Anchor>
 		</Token>
 		
 		<Token>

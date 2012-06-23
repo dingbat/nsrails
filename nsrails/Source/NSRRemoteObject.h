@@ -735,7 +735,7 @@
  
  For example, will return `updatedAt` (the Objective-C property) for the `updated_at` key in an incoming dictionary, assuming that your class defines an `updatedAt` property.
  
- The default behavior is to autoinflect into camelCase (if [enabled](NSRConfig.html#//api/name/autoinflectsPropertyNames)), or convert `id` to `remoteID`. If the resulting conversino is not found as a property in the class, returns `nil`.
+ The default behavior is to autoinflect into camelCase (if [enabled](NSRConfig.html#//api/name/autoinflectsPropertyNames)), or convert `id` to `remoteID`. If the resulting conversion is not found as a property in the class, returns `nil`.
  
  Overriding example:
  
@@ -758,7 +758,11 @@
 - (NSString *) propertyForRemoteKey:(NSString *)remoteKey;
 
 /**
- Undocumented
+ Should return a configuration for this class and its members.
+ 
+ The default behavior is to return <NSRConfig's> `contextuallyRelevantConfig`.
+ 
+ @return A configuration for this class and its members.
  */
 + (NSRConfig *) config;
 
