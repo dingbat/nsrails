@@ -34,7 +34,7 @@
 @class NSRConfig;
 
 /**
- NSRRequest is a class used internally by NSRRemoteObject to make `remote<X>` requests, but can also be used directly to construct custom resource paths, etc.
+ NSRRequest is a class used internally by NSRRemoteObject to make `remoteX` requests, but can also be used directly to construct custom resource paths, etc.
  
  The methods in this class are set up so that making requests is concise and visually logical:
  
@@ -81,7 +81,7 @@
 /**
  The HTTP verb with which to make the request.
  
- This should hardly ever be *set*. Use the <GET>, <DELETE>, <POST>, <PUT>, and <PATCH> factory methods.
+ This property is readonly. Use the <GET>, <DELETE>, <POST>, <PUT>, and <PATCH> factory methods.
  */
 @property (nonatomic, readonly) NSString *httpMethod;
 

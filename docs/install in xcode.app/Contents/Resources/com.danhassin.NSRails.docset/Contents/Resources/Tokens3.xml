@@ -552,7 +552,7 @@ Note that this dictionary needs to be JSON-parasable, meaning all keys are strin
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/shouldOnlySendIDKeyForNestedObjectProperty:</TokenIdentifier>
-			<Abstract>Should return whether or not a nested object should be sent with its entire body (<x>attributes), or just ID (<x>id).</Abstract>
+			<Abstract>Should return whether or not a nested object should be sent with its entire body (xattributes), or just ID (xid).</Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
 			<Declaration>- (BOOL)shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property</Declaration>
@@ -562,7 +562,7 @@ Note that this dictionary needs to be JSON-parasable, meaning all keys are strin
 					<Abstract>Name of the property.</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract>YES if only the <x>id key should be sent for this nested property, NO if the full <x>attributes should be sent.</Abstract></ReturnValue>
+			<ReturnValue><Abstract>YES if only the xid key should be sent for this nested property, NO if the full xattributes should be sent.</Abstract></ReturnValue>
 			<Anchor>//api/name/shouldOnlySendIDKeyForNestedObjectProperty:</Anchor>
 		</Token>
 		

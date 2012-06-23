@@ -4,7 +4,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/cl/NSRRequest</TokenIdentifier>
-			<Abstract>NSRRequest is a class used internally by NSRRemoteObject to make remote<X> requests, but can also be used directly to construct custom resource paths, etc.</Abstract>
+			<Abstract>NSRRequest is a class used internally by NSRRemoteObject to make remoteX requests, but can also be used directly to construct custom resource paths, etc.</Abstract>
 			<DeclaredIn>NSRRequest.h</DeclaredIn>
 			
 			<NodeRef refid="4"/>

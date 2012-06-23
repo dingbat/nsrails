@@ -714,7 +714,7 @@
 - (Class) nestedClassForProperty:(NSString *)property;
 
 /**
- Should return whether or not a nested object should be sent with its entire body (`<x>_attributes`), or just ID (`<x>_id`).
+ Should return whether or not a nested object should be sent with its entire body (`x_attributes`), or just ID (`x_id`).
  
  The default behavior is to return `NO`. (You don't have to make a call to super here.)
  
@@ -726,7 +726,7 @@
      }
  
  @param property Name of the property.
- @return YES if only the `<x>_id` key should be sent for this nested property, NO if the full `<x>_attributes` should be sent.
+ @return YES if only the `x_id` key should be sent for this nested property, NO if the full `x_attributes` should be sent.
  */
 - (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property;
 
