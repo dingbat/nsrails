@@ -73,15 +73,9 @@
 	
 	<option value="class_methods">Class Methods</option>
 	
-	<option value="//api/name/configForEnvironment:">&nbsp;&nbsp;&nbsp;&nbsp;+ configForEnvironment:</option>
-	
-	<option value="//api/name/currentEnvironment">&nbsp;&nbsp;&nbsp;&nbsp;+ currentEnvironment</option>
+	<option value="//api/name/contextuallyRelevantConfig">&nbsp;&nbsp;&nbsp;&nbsp;+ contextuallyRelevantConfig</option>
 	
 	<option value="//api/name/defaultConfig">&nbsp;&nbsp;&nbsp;&nbsp;+ defaultConfig</option>
-	
-	<option value="//api/name/relevantConfigForClass:">&nbsp;&nbsp;&nbsp;&nbsp;+ relevantConfigForClass:</option>
-	
-	<option value="//api/name/setCurrentEnvironment:">&nbsp;&nbsp;&nbsp;&nbsp;+ setCurrentEnvironment:</option>
 	
 	
 	
@@ -99,10 +93,6 @@
 	<option value="//api/name/use">&nbsp;&nbsp;&nbsp;&nbsp;- use</option>
 	
 	<option value="//api/name/useAsDefault">&nbsp;&nbsp;&nbsp;&nbsp;- useAsDefault</option>
-	
-	<option value="//api/name/useAsDefaultForEnvironment:">&nbsp;&nbsp;&nbsp;&nbsp;- useAsDefaultForEnvironment:</option>
-	
-	<option value="//api/name/useForClass:">&nbsp;&nbsp;&nbsp;&nbsp;- useForClass:</option>
 	
 	<option value="//api/name/useIn:">&nbsp;&nbsp;&nbsp;&nbsp;- useIn:</option>
 	
@@ -132,9 +122,7 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_CoreData">CoreData</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Retrieving the default config">Retrieving the default config</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Managing the global environment">Managing the global environment</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Retrieving global configs">Retrieving global configs</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Using configs in specific locations">Using configs in specific locations</a></span></li>
 	
@@ -184,15 +172,9 @@
 
 <li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#class_methods">Class Methods</a></span><ul>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/configForEnvironment:">configForEnvironment:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/currentEnvironment">currentEnvironment</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/contextuallyRelevantConfig">contextuallyRelevantConfig</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/defaultConfig">defaultConfig</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/relevantConfigForClass:">relevantConfigForClass:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setCurrentEnvironment:">setCurrentEnvironment:</a></span></li>
 	
 </ul></li>
 
@@ -211,10 +193,6 @@
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/use">use</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/useAsDefault">useAsDefault</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/useAsDefaultForEnvironment:">useAsDefaultForEnvironment:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/useForClass:">useForClass:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/useIn:">useIn:</a></span></li>
 	
@@ -278,33 +256,10 @@
 }
 </code></pre>
 
-<h2>Config environments</h2>
-
-<p>NSRConfig supports several environments if you have a test and production server and don&rsquo;t want to switch between the two all the time. The constants <code>NSRConfigEnvironmentDevelopment</code> and <code>NSRConfigEnvironmentProduction</code> can be used, but any string will do.</p>
-
-<pre><code>NSRConfig *devConfig = [[NSRConfig alloc] initWithAppURL:@"http://localhost:3000"];
-[devConfig useAsDefaultForEnvironment:NSRConfigEnvironmentDevelopment];
-
-NSRConfig *prodConfig = [[NSRConfig alloc] initWithAppURL:@"http://myapp.com"];
-prodConfig.appUsername = @"username";
-prodConfig.appPassword = @"password";
-[prodConfig useAsDefaultForEnvironment:NSRConfigEnvironmentProduction];
-
-// Now set your environment for the rest of the app... (set to Development by default so this isn't even necessary)
-[NSRConfig setCurrentEnvironment:NSRConfigEnvironmentDevelopment];
-// And the relevant config will be used in future calls to `defaultConfig` or in any `remote&lt;X&gt;` methods.
-</code></pre>
-
-<p>The environment in which a config exists (production, development, or your own) has no bearing on its behavior in sending/receiving from your server.</p>
-
 <h2>Using several configs in one project</h2>
 
 <ul>
-<li><p>If you simply need to direct different objects to different URLs, use the <a href="#//api/name/useForClass:"><code>useForClass:</code></a> method. Base URLs, autoinflection, date formats, and any other NSRConfig configurations will be used for NSRails actions called on this class or its instances:</p>
-
-<pre><code>  NSRConfig *peopleServer = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com"];
-  [peopleServer useForClass:[Person class]];
-</code></pre></li>
+<li><p>When NSRails needs to retrieve configuration settings, it calls the <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a> <code>config</code> method. The default behavior is to return <a href="#//api/name/contextuallyRelevantConfig"><code>contextuallyRelevantConfig</code></a>, but this can be overridden by your NSRRemoteObject subclass. Simply initialize your own NSRConfig instance and return it, and base URLs, autoinflection, date formats, and any other NSRConfig configurations will be used for NSRails actions called on this class or its instances.</p></li>
 <li><p>If specific actions must be called using a separate config, an NSRConfig instance can be used to define a context block in which to call those config-specific methods:</p>
 
 <pre><code>  NSRConfig *myConfig = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com/"];
@@ -328,20 +283,9 @@ prodConfig.appPassword = @"password";
   ];
 </code></pre>
 
-<p>  In these examples, everything within the blocks will be called using the config context specified, regardless of <a href="#//api/name/defaultConfig"><code>defaultConfig</code></a> or any class-specific config (they take highest precedence).</p>
+<p>  In these examples, everything within the blocks will be called using the config context specified, regardless of <a href="#//api/name/defaultConfig"><code>defaultConfig</code></a>. The config for the current context can be retrieved using the <a href="#//api/name/contextuallyRelevantConfig"><code>contextuallyRelevantConfig</code></a> class method.</p>
 
 <p>  You can nest several config contexts within each other.</p></li>
-</ul>
-
-
-<h2>Config precedence</h2>
-
-<p>When an NSRails method is called, NSRails uses the following hierarchy to find an NSRConfig to use:</p>
-
-<ul>
-<li><strong>&ldquo;Override&rdquo; config:</strong> If use was called (explicitly or implicity via a block). If they are nested, whichever one is on top of the stack (latest one).</li>
-<li><strong>Class-specific config</strong>: If the receiving class of the method (class or instance) defines a custom class with <a href="#//api/name/useForClass:"><code>useForClass:</code></a>.</li>
-<li><strong>Default config</strong>: (Most frequent case.) Uses the config set to default of the current environment. (Current environment is <code>NSRConfigEnvironmentDevelopment</code> by default.</li>
 </ul>
 
 					</div>
@@ -493,8 +437,8 @@ prodConfig.appPassword = @"password";
 						</ul>
 						
 						
-						<a title="Retrieving the default config" name="task_Retrieving the default config"></a>
-						<h3 class="subsubtitle task-title">Retrieving the default config</h3>
+						<a title="Retrieving global configs" name="task_Retrieving global configs"></a>
+						<h3 class="subsubtitle task-title">Retrieving global configs</h3>
 
 						<ul class="task-list">
 							<li>
@@ -506,37 +450,8 @@ prodConfig.appPassword = @"password";
 	
 </li><li>
 	<span class="tooltip">
-		<code><a href="#//api/name/relevantConfigForClass:">+&nbsp;relevantConfigForClass:</a></code>
-		<span class="tooltip"><p>Returns the current relevant config for a given class.</p></span>
-	</span>
-	
-	
-</li>
-						</ul>
-						
-						
-						<a title="Managing the global environment" name="task_Managing the global environment"></a>
-						<h3 class="subsubtitle task-title">Managing the global environment</h3>
-
-						<ul class="task-list">
-							<li>
-	<span class="tooltip">
-		<code><a href="#//api/name/configForEnvironment:">+&nbsp;configForEnvironment:</a></code>
-		<span class="tooltip"><p>Returns the default configuration for a given environment.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/setCurrentEnvironment:">+&nbsp;setCurrentEnvironment:</a></code>
-		<span class="tooltip"><p>Sets the global environment for NSRConfig.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/currentEnvironment">+&nbsp;currentEnvironment</a></code>
-		<span class="tooltip"><p>Returns the identifier for the current global environment.</p></span>
+		<code><a href="#//api/name/contextuallyRelevantConfig">+&nbsp;contextuallyRelevantConfig</a></code>
+		<span class="tooltip"><p>Returns the contextually relevant configuration.</p></span>
 	</span>
 	
 	
@@ -571,22 +486,8 @@ prodConfig.appPassword = @"password";
 	
 </li><li>
 	<span class="tooltip">
-		<code><a href="#//api/name/useForClass:">&ndash;&nbsp;useForClass:</a></code>
-		<span class="tooltip"><p>Specifies for all NSRails actions (instance and class methods) in a given class to use the receiver.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
 		<code><a href="#//api/name/useAsDefault">&ndash;&nbsp;useAsDefault</a></code>
-		<span class="tooltip"><p>Specifies for all NSRails actions in the current environment to use the receiver.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/useAsDefaultForEnvironment:">&ndash;&nbsp;useAsDefaultForEnvironment:</a></code>
-		<span class="tooltip"><p>Specifies for all NSRails actions in a given environment to use the receiver.</p></span>
+		<span class="tooltip"><p>Specifies for all NSRails actions to use the receiver.</p></span>
 	</span>
 	
 	
@@ -1209,34 +1110,24 @@ prodConfig.appPassword = @"password";
 						<h2 class="subtitle subtitle-methods">Class Methods</h2>
 						
 						<div class="section-method">
-	<a name="//api/name/configForEnvironment:" title="configForEnvironment:"></a>
-	<h3 class="subsubtitle method-title">configForEnvironment:</h3>
+	<a name="//api/name/contextuallyRelevantConfig" title="contextuallyRelevantConfig"></a>
+	<h3 class="subsubtitle method-title">contextuallyRelevantConfig</h3>
 	
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Returns the default configuration for a given environment.</p>
+		<p>Returns the contextually relevant configuration.</p>
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>+ (NSRConfig *)configForEnvironment:(NSString *)<em>environment</em></code></div>
+	<div class="method-subsection method-declaration"><code>+ (NSRConfig *)contextuallyRelevantConfig</code></div>
 	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>environment</em></dt>
-			<dd><p>Environment identifier.</p></dd>
-		</dl>
-		
-	</div>
 	
 	
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>Configuration set for <em>environment</em>.</p>
+		<p>The contextually relevant configuration, or default configuration is no explicit context is set.</p>
 	</div>
 	
 	
@@ -1245,47 +1136,8 @@ prodConfig.appPassword = @"password";
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Creates and sets one if one for the given environment hasn&rsquo;t been set yet.</p>
+		<p>This is like <a href="#//api/name/defaultConfig"><code>defaultConfig</code></a>, but will return any configuration currently being used in a <a href="#//api/name/use"><code>use</code></a>/<a href="#//api/name/end"><code>end</code></a> or <a href="#//api/name/useIn:"><code>useIn:</code></a> block before going to the default.</p>
 	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRConfig.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/currentEnvironment" title="currentEnvironment"></a>
-	<h3 class="subsubtitle method-title">currentEnvironment</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Returns the identifier for the current global environment.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>+ (NSString *)currentEnvironment</code></div>
-	
-	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>The identifier for the current global environment.</p>
-	</div>
-	
-	
-	
-	
 	
 	
 	
@@ -1319,111 +1171,8 @@ prodConfig.appPassword = @"password";
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>The configuration set for the current environment.</p>
+		<p>The default configuration.</p>
 	</div>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRConfig.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/relevantConfigForClass:" title="relevantConfigForClass:"></a>
-	<h3 class="subsubtitle method-title">relevantConfigForClass:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Returns the current relevant config for a given class.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>+ (NSRConfig *)relevantConfigForClass:(Class)<em>class</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>class</em></dt>
-			<dd><p>he class &ndash; maybe has a custom config attached to it.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>The current relevant config for a given class.</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<ul>
-<li>Will return the config currently being used in a context block (with <a href="#//api/name/use"><code>use</code></a> and <a href="#//api/name/useIn:"><code>useIn:</code></a>).</li>
-<li>If none, will return the config set for <em>class</em> (with <a href="#//api/name/useForClass:"><code>useForClass:</code></a>).</li>
-<li>If none, will return <a href="#//api/name/defaultConfig"><code>defaultConfig</code></a>.</li>
-</ul>
-
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRConfig.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/setCurrentEnvironment:" title="setCurrentEnvironment:"></a>
-	<h3 class="subsubtitle method-title">setCurrentEnvironment:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Sets the global environment for NSRConfig.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>+ (void)setCurrentEnvironment:(NSString *)<em>environment</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>environment</em></dt>
-			<dd><p>Environment identifier. Can be your own custom string or the constants NSRConfigEnvironmentDevelopment or NSRConfigEnvironmentProduction.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
 	
 	
 	
@@ -1718,7 +1467,7 @@ prodConfig.appPassword = @"password";
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Specifies for all NSRails actions in the current environment to use the receiver.</p>
+		<p>Specifies for all NSRails actions to use the receiver.</p>
 	</div>		
 	
 	
@@ -1733,107 +1482,7 @@ prodConfig.appPassword = @"password";
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Lowest config precedence.</p>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRConfig.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/useAsDefaultForEnvironment:" title="useAsDefaultForEnvironment:"></a>
-	<h3 class="subsubtitle method-title">useAsDefaultForEnvironment:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Specifies for all NSRails actions in a given environment to use the receiver.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>- (void)useAsDefaultForEnvironment:(NSString *)<em>environment</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>environment</em></dt>
-			<dd><p>Environment identifier. Can be your own custom string or the constants NSRConfigEnvironmentDevelopment or NSRConfigEnvironmentProduction.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Lowest config precedence.</p>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRConfig.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/useForClass:" title="useForClass:"></a>
-	<h3 class="subsubtitle method-title">useForClass:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Specifies for all NSRails actions (instance and class methods) in a given class to use the receiver.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>- (void)useForClass:(Class)<em>class</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>class</em></dt>
-			<dd><p>Class to use this config.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Has precedence over a <a href="#//api/name/defaultConfig"><code>defaultConfig</code></a>, but is trumped by a config specified for a block (with <a href="#//api/name/use"><code>use</code></a> and <a href="#//api/name/end"><code>end</code></a>, or <a href="#//api/name/useIn:"><code>useIn:</code></a>). (This is the same precedence as instances which declare custom configs.)</p>
-
-<p>This should be used somewhere in your app setup, before any NSRails actions.</p>
+		<p><a href="#//api/name/defaultConfig"><code>defaultConfig</code></a> will now return the receiver.</p>
 	</div>
 	
 	
@@ -1918,7 +1567,7 @@ prodConfig.appPassword = @"password";
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-21)</span><br />
+						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-23)</span><br />
 						
 						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 789)</a>.</span></p>
 						
