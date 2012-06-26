@@ -253,11 +253,6 @@
 	Class nestedClass = [self nestedClassForProperty:property];
 	
 	id previousVal = [self valueForKey:property];
-    
-	//TODO - rubymotion bug workaround - returns NSNull instead of nil in valueForKey
-	if (previousVal == [NSNull null])
-		previousVal = nil;
-    
 	id decodedObj = nil;
 	
 	if (railsObject)
@@ -376,8 +371,7 @@
 		id val = [self valueForKey:property];
 
 		//don't send if there's no val or empty (is okay on belongs_to bc we send a null id)
-		//TODO - the NSNull check is a rubymotion bug workaround
-		if (val == [NSNull null] || !val || ([self valueIsArray:val] && [val count] == 0))
+		if (!val || ([self valueIsArray:val] && [val count] == 0))
 		{
 			return NO;
 		}
