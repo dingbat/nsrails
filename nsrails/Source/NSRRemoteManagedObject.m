@@ -38,9 +38,6 @@
 
 @end
 
-#pragma clang diagnostic ignored "-Wwarning-flag"
-#pragma clang diagnostic push
-
 @implementation NSRRemoteManagedObject
 
 #pragma mark - RemoteID CoreData getter/setters
