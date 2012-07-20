@@ -8,6 +8,12 @@
 
 #import "NSRAsserts.h"
 
+@interface NSRRemoteObject (private_overrides)
+
+- (Class) containerClassForRelationProperty:(NSString *)property;
+
+@end
+
 /** CoreData Mock Classes **/
 
 @interface CDPost : NSRRemoteManagedObject
@@ -81,6 +87,11 @@
 
 - (void) test_crud
 {
+	NSError *e = nil;
+	[[[NSRRequest GET] routeTo:@"404.html"] sendSynchronous:&e];
+	NSRAssertNoServer([[e domain] isEqualToString:NSURLErrorDomain]);
+
+	
 	CDPost *p = [[CDPost alloc] initInserted];
 	
 	//shouldn't save the context
@@ -174,7 +185,16 @@
 	STAssertEquals(postClass, [CDPost class], nil);
 }
 
+- (void) test_container_class_override
+{
+	CDPost *p = [CDPost objectWithRemoteDictionary:NSRDictionary(NSRNumber(12),@"id")];
 
+	Class unorderedClass = [p containerClassForRelationProperty:@"responses"];
+	STAssertEquals(unorderedClass, [NSMutableSet class], nil);
+
+	Class orderedClass = [p containerClassForRelationProperty:@"orderedResponses"];
+	STAssertEquals(orderedClass, [NSMutableOrderedSet class], nil);
+}
 
 
 
