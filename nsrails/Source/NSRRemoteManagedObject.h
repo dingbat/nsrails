@@ -147,5 +147,14 @@
  */
 + (NSString *) entityName;
 
+/**
+ Override this method only if you wish to disable `remoteID` uniqueness validation.
+ 
+ Unfortunately CoreData does not offer a good way to validate on uniqueness (on the DB level). When enabled and an object is inserted, NSRails will make a fetch request for any other managed objects with the inserted object's `remoteID`. This may take time depending on the amount of records you have.
+ 
+ @return `NO` if you do not wish to validate `remoteID` uniqueness. You should not override this method otherwise.
+ */
+- (BOOL) validatesRemoteIDUniqueness;
+
 
 @end

@@ -21,6 +21,8 @@
 @property (nonatomic, strong) NSString *author, *content;
 @property (nonatomic, strong) NSSet *responses;
 
+@property BOOL shouldNotValidateUniqueness;
+
 @end
 
 @interface CDResponse : NSRRemoteManagedObject
@@ -32,6 +34,12 @@
 
 @implementation CDPost
 @dynamic author, content, responses;
+@synthesize shouldNotValidateUniqueness;
+
+- (BOOL) validatesRemoteIDUniqueness
+{
+	return !shouldNotValidateUniqueness;
+}
 
 + (NSString *) entityName
 {
@@ -172,6 +180,32 @@
 	STAssertFalse(p4.hasChanges, @"");
 }
 
+- (void) test_remote_id_uniqueness_validation
+{
+	CDPost *p = [[CDPost alloc] initInserted];
+	p.remoteID = NSRNumber(99);
+	
+	STAssertTrue([p saveContext],nil);
+	
+	CDPost *p2 = [[CDPost alloc] initInserted];
+	p2.remoteID = NSRNumber(99);
+	
+	STAssertFalse([p2 saveContext],nil);
+}
+
+- (void) test_no_remote_id_uniqueness_validation
+{
+	CDPost *p = [[CDPost alloc] initInserted];
+	p.remoteID = NSRNumber(99);
+	
+	STAssertTrue([p saveContext],nil);
+	
+	CDPost *p2 = [[CDPost alloc] initInserted];
+	p2.remoteID = NSRNumber(99);
+	p2.shouldNotValidateUniqueness = YES;
+	
+	STAssertTrue([p2 saveContext],nil);
+}
 
 - (void) test_nested_class_override
 {

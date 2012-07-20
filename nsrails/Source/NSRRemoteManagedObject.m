@@ -237,9 +237,14 @@
 	return self;
 }
 
+- (BOOL) validatesRemoteIDUniqueness
+{
+	return ([self.primitiveRemoteID intValue] != 0);
+}
+
 - (BOOL) validateRemoteID:(id *)value error:(NSError **)error 
 {
-	if ([*value intValue] == 0)
+	if (![self validatesRemoteIDUniqueness])
 		return YES;
 	
 	NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:self.class.entityName];
