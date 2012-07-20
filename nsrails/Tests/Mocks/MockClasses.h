@@ -99,6 +99,9 @@
 @property (nonatomic, strong) NSString *locallyLowercase, *remotelyUppercase, *codeToNil, *remoteOnly, *objc;
 @property (nonatomic, strong) CustomCoderComponent *componentWithFlippingName;
 @property (nonatomic, strong) NSDate *dateOverrideSend, *dateOverrideRet;
+
+- (NSDate *) customDate;
+
 @end
 
 @interface CustomSender : NSRRemoteObject

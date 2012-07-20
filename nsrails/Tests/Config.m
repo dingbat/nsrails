@@ -90,8 +90,8 @@ STAssertEqualObjects(string, [NSRConfig contextuallyRelevantConfig].appURL, nil)
 	NSString *string2 = [[NSRConfig defaultConfig] stringFromDate:date];
 	STAssertFalse([string2 isEqualToString:mockDatetime], @"Datetime string sent and datetime string server accepts should not be equal. (format mismatch)");
 	
-	NSString *string3 = [[NSRConfig defaultConfig] stringFromDate:[NSDate dateWithTimeIntervalSince1970:0]];
-	STAssertEqualObjects(string3, @"1969", @"Datetime string should be formatted to 'yyyy'");
+	NSString *string3 = [[NSRConfig defaultConfig] stringFromDate:[NSDate dateWithTimeIntervalSince1970:100]];
+	STAssertEqualObjects(string3, @"1970", @"Datetime string should be formatted to 'yyyy'");
 	
 	//invalid date format
 	[[NSRConfig defaultConfig] setDateFormat:@"!@#@$"];

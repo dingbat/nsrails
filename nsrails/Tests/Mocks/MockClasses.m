@@ -235,11 +235,16 @@
 	return [super encodeValueForProperty:key remoteKey:remoteKey];
 }
 
+- (NSDate *) customDate
+{
+	return [NSDate dateWithTimeIntervalSince1970:100];	
+}
+
 - (void) decodeRemoteValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)change
 {
 	if ([remoteKey isEqualToString:@"date_override_ret"])
 	{
-		self.dateOverrideRet = [NSDate dateWithTimeIntervalSince1970:0];
+		self.dateOverrideRet = [self customDate];
 	}
 	else if ([remoteKey isEqualToString:@"csv_array"])
 	{

@@ -226,7 +226,7 @@
 	STAssertTrue([p.csvArray isKindOfClass:[NSArray class]], @"Should've decoded into an array");
 	STAssertTrue([p.locallyURL isKindOfClass:[NSURL class]], @"Should've decoded into a URL");
 	STAssertTrue([p.dateOverrideSend isKindOfClass:[NSDate class]], @"Should've decoded into an NSDate");
-	STAssertTrue([p.dateOverrideRet isEqualToDate:[NSDate dateWithTimeIntervalSince1970:0]], @"Should've used custom decode");
+	STAssertTrue([p.dateOverrideRet isEqualToDate:[p customDate]], @"Should've used custom decode");
 	STAssertNil(p.codeToNil, @"Should've decoded codeToNil into nil");
 	STAssertEqualObjects([p.locallyURL description], @"http://nsrails.com", @"Should've decoded into URL & retain content");
 	STAssertEqualObjects(p.csvArray, NSRArray(@"one", @"two", @"three"), @"Should've decoded into an array & retain content");
@@ -246,7 +246,8 @@
 	STAssertEqualObjects([sendDict objectForKey:@"locally_lowercase"], @"lowercase?", @"Should've kept as lowercase");
 	STAssertEqualObjects([sendDict objectForKey:@"remotely_uppercase"], @"UPPER", @"Should've encoded to uppercase");
 	STAssertEqualObjects([sendDict objectForKey:@"date_override_send"], @"override!", @"Should've overriden NSDate encode");
-	STAssertEqualObjects([sendDict objectForKey:@"date_override_ret"], @"1969-12-31T19:00:00Z", @"Should've overriden NSDate decode");
+	NSString *dateStr = [[NSRConfig defaultConfig] stringFromDate:[p customDate]];
+	STAssertEqualObjects([sendDict objectForKey:@"date_override_ret"], dateStr, @"Should've overriden NSDate decode");
 	STAssertEqualObjects(p.componentWithFlippingName.componentName, @"COMP LOWERCASE?", @"Should've encoded comp name into uppercase");
 	
 	STAssertEqualObjects([sendDict objectForKey:@"remote_only"], @"remote", @"Should've captured remoteOnly!");
