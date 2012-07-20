@@ -32,14 +32,6 @@
 	return @"Post";
 }
 
-- (Class) nestedClassForProperty:(NSString *)property
-{
-	if ([property isEqualToString:@"responses"])
-		return [CDResponse class];
-	
-	return [super nestedClassForProperty:property];
-}
-
 @end
 
 @implementation CDResponse
@@ -168,6 +160,25 @@
 	STAssertEqualObjects(p4.content, @"hi", @"");
 	STAssertFalse(p4.hasChanges, @"");
 }
+
+
+- (void) test_nested_class_override
+{
+	CDPost *p = [CDPost objectWithRemoteDictionary:NSRDictionary(NSRNumber(12),@"id")];
+	CDResponse *r = [CDResponse objectWithRemoteDictionary:NSRDictionary(NSRNumber(12),@"id")];
+	
+	Class responseClass = [p nestedClassForProperty:@"responses"];
+	STAssertEquals(responseClass, [CDResponse class], nil);
+
+	Class postClass = [r nestedClassForProperty:@"post"];
+	STAssertEquals(postClass, [CDPost class], nil);
+}
+
+
+
+
+
+/////////////////////////////////////////////
 
 - (void) setUp
 {

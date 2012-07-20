@@ -108,7 +108,8 @@
 	NSRelationshipDescription *cdRelation = [[[(id)self entity] relationshipsByName] objectForKey:property];
 	if (cdRelation)
 	{
-		return cdRelation.destinationEntity.class;
+		Class class = NSClassFromString(cdRelation.destinationEntity.managedObjectClassName);
+		return class;
 	}
     
     return [super nestedClassForProperty:property];
