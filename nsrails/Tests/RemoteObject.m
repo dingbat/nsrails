@@ -226,6 +226,17 @@
 	STAssertEqualObjects([[array objectAtIndex:0] author], @"dan", nil);
 }
 
+- (void) test_index_json_into_array_with_root
+{
+	NSArray *remoteJSON = NSRDictionary(NSRMArray(NSRDictionary(@"dan",@"author"), NSRDictionary(@"michael",@"author")), @"posts");
+	NSArray *array = [Post arrayOfInstancesFromRemoteJSON:remoteJSON];
+	
+	STAssertNotNil(array, nil);
+	STAssertEquals(array.count, (NSUInteger)2, nil);
+	STAssertTrue([[array objectAtIndex:0] isKindOfClass:[Post class]], nil);
+	STAssertEqualObjects([[array objectAtIndex:0] author], @"dan", nil);
+}
+
 /*************
    OVERRIDES
  *************/

@@ -591,6 +591,15 @@
 	if (!json)
 		return nil;
 	
+	if ([json isKindOfClass:[NSDictionary class]])
+	{
+		//probably has root in front of it - "posts":[{},{}]
+		if ([json count] == 1)
+		{
+			json = [[json allValues] objectAtIndex:0];
+		}
+	}
+	
 	[json translateRemoteDictionariesIntoInstancesOfClass:self];
 	return json;
 }
