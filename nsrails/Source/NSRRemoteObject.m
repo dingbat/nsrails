@@ -41,6 +41,7 @@
 @interface NSRRemoteObject (private)
 
 - (NSDictionary *) remoteDictionaryRepresentationWrapped:(BOOL)wrapped fromNesting:(BOOL)nesting;
++ (NSArray *) arrayOfInstancesFromRemoteJSON:(id)json;
 
 - (BOOL) propertyIsTimestamp:(NSString *)property;
 
@@ -585,6 +586,15 @@
 
 #pragma mark Get all objects (class-level)
 
++ (NSArray *) arrayOfInstancesFromRemoteJSON:(id)json
+{
+	if (!json)
+		return nil;
+	
+	[json translateRemoteDictionariesIntoInstancesOfClass:self];
+	return json;
+}
+
 + (NSArray *) remoteAll:(NSError **)error
 {
 	return [self remoteAllViaObject:nil error:error];
@@ -593,8 +603,7 @@
 + (NSArray *) remoteAllViaObject:(NSRRemoteObject *)obj error:(NSError **)error
 {
     id json = [[NSRRequest requestToFetchAllObjectsOfClass:self viaObject:obj] sendSynchronous:error];
-	[json translateRemoteDictionariesIntoInstancesOfClass:self];
-    return json;
+	return [self arrayOfInstancesFromRemoteJSON:json];
 }
 
 + (void) remoteAllAsync:(NSRFetchAllCompletionBlock)completionBlock
@@ -607,8 +616,7 @@
     [[NSRRequest requestToFetchAllObjectsOfClass:self viaObject:obj] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
-		 [result translateRemoteDictionariesIntoInstancesOfClass:self];
-		 completionBlock(result,error);
+		 completionBlock([self arrayOfInstancesFromRemoteJSON:result],error);
 	 }];
 }
 

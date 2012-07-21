@@ -28,6 +28,7 @@
 #define NSRAssertClassPluralName(mname, class)	STAssertEqualObjects([class remoteControllerName], mname, @"%@ model name failed.", NSStringFromClass(class))
 
 #define NSRArray(...) [NSArray arrayWithObjects:__VA_ARGS__, nil]
+#define NSRMArray(...) [NSMutableArray arrayWithObjects:__VA_ARGS__, nil]
 #define NSRDictionary(...) [NSDictionary dictionaryWithObjectsAndKeys:__VA_ARGS__, nil]
 #define NSRNumber(x)	[NSNumber numberWithInteger:x]
 

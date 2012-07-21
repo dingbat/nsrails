@@ -11,6 +11,7 @@
 @interface NSRRemoteObject (private)
 
 + (NSString *) typeForProperty:(NSString *)prop;
++ (NSArray *) arrayOfInstancesFromRemoteJSON:(id)json;
 
 @end
 
@@ -214,6 +215,16 @@
 	STAssertEqualObjects(e.remoteID, eRetrieve.remoteID, @"Should've carried over remoteID");	
 }
 
+- (void) test_index_json_into_array
+{
+	NSArray *remoteJSON = NSRMArray(NSRDictionary(@"dan",@"author"), NSRDictionary(@"michael",@"author"));
+	NSArray *array = [Post arrayOfInstancesFromRemoteJSON:remoteJSON];
+	
+	STAssertNotNil(array, nil);
+	STAssertEquals(array.count, remoteJSON.count, nil);
+	STAssertTrue([[array objectAtIndex:0] isKindOfClass:[Post class]], nil);
+	STAssertEqualObjects([[array objectAtIndex:0] author], @"dan", nil);
+}
 
 /*************
    OVERRIDES
