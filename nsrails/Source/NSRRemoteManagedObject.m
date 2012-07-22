@@ -76,15 +76,6 @@
 	return obj;
 }
 
-- (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dictionary
-{
-	BOOL changes = [super setPropertiesUsingRemoteDictionary:dictionary];
-	if (changes)
-		[self saveContext];
-	
-	return changes;
-}
-
 - (Class) containerClassForRelationProperty:(NSString *)property
 {
 	BOOL ordered = [[[[(id)self entity] propertiesByName] objectForKey:property] isOrdered];
@@ -113,6 +104,48 @@
 }
 
 #pragma mark - Overridden operations (w/coredata)
+
+- (BOOL) remoteFetch:(NSError *__autoreleasing *)error
+{
+	if (![super remoteFetch:error])
+		return NO;
+	
+	[self saveContext];
+	return YES;
+}
+
+- (void) remoteFetchAsync:(NSRFetchCompletionBlock)completionBlock
+{
+	[super remoteFetchAsync:
+	 ^(BOOL changes, NSError *error)
+	 {
+		 if (!error && changes)
+			 [self saveContext];
+		 
+		 completionBlock(changes, error);
+	 }];
+}
+
+- (BOOL) remoteCreate:(NSError **)error
+{
+	if (![super remoteCreate:error])
+		return NO;
+	
+	[self saveContext];
+	return YES;
+}
+
+- (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock
+{
+	[super remoteCreateAsync:
+	 ^(NSError *error)
+	 {
+		 if (!error)
+			 [self saveContext];
+		 
+		 completionBlock(error);
+	 }];
+}
 
 - (BOOL) remoteUpdate:(NSError **)error
 {

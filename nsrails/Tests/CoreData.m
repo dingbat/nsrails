@@ -105,9 +105,11 @@
 	//shouldn't save the context
 	STAssertTrue(p.hasChanges, @"");
 	
-	p.author = @"hi";
-	p.content = @"hello";
 	p.remoteID = NSRNumber(15);
+	
+	STAssertTrue(p.hasChanges, @"");
+	
+	[p setPropertiesUsingRemoteDictionary:[NSDictionary dictionaryWithObjectsAndKeys:@"hi", @"author", @"hello", @"content", nil]];
 	
 	STAssertTrue(p.hasChanges, @"");
 	
@@ -157,27 +159,27 @@
 	
 	STAssertNotNil(p, @"");
 	STAssertEqualObjects(p.remoteID, NSRNumber(12), @"");
-	STAssertFalse(p.hasChanges, @"");
+	STAssertTrue(p.hasChanges, @"");
 	
 	CDPost *p2 = [CDPost findObjectWithRemoteID:NSRNumber(12)];
 	STAssertNotNil(p2,@"");
 	STAssertTrue(p2 == p, @"");
 	STAssertEqualObjects(p2.remoteID, NSRNumber(12), @"");
-	STAssertFalse(p2.hasChanges, @"");
+	STAssertTrue(p2.hasChanges, @"");
 	
 	CDPost *p3 = [CDPost objectWithRemoteDictionary:NSRDictionary(NSRNumber(12),@"id",@"hi",@"content")];
 	
 	STAssertNotNil(p3,@"");
 	STAssertTrue(p3 == p2,@"");
 	STAssertEqualObjects(p3.content, @"hi", @"");
-	STAssertFalse(p3.hasChanges, @"");
+	STAssertTrue(p3.hasChanges, @"");
 	
 	CDPost *p4 = [CDPost objectWithRemoteDictionary:NSRDictionary(@"hi",@"content")];
 	
 	STAssertNotNil(p4,@"");
 	STAssertEqualObjects(p4.remoteID, NSRNumber(0), nil);
 	STAssertEqualObjects(p4.content, @"hi", @"");
-	STAssertFalse(p4.hasChanges, @"");
+	STAssertTrue(p4.hasChanges, @"");
 }
 
 - (void) test_remote_id_uniqueness_validation

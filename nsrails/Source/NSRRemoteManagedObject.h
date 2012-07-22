@@ -70,9 +70,9 @@
  
  ### Class
  
- **Remote All (index)**: Each object returned in the array may be an existing or newly inserted managed object. All managed objects will reflect properties set to those returned by your server.
+ **Remote All (index)**: Each object returned in the array may be an existing or newly inserted managed object. All managed objects will reflect properties set to those returned by your server. Does not save the context.
 
- **Object with ID**: If request is successful, will attempt to find an existing local object with *objectID*, and update its properties to the server's response. If it cannot find an existing local object with that remoteID, will insert a new object into the context, with those properties.
+ **Object with ID**: If request is successful, will attempt to find an existing local object with *objectID*, and update its properties to the server's response. If it cannot find an existing local object with that remoteID, will insert a new object into the context, with those properties. Does not save the context.
 
  ### Instance
  
@@ -88,12 +88,10 @@
  
  **objectWithRemoteDictionary**: Will attempt to retrieve the object in CoreData whose remoteID matches the object for key `id` in *dictionary*.
  
- - If this object is found, will set its properties using *dictionary* and save the context.
- - If this object is not found (or there's no `id` key), will create & insert a new object using *dictionary* and save the context.
+ - If this object is found, will set its properties using *dictionary*.
+ - If this object is not found (or there's no `id` key), will create & insert a new object using *dictionary*.
  
- Will search for objects of entity named with the receiver's class name.
-
- **setPropertiesUsingRemoteDictionary**: Saves the context.
+ Does not save the context.
  
  **remoteDestroyOnNesting**: This property leaves your managed object **unaffected**. You will have to delete it from your context manually if your request was successful.
  
