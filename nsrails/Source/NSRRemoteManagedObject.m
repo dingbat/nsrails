@@ -269,10 +269,10 @@
 
 - (BOOL) validatesRemoteIDUniqueness
 {
-	return ([self.primitiveRemoteID intValue] != 0);
+	return ([self.primitiveRemoteID intValue] != 0 && [[(id)self changedValues] objectForKey:@"remoteID"]);
 }
 
-- (BOOL) validateRemoteID:(id *)value error:(NSError **)error 
+- (BOOL) validateRemoteID:(id *)value error:(NSError **)error
 {
 	if (![self validatesRemoteIDUniqueness])
 		return YES;
