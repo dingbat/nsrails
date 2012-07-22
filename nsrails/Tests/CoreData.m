@@ -38,7 +38,9 @@
 
 - (BOOL) validatesRemoteIDUniqueness
 {
-	return !shouldNotValidateUniqueness;
+	if (shouldNotValidateUniqueness)
+		return NO;
+	return [super validatesRemoteIDUniqueness];
 }
 
 + (NSString *) entityName
