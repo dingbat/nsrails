@@ -114,15 +114,15 @@
 	return YES;
 }
 
-- (void) remoteFetchAsync:(NSRFetchCompletionBlock)completionBlock
+- (void) remoteFetchAsync:(NSRBasicCompletionBlock)completionBlock
 {
 	[super remoteFetchAsync:
-	 ^(BOOL changes, NSError *error)
+	 ^(NSError *error)
 	 {
-		 if (!error && changes)
+		 if (!error)
 			 [self saveContext];
 		 
-		 completionBlock(changes, error);
+		 completionBlock(error);
 	 }];
 }
 

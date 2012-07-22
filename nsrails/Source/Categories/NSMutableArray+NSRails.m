@@ -58,11 +58,8 @@
 }
 
 //helper method to set array to returned values - has to keep the objects, just update them individually to their new dict
-//returns whether or not there was a local change
-- (BOOL) setSelfToRemoteArray:(NSArray *)array forClass:(Class)class
+- (void) setSelfToRemoteArray:(NSArray *)array forClass:(Class)class
 {
-	BOOL changes = NO;
-	
 	NSMutableArray *itemsToDelete = [self mutableCopy];
 	
 	for (NSDictionary *dict in array)
@@ -77,13 +74,10 @@
 		{
 			id new = [class objectWithRemoteDictionary:dict];
 			[self addObject:new];
-			changes = YES;
 		}
 		else
 		{
-			BOOL neededChange = [existing setPropertiesUsingRemoteDictionary:dict];
-			if (neededChange)
-				changes = YES;
+			[existing setPropertiesUsingRemoteDictionary:dict];
 
 			[itemsToDelete removeObject:existing];
 		}
@@ -91,60 +85,46 @@
 	
 	if (itemsToDelete.count > 0)
 	{
-		changes = YES;
 		[self removeObjectsInArray:itemsToDelete];
 	}
-	
-	return changes;
 }
 
-- (BOOL) remoteFetchAll:(Class)class error:(NSError **)errorPtr changes:(BOOL *)changesPtr
+- (BOOL) remoteFetchAll:(Class)class error:(NSError **)errorPtr
 {
-    return [self remoteFetchAll:class viaObject:nil error:errorPtr changes:changesPtr];
+    return [self remoteFetchAll:class viaObject:nil error:errorPtr];
 }
 
-- (BOOL) remoteFetchAll:(Class)class viaObject:(NSRRemoteObject *)obj error:(NSError **)errorPtr changes:(BOOL *)changesPtr
+- (BOOL) remoteFetchAll:(Class)class viaObject:(NSRRemoteObject *)obj error:(NSError **)errorPtr
 {
 	[self assertValidSubclass:class cmd:_cmd];
 	
 	NSArray *array = [[NSRRequest requestToFetchAllObjectsOfClass:class viaObject:obj] sendSynchronous:errorPtr];
 	
 	if (!array)
-	{
-		if (changesPtr)
-			*changesPtr = NO;
 		return NO;
-	}
 	
-	BOOL changes = [self setSelfToRemoteArray:array forClass:class];
-	
-	if (changesPtr)
-		*changesPtr = changes;
+	[self setSelfToRemoteArray:array forClass:class];
 	
 	return YES;
 }
 
-- (void) remoteFetchAll:(Class)class async:(NSRFetchCompletionBlock)block
+- (void) remoteFetchAll:(Class)class async:(NSRBasicCompletionBlock)block
 {
     [self remoteFetchAll:class viaObject:nil async:block];
 }
 
-- (void) remoteFetchAll:(Class)class viaObject:(NSRRemoteObject *)obj async:(NSRFetchCompletionBlock)block
+- (void) remoteFetchAll:(Class)class viaObject:(NSRRemoteObject *)obj async:(NSRBasicCompletionBlock)block
 {
 	[self assertValidSubclass:class cmd:_cmd];
 	
 	[[NSRRequest requestToFetchAllObjectsOfClass:class viaObject:obj] sendAsynchronous:
 	 ^(id jsonRep, NSError *error) 
 	 {
-		if (!jsonRep)
-		{
-			block(NO, error);
-		}
-		else
-		{
-			BOOL changes = [self setSelfToRemoteArray:jsonRep forClass:class];
-			block(changes, nil);
-		}
+		 if (jsonRep)
+		 {
+			 [self setSelfToRemoteArray:jsonRep forClass:class];
+		 }
+		 block(error);
 	 }];
 }
 

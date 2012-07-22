@@ -244,7 +244,7 @@
 	return [NSMutableArray class];
 }
 
-- (void) decodeRemoteValue:(id)railsObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)changes
+- (void) decodeRemoteValue:(id)railsObject forRemoteKey:(NSString *)remoteKey
 {
 	NSString *property = [self propertyForRemoteKey:remoteKey];
 	
@@ -262,10 +262,6 @@
         {
             if ([self valueIsArray:railsObject])
             {
-                BOOL checkForChange = ([railsObject count] == [previousVal count]);
-                if (!checkForChange)
-                    *changes = YES;
-                
                 decodedObj = [[[self containerClassForRelationProperty:property] alloc] init];
                                 
                 id previousArray = ([previousVal isKindOfClass:[NSSet class]] ? 
@@ -289,16 +285,12 @@
                     {
                         //didn't previously exist - make a new one
                         decodedElement = [nestedClass objectWithRemoteDictionary:railsElement];
-                        *changes = YES;
                     }
                     else
                     {
                         //existed - simply update that one (recursively)
                         decodedElement = existing;
-                        BOOL neededChange = [decodedElement setPropertiesUsingRemoteDictionary:railsElement];
-                        
-                        if (neededChange)
-                            *changes = YES;
+                        [decodedElement setPropertiesUsingRemoteDictionary:railsElement];
                     }
                     
                     [decodedObj addObject:decodedElement];
@@ -310,39 +302,22 @@
                 if (!previousVal)
                 {
                     decodedObj = [nestedClass objectWithRemoteDictionary:railsObject];
-                    *changes = YES;
                 }
-                //otherwise, keep the old object & only mark as change if its properties changed (recursive)
+                //otherwise, keep the old object
                 else
                 {
                     decodedObj = previousVal;
-                    *changes = [decodedObj setPropertiesUsingRemoteDictionary:railsObject];
                 }
             }
         }
         else if ([self propertyIsDate:property])
 		{
 			decodedObj = [[self.class config] dateFromString:railsObject];
-			
-			//account for any discrepancies between NSDate object and a string (which doesn't include milliseconds) 
-			CGFloat diff = fabs([decodedObj timeIntervalSinceDate:previousVal]);
-			*changes = (!previousVal || (diff > 1.25));
 		}
 		//otherwise, if not nested or anything, just use what we got (number, string, dictionary, array)
 		else
 		{
 			decodedObj = railsObject;
-            
-            //check for change with straight equality
-            //if it existed before but now nil, mark change
-            if (!decodedObj && previousVal)
-            {
-                *changes = YES;
-            }
-            else if (decodedObj)
-            {
-                *changes = ![decodedObj isEqual:previousVal];
-            }
 		}
 	}
 	
@@ -383,7 +358,7 @@
 
 #pragma mark - Internal NSR stuff
 
-- (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict
+- (void) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict
 {
     if (dict)
         remoteAttributes = dict;
@@ -394,23 +369,15 @@
 	{
 		dict = innerDict;
 	}
-	
-	BOOL changes = NO;
-	
+		
 	for (NSString *remoteKey in dict)
 	{
 		id remoteObject = [dict objectForKey:remoteKey];
 		if (remoteObject == [NSNull null])
 			remoteObject = nil;
 
-		BOOL change = NO;
-		[self decodeRemoteValue:remoteObject forRemoteKey:remoteKey change:&change];
-
-		if (change)
-			changes = YES;
+		[self decodeRemoteValue:remoteObject forRemoteKey:remoteKey];
 	}
-		
-	return changes;
 }
 
 - (NSDictionary *) remoteDictionaryRepresentationWrapped:(BOOL)wrapped
@@ -539,29 +506,24 @@
 
 #pragma mark Get latest
 
-- (BOOL) remoteFetch:(NSError **)error changes:(BOOL *)changesPtr
+- (BOOL) remoteFetch:(NSError **)error
 {
 	NSDictionary *jsonResponse = [[NSRRequest requestToFetchObject:self] sendSynchronous:error];
 	
-    BOOL change = [self setPropertiesUsingRemoteDictionary:jsonResponse];
-	if (changesPtr)
-		*changesPtr = change;
+	if (jsonResponse)
+		[self setPropertiesUsingRemoteDictionary:jsonResponse];
 	
 	return !!jsonResponse;
 }
 
-- (BOOL) remoteFetch:(NSError **)error
-{
-	return [self remoteFetch:error changes:NULL];
-}
-
-- (void) remoteFetchAsync:(NSRFetchCompletionBlock)completionBlock
+- (void) remoteFetchAsync:(NSRBasicCompletionBlock)completionBlock
 {
 	[[NSRRequest requestToFetchObject:self] sendAsynchronous:
 	 ^(id jsonRep, NSError *error) 
 	 {
-		 BOOL change = [self setPropertiesUsingRemoteDictionary:jsonRep];
-		 completionBlock(change, error);
+		 if (jsonRep)
+			 [self setPropertiesUsingRemoteDictionary:jsonRep];
+		 completionBlock(error);
 	 }];
 }
 

@@ -219,30 +219,8 @@
  
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`. 
  @return `YES` if fetch was successful. Returns `NO` if an error occurred.
- 
- @see remoteFetch:changes:
  */
 - (BOOL) remoteFetch:(NSError **)error;
-
-/**
- Retrieves the latest remote data for receiver and sets its properties to received response.
- 
- Sends a `GET` request to `/objects/1` (where `objects` is the pluralization of receiver's model name, and `1` is the receiver's remoteID).
- 
- Request made synchronously. See `<remoteFetchAsync:>` for asynchronous operation.
- 
- Requires presence of `<remoteID>`, or will throw an `NSRNullRemoteIDException`.
- 
- @param error Out parameter used if an error occurs while processing the request. May be `NULL`. 
- @param changesPtr Pointer to boolean value set to whether or not the receiver changed in any way after the fetch (ie, if this fetch modified one of receiver's local properties due to a change in value server-side). This will also take into account diffs to any nested `NSRRemoteObject` objects that are affected by this fetch (done recursively).
- 
- Note that because this only tracks differences in local changes, properties that changed server-side that are not defined in the receiver's class will *not* report back a change (ie, if receiver's class doesn't implement an `updated_at` property and `updated_at` is changed in your remote DB, no change will be reported.) This parameter may be `NULL` if this information is not useful, or use remoteFetch:.
- @return `YES` if fetch was successful. Returns `NO` if an error occurred.
- 
- @see remoteFetch:
- */
-- (BOOL) remoteFetch:(NSError **)error changes:(BOOL *)changesPtr;
-
 
 /**
  Retrieves the latest remote data for receiver and sets its properties to received response.
@@ -251,9 +229,9 @@
  
  Requires presence of `<remoteID>, or will throw an `NSRNullRemoteIDException`.
  
- @param completionBlock Block to be executed when the request is complete. The second parameter passed in is a BOOL whether or not there was a *local* change. This means changes in `updated_at`, etc, will only apply if your Objective-C class implement this as a property as well. This also applies when updating any of its nested objects (done recursively).
+ @param completionBlock Block to be executed when the request is complete.
  */
-- (void) remoteFetchAsync:(NSRFetchCompletionBlock)completionBlock;
+- (void) remoteFetchAsync:(NSRBasicCompletionBlock)completionBlock;
 
 
 /**
@@ -389,9 +367,8 @@
  Will set `<remoteAttributes>` to *dictionary*.
 
  @param dictionary Dictionary to be evaluated. 
- @return YES if any changes were made to the local object, NO if object was identical before/after.
  */
-- (BOOL) setPropertiesUsingRemoteDictionary:(NSDictionary *)dictionary;
+- (void) setPropertiesUsingRemoteDictionary:(NSDictionary *)dictionary;
 
 /// =============================================================================================
 /// @name Initializers
@@ -604,48 +581,29 @@
      @end
  
  In the example above, we want `URL` to be decoded (saved) as an NSURL locally and `csvArray` to be decoded as an NSArray locally, but Rails sends them to us as plain strings. Here's a possible overridden implementation:
-
-     - (void) decodeValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)change
-     {
-         if ([forRemoteKey isEqualToString:@"csv_array"])
-             self.csvArray = [remoteObject componentsSeparatedByString:@","];
-         
-         else if ([forRemoteKey isEqualToString:@"url"])
-             self.URL = [NSURL URLWithString:remoteObject];
-         
-         else
-             [super decodeValue:remoteObject forRemoteKey:remoteKey change:change];
-     }
  
- Note: the default implementation of this method will automatically take care of NSDates for you, decoding them into an NSDate object using the Rails date format. The format used can be changed in [this](NSRConfig.html#//api/name/dateFormat) NSRConfig property.
- 
- Example implementing change detection:
-
-     - (void) decodeValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)change
+     - (void) decodeValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey
      {
          if ([forRemoteKey isEqualToString:@"csv_array"])
          {
-            NSArray *array = [remoteObject componentsSeparatedByString:@","];
-            *change = [array isEqualToArray:self.csvArray];
-            self.csvArray = array;
+            self.csvArray = [remoteObject componentsSeparatedByString:@","];
          }
          else if ([forRemoteKey isEqualToString:@"url"])
          {
-            *change = [[self.URL absoluteString] isEqualToString:remoteObject];
             self.URL = [NSURL URLWithString:remoteObject];
          }
          else
-            [super decodeValue:remoteObject forRemoteKey:remoteKey change:change];
+            [super decodeValue:remoteObject forRemoteKey:remoteKey];
      }
 
+ Note: the default implementation of this method will automatically take care of NSDates for you, decoding them into an NSDate object using the Rails date format. The format used can be changed in [this](NSRConfig.html#//api/name/dateFormat) NSRConfig property.
  
  @param remoteObject Remote representation of this key. Will be a JSON-parsed object (NSDictionary, NSArray, NSString, NSNumber, or nil).
  @param remoteKey The remote key returned from Rails. Use `<propertyForRemoteKey:>` if you want the Objective-C property version of this key.
- @param change Reference to a change boolean. Its value should be set on a custom-coded property based off if the decoding will introduce a change in the instance variable. This is used to set the change value in `<remoteFetch:changes:>` and `<setPropertiesUsingRemoteDictionary:>.
   
  @warning Make sure you make a call to super if a certain property shouldn't be custom-coded.
  */
-- (void) decodeRemoteValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)change;
+- (void) decodeRemoteValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey;
 
 /** 
  Should return whether or not a certain property should be sent in the outgoing dictionary.
@@ -672,7 +630,7 @@
         return [super shouldSendProperty:property whenNested:nested];
      }
  
- The "shouldSetProperty" equivalent is done through `<decodeRemoteValue:forRemoteKey:change:>`. Simply override it and do nothing for that property if you do not want to decode it.
+ The "shouldSetProperty" equivalent is done through `<decodeRemoteValue:forRemoteKey:>`. Simply override it and do nothing for that property if you do not want to decode it.
  
  @param property The name of the property.
  @param nested Whether or not the receiving object is being nested.
@@ -748,7 +706,7 @@
          return [super propertyForRemoteKey:remoteKey];
      }
 
- It is possible to also override decodeRemoteValue:forRemoteKey:changes: and setting the `objc` property manually for a remoteKey of "rails", but since `<decodeRemoteValue:forRemoteKey:changes:>` uses this method internally, it is cleaner to just override this method.
+ It is possible to also override decodeRemoteValue:forRemoteKey: and setting the `objc` property manually for a remoteKey of "rails", but since `<decodeRemoteValue:forRemoteKey:>` uses this method internally, it is cleaner to just override this method.
 
  The inverse method remoteKeyForProperty does not exist - instead override `<encodeValueForProperty:remoteKey:>` and modify the remote key.
  

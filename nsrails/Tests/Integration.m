@@ -112,7 +112,7 @@ static BOOL noServer = NO;
 					///////////////////////
 					//TEST READ (RETRIVE)
 					
-					[newPost remoteFetchAsync:^(BOOL changed, NSError *e5) {
+					[newPost remoteFetchAsync:^(NSError *e5) {
 						STAssertNil(e5, @"ASYNC Should be no error retrieving a value.");
 						//see if it correctly set the info on the server (still there after failed validation) to overwrite the local author (set to nil)
 						STAssertNotNil(newPost.author, @"ASYNC New post should have gotten back his old author after validation failed (on the retrieve).");
@@ -120,7 +120,7 @@ static BOOL noServer = NO;
 						newPost.remoteID = nil;
 						
 						//see if there's an exception if trying to retrieve with a nil ID
-						STAssertThrowsSpecificNamed([newPost remoteFetchAsync:^(BOOL changed, NSError *error) {}], NSException, NSRNullRemoteIDException, @"ASYNC Tried to retrieve an instance with a nil ID, where's the exception?");
+						STAssertThrowsSpecificNamed([newPost remoteFetchAsync:^(NSError *error) {}], NSException, NSRNullRemoteIDException, @"ASYNC Tried to retrieve an instance with a nil ID, where's the exception?");
 						
 						///////////////////////
 						//TEST DESTROY
@@ -611,19 +611,16 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	BOOL changes;
-	STAssertTrue([post remoteFetch:&e changes:&changes],@"Should retrieve post just fine");
+	STAssertTrue([post remoteFetch:&e],@"Should retrieve post just fine");
 	STAssertTrue(post.responses.count == 0, @"Retrieved post should have 0 responses ('deleted' b-t)");
-	STAssertTrue(changes,@"Should be changes since we 'deleted' the nested response by nulling its 'post'");
 	
 	//recreate belongsTo
 	belongsTo.post = post;
 	belongsTo.remoteID = nil;
 	
 	STAssertTrue([belongsTo remoteCreate:&e],@"");
-	STAssertTrue([post remoteFetch:&e changes:&changes],@"Should retrieve post just fine");
+	STAssertTrue([post remoteFetch:&e],@"Should retrieve post just fine");
 	STAssertTrue(post.responses.count == 1, @"Retrieved post should have 1 responses (just recreated b-t)");
-	STAssertTrue(changes,@"Should be changes since we created a nested response");
 	
 	
 	//now test with dicts
@@ -649,12 +646,10 @@ static BOOL noServer = NO;
 	// on retrieve, it should set responses in dictionary form
 	dictionariesPost.remoteID = post.remoteID;
 	
-	BOOL changes2;
-	STAssertTrue([dictionariesPost remoteFetch:&e changes:&changes2],@"e=%@",e);
+	STAssertTrue([dictionariesPost remoteFetch:&e],@"e=%@",e);
 	STAssertNil(e, @"There should've been no errors on the retrieve, even if no nested model defined.");
 	STAssertEquals(dictionariesPost.responses.count, post.responses.count, @"Should still come back with same number of dicts as responses (1)");
 	STAssertTrue([[dictionariesPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[dictionariesPost.responses objectAtIndex:0] class]));
-	STAssertTrue(changes2,@"There should be changes since new dicts were introduced");
 	
 	e = nil;
 	
@@ -667,93 +662,6 @@ static BOOL noServer = NO;
 	testResponse.remoteID = [[dictionariesPost.responses objectAtIndex:0] objectForKey:@"id"];
 	STAssertTrue([testResponse remoteDestroy:&e],@"");	
 	STAssertNil(e, @"testResponse object should've been destroyed fine after manually setting ID from dictionary (nothing to do with nesting, just cleaning up)");
-}
-
-- (void) test_diff_detection
-{
-	NSRAssertNoServer(noServer);
-	
-	NSError *e = nil;
-	
-	//remove the two dates, which could modify our object (not relevant currently in this test, but i'll forget later)
-	Post *post = [[Post alloc] init];
-	post.author = @"Dan";
-	post.content = @"Text";
-	
-	STAssertTrue([post remoteCreate:&e],@"");
-	
-	STAssertNil(e, @"There should be no error on a normal remoteCreate for Post");
-	STAssertNotNil(post.remoteID, @"There should be a remoteID present for newly created object");
-	
-	e = nil;
-	
-	BOOL changes;
-	STAssertTrue([post remoteFetch:&e changes:&changes],@"");
-	STAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
-	STAssertFalse(changes, @"remoteFetch should've returned false - there were no changes to Post");
-	
-	e = nil;
-	
-	post.content = @"Local change";
-	
-	STAssertTrue([post remoteFetch:&e changes:&changes],@"");
-	STAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
-	STAssertTrue(changes, @"remoteFetch should've returned true - there was a local change to Post");
-	
-	e = nil;
-	
-	//default Response class doesn't have -b, used for some other test
-	Response *response = [[Response alloc] init];
-	response.author = @"John";
-	response.belongsToPost = YES;
-	response.content = @"Response";
-	
-	[post.responses addObject:response];
-	
-	STAssertTrue([post remoteFetch:&e changes:&changes], @"");
-	STAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
-	STAssertTrue(post.responses.count == 0, @"remoteFetch should've overwritten post.responses");
-	STAssertTrue(changes, @"remoteFetch should've returned true - there was a local change to Post (added a nested Response)");
-	
-	e = nil;
-	
-	response.post = post;
-	STAssertTrue([response remoteCreate:&e],@"");
-	
-	STAssertNil(e, @"There should be no error on a normal remoteCreate for Response obj");
-	STAssertNotNil(response.remoteID, @"There should be a remoteID present for newly created object");
-	
-	e = nil;
-	
-	response.post = nil;
-	STAssertTrue([response remoteFetch:&e changes:&changes],@"");
-	STAssertNil(e, @"There should be no error on a normal remoteFetch for existing Response obj");
-	STAssertNotNil(response.post, @"remoteFetch should've added the tied Post object");
-	STAssertTrue(changes, @"remoteFetch should've returned true - locally the post attr was set to nil.");
-	
-	e = nil;
-	
-	STAssertTrue([post remoteFetch:&e changes:&changes],@"");
-	STAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
-	STAssertTrue(post.responses.count == 1, @"remoteFetch should've added the newly created response");
-	STAssertTrue(changes, @"remoteFetch should've returned true - there was a remote change to Post (Response was created)");
-	
-	e = nil;
-	
-	STAssertTrue([post remoteFetch:&e changes:&changes],@"");
-	STAssertNil(e, @"There should be no error on a normal remoteFetch for existing Post obj");
-	STAssertFalse(changes, @"remoteFetch should've returned false - there were no changes to Post");
-	
-	e = nil;
-	
-	//clean up
-	
-	STAssertTrue([response remoteDestroy:&e],@"");
-	STAssertNil(e, @"There should be no error on a normal remoteDestroy for existing Response obj");
-	e = nil;
-	
-	STAssertTrue([post remoteDestroy:&e],@"");
-	STAssertNil(e, @"There should be no error on a normal remoteDestroy for existing Post obj");
 }
 
 - (void) test_date_conversion
@@ -783,12 +691,10 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	BOOL changes;
-	STAssertTrue([post remoteFetch:&e changes:&changes],@"");
+	STAssertTrue([post remoteFetch:&e],@"");
 	
 	STAssertNil(e, @"There should be no error in remoteFetch");
 	STAssertNotNil(post.updatedAt,@"updatedAt should be present");
-	STAssertTrue(changes,@"UpdatedAt should've changed");
 	
 	STAssertTrue([post remoteDestroy:&e],@"");
 	
@@ -800,18 +706,16 @@ static BOOL noServer = NO;
 	NSMutableArray *array = [[NSMutableArray alloc] init];
 	
 	NSError *e = nil;
-	BOOL changes = NO;
 	
-	STAssertThrowsSpecificNamed([array remoteFetchAll:[NSString class] error:&e changes:&changes], NSException, NSInvalidArgumentException, @"Should crash if class is not NSRailsModel subclass");
+	STAssertThrowsSpecificNamed([array remoteFetchAll:[NSString class] error:&e], NSException, NSInvalidArgumentException, @"Should crash if class is not NSRailsModel subclass");
 	
-	STAssertThrowsSpecificNamed([array remoteFetchAll:nil error:&e changes:&changes], NSException, NSInvalidArgumentException, @"Should crash if class is not NSRailsModel subclass");
+	STAssertThrowsSpecificNamed([array remoteFetchAll:nil error:&e], NSException, NSInvalidArgumentException, @"Should crash if class is not NSRailsModel subclass");
 	
 	NSRAssertNoServer(noServer);
 	
-	STAssertFalse([array remoteFetchAll:[Faker class] error:&e changes:&changes],@"");
+	STAssertFalse([array remoteFetchAll:[Faker class] error:&e],@"");
 	
 	STAssertNotNil(e, @"Error should be present -- Faker doesn't really exist");
-	STAssertFalse(changes, @"There should be no changes since error");
 	
 	e = nil;
 	
@@ -826,12 +730,10 @@ static BOOL noServer = NO;
 	}
 	
 	e = nil;
-	changes = NO;
 	
-	STAssertTrue([array remoteFetchAll:[Post class] error:&e changes:&changes],@"");
+	STAssertTrue([array remoteFetchAll:[Post class] error:&e],@"");
 	
 	STAssertNil(e, @"Error shouldn't be present e=%@",e);
-	STAssertFalse(changes, @"There should be no changes since there are 0 posts");
 	
 	e = nil;
 	
@@ -843,23 +745,21 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	STAssertTrue([array remoteFetchAll:[Post class] error:&e changes:&changes],@"");
+	STAssertTrue([array remoteFetchAll:[Post class] error:&e],@"");
 	
 	STAssertNil(e, @"Error shouldn't be present e=%@",e);
 	STAssertTrue(array.count == 1, @"array should have 1 post");
 	STAssertTrue([[array lastObject] isKindOfClass:[Post class]],@"should be Post class member");
-	STAssertTrue(changes, @"There should be changes since a new post was added");
 	
 	Post *thePost = [array lastObject];
 	
 	e = nil;
 	
-	STAssertTrue([array remoteFetchAll:[Post class] error:&e changes:&changes],@"");
+	STAssertTrue([array remoteFetchAll:[Post class] error:&e],@"");
 	
 	STAssertNil(e, @"Error shouldn't be present e=%@",e);
 	STAssertTrue(array.count == 1, @"array should have 1 post again");
 	STAssertTrue(thePost == [array lastObject],@"should be the same Post object");
-	STAssertFalse(changes, @"There should be no changes since it's a repeat");
 	
 	e = nil;
 	
@@ -880,12 +780,11 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	STAssertTrue([array remoteFetchAll:[Post class] error:&e changes:&changes],@"");
+	STAssertTrue([array remoteFetchAll:[Post class] error:&e],@"");
 	
 	STAssertNil(e, @"Error shouldn't be present e=%@",e);
 	STAssertTrue(array.count == 4, @"array should have 1 post again");
 	STAssertFalse(thePost == [array lastObject],@"should be a different Post object");
-	STAssertTrue(changes, @"There should be changes since it's a different post");
 	
 	e = nil;
 	
@@ -897,12 +796,11 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-	STAssertTrue([array remoteFetchAll:[Post class] error:&e changes:&changes],@"");
+	STAssertTrue([array remoteFetchAll:[Post class] error:&e],@"");
 	
 	STAssertNil(e, @"Error shouldn't be present e=%@",e);
 	STAssertTrue(array.count == 4, @"array should have 1 post again");
 	STAssertTrue(thePost2 == [array lastObject],@"should be the same Post object");
-	STAssertFalse(changes, @"There should be no changes since the post changed, BUT it was the same post object");
 	STAssertEqualObjects([[array lastObject] content], @"changed!!", @"content should be updated");
 	
 	e = nil;
@@ -921,11 +819,10 @@ static BOOL noServer = NO;
 	{
 		e = nil;
 		
-		STAssertTrue([array remoteFetchAll:[Post class] error:&e changes:&changes],@"");
+		STAssertTrue([array remoteFetchAll:[Post class] error:&e],@"");
 		
 		STAssertNil(e, @"Error shouldn't be present e=%@ (iteration %d)",e,i);
 		STAssertTrue(array.count == 4, @"array should have 1 post again (iteration %d)",i);
-		STAssertTrue(changes, @"There should be changes since the post changed out of our knowledge (iteration %d)",i);
 		STAssertEqualObjects([[array lastObject] content], @"changed externally!", @"content should be updated (iteration %d)",i);
 		
 		//behavior should be identical to if it was empty to begin with
@@ -935,7 +832,7 @@ static BOOL noServer = NO;
 	
 	[array addObject:@"please remove me"];
 	
-	STAssertThrows([array remoteFetchAll:[Post class] error:nil changes:NULL],@"Should throw an exception if non-NSRRO object is entered (KVC)");
+	STAssertThrows([array remoteFetchAll:[Post class] error:nil],@"Should throw an exception if non-NSRRO object is entered (KVC)");
 }
 
 
