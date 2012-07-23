@@ -28,9 +28,10 @@
 
 + (NSString *) fullErrorWithFile:(NSString *)file
 {
-	NSString *text = [[NSString alloc] initWithContentsOfFile:[@"Tests/Mocks/" stringByAppendingFormat:@"%@.txt",file]
+	NSString *text = [[NSString alloc] initWithContentsOfFile:[[NSBundle bundleForClass:self] pathForResource:file ofType:@"txt"]
 												 usedEncoding:NULL
 														error:nil];
+	
 	if (!text)
 		[NSException raise:@"Mock server error" format:@"Could not load text file '%@.txt'",file];
 	
