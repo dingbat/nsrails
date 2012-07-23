@@ -240,7 +240,7 @@
 	return [NSDate dateWithTimeIntervalSince1970:100];	
 }
 
-- (void) decodeRemoteValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)change
+- (void) decodeRemoteValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey
 {
 	if ([remoteKey isEqualToString:@"date_override_ret"])
 	{
@@ -270,7 +270,7 @@
 	}
 	else if (![remoteKey isEqualToString:@"remote_only"])
 	{
-		[super decodeRemoteValue:remoteObject forRemoteKey:remoteKey change:change];
+		[super decodeRemoteValue:remoteObject forRemoteKey:remoteKey];
 	}
 }
 
@@ -287,10 +287,10 @@
 	return [super shouldSendProperty:property whenNested:nested];
 }
 
-- (void) decodeRemoteValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)change
+- (void) decodeRemoteValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey
 {
 	if (![remoteKey isEqualToString:@"send_only"] || [remoteKey isEqualToString:@"local"])
-		[super decodeRemoteValue:remoteObject forRemoteKey:remoteKey change:change];
+		[super decodeRemoteValue:remoteObject forRemoteKey:remoteKey];
 }
 
 - (NSMutableArray *) remoteProperties

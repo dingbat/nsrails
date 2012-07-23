@@ -63,27 +63,24 @@
 	
 	NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:@"test", @"tester", nil];
 	
-	BOOL ch = [t setPropertiesUsingRemoteDictionary:dict];
+	[t setPropertiesUsingRemoteDictionary:dict];
 	STAssertEqualObjects(t.tester, @"test", @"");
-	STAssertTrue(ch, @"Should've been changes first time around");
 	STAssertNotNil(t.remoteAttributes, @"remoteAttributes should exist after setting props");
 	
-	BOOL ch2 = [t setPropertiesUsingRemoteDictionary:dict];
-	STAssertFalse(ch2, @"Should've been no changes when setting to no dict");
+	[t setPropertiesUsingRemoteDictionary:dict];
 	
 	t.tester = nil;
 	
 	NSDictionary *dictEnveloped = [[NSDictionary alloc] initWithObjectsAndKeys:[[NSDictionary alloc] initWithObjectsAndKeys:@"test",@"tester", nil], @"tester", nil];
-	BOOL ch3 = [t setPropertiesUsingRemoteDictionary:dictEnveloped];
+	[t setPropertiesUsingRemoteDictionary:dictEnveloped];
 	STAssertEqualObjects(t.tester, @"test", @"");
-	STAssertFalse(ch2, @"Should've been no changes when setting to inner dict");
 }
 
 - (void) test_dict_setting
 {
 	Post *p = [[Post alloc] init];
-	STAssertFalse([p setPropertiesUsingRemoteDictionary:[NSDictionary dictionary]], @"should be no changes");
-
+	[p setPropertiesUsingRemoteDictionary:[NSDictionary dictionary]];
+	
 	for (int i = 0; i < 2; i++)
 	{
 		NSDictionary *dict = NSRDictionary(@"dan",@"author", @"hi",@"content", NSRNumber(10),@"id");
@@ -96,7 +93,7 @@
 		
 		for (int i = 0; i < 2; i++)
 		{
-			STAssertTrue([p setPropertiesUsingRemoteDictionary:dict], @"should be changes");
+			[p setPropertiesUsingRemoteDictionary:dict];
 			STAssertEqualObjects(p.author, @"dan", nil);
 			STAssertEqualObjects(p.content, @"hi", nil);
 			STAssertEqualObjects(p.remoteID, NSRNumber(10), nil);
@@ -105,7 +102,7 @@
 				p.author = @"CHANGE";
 		}
 		
-		STAssertFalse([p setPropertiesUsingRemoteDictionary:dict], @"should be no changes");
+		[p setPropertiesUsingRemoteDictionary:dict];
 		STAssertEqualObjects(p.author, @"dan", nil);
 		STAssertEqualObjects(p.content, @"hi", nil);		
 	}
@@ -114,12 +111,12 @@
 	
 	NSDictionary *dict = NSRDictionary([MockServer datetime],@"updated_at");
 
-	STAssertTrue([p setPropertiesUsingRemoteDictionary:dict], @"should be changes");
+	[p setPropertiesUsingRemoteDictionary:dict];
 	STAssertEqualObjects(p.author, @"dan", nil);
 	STAssertEqualObjects(p.content, @"hi", nil);
 	STAssertTrue([p.updatedAt isKindOfClass:[NSDate class]], nil);
 
-	STAssertFalse([p setPropertiesUsingRemoteDictionary:dict], @"should be no changes");
+	[p setPropertiesUsingRemoteDictionary:dict];
 	STAssertEqualObjects(p.author, @"dan", nil);
 	STAssertEqualObjects(p.content, @"hi", nil);
 	STAssertTrue([p.updatedAt isKindOfClass:[NSDate class]], nil);
@@ -131,16 +128,16 @@
 	NSArray *array = NSRArray(@"hello", NSRNumber(15), NSRDictionary(@"hi",@"there"), NSRArray(@"hop"));
 	dict = NSRDictionary(array,@"array");
 	
-	STAssertTrue([t setPropertiesUsingRemoteDictionary:dict], @"should be changes");
+	[t setPropertiesUsingRemoteDictionary:dict];
 	STAssertEqualObjects(t.array, array, nil);
 	
-	STAssertFalse([t setPropertiesUsingRemoteDictionary:dict], @"should be no changes");
+	[t setPropertiesUsingRemoteDictionary:dict];
 	STAssertEqualObjects(t.array, array, nil);
 
 	array = NSRArray(@"hello", @"CHANGE", NSRDictionary(@"hi",@"there"), NSRArray(@"hop"));
 	dict = NSRDictionary(array,@"array");
 
-	STAssertTrue([t setPropertiesUsingRemoteDictionary:dict], @"should be changes");
+	[t setPropertiesUsingRemoteDictionary:dict];
 	STAssertEqualObjects(t.array, array, nil);
 
 	/** Dicts **/
@@ -148,23 +145,21 @@
 	NSDictionary *dictionary = NSRDictionary(NSRNumber(34), @"key", NSRArray(array), @"array", @"xx", @"string");
 	dict = NSRDictionary(dictionary,@"dictionary");
 	
-	STAssertTrue([t setPropertiesUsingRemoteDictionary:dict], @"should be changes");
+	[t setPropertiesUsingRemoteDictionary:dict];
 	STAssertEqualObjects(t.dictionary, dictionary, nil);
 	
-	STAssertFalse([t setPropertiesUsingRemoteDictionary:dict], @"should be no changes");
+	[t setPropertiesUsingRemoteDictionary:dict];
 	STAssertEqualObjects(t.dictionary, dictionary, nil);
 	
-	dictionary = NSRDictionary(NSRNumber(34), @"key", NSRArray(array), @"array", @"xx", @"CHANGE");
+	[t setPropertiesUsingRemoteDictionary:dict];
 	dict = NSRDictionary(dictionary,@"dictionary");
 
-	STAssertTrue([t setPropertiesUsingRemoteDictionary:dict], @"should be changes");
+	[t setPropertiesUsingRemoteDictionary:dict];
 	STAssertEqualObjects(t.dictionary, dictionary, nil);
 
 	/** Nulls and stuff **/
 		
-	BOOL b;
-	STAssertNoThrow(b = [t setPropertiesUsingRemoteDictionary:nil], @"Shouldn't blow up on setting to nil dictionary");
-	STAssertFalse(b, @"Shouldn't be a change if nil JSON");
+	STAssertNoThrow([t setPropertiesUsingRemoteDictionary:nil], @"Shouldn't blow up on setting to nil dictionary");
 	
 	[t setPropertiesUsingRemoteDictionary:NSRDictionary([NSNull null], @"tester")];
 	STAssertNil(t.tester, @"tester should be nil after setting from JSON");
@@ -180,26 +175,6 @@
 	//TODO
 	//For each one, test if the specific elements are of right type? ([dict objectForKey:@"array"] isKindOfClass:array)
 }
-
-- (void) test_date_diff_detection
-{
-	//single NSDate
-	SubClass *p = [[SubClass alloc] init];
-	p.subDate = [NSDate date];
-	
-	NSDictionary *manDict = [p remoteDictionaryRepresentationWrapped:NO];
-	
-	p.subDate = [p.subDate dateByAddingTimeInterval:0.1];
-	
-	BOOL changes = [p setPropertiesUsingRemoteDictionary:manDict];
-	STAssertFalse(changes, @"Should be no changes - too minute");
-	
-	p.subDate = [p.subDate dateByAddingTimeInterval:1.5];
-	
-	changes = [p setPropertiesUsingRemoteDictionary:manDict];
-	STAssertTrue(changes, @"Should be changes - modified significantly");
-}
-
 
 - (void) test_serialization
 {
@@ -376,8 +351,7 @@
 	[sendDict setObject:[sendDict objectForKey:@"eggs_attributes"] forKey:@"eggs"];
 	[sendDict removeObjectForKey:@"eggs_attributes"];
 	
-	BOOL changes = [nn setPropertiesUsingRemoteDictionary:sendDict];
-	STAssertTrue(changes, @"Should be changes - egg never had an ID so it doesn't know to persist");
+	[nn setPropertiesUsingRemoteDictionary:sendDict];
 	STAssertNotNil(nn.eggs, @"Array shouldn't be nil");
 	STAssertTrue([nn.eggs isKindOfClass:[NSArray class]], @"plain.array should be set to array");
 	STAssertTrue(nn.eggs.count == 1, @"plain.array should have one element");
@@ -390,8 +364,7 @@
 	[sendDict setObject:[sendDict objectForKey:@"eggs_attributes"] forKey:@"eggs"];
 	[sendDict removeObjectForKey:@"eggs_attributes"];
 	
-	changes = [nn setPropertiesUsingRemoteDictionary:sendDict];
-	STAssertFalse(changes, @"Should be no changes - should've detected same egg ID");
+	[nn setPropertiesUsingRemoteDictionary:sendDict];
 }
 
 /** Belongs-to **/
