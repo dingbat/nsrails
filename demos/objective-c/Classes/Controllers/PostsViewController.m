@@ -26,18 +26,15 @@
 {
 	// When the refresh button is hit, refresh our array of posts (uses a category on NSMutableArray)
 	
-	BOOL changes;
 	NSError *error;
 	
-	BOOL success = [posts remoteFetchAll:[Post class] error:&error changes:&changes];
-	
-	if (!success)
-	{
-		[AppDelegate alertForError:error];
-	}
-	else if (changes)
+	if ([posts remoteFetchAll:[Post class] error:&error])
 	{
 		[self.tableView reloadData];
+	}
+	else
+	{
+		[AppDelegate alertForError:error];
 	}
 	
 	// This could also be done by setting posts to the result of [Post remoteAll:&error], but the NSMutableArray category will persist the same objects and update their respective properties instead of replacing everything, which could be desirable

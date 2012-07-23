@@ -34,12 +34,10 @@ class PostsViewController < UITableViewController
     # When the refresh button is hit, refresh our array of posts (uses an extension on Array)
   	
     e_ptr = Pointer.new(:object)
-    c_ptr = Pointer.new(:boolean)
-    
-    if !@posts.remoteFetchAll(Post, error:e_ptr, changes:c_ptr)
-      AppDelegate.alertForError e_ptr[0]
-    elsif c_ptr[0]
+    if @posts.remoteFetchAll(Post, error:e_ptr)
       self.tableView.reloadData
+    else
+      AppDelegate.alertForError e_ptr[0]
     end
     
     # This could also be done by setting @posts to the result of Post.remoteAll(e_ptr), but using the Array method will persist the same objects and update their respective properties instead of replacing everything, which could be desirable
