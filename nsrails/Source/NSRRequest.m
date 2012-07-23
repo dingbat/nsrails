@@ -334,7 +334,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 			[request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
 			[request setHTTPBody:data];
 			
-			[request setValue:[NSString stringWithFormat:@"%d", [data length]] forHTTPHeaderField:@"Content-Length"];
+			[request setValue:[NSNumber numberWithUnsignedInteger:data.length].stringValue forHTTPHeaderField:@"Content-Length"];
 		}
  	}
 	
