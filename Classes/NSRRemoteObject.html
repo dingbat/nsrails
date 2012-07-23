@@ -76,7 +76,7 @@
 	
 	<option value="instance_methods">Instance Methods</option>
 	
-	<option value="//api/name/decodeRemoteValue:forRemoteKey:change:">&nbsp;&nbsp;&nbsp;&nbsp;- decodeRemoteValue:forRemoteKey:change:</option>
+	<option value="//api/name/decodeRemoteValue:forRemoteKey:">&nbsp;&nbsp;&nbsp;&nbsp;- decodeRemoteValue:forRemoteKey:</option>
 	
 	<option value="//api/name/encodeValueForProperty:remoteKey:">&nbsp;&nbsp;&nbsp;&nbsp;- encodeValueForProperty:remoteKey:</option>
 	
@@ -99,8 +99,6 @@
 	<option value="//api/name/remoteDictionaryRepresentationWrapped:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteDictionaryRepresentationWrapped:</option>
 	
 	<option value="//api/name/remoteFetch:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteFetch:</option>
-	
-	<option value="//api/name/remoteFetch:changes:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteFetch:changes:</option>
 	
 	<option value="//api/name/remoteFetchAsync:">&nbsp;&nbsp;&nbsp;&nbsp;- remoteFetchAsync:</option>
 	
@@ -196,7 +194,7 @@
 
 <li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/decodeRemoteValue:forRemoteKey:change:">decodeRemoteValue:forRemoteKey:change:</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/decodeRemoteValue:forRemoteKey:">decodeRemoteValue:forRemoteKey:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/encodeValueForProperty:remoteKey:">encodeValueForProperty:remoteKey:</a></span></li>
 	
@@ -219,8 +217,6 @@
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteDictionaryRepresentationWrapped:">remoteDictionaryRepresentationWrapped:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteFetch:">remoteFetch:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteFetch:changes:">remoteFetch:changes:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteFetchAsync:">remoteFetchAsync:</a></span></li>
 	
@@ -417,13 +413,6 @@
 	
 </li><li>
 	<span class="tooltip">
-		<code><a href="#//api/name/remoteFetch:changes:">&ndash;&nbsp;remoteFetch:changes:</a></code>
-		<span class="tooltip"><p>Retrieves the latest remote data for receiver and sets its properties to received response.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
 		<code><a href="#//api/name/remoteFetchAsync:">&ndash;&nbsp;remoteFetchAsync:</a></code>
 		<span class="tooltip"><p>Retrieves the latest remote data for receiver and sets its properties to received response.</p></span>
 	</span>
@@ -562,7 +551,7 @@
 	
 </li><li>
 	<span class="tooltip">
-		<code><a href="#//api/name/decodeRemoteValue:forRemoteKey:change:">&ndash;&nbsp;decodeRemoteValue:forRemoteKey:change:</a></code>
+		<code><a href="#//api/name/decodeRemoteValue:forRemoteKey:">&ndash;&nbsp;decodeRemoteValue:forRemoteKey:</a></code>
 		<span class="tooltip"><p>Should set what you want an Objective-C property to be set to, based off a remote representation.</p></span>
 	</span>
 	
@@ -584,7 +573,7 @@
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/shouldOnlySendIDKeyForNestedObjectProperty:">&ndash;&nbsp;shouldOnlySendIDKeyForNestedObjectProperty:</a></code>
-		<span class="tooltip"><p>Should return whether or not a nested object should be sent with its entire body (<code>&lt;x&gt;_attributes</code>), or just ID (<code>&lt;x&gt;_id</code>).</p></span>
+		<span class="tooltip"><p>Should return whether or not a nested object should be sent with its entire body (<code>x_attributes</code>), or just ID (<code>x_id</code>).</p></span>
 	</span>
 	
 	
@@ -1131,7 +1120,7 @@ if ([myObj remoteFetch:&amp;error])
 
 <p><strong>Default Behavior</strong> (when not overriden)</p>
 
-<p>Pluralizes remoteModelName.</p>
+<p>Pluralizes <code>remoteModelName</code>.</p>
 	</div>
 	
 	
@@ -1327,8 +1316,8 @@ if ([myObj remoteFetch:&amp;error])
 						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
 						
 						<div class="section-method">
-	<a name="//api/name/decodeRemoteValue:forRemoteKey:change:" title="decodeRemoteValue:forRemoteKey:change:"></a>
-	<h3 class="subsubtitle method-title">decodeRemoteValue:forRemoteKey:change:</h3>
+	<a name="//api/name/decodeRemoteValue:forRemoteKey:" title="decodeRemoteValue:forRemoteKey:"></a>
+	<h3 class="subsubtitle method-title">decodeRemoteValue:forRemoteKey:</h3>
 	
 	
 	
@@ -1337,7 +1326,7 @@ if ([myObj remoteFetch:&amp;error])
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>- (void)decodeRemoteValue:(id)<em>remoteObject</em> forRemoteKey:(NSString *)<em>remoteKey</em> change:(BOOL *)<em>change</em></code></div>
+	<div class="method-subsection method-declaration"><code>- (void)decodeRemoteValue:(id)<em>remoteObject</em> forRemoteKey:(NSString *)<em>remoteKey</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
@@ -1351,11 +1340,6 @@ if ([myObj remoteFetch:&amp;error])
 		<dl class="argument-def parameter-def">
 			<dt><em>remoteKey</em></dt>
 			<dd><p>The remote key returned from Rails. Use <a href="#//api/name/propertyForRemoteKey:"><code>propertyForRemoteKey:</code></a> if you want the Objective-C property version of this key.</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>change</em></dt>
-			<dd><p>Reference to a change boolean. Its value should be set on a custom-coded property based off if the decoding will introduce a change in the instance variable. This is used to set the change value in <a href="#//api/name/remoteFetch:changes:"><code>remoteFetch:changes:</code></a> and `<a href="#//api/name/setPropertiesUsingRemoteDictionary:">setPropertiesUsingRemoteDictionary:</a>.</p></dd>
 		</dl>
 		
 	</div>
@@ -1380,40 +1364,26 @@ if ([myObj remoteFetch:&amp;error])
 
 <p>In the example above, we want <code>URL</code> to be decoded (saved) as an NSURL locally and <code>csvArray</code> to be decoded as an NSArray locally, but Rails sends them to us as plain strings. Here&rsquo;s a possible overridden implementation:</p>
 
-<pre><code> - (void) decodeValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)change
+<pre><code> - (void) decodeValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey
  {
      if ([forRemoteKey isEqualToString:@"csv_array"])
-         self.csvArray = [remoteObject componentsSeparatedByString:@","];
-
+     {
+        self.csvArray = [remoteObject componentsSeparatedByString:@","];
+     }
      else if ([forRemoteKey isEqualToString:@"url"])
-         self.URL = [NSURL URLWithString:remoteObject];
-
+     {
+        self.URL = [NSURL URLWithString:remoteObject];
+     }
      else
-         [super decodeValue:remoteObject forRemoteKey:remoteKey change:change];
+     {
+        [super decodeValue:remoteObject forRemoteKey:remoteKey];
+     }
  }
 </code></pre>
 
 <p>Note: the default implementation of this method will automatically take care of NSDates for you, decoding them into an NSDate object using the Rails date format. The format used can be changed in <a href="NSRConfig.html#//api/name/dateFormat">this</a> NSRConfig property.</p>
 
-<p>Example implementing change detection:</p>
-
-<pre><code> - (void) decodeValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)change
- {
-     if ([forRemoteKey isEqualToString:@"csv_array"])
-     {
-        NSArray *array = [remoteObject componentsSeparatedByString:@","];
-        *change = [array isEqualToArray:self.csvArray];
-        self.csvArray = array;
-     }
-     else if ([forRemoteKey isEqualToString:@"url"])
-     {
-        *change = [[self.URL absoluteString] isEqualToString:remoteObject];
-        self.URL = [NSURL URLWithString:remoteObject];
-     }
-     else
-        [super decodeValue:remoteObject forRemoteKey:remoteKey change:change];
- }
-</code></pre><div class="warning"><p><strong>Warning:</strong> Make sure you make a call to super if a certain property shouldn&rsquo;t be custom-coded.</p></div>
+<p>Also note that this should not be overridden for only a simple change in local/remote property naming. If your server has a different property name than your Objective-C code, but otherwise decodes the same, simply override <a href="#//api/name/propertyForRemoteKey:"><code>propertyForRemoteKey:</code></a>.</p><div class="warning"><p><strong>Warning:</strong> Make sure you make a call to super if a certain property shouldn&rsquo;t be custom-coded.</p></div>
 	</div>
 	
 	
@@ -1500,34 +1470,18 @@ if ([myObj remoteFetch:&amp;error])
  @end
 </code></pre>
 
-<p>Note: the default implementation of this method will automatically take care of NSDates for you, encoding them into a date format string that&rsquo;s Rails-friendly. The format used can be changed in <a href="NSRConfig.html#//api/name/dateFormat">this</a> NSRConfig property.</p>
-
-<p>Overriding this method can also be used to define remote-only properties (ie, if your Rails server expects an attribute that you don’t want defined in your Objective-C class). Note here that <code>uniqueDeviceID</code> isn’t even a property of the Person class:</p>
-
-<pre><code> @implementation Person
- @synthesize name, age;
-
- - (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
- {
-     if ([property isEqualToString:@"uniqueDeviceID"])
-         return [[UIDevice currentDevice] uniqueIdentifier];
-
-     return [super encodeValueForProperty:property remoteKey:remoteKey];
- }
-
- @end
-</code></pre>
-
-<p>Moreover, custom remote keys can be defined here, if your Objective-C property and remote attribute differ. Simply set the contents of the <em>remoteKey</em> reference:</p>
+<p>Moreover, custom remote keys can be defined here, if the names of your Objective-C property and remote attribute differ. Simply set the contents of the <em>remoteKey</em> reference. That&rsquo;s the key it will be sent with.</p>
 
 <pre><code> - (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
  {
      if ([property isEqualToString:@"objcProperty"])
-         *remoteKey = @"railsProperty";
+         *remoteKey = @"rails_attr";
 
      return [super encodeValueForProperty:property remoteKey:remoteKey];
  }
-</code></pre><div class="warning"><p><strong>Warning:</strong> Make sure you make a call to super if a certain property shouldn&rsquo;t be custom-coded.</p></div>
+</code></pre>
+
+<p>Note: the default implementation of this method will automatically take care of NSDates for you, encoding them into a date format string that&rsquo;s Rails-friendly. The format used can be changed in <a href="NSRConfig.html#//api/name/dateFormat">this</a> NSRConfig property.</p><div class="warning"><p><strong>Warning:</strong> Make sure you make a call to super if a certain property shouldn&rsquo;t be custom-coded.</p></div>
 	</div>
 	
 	
@@ -1587,6 +1541,8 @@ if ([myObj remoteFetch:&amp;error])
 
 <pre><code> - (Class) nestedClassForProperty:(NSString *)property
  {
+     // Only necessary for 'responses' (to-many)
+     // By default, the Author class (to-one) will be picked up through its property type
      if ([property isEqualToString:@"responses"])
          return [Response class];
 
@@ -1596,13 +1552,14 @@ if ([myObj remoteFetch:&amp;error])
 
 <p><strong>Ruby</strong>:</p>
 
-<pre><code> def nestedClassForProperty(property)
+<pre><code> # Because Ruby is not statically typed, this must be overriden for all relationships (necessary for both)
+ # NSRails can't "guess" what class you want to nest in a property
+
+ def nestedClassForProperty(property)
    return Response if property == "responses"
    return Author if property == "author"
  end
-</code></pre>
-
-<p>Because Ruby is not statically typed, this must be overriden for all relationships &ndash;  NSRails can&rsquo;t &ldquo;guess&rdquo; what class you want to nest in a property.</p><div class="warning"><p><strong>Warning:</strong> In Objective-C, make sure you make a call to super.</p></div>
+</code></pre><div class="warning"><p><strong>Warning:</strong> In Objective-C, make sure you make a call to super.</p></div>
 	</div>
 	
 	
@@ -1774,7 +1731,7 @@ if ([myObj remoteFetch:&amp;error])
  }
 </code></pre>
 
-<p>It is possible to also override decodeRemoteValue:forRemoteKey:changes: and setting the <code>objc</code> property manually for a remoteKey of &ldquo;rails&rdquo;, but since <code>&lt;decodeRemoteValue:forRemoteKey:changes:&gt;</code> uses this method internally, it is cleaner to just override this method.</p>
+<p>It is possible to also override decodeRemoteValue:forRemoteKey: and setting the <code>objc</code> property manually for a remoteKey of &ldquo;rails&rdquo;, but since <a href="#//api/name/decodeRemoteValue:forRemoteKey:"><code>decodeRemoteValue:forRemoteKey:</code></a> uses this method internally, it is cleaner to just override this method.</p>
 
 <p>The inverse method remoteKeyForProperty does not exist &ndash; instead override <a href="#//api/name/encodeValueForProperty:remoteKey:"><code>encodeValueForProperty:remoteKey:</code></a> and modify the remote key.</p>
 	</div>
@@ -1832,12 +1789,14 @@ if ([myObj remoteFetch:&amp;error])
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>NSRails has no idea what types your properties are in Ruby, so to benefit from automatic Date &ndash;> string and string &ndash;> Date, it needs to know what properties are dates.</p>
 
-<p>Note that <code>created_at</code> and <code>updated_at</code> are already taken care of as dates.</p>
+<p>This is unnecessary in Objective-C.</p>
 
 <pre><code> def propertyIsDate(property)
    (property == "birthday") || super
  end
-</code></pre><div class="warning"><p><strong>Warning:</strong> Make a call to super.</p></div>
+</code></pre>
+
+<p>Note that <code>created_at</code> and <code>updated_at</code> are already taken care of as dates.</p><div class="warning"><p><strong>Warning:</strong> Make a call to super.</p></div>
 	</div>
 	
 	
@@ -2164,89 +2123,6 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:"><code>
 	
 	
 	
-	<div class="method-subsection see-also-section">
-		<h4 class="method-subtitle">See Also</h4>
-		<ul>
-			
-			<li><code><p><a href="#//api/name/remoteFetch:changes:">&ndash; remoteFetch:changes:</a></p></code></li>
-			
-		</ul>
-	</div>
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/remoteFetch:changes:" title="remoteFetch:changes:"></a>
-	<h3 class="subsubtitle method-title">remoteFetch:changes:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Retrieves the latest remote data for receiver and sets its properties to received response.</p>
-	</div>		
-	
-	
-	<div class="method-subsection method-declaration"><code>- (BOOL)remoteFetch:(NSError **)<em>error</em> changes:(BOOL *)<em>changesPtr</em></code></div>
-	
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>error</em></dt>
-			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>.</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>changesPtr</em></dt>
-			<dd><p>Pointer to boolean value set to whether or not the receiver changed in any way after the fetch (ie, if this fetch modified one of receiver&rsquo;s local properties due to a change in value server-side). This will also take into account diffs to any nested <code>NSRRemoteObject</code> objects that are affected by this fetch (done recursively).</p>
-
-<p>Note that because this only tracks differences in local changes, properties that changed server-side that are not defined in the receiver&rsquo;s class will <em>not</em> report back a change (ie, if receiver&rsquo;s class doesn&rsquo;t implement an <code>updated_at</code> property and <code>updated_at</code> is changed in your remote DB, no change will be reported.) This parameter may be <code>NULL</code> if this information is not useful, or use remoteFetch:.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p><code>YES</code> if fetch was successful. Returns <code>NO</code> if an error occurred.</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Sends a <code>GET</code> request to <code>/objects/1</code> (where <code>objects</code> is the pluralization of receiver&rsquo;s model name, and <code>1</code> is the receiver&rsquo;s remoteID).</p>
-
-<p>Request made synchronously. See <a href="#//api/name/remoteFetchAsync:"><code>remoteFetchAsync:</code></a> for asynchronous operation.</p>
-
-<p>Requires presence of <a href="#//api/name/remoteID"><code>remoteID</code></a>, or will throw an <code>NSRNullRemoteIDException</code>.</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection see-also-section">
-		<h4 class="method-subtitle">See Also</h4>
-		<ul>
-			
-			<li><code><p><a href="#//api/name/remoteFetch:">&ndash; remoteFetch:</a></p></code></li>
-			
-		</ul>
-	</div>
-	
 	
 	
 	<div class="method-subsection declared-in-section">
@@ -2268,7 +2144,7 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:"><code>
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>- (void)remoteFetchAsync:(NSRFetchCompletionBlock)<em>completionBlock</em></code></div>
+	<div class="method-subsection method-declaration"><code>- (void)remoteFetchAsync:(NSRBasicCompletionBlock)<em>completionBlock</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
@@ -2276,7 +2152,7 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:"><code>
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>completionBlock</em></dt>
-			<dd><p>Block to be executed when the request is complete. The second parameter passed in is a BOOL whether or not there was a <em>local</em> change. This means changes in <code>updated_at</code>, etc, will only apply if your Objective-C class implement this as a property as well. This also applies when updating any of its nested objects (done recursively).</p></dd>
+			<dd><p>Block to be executed when the request is complete.</p></dd>
 		</dl>
 		
 	</div>
@@ -2612,7 +2488,7 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>- (BOOL)setPropertiesUsingRemoteDictionary:(NSDictionary *)<em>dictionary</em></code></div>
+	<div class="method-subsection method-declaration"><code>- (void)setPropertiesUsingRemoteDictionary:(NSDictionary *)<em>dictionary</em></code></div>
 	
 	
 	<div class="method-subsection arguments-section parameters">
@@ -2626,11 +2502,6 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 	</div>
 	
 	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>YES if any changes were made to the local object, NO if object was identical before/after.</p>
-	</div>
 	
 	
 	
@@ -2664,7 +2535,7 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Should return whether or not a nested object should be sent with its entire body (<code>&lt;x&gt;_attributes</code>), or just ID (<code>&lt;x&gt;_id</code>).</p>
+		<p>Should return whether or not a nested object should be sent with its entire body (<code>x_attributes</code>), or just ID (<code>x_id</code>).</p>
 	</div>		
 	
 	
@@ -2685,7 +2556,7 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>YES if only the <code>&lt;x&gt;_id</code> key should be sent for this nested property, NO if the full <code>&lt;x&gt;_attributes</code> should be sent.</p>
+		<p>YES if only the <code>x_id</code> key should be sent for this nested property, NO if the full <code>x_attributes</code> should be sent.</p>
 	</div>
 	
 	
@@ -2771,7 +2642,7 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 </ul>
 
 
-<p>Otherwise the property is sent. So typically, this method is overridden if you do not wish to have a property in an outgoing dictionary. Overriding this method would look like this:</p>
+<p>Otherwise the property is sent. So typically, this method is overridden if you do not wish to have a property in an outgoing request. Overriding this method would look like this:</p>
 
 <pre><code> - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
  {
@@ -2779,7 +2650,7 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
     if ([property isEqualToString:@"retrieveOnlyProperty"])
         return NO;
 
-    //deepNest is a property with a has-one/has-many relationship that would otherwise not be sent when this object is nested
+    //deepNest is a property with a has-one/has-many relationship that would otherwise not be sent when this object is *nested*
     if ([property isEqualToString:@"deepNest"] &amp;&amp; nested)
         return YES;
 
@@ -2787,7 +2658,7 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
  }
 </code></pre>
 
-<p>The &ldquo;shouldSetProperty&rdquo; equivalent is done through <a href="#//api/name/decodeRemoteValue:forRemoteKey:change:"><code>decodeRemoteValue:forRemoteKey:change:</code></a>. Simply override it and do nothing for that property if you do not want to decode it.</p><div class="warning"><p><strong>Warning:</strong> Make sure you make a call to super if a certain property shouldn&rsquo;t be manually managed.</p></div>
+<p>The equivalent for this method for <em>retrieving</em> properties (&ldquo;shouldSetProperty&rdquo;) is done through <a href="#//api/name/decodeRemoteValue:forRemoteKey:"><code>decodeRemoteValue:forRemoteKey:</code></a>. Simply override it and do nothing for that property if you do not want to decode &amp; set it from a remote value.</p><div class="warning"><p><strong>Warning:</strong> Make sure you make a call to super if a certain property shouldn&rsquo;t be manually managed.</p></div>
 	</div>
 	
 	
@@ -2817,7 +2688,7 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-23)</span><br />
+						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-07-23)</span><br />
 						
 						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 789)</a>.</span></p>
 						
