@@ -12,11 +12,11 @@
 		
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/intfm/NSMutableArray(NSRFetch)/remoteFetchAll:error:changes:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/intfm/NSMutableArray(NSRFetch)/remoteFetchAll:error:</TokenIdentifier>
 			<Abstract>Updates elements in this array.</Abstract>
 			<DeclaredIn>NSMutableArray+NSRails.h</DeclaredIn>			
 			
-			<Declaration>- (BOOL)remoteFetchAll:(Class)class error:(NSError **)errorPtr changes:(BOOL *)changesPtr</Declaration>
+			<Declaration>- (BOOL)remoteFetchAll:(Class)class error:(NSError **)errorPtr</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>class</Name>
@@ -24,23 +24,18 @@
 				</Parameter><Parameter>
 					<Name>errorPtr</Name>
 					<Abstract>Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
-				</Parameter><Parameter>
-					<Name>changesPtr</Name>
-					<Abstract>Reference to a BOOL. Will indicate whether or not there were local changes to the array after this operation. Returns YES if no elements were added or deleted, and if no element changed when updating its respective properties.
-
-Works in a very similar way to remoteFetch: in NSRRemoteObject.</Abstract>
 				</Parameter>
 			</Parameters>
 			<ReturnValue><Abstract>YES if fetch was successful. Returns NO if an error occurred.</Abstract></ReturnValue>
-			<Anchor>//api/name/remoteFetchAll:error:changes:</Anchor>
+			<Anchor>//api/name/remoteFetchAll:error:</Anchor>
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/intfm/NSMutableArray(NSRFetch)/remoteFetchAll:viaObject:error:changes:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/intfm/NSMutableArray(NSRFetch)/remoteFetchAll:viaObject:error:</TokenIdentifier>
 			<Abstract>Updates elements in this array.</Abstract>
 			<DeclaredIn>NSMutableArray+NSRails.h</DeclaredIn>			
 			
-			<Declaration>- (BOOL)remoteFetchAll:(Class)class viaObject:(NSRRemoteObject *)parentObject error:(NSError **)errorPtr changes:(BOOL *)changesPtr</Declaration>
+			<Declaration>- (BOOL)remoteFetchAll:(Class)class viaObject:(NSRRemoteObject *)parentObject error:(NSError **)errorPtr</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>class</Name>
@@ -51,15 +46,10 @@ Works in a very similar way to remoteFetch: in NSRRemoteObject.</Abstract>
 				</Parameter><Parameter>
 					<Name>errorPtr</Name>
 					<Abstract>Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
-				</Parameter><Parameter>
-					<Name>changesPtr</Name>
-					<Abstract>Reference to a BOOL. Will indicate whether or not there were local changes to the array after this operation. Returns YES if no elements were added or deleted, and if no element changed when updating its respective properties.
-
-Works in a very similar way to remoteFetch: in NSRRemoteObject.</Abstract>
 				</Parameter>
 			</Parameters>
 			<ReturnValue><Abstract>YES if fetch was successful. Returns NO if an error occurred.</Abstract></ReturnValue>
-			<Anchor>//api/name/remoteFetchAll:viaObject:error:changes:</Anchor>
+			<Anchor>//api/name/remoteFetchAll:viaObject:error:</Anchor>
 		</Token>
 		
 		<Token>
@@ -67,7 +57,7 @@ Works in a very similar way to remoteFetch: in NSRRemoteObject.</Abstract>
 			<Abstract>Updates elements in this array.</Abstract>
 			<DeclaredIn>NSMutableArray+NSRails.h</DeclaredIn>			
 			
-			<Declaration>- (void)remoteFetchAll:(Class)class async:(NSRFetchCompletionBlock)completionBlock</Declaration>
+			<Declaration>- (void)remoteFetchAll:(Class)class async:(NSRBasicCompletionBlock)completionBlock</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>class</Name>
@@ -86,7 +76,7 @@ Works in a very similar way to remoteFetch: in NSRRemoteObject.</Abstract>
 			<Abstract>Updates elements in this array.</Abstract>
 			<DeclaredIn>NSMutableArray+NSRails.h</DeclaredIn>			
 			
-			<Declaration>- (void)remoteFetchAll:(Class)class viaObject:(NSRRemoteObject *)parentObject async:(NSRFetchCompletionBlock)completionBlock</Declaration>
+			<Declaration>- (void)remoteFetchAll:(Class)class viaObject:(NSRRemoteObject *)parentObject async:(NSRBasicCompletionBlock)completionBlock</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>class</Name>

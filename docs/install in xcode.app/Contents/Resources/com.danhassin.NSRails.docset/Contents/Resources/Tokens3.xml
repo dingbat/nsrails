@@ -194,11 +194,6 @@ Note that you do not have to define an id property for your Objective-C class, a
 			<Abstract>Retrieves the latest remote data for receiver and sets its properties to received response.</Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-	<RelatedTokens>
-		<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteFetch:changes:</TokenIdentifier>
-		
-	</RelatedTokens>
-	
 			<Declaration>- (BOOL)remoteFetch:(NSError **)error</Declaration>
 			<Parameters>
 				<Parameter>
@@ -211,41 +206,15 @@ Note that you do not have to define an id property for your Objective-C class, a
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteFetch:changes:</TokenIdentifier>
-			<Abstract>Retrieves the latest remote data for receiver and sets its properties to received response.</Abstract>
-			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
-			
-	<RelatedTokens>
-		<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteFetch:</TokenIdentifier>
-		
-	</RelatedTokens>
-	
-			<Declaration>- (BOOL)remoteFetch:(NSError **)error changes:(BOOL *)changesPtr</Declaration>
-			<Parameters>
-				<Parameter>
-					<Name>error</Name>
-					<Abstract>Out parameter used if an error occurs while processing the request. May be NULL.</Abstract>
-				</Parameter><Parameter>
-					<Name>changesPtr</Name>
-					<Abstract>Pointer to boolean value set to whether or not the receiver changed in any way after the fetch (ie, if this fetch modified one of receiver's local properties due to a change in value server-side). This will also take into account diffs to any nested NSRRemoteObject objects that are affected by this fetch (done recursively).
-
-Note that because this only tracks differences in local changes, properties that changed server-side that are not defined in the receiver's class will not report back a change (ie, if receiver's class doesn't implement an updatedat property and updatedat is changed in your remote DB, no change will be reported.) This parameter may be NULL if this information is not useful, or use remoteFetch:.</Abstract>
-				</Parameter>
-			</Parameters>
-			<ReturnValue><Abstract>YES if fetch was successful. Returns NO if an error occurred.</Abstract></ReturnValue>
-			<Anchor>//api/name/remoteFetch:changes:</Anchor>
-		</Token>
-		
-		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/remoteFetchAsync:</TokenIdentifier>
 			<Abstract>Retrieves the latest remote data for receiver and sets its properties to received response.</Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>- (void)remoteFetchAsync:(NSRFetchCompletionBlock)completionBlock</Declaration>
+			<Declaration>- (void)remoteFetchAsync:(NSRBasicCompletionBlock)completionBlock</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>completionBlock</Name>
-					<Abstract>Block to be executed when the request is complete. The second parameter passed in is a BOOL whether or not there was a local change. This means changes in updated_at, etc, will only apply if your Objective-C class implement this as a property as well. This also applies when updating any of its nested objects (done recursively).</Abstract>
+					<Abstract>Block to be executed when the request is complete.</Abstract>
 				</Parameter>
 			</Parameters>
 			
@@ -405,14 +374,14 @@ Uses the coding methods.</Abstract>
 			<Abstract>Sets the receiver's properties given a dictionary.</Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>- (BOOL)setPropertiesUsingRemoteDictionary:(NSDictionary *)dictionary</Declaration>
+			<Declaration>- (void)setPropertiesUsingRemoteDictionary:(NSDictionary *)dictionary</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>dictionary</Name>
 					<Abstract>Dictionary to be evaluated.</Abstract>
 				</Parameter>
 			</Parameters>
-			<ReturnValue><Abstract>YES if any changes were made to the local object, NO if object was identical before/after.</Abstract></ReturnValue>
+			
 			<Anchor>//api/name/setPropertiesUsingRemoteDictionary:</Anchor>
 		</Token>
 		
@@ -493,26 +462,23 @@ Note that this dictionary needs to be JSON-parasable, meaning all keys are strin
 		</Token>
 		
 		<Token>
-			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/decodeRemoteValue:forRemoteKey:change:</TokenIdentifier>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteObject/decodeRemoteValue:forRemoteKey:</TokenIdentifier>
 			<Abstract>Should set what you want an Objective-C property to be set to, based off a remote representation.</Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>- (void)decodeRemoteValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey change:(BOOL *)change</Declaration>
+			<Declaration>- (void)decodeRemoteValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>remoteObject</Name>
 					<Abstract>Remote representation of this key. Will be a JSON-parsed object (NSDictionary, NSArray, NSString, NSNumber, or nil).</Abstract>
 				</Parameter><Parameter>
 					<Name>remoteKey</Name>
-					<Abstract>The remote key returned from Rails. Use propertyForRemoteKey: if you want the Objective-C property version of this key.</Abstract>
-				</Parameter><Parameter>
-					<Name>change</Name>
-					<Abstract>Reference to a change boolean. Its value should be set on a custom-coded property based off if the decoding will introduce a change in the instance variable. This is used to set the change value in remoteFetch:changes: and `setPropertiesUsingRemoteDictionary:.
+					<Abstract>The remote key returned from Rails. Use propertyForRemoteKey: if you want the Objective-C property version of this key.
   </Abstract>
 				</Parameter>
 			</Parameters>
 			
-			<Anchor>//api/name/decodeRemoteValue:forRemoteKey:change:</Anchor>
+			<Anchor>//api/name/decodeRemoteValue:forRemoteKey:</Anchor>
 		</Token>
 		
 		<Token>

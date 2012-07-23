@@ -436,7 +436,7 @@
      
  **Default Behavior** (when not overriden)
  
- Pluralizes remoteModelName.
+ Pluralizes `<remoteModelName>`.
  */
 + (NSString *) remoteControllerName;
 
@@ -531,34 +531,18 @@
  
      @end
 
- Note: the default implementation of this method will automatically take care of NSDates for you, encoding them into a date format string that's Rails-friendly. The format used can be changed in [this](NSRConfig.html#//api/name/dateFormat) NSRConfig property.
- 
- Overriding this method can also be used to define remote-only properties (ie, if your Rails server expects an attribute that you don’t want defined in your Objective-C class). Note here that `uniqueDeviceID` isn’t even a property of the Person class:
- 
-     @implementation Person
-     @synthesize name, age;
-     
-     - (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
-     {
-         if ([property isEqualToString:@"uniqueDeviceID"])
-             return [[UIDevice currentDevice] uniqueIdentifier];
-     
-         return [super encodeValueForProperty:property remoteKey:remoteKey];
-     }
-     
-     @end
-
- Moreover, custom remote keys can be defined here, if your Objective-C property and remote attribute differ. Simply set the contents of the *remoteKey* reference:
+ Moreover, custom remote keys can be defined here, if the names of your Objective-C property and remote attribute differ. Simply set the contents of the *remoteKey* reference. That's the key it will be sent with.
  
      - (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
      {
          if ([property isEqualToString:@"objcProperty"])
-             *remoteKey = @"railsProperty";
+             *remoteKey = @"rails_attr";
          
          return [super encodeValueForProperty:property remoteKey:remoteKey];
      }
 
- 
+ Note: the default implementation of this method will automatically take care of NSDates for you, encoding them into a date format string that's Rails-friendly. The format used can be changed in [this](NSRConfig.html#//api/name/dateFormat) NSRConfig property.
+
  @param property Name of the property.
  @param remoteKey Reference to an NSString that contains the key that should be put into the JSON going out. Will contain the key that would be sent by default (ie, underscored, if [enabled](NSRConfig.html#//api/name/autoinflectsPropertyNames)).
  
@@ -593,10 +577,14 @@
             self.URL = [NSURL URLWithString:remoteObject];
          }
          else
+		 {
             [super decodeValue:remoteObject forRemoteKey:remoteKey];
+		 }
      }
 
  Note: the default implementation of this method will automatically take care of NSDates for you, decoding them into an NSDate object using the Rails date format. The format used can be changed in [this](NSRConfig.html#//api/name/dateFormat) NSRConfig property.
+ 
+ Also note that this should not be overridden for only a simple change in local/remote property naming. If your server has a different property name than your Objective-C code, but otherwise decodes the same, simply override `<propertyForRemoteKey:>`.
  
  @param remoteObject Remote representation of this key. Will be a JSON-parsed object (NSDictionary, NSArray, NSString, NSNumber, or nil).
  @param remoteKey The remote key returned from Rails. Use `<propertyForRemoteKey:>` if you want the Objective-C property version of this key.
@@ -615,7 +603,7 @@
  - Property is a relationship, would send the full `_attributes`, and `nested` is true (ie, only send "shallow" copies of objects when they are being nested. This is to prevent infinite loops when recursively sending nested properties that could also include this object).
  - Property is a relationship, but the value of the property is either `nil` or an empty collection. (No reason to send empty `_attributes`).
  
- Otherwise the property is sent. So typically, this method is overridden if you do not wish to have a property in an outgoing dictionary. Overriding this method would look like this:
+ Otherwise the property is sent. So typically, this method is overridden if you do not wish to have a property in an outgoing request. Overriding this method would look like this:
  
      - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
      {
@@ -623,14 +611,14 @@
         if ([property isEqualToString:@"retrieveOnlyProperty"])
             return NO;
  
-        //deepNest is a property with a has-one/has-many relationship that would otherwise not be sent when this object is nested
+        //deepNest is a property with a has-one/has-many relationship that would otherwise not be sent when this object is *nested*
         if ([property isEqualToString:@"deepNest"] && nested)
             return YES;
      
         return [super shouldSendProperty:property whenNested:nested];
      }
  
- The "shouldSetProperty" equivalent is done through `<decodeRemoteValue:forRemoteKey:>`. Simply override it and do nothing for that property if you do not want to decode it.
+ The equivalent for this method for *retrieving* properties ("shouldSetProperty") is done through `<decodeRemoteValue:forRemoteKey:>`. Simply override it and do nothing for that property if you do not want to decode & set it from a remote value.
  
  @param property The name of the property.
  @param nested Whether or not the receiving object is being nested.
@@ -649,6 +637,8 @@
  
      - (Class) nestedClassForProperty:(NSString *)property
      {
+		 // Only necessary for 'responses' (to-many)
+		 // By default, the Author class (to-one) will be picked up through its property type
          if ([property isEqualToString:@"responses"])
              return [Response class];
          
@@ -657,13 +647,15 @@
 
  **Ruby**:
  
+ 
+     # Because Ruby is not statically typed, this must be overriden for all relationships (necessary for both)
+     # NSRails can't "guess" what class you want to nest in a property
+ 
      def nestedClassForProperty(property)
        return Response if property == "responses"
        return Author if property == "author"
      end
- 
- Because Ruby is not statically typed, this must be overriden for all relationships -  NSRails can't "guess" what class you want to nest in a property.
- 
+  
  @param property Name of the property.
  @return The class for the nested object stored in the property, or nil if it is not a nested object.
  
@@ -765,11 +757,13 @@
  
  NSRails has no idea what types your properties are in Ruby, so to benefit from automatic Date -> string and string -> Date, it needs to know what properties are dates.
  
- Note that `created_at` and `updated_at` are already taken care of as dates.
+ This is unnecessary in Objective-C.
  
      def propertyIsDate(property)
        (property == "birthday") || super
      end
+
+ Note that `created_at` and `updated_at` are already taken care of as dates.
 
  @param property Name of the property.
  @return Whether or not this property should be encoded/decoded to/from a Date object.

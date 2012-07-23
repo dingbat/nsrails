@@ -55,6 +55,8 @@
 	
 	<option value="//api/name/saveContext">&nbsp;&nbsp;&nbsp;&nbsp;- saveContext</option>
 	
+	<option value="//api/name/validatesRemoteIDUniqueness">&nbsp;&nbsp;&nbsp;&nbsp;- validatesRemoteIDUniqueness</option>
+	
 	
 	
 </select>
@@ -98,6 +100,8 @@
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initInserted">initInserted</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/saveContext">saveContext</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/validatesRemoteIDUniqueness">validatesRemoteIDUniqueness</a></span></li>
 	
 </ul></li>
 
@@ -188,9 +192,9 @@
 
 <h3>Class</h3>
 
-<p><strong>Remote All (index)</strong>: Each object returned in the array may be an existing or newly inserted managed object. All managed objects will reflect properties set to those returned by your server.</p>
+<p><strong>Remote All (index)</strong>: Each object returned in the array may be an existing or newly inserted managed object. All managed objects will reflect properties set to those returned by your server. Does not save the context.</p>
 
-<p><strong>Object with ID</strong>: If request is successful, will attempt to find an existing local object with <em>objectID</em>, and update its properties to the server&rsquo;s response. If it cannot find an existing local object with that remoteID, will insert a new object into the context, with those properties.</p>
+<p><strong>Object with ID</strong>: If request is successful, will attempt to find an existing local object with <em>objectID</em>, and update its properties to the server&rsquo;s response. If it cannot find an existing local object with that remoteID, will insert a new object into the context, with those properties. Does not save the context.</p>
 
 <h3>Instance</h3>
 
@@ -207,14 +211,12 @@
 <p><strong>objectWithRemoteDictionary</strong>: Will attempt to retrieve the object in CoreData whose remoteID matches the object for key <code>id</code> in <em>dictionary</em>.</p>
 
 <ul>
-<li>If this object is found, will set its properties using <em>dictionary</em> and save the context.</li>
-<li>If this object is not found (or there&rsquo;s no <code>id</code> key), will create &amp; insert a new object using <em>dictionary</em> and save the context.</li>
+<li>If this object is found, will set its properties using <em>dictionary</em>.</li>
+<li>If this object is not found (or there&rsquo;s no <code>id</code> key), will create &amp; insert a new object using <em>dictionary</em>.</li>
 </ul>
 
 
-<p>Will search for objects of entity named with the receiver&rsquo;s class name.</p>
-
-<p><strong>setPropertiesUsingRemoteDictionary</strong>: Saves the context.</p>
+<p>Does not save the context.</p>
 
 <p><strong>remoteDestroyOnNesting</strong>: This property leaves your managed object <strong>unaffected</strong>. You will have to delete it from your context manually if your request was successful.</p>
 
@@ -267,6 +269,13 @@
 	<span class="tooltip">
 		<code><a href="#//api/name/entityName">+&nbsp;entityName</a></code>
 		<span class="tooltip"><p>Override this method if the class entity name is different than the name of the class.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/validatesRemoteIDUniqueness">&ndash;&nbsp;validatesRemoteIDUniqueness</a></code>
+		<span class="tooltip"><p>Override this method only if you wish to disable <code>remoteID</code> uniqueness validation.</p></span>
 	</span>
 	
 	
@@ -471,6 +480,50 @@
 	
 </div>
 						
+						<div class="section-method">
+	<a name="//api/name/validatesRemoteIDUniqueness" title="validatesRemoteIDUniqueness"></a>
+	<h3 class="subsubtitle method-title">validatesRemoteIDUniqueness</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Override this method only if you wish to disable <code>remoteID</code> uniqueness validation.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (BOOL)validatesRemoteIDUniqueness</code></div>
+	
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>NO</code> if you do not wish to validate <code>remoteID</code> uniqueness. You should not override this method otherwise.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Unfortunately CoreData does not offer a good way to validate on uniqueness (on the DB level). When enabled and an object is inserted, NSRails will make a fetch request for any other managed objects with the inserted object&rsquo;s <code>remoteID</code>. This may take time depending on the amount of records you have.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteManagedObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
 					</div>
 					
 					
@@ -484,7 +537,7 @@
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-06-23)</span><br />
+						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-07-23)</span><br />
 						
 						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 789)</a>.</span></p>
 						

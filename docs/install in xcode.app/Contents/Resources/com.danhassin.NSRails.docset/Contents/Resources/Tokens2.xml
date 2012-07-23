@@ -62,5 +62,16 @@
 			<Anchor>//api/name/entityName</Anchor>
 		</Token>
 		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRRemoteManagedObject/validatesRemoteIDUniqueness</TokenIdentifier>
+			<Abstract>Override this method only if you wish to disable remoteID uniqueness validation.</Abstract>
+			<DeclaredIn>NSRRemoteManagedObject.h</DeclaredIn>			
+			
+			<Declaration>- (BOOL)validatesRemoteIDUniqueness</Declaration>
+			
+			<ReturnValue><Abstract>NO if you do not wish to validate remoteID uniqueness. You should not override this method otherwise.</Abstract></ReturnValue>
+			<Anchor>//api/name/validatesRemoteIDUniqueness</Anchor>
+		</Token>
+		
 	</File>
 </Tokens>
