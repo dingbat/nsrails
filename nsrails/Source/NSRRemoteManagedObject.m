@@ -93,13 +93,17 @@
 
 - (Class) nestedClassForProperty:(NSString *)property
 {
-	NSRelationshipDescription *cdRelation = [[[(id)self entity] relationshipsByName] objectForKey:property];
-	if (cdRelation)
+	NSDictionary *relationships = [[(id)self entity] relationshipsByName];
+	if (relationships.count > 0)
 	{
-		Class class = NSClassFromString(cdRelation.destinationEntity.managedObjectClassName);
-		return class;
-	}
-    
+		NSRelationshipDescription *cdRelation = [relationships objectForKey:property];
+		if (cdRelation)
+		{
+			Class class = NSClassFromString(cdRelation.destinationEntity.managedObjectClassName);
+			return class;
+		}
+    }
+	
     return [super nestedClassForProperty:property];
 }
 
