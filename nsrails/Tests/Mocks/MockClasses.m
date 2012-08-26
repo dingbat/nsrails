@@ -141,7 +141,7 @@
 @end
 
 @implementation Bird
-@synthesize eggs, nestEggs;
+@synthesize eggs, nestEggs, name;
 
 - (Class) nestedClassForProperty:(NSString *)property
 {

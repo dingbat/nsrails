@@ -303,10 +303,11 @@
                 {
                     decodedObj = [nestedClass objectWithRemoteDictionary:railsObject];
                 }
-                //otherwise, keep the old object
+                //otherwise, keep the old object & update to whatever was given
                 else
                 {
                     decodedObj = previousVal;
+					[decodedObj setPropertiesUsingRemoteDictionary:railsObject];
                 }
             }
         }

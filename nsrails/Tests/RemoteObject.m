@@ -582,5 +582,21 @@
 	STAssertTrue([[eggDict objectForKey:@"bird_id"] isKindOfClass:[NSNull class]], @"bird_id should be exist but be null");
 }
 
+- (void) test_update_nested_object
+{
+	Bird *b = [[Bird alloc] init];
+	b.eggs = [[NSMutableArray alloc] init];
+	b.remoteID = NSRNumber(1);
+	
+	Egg *e = [[Egg alloc] init];
+	e.bird = b;
+	[b.eggs addObject:e];
+
+	NSDictionary *updateDict = NSRDictionary(NSRNumber(2), @"remoteID",NSRDictionary(NSRNumber(1), @"remoteID", @"tweety", @"name"),@"bird");
+	[e setPropertiesUsingRemoteDictionary:updateDict];
+	
+	STAssertEqualObjects(b.name, @"tweety", nil);
+}
+
 
 @end
