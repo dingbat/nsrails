@@ -453,7 +453,8 @@
 	 ^(id result, NSError *error) 
 	 {
 		 [self setPropertiesUsingRemoteDictionary:result];
-		 completionBlock(error);
+		 if (completionBlock)
+			 completionBlock(error);
 	 }];
 }
 
@@ -469,7 +470,8 @@
 	[[NSRRequest requestToUpdateObject:self] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
-		 completionBlock(error);
+		 if (completionBlock)
+			 completionBlock(error);
 	 }];
 }
 
@@ -485,7 +487,8 @@
 	[[NSRRequest requestToReplaceObject:self] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
-		 completionBlock(error);
+		 if (completionBlock)
+			 completionBlock(error);
 	 }];
 }
 
@@ -501,7 +504,8 @@
 	[[NSRRequest requestToDestroyObject:self] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
-		 completionBlock(error);
+		 if (completionBlock)
+			 completionBlock(error);
 	 }];
 }
 
@@ -524,7 +528,8 @@
 	 {
 		 if (jsonRep)
 			 [self setPropertiesUsingRemoteDictionary:jsonRep];
-		 completionBlock(error);
+		 if (completionBlock)
+			 completionBlock(error);
 	 }];
 }
 
@@ -543,7 +548,8 @@
 	 ^(id jsonRep, NSError *error) 
 	 {
          id obj = (jsonRep ? [self objectWithRemoteDictionary:jsonRep] : nil);
-         completionBlock(obj, error);
+		 if (completionBlock)
+			 completionBlock(obj, error);
 	 }];
 }
 
@@ -588,7 +594,8 @@
     [[NSRRequest requestToFetchAllObjectsOfClass:self viaObject:obj] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
-		 completionBlock([self arrayOfInstancesFromRemoteJSON:result],error);
+		 if (completionBlock)
+			 completionBlock([self arrayOfInstancesFromRemoteJSON:result],error);
 	 }];
 }
 

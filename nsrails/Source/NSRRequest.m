@@ -492,14 +492,16 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 		 {
 			 NSRLogTagged(@"connection", @"%@", appleError);
 			 
-			 dispatch_sync(queue, ^{ block(nil, appleError); } );
+			 if (block)
+				 dispatch_sync(queue, ^{ block(nil, appleError); } );
 		 }
 		 else
 		 {
 			 NSError *e = nil;
 			 id jsonResp = [self receiveResponse:(NSHTTPURLResponse *)response data:data error:&e];
 			 
-			 dispatch_sync(queue, ^{ block(jsonResp, e); } );
+			 if (block)
+				 dispatch_sync(queue, ^{ block(jsonResp, e); } );
 		 }
 	 }];
 }

@@ -126,7 +126,8 @@
 		 if (!error)
 			 [self saveContext];
 		 
-		 completionBlock(error);
+		 if (completionBlock)
+			 completionBlock(error);
 	 }];
 }
 
@@ -147,7 +148,8 @@
 		 if (!error)
 			 [self saveContext];
 		 
-		 completionBlock(error);
+		 if (completionBlock)
+			 completionBlock(error);
 	 }];
 }
 
@@ -168,7 +170,8 @@
 		 if (!error)
 			 [self saveContext];
 		 
-		 completionBlock(error);
+		 if (completionBlock)
+			 completionBlock(error);
 	 }];
 }
 
@@ -189,7 +192,8 @@
 		 if (!error)
 			 [self saveContext];
 		 
-		 completionBlock(error);
+		 if (completionBlock)
+			 completionBlock(error);
 	 }];
 }
 
@@ -213,7 +217,8 @@
 			 [[(id)self managedObjectContext] deleteObject:(id)self];
 			 [self saveContext];
 		 }
-		 completionBlock(error);
+		 if (completionBlock)
+			 completionBlock(error);
 	 }];
 }
 
