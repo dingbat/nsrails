@@ -290,9 +290,12 @@
 	
 	if (results.count > 0)
 	{
-		*error = [NSError errorWithDomain:NSRCoreDataException 
-									 code:0
-								 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"%@ with remoteID %@ already exists",self.class,*value] forKey:NSLocalizedDescriptionKey]];
+		if (error)
+		{
+			*error = [NSError errorWithDomain:NSRCoreDataException
+										 code:0
+									 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"%@ with remoteID %@ already exists",self.class,*value] forKey:NSLocalizedDescriptionKey]];
+		}
 		
 		return NO;
 	}
