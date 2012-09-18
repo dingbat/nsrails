@@ -22,16 +22,18 @@ Post *postNumber1 = [Post remoteObjectWithID:1 error:&error];
 // Display your article(s)! They're ready with their properties populated directly from your remote DB
 ```
 
+NSRails is very accessible while very customizable, and keeps your code clean and organized. It simply uses your classes' names and standard `@properties` to map to your remote models, making it super easy to fit into your project!
+
 Features
 --------
 
 * High-level API, yet flexible enough even to work with any RESTful server
 * Highly customizable property behaviors and nesting
+* Seamless CoreData support
 * Asynchronous requests
-* [Autogenerate](https://github.com/dingbat/nsrails/tree/master/autogen) NSRails-ready classes from a Rails project
 * Fully supported in RubyMotion and MacRuby
 * Written with ARC
-* MIT license
+* [Autogenerate](https://github.com/dingbat/nsrails/tree/master/autogen) NSRails-ready classes from a Rails project
 
 Quick links
 --------
@@ -87,14 +89,13 @@ Post *post = [Post remoteObjectWithID:1 error:&error];
 post.content = @"Changed!";
 [post remoteUpdate:&error];
 
-// Fetch any latest data for this post (and know if anything changed)
-BOOL objectDidChange;
-[post remoteFetch:&error changes:&objectDidChange];
+// Fetch any latest data for this post
+[post remoteFetch:&error];
 
 // Retrieve a collection based on an object - will GET /posts/1/responses.json
 NSArray *responses = [Response remoteAllViaObject:post error:&error];
 
-// Async is also available:
+// Async is also available for all commands, with blocks!
 [post remoteDestroyAsync: ^(NSError *error) {  if (!error) ... }];
 ```
 
@@ -127,8 +128,8 @@ Getting started - Ruby
 	class Post < NSRRemoteObject
 	  attr_accessor :author, :content, :created_at
 
-	  # Since Ruby only creates instance variables during runtime, properties
-	  # have to be explicitly defined by overriding 'remoteProperties'
+	  # Since the above list of Ruby instance variables can't be accessed from
+	  # Obj-C, they have to be explicitly defined by overriding 'remoteProperties'
 	  def remoteProperties
 	    super + ["author", "content", "created_at"]
 	  end
@@ -144,7 +145,7 @@ Getting started - Ruby
 	NSRConfig.defaultConfig.autoinflectsPropertyNames = false
 	```
 	
-Now have fun!
+Now have fun! These are just examples of how you can use pointers/blocks in Ruby, but see the Objective-C example above for more!
 
 ```ruby
 # Get all posts (synchronously)
@@ -173,6 +174,8 @@ Dependencies
 Credits
 ----------
 
-Version 2.0.
+Version 2.0.1.
 
-A lot of NSRails was inspired by the [ObjectiveResource](https://github.com/yfactorial/objectiveresource) project. Thanks!
+NSRails is written and maintained by Dan Hassin. A lot of it was inspired by the [ObjectiveResource](https://github.com/yfactorial/objectiveresource) project, many thanks there!
+
+http://nsrails.com
