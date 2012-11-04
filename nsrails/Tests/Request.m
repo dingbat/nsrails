@@ -639,4 +639,19 @@
     STAssertNil([request valueForHTTPHeaderField:@"test"], @"Should've cleared custom key");
 }
 
+- (void) test_additional_config_headers
+{
+	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
+	[[NSRConfig defaultConfig] setAdditionalHTTPHeaders:NSRDictionary(@"hi", @"test")];
+	
+	NSRRequest *req = [NSRRequest GET];
+    NSURLRequest *request = [req HTTPRequest];
+    STAssertEqualObjects([request valueForHTTPHeaderField:@"test"], @"hi", @"Should send custom key");
+	
+    [req.additionalHTTPHeaders setObject:@"hi" forKey:@"test2"];
+    request = [req HTTPRequest];
+    STAssertEqualObjects([request valueForHTTPHeaderField:@"test2"], @"hi", @"Should send custom key");
+    STAssertEqualObjects([request valueForHTTPHeaderField:@"test"], @"hi", @"Should still send custom key");
+}
+
 @end

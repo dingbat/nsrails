@@ -225,6 +225,11 @@ extern NSString * const NSRCoreDataException;
  */
 @property (nonatomic, strong) NSString *appOAuthToken;
 
+/**
+ A dictionary of additional HTTP headers to send with each request that uses this configuration.
+ */
+@property (nonatomic, strong) NSMutableDictionary *additionalHTTPHeaders;
+
 /// =============================================================================================
 /// @name Server-side settings
 /// =============================================================================================

@@ -70,7 +70,7 @@ NSString * const NSRCoreDataException				= @"NSRCoreDataException";
 
 @implementation NSRConfig
 @synthesize appURL, appUsername, appPassword, appOAuthToken;
-@synthesize autoinflectsClassNames, autoinflectsPropertyNames, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages, performsCompletionBlocksOnMainThread, managedObjectContext, updateMethod;
+@synthesize autoinflectsClassNames, autoinflectsPropertyNames, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages, performsCompletionBlocksOnMainThread, managedObjectContext, updateMethod, additionalHTTPHeaders;
 @dynamic dateFormat;
 
 #pragma mark -
@@ -239,6 +239,8 @@ static NSMutableArray *overrideConfigStack = nil;
 		self.appURL = [aDecoder decodeObjectForKey:@"appURL"];
 		self.appUsername = [aDecoder decodeObjectForKey:@"appUsername"];
 		self.appPassword = [aDecoder decodeObjectForKey:@"appPassword"];
+		
+		self.additionalHTTPHeaders = [aDecoder decodeObjectForKey:@"additionalHTTPHeaders"];
 	}
 	return self;
 }
@@ -260,6 +262,8 @@ static NSMutableArray *overrideConfigStack = nil;
 	[aCoder encodeObject:self.appURL forKey:@"appURL"];
 	[aCoder encodeObject:self.appUsername forKey:@"appUsername"];
 	[aCoder encodeObject:self.appPassword forKey:@"appPassword"];
+
+	[aCoder encodeObject:self.additionalHTTPHeaders forKey:@"additionalHTTPHeaders"];
 }
 
 

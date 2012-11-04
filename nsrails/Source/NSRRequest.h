@@ -68,6 +68,8 @@
  This property is automatically set when a `routeTo` method is invoked (will set it to the config of the class/instance).
  
  Will use <NSRConfig>'s `defaultConfig` by default (ie, is not routed to an object or class).
+ 
+ When this request is made, any [additionalHTTPHeaders](NSRConfig.html#//api/name/additionalHTTPHeaders) defined for this config are added to the request header (along with this instance's own <additionalHTTPHeaders>).
  */
 @property (nonatomic, strong) NSRConfig *config;
 

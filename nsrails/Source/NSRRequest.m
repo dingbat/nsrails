@@ -302,8 +302,14 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	[request setHTTPShouldHandleCookies:NO];
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     
-    [additionalHTTPHeaders enumerateKeysAndObjectsUsingBlock:
+	[additionalHTTPHeaders enumerateKeysAndObjectsUsingBlock:
      ^(id key, id obj, BOOL *stop) 
+     {
+         [request setValue:obj forHTTPHeaderField:key];
+     }];
+	
+	[self.config.additionalHTTPHeaders enumerateKeysAndObjectsUsingBlock:
+     ^(id key, id obj, BOOL *stop)
      {
          [request setValue:obj forHTTPHeaderField:key];
      }];
