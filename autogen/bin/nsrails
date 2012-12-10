@@ -443,11 +443,10 @@ class Runner
 end
 
 def self.print_help
-  this_file = File.expand_path(File.dirname(__FILE__))+"/generate"
   pwd = Dir.pwd
 
   puts "Usage:"
-  puts "   #{this_file[pwd.length+1..this_file.length]} [options] APP_PATH"
+  puts "   nsrails g [options] RAILS_APP_PATH"
   puts ""
   puts "Options for property translation:"
   puts "   --ruby                       Generate Ruby classes for MacRuby and RubyMotion"
@@ -468,15 +467,17 @@ begin
   $options = Runner.parse_options(ARGV)
   if ($options[:help])
     print_help
-  else
+  elsif ($options[:g])
     $options[:project] ||= $options[:path].split("/").last
     $options[:company] ||= $options[:author] || ENV["USER"] || ENV["USERNAME"]
-    $options[:author] ||= "NSRails autogen"
+    $options[:author] ||= "NSRails Generator"
   
-    output = File.expand_path(File.dirname(__FILE__))+"/"+$options[:project]+".gen"
+    output = Dir.pwd + "/" + "Models"
     Runner.class_variable_set(:@@output_path, output)
     
     Runner.run
+  else
+    print_help
   end
 rescue => e
   puts "Error! #{e}\nUse --help or -h for help."

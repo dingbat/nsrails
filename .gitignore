@@ -10,8 +10,7 @@ project.xcworkspace
 
 # Ignore folders made with autogen
 
-*.gen/
-
+Models/
 
 # Ignore RubyMotion noise
 
@@ -20,3 +19,4 @@ build-iPhoneSimulator
 build
 *.bridgesupport
 .*
+*.gem
