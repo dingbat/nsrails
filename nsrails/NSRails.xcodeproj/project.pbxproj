@@ -492,7 +492,7 @@
 		59C4648D155C580D00920FD5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0460;
 			};
 			buildConfigurationList = 59C46490155C580D00920FD5 /* Build configuration list for PBXProject "NSRails" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1042,14 +1042,12 @@
 		59C46492155C580D00920FD5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 			};
 			name = Debug;
 		};
 		59C46493155C580D00920FD5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 			};
 			name = Release;
 		};
