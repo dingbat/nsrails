@@ -455,6 +455,18 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	return [self receiveResponse:response data:data error:error];
 }
 
+- (void) performCompletionBlock:(void(^)(void))block
+{
+	if (self.config.performsCompletionBlocksOnMainThread)
+	{
+		dispatch_sync(dispatch_get_main_queue(), block);
+	}
+	else
+	{
+		block();
+	}
+}
+
 - (void) sendAsynchronous:(NSRHTTPCompletionBlock)block
 {
 #if TARGET_OS_IPHONE
@@ -490,16 +502,13 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 		 }
 #endif
 		 
-		 dispatch_queue_t queue = (self.config.performsCompletionBlocksOnMainThread ? 
-								   dispatch_get_main_queue() : dispatch_get_current_queue());
-		 
 		 //if there's an error from the request there must have been an issue connecting to the server.
 		 if (appleError)
 		 {
 			 NSRLogTagged(@"connection", @"%@", appleError);
 			 
 			 if (block)
-				 dispatch_sync(queue, ^{ block(nil, appleError); } );
+				 [self performCompletionBlock:^{ block(nil, appleError); }];
 		 }
 		 else
 		 {
@@ -507,7 +516,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 			 id jsonResp = [self receiveResponse:(NSHTTPURLResponse *)response data:data error:&e];
 			 
 			 if (block)
-				 dispatch_sync(queue, ^{ block(jsonResp, e); } );
+				 [self performCompletionBlock:^{ block(jsonResp, e); }];
 		 }
 	 }];
 }
