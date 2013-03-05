@@ -30,6 +30,9 @@
 
 #import <Foundation/Foundation.h>
 
+//needed for block typedefs
+#import "NSRConfig.h"
+
 @class NSRRemoteObject;
 @class NSRConfig;
 
