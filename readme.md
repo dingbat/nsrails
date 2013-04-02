@@ -174,8 +174,6 @@ Dependencies
 Credits
 ----------
 
-Version 2.0.1.
-
 NSRails is written and maintained by Dan Hassin. A lot of it was inspired by the [ObjectiveResource](https://github.com/yfactorial/objectiveresource) project, many thanks there!
 
 http://nsrails.com

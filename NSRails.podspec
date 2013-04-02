@@ -8,12 +8,12 @@
 #
 Pod::Spec.new do |s|
   s.name         = "NSRails"
-  s.version      = "2.0.1"
+  s.version      = "2.0.2"
   s.summary      = "iOS/Mac OS framework for Rails."
   s.homepage     = "https://github.com/dingbat/nsrails"
   s.license      = { :type => 'Copyright (c) 2012 Dan Hassin', :file => 'license.md' }
   s.author       = { "Dan Hassin" => "danhassin@mac.com" }
-  s.source       = { :git => "https://github.com/dingbat/nsrails.git", :tag => "v2.0.1" }
+  s.source       = { :git => "https://github.com/dingbat/nsrails.git", :tag => "v2.0.2" }
 
   # If this Pod runs only on iOS or OS X, then specify the platform and
   # the deployment target.
