@@ -87,7 +87,7 @@
 		
 		//should be identical with wrapped dict
 		if (i == 1)
-			dict = [NSDictionary dictionaryWithDictionary:dict];
+			dict = [[NSDictionary alloc] initWithObjectsAndKeys:dict, @"post", nil];
 		
 		p.author = nil; p.content = nil; p.remoteID = nil;
 		
