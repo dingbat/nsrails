@@ -66,7 +66,7 @@ static BOOL noServer = NO;
 	[failedPost remoteCreateAsync:^(NSError *e) {
 		STAssertNotNil(e, @"ASYNC Post should have failed validation b/c no content... where is error?");
 		STAssertNotNil(failedPost, @"ASYNC Post did fail but object should not be nil.");
-		STAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"ASYNC There was an error by validation, so validation error dictionary should be present.");
+		STAssertNotNil([[e userInfo] objectForKey:NSRErrorResponseBodyKey], @"ASYNC There was an error by validation, so validation error dictionary should be present.");
 	}];
 	
 	//this should go through
@@ -106,7 +106,7 @@ static BOOL noServer = NO;
 				newPost.author = nil;
 				[newPost remoteUpdateAsync:^(NSError *e4) {
 					STAssertNotNil(e4, @"ASYNC New post should've failed, there should be an error.");
-					STAssertNotNil([[e4 userInfo] objectForKey:NSRValidationErrorsKey], @"ASYNC There was an error by validation, so validation error dictionary should be present.");
+					STAssertNotNil([[e4 userInfo] objectForKey:NSRErrorResponseBodyKey], @"ASYNC There was an error by validation, so validation error dictionary should be present.");
 					STAssertNil(newPost.author, @"ASYNC New author failed validation (unchanged) but it should still be nil locally.");
 					
 					///////////////////////
@@ -181,7 +181,7 @@ static BOOL noServer = NO;
 	
 	STAssertNotNil(e, @"Post should have failed validation b/c no content... where is error?");
 	STAssertNotNil(failedPost, @"Post did fail but object should not be nil.");
-	STAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"There was an error by validation, so validation error dictionary should be present.");
+	STAssertNotNil([[e userInfo] objectForKey:NSRErrorResponseBodyKey], @"There was an error by validation, so validation error dictionary should be present.");
 	
 	e = nil;
 	
@@ -254,7 +254,7 @@ static BOOL noServer = NO;
 			STAssertFalse([newPost remoteUpdate:&e],@"");
 		
 		STAssertNotNil(e, @"New post should've failed, there should be an error.");
-		STAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"There was an error by validation, so validation error dictionary should be present.");
+		STAssertNotNil([[e userInfo] objectForKey:NSRErrorResponseBodyKey], @"There was an error by validation, so validation error dictionary should be present.");
 		STAssertNil(newPost.author, @"New author failed validation (unchanged) but it should still be nil locally.");
 		
 		e = nil;
@@ -519,7 +519,7 @@ static BOOL noServer = NO;
 	
 	STAssertFalse([post remoteUpdate:&e],@"");
 	
-	STAssertNotNil([[e userInfo] objectForKey:NSRValidationErrorsKey], @"Should've been a validation error in sending reponse without content/author.");
+	STAssertNotNil([[e userInfo] objectForKey:NSRErrorResponseBodyKey], @"Should've been a validation error in sending reponse without content/author.");
 	STAssertTrue(post.responses.count == 1, @"Local array should still have response even though wasn't created properly.");
 	STAssertNotNil(response, @"Validation failed on nested create but local object should still be there (external)");
 	

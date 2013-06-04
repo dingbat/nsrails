@@ -14,7 +14,7 @@
 
 - (NSURLRequest *) HTTPRequest;
 
-- (NSError *) errorForResponse:(id)response statusCode:(NSInteger)statusCode;
+- (NSError *) errorForResponse:(id)jsonResponse existingError:(NSError *)existing statusCode:(NSInteger)statusCode;
 - (id) receiveResponse:(NSHTTPURLResponse *)response data:(NSData *)data error:(NSError **)error;
 
 @end
@@ -492,7 +492,10 @@
 }
 
 - (void) test_error_detection
-{	
+{
+	NSString *url = @"http://localhost:3000";
+	[[NSRConfig defaultConfig] setAppURL:url];
+
 	NSRRequest *r = [NSRRequest GET];
 	
 	// 404 Not Found
@@ -506,32 +509,30 @@
 		//Test with succinct (default)
 		[[NSRConfig defaultConfig] setSuccinctErrorMessages:YES];
 		
-		NSError *error = [r errorForResponse:fullError statusCode:code];
+		NSError *error = [r errorForResponse:fullError existingError:nil statusCode:code];
 		STAssertEqualObjects([error domain], NSRRemoteErrorDomain, @"Succinct error messages failed");
 		STAssertEqualObjects([[error userInfo] objectForKey:NSLocalizedDescriptionKey], shortError, @"Succinct message extraction failed for short message");
-		STAssertNil([[error userInfo] objectForKey:NSRValidationErrorsKey], @"Validation errors dict should not have been created for 404");
 		STAssertEquals([[error userInfo] objectForKey:NSRRequestObjectKey],r,@"Should include itself as the request");
-        
+
 		//Test without succinct
 		[[NSRConfig defaultConfig] setSuccinctErrorMessages:NO];
 		
-		NSError *error2 = [r errorForResponse:fullError statusCode:code];
+		NSError *error2 = [r errorForResponse:fullError existingError:nil statusCode:code];
 		STAssertEqualObjects([error2 domain], NSRRemoteErrorDomain, @"Succinct error messages failed");
 		STAssertTrue([[[error2 userInfo] objectForKey:NSLocalizedDescriptionKey] isEqualToString:fullError], @"NO succinct error messages failed (bad!)");
-		STAssertNil([[error2 userInfo] objectForKey:NSRValidationErrorsKey], @"Validation errors dict should not have been created for 404");
-        STAssertEquals([[error userInfo] objectForKey:NSRRequestObjectKey],r,@"Should include itself as the request");
+		STAssertEquals([[error2 userInfo] objectForKey:NSRRequestObjectKey],r,@"Should include itself as the request");
     }
 	
 	// 422 Validation
 	
 	NSDictionary *response = [NSJSONSerialization JSONObjectWithData:[[MockServer validation422Error] dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil];
 	
-	NSError *valError = [r errorForResponse:response statusCode:422];
+	NSError *valError = [r errorForResponse:response existingError:nil statusCode:422];
 	STAssertTrue([valError code] == 422, @"422 was returned, not picked up by config");
 	STAssertEqualObjects([valError domain], NSRRemoteErrorDomain, @"Succinct error messages failed");
-    STAssertEquals([[valError userInfo] objectForKey:NSRRequestObjectKey],r,@"Should include itself as the request");
+	STAssertEquals([[valError userInfo] objectForKey:NSRRequestObjectKey],r,@"Should include itself as the request");
 
-	id valDict = [[valError userInfo] objectForKey:NSRValidationErrorsKey];
+	id valDict = [[valError userInfo] objectForKey:NSRErrorResponseBodyKey];
 	STAssertNotNil(valDict, @"Validation errors dict not compiled");
 	STAssertTrue([valDict isKindOfClass:[NSDictionary class]], @"Object for validation key needs to be a dict");
 	STAssertTrue([[[valDict allKeys] lastObject] isKindOfClass:[NSString class]], @"Keys in val dict need to be a string");
@@ -541,13 +542,21 @@
 	
 	// 200 OK
 	
-	NSError *noError = [r errorForResponse:[MockServer ok200] statusCode:200];
+	NSError *noError = [r errorForResponse:[MockServer ok200] existingError:nil statusCode:200];
 	STAssertNil(noError, @"There should be no error for status code 200");
 	
 	// 201 Created
 	
-	NSError *noError2 = [r errorForResponse:[MockServer creation201] statusCode:201];
+	NSError *noError2 = [r errorForResponse:[MockServer creation201] existingError:nil statusCode:201];
 	STAssertNil(noError, @"There should be no error for status code 201");
+	
+	/* Try retrieving data from an Apple error message */
+	[r routeTo:@"auth_error"];
+	NSError *e;
+	id val = [r sendSynchronous:&e];
+	STAssertNil(val, @"There should be nil value for auth error");
+	STAssertEqualObjects([e.userInfo objectForKey:NSRErrorResponseBodyKey], @{@"message": @"Test string"}, @"Should include 401 error message in userInfo");
+	STAssertEquals([[e userInfo] objectForKey:NSRRequestObjectKey],r,@"Should include itself as the request");
 }
 
 - (void) test_authentication

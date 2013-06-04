@@ -43,8 +43,9 @@ typedef void(^NSRFetchAllCompletionBlock)(NSArray *allRemote, NSError *error);
 typedef void(^NSRFetchObjectCompletionBlock)(id object, NSError *error);
 
 //Keys
-extern NSString * const NSRValidationErrorsKey;
+extern NSString * const NSRErrorResponseBodyKey;
 extern NSString * const NSRRequestObjectKey;
+extern NSString * const NSRValidationErrorsKey;
 
 //Exceptions+Domains
 extern NSString * const NSRRemoteErrorDomain;

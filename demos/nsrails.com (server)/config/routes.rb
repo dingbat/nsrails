@@ -3,6 +3,7 @@ NsrailsCom::Application.routes.draw do
   resources :responses
   
   root :to => "home#index"
+  match 'auth_error' => "home#auth_error"
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

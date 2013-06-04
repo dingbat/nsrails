@@ -56,12 +56,12 @@
  
  # Validation Errors
  
- If a create or update failed due to validation reasons, NSRails will package the validation failures into a dictionary. This can be retrieved using the key constant `NSRValidationErrorsKey` in the `userInfo` property of the error. This dictionary contains **each failed property as a key**, with each respective object being **an array of the reasons that property failed validation**. For instance,
+ If a create or update failed due to validation reasons, NSRails will package the validation failures into a dictionary. This can be retrieved using the key constant `NSRErrorResponseBodyKey` in the `userInfo` property of the error. This dictionary contains **each failed property as a key**, with each respective object being **an array of the reasons that property failed validation**. For instance,
  
 	 NSError *error;
 	 if (![user createRemote:&error])
 	 {
-		 NSDictionary *validationErrors = [[error userInfo] objectForKey:NSRValidationErrorsKey];
+		 NSDictionary *validationErrors = [[error userInfo] objectForKey:NSRErrorResponseBodyKey];
 		 
 		 for (NSString *property in validationErrors)
 		 {

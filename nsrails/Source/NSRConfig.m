@@ -58,8 +58,10 @@
 @end
 
 
-NSString * const NSRValidationErrorsKey					= @"NSRValidationErrorsKey";
 NSString * const NSRRequestObjectKey                    = @"NSRRequestObjectKey";
+NSString * const NSRErrorResponseBodyKey				= @"NSRErrorResponseBodyKey";
+//backwards compatibility
+NSString * const NSRValidationErrorsKey					= @"NSRErrorResponseBodyKey";
 
 NSString * const NSRRemoteErrorDomain				= @"NSRRemoteErrorDomain";
 NSString * const NSRJSONParsingException			= @"NSRJSONParsingException";
