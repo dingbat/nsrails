@@ -513,7 +513,7 @@ def self.print_help
   puts ""
 end
 
-
+begin
   $options = Runner.parse_options(ARGV)
   if ($options[:help])
     print_help
@@ -527,5 +527,8 @@ end
     
     Runner.run
   end
+rescue => e
+  puts "Error! #{e}\nUse --help or -h for help."
+end
 
 
