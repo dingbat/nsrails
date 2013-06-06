@@ -30,6 +30,10 @@ require 'rubygems'
 require 'active_support/inflector'
 
 class Model
+  OBJC_CONVERSIONS = {integer:"NSNumber", float:"NSNumber", double:"NSNumber", 
+                    boolean:"NSNumber", string:"NSString", text:"NSString", 
+                    datetime:"NSDate", date:"NSDate", hash:"NSDictionary"}
+
   attr_accessor :name, :property_collection
   
   def initialize
@@ -57,10 +61,10 @@ class Model
 
       p = Property.new
       p.name = match 
-      p.has_many = line =~ /has_many/
-      p.belongs_to = line =~ /belongs_to/
+      p.has_many = line =~ /(has|embeds)_many/
+      p.belongs_to = line =~ /belongs_to|embedded_in/
       
-      if p.has_many || p.belongs_to || line =~ /has_one/
+      if p.has_many || p.belongs_to || line =~ /(has|embeds)_one/
         if line =~ /:class_name/
           match = line.match(/:class_name => ([^,]*)(,?)/)
           if match
@@ -85,6 +89,16 @@ class Model
         @property_collection.properties << p
       end
     end    
+  end
+
+  def add_property prop, type
+    unless (prop =~ /_id/ || (prop == "updated_at" && !$options[:updated_at]) || (prop == "created_at" && !$options[:created_at]))
+      p = Property.new
+      p.type = OBJC_CONVERSIONS[type.to_sym] || type    
+      p.name = $options[:ruby] ? prop : prop.camelize(:lower)
+      
+      self.property_collection.properties << p
+    end
   end
   
   def interface_properties
@@ -205,6 +219,10 @@ class Model
     
     str += "\nend"
   end
+
+  def name=(val)
+    @name = ($options[:prefix] ? $options[:prefix] : "") + val
+  end
 end
 
 class PropertyCollection
@@ -278,7 +296,6 @@ class Property
 end
 
 class Generator  
-  OBJC_CONVERSIONS = {integer:"NSNumber", float:"NSNumber", double:"NSNumber", boolean:"NSNumber", string:"NSString", text:"NSString", datetime:"NSDate", date:"NSDate"}
   
   def self.objc_header(file)
 %Q{//
@@ -305,7 +322,7 @@ class Generator
         model_name = line.match(/create_table "(.*)",/).captures[0]
 
         current_model = Model.new
-        current_model.name = ($options[:prefix] ? $options[:prefix] : "")+model_name.classify
+        current_model.name = model_name.classify
         
         current_model.look_for_relationships(model_name.singularize)
       end
@@ -316,14 +333,36 @@ class Generator
       elsif !new_model
         prop = line.match(/\"(.*?)\"/).captures[0]
         type = line.match(/t.(.*?)\"/).captures[0].strip
-        unless (prop =~ /_id/ || (prop == "updated_at" && !$options[:updated_at]) || (prop == "created_at" && !$options[:created_at]))
-          p = Property.new
-          p.type = OBJC_CONVERSIONS[type.to_sym] || type    
-          p.name = $options[:ruby] ? prop : prop.camelize(:lower)
-          
-          current_model.property_collection.properties << p
-        end
+        current_model.add_property prop, type
       end
+    end
+  end
+
+  def generate_for_mongoid
+    @models = []
+
+    model_names = Dir.glob("#{$options[:path]}/app/models/*.rb")
+    model_names.each do |file_name|
+      model_name = file_name.gsub /.*\/app\/models\/(.*).rb/, '\1'
+
+      model = Model.new
+      model.name = model_name.pluralize.classify
+      model.look_for_relationships(file_name)
+
+      # we can safely assume this exists because we got it from Dir.glob
+      model_file = File.open file_name
+
+      while line = model_file.gets()
+        next if (line.length > 0 && line[0] == "#")
+
+        match = line.match(/^\s*field\s+:([^,]*)\s*,\s*:type\s*=>\s*([^\s]+)\s*$/)        
+        next unless match
+
+        prop = match[0]
+        type = match[1].downcase
+        model.add_property prop, type
+      end
+      @models << model
     end
   end
   
@@ -411,10 +450,15 @@ class Runner
   def self.run
     schema = nil
     path = $options[:path]
-    begin
-      schema = File.open(path+"db/schema.rb")
-    rescue => e
-      puts "Error! Either '#{path}' isn't the root path to a Rails project or your db/schema.rb is misplaced. (#{e})"
+    g = Generator.new
+    schema_path = "#{path}/db/schema.rb"
+    mongoid_path = "#{path}/config/mongoid.yml"
+    if File.exists? schema_path
+      generation = lambda { g.generate_with_schema File.open(path+"db/schema.rb") }
+    elsif File.exists? mongoid_path
+      generation = lambda { g.generate_for_mongoid }
+    else
+      puts "Error! Either '#{path}' isn't the root path to a Rails project or your db/schema.rb (or config/mongoid.yml, for mongoid users) is misplaced."
       return nil
     end
     
@@ -426,9 +470,8 @@ class Runner
     end
 
     puts "Writing files to #{@@output_path}"
-    
-    g = Generator.new
-    g.generate_with_schema(schema)
+  
+    generation.call
     
     if $options[:ruby]
       g.ruby_files do |filename, content|
@@ -464,7 +507,7 @@ def self.print_help
   puts ""
 end
 
-begin
+
   $options = Runner.parse_options(ARGV)
   if ($options[:help])
     print_help
@@ -478,6 +521,5 @@ begin
     
     Runner.run
   end
-rescue => e
-  puts "Error! #{e}\nUse --help or -h for help."
-end
+
+
