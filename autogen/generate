@@ -338,6 +338,13 @@ class Generator
     end
   end
 
+  # This is here so we can eval in generate_for mongoid
+  class Boolean;end
+  def field name, hash
+    hash[:field] = name
+    hash
+  end
+
   def generate_for_mongoid
     @models = []
 
@@ -346,20 +353,20 @@ class Generator
       model_name = file_name.gsub /.*\/app\/models\/(.*).rb/, '\1'
 
       model = Model.new
+      model.look_for_relationships(model_name)
       model.name = model_name.pluralize.classify
-      model.look_for_relationships(file_name)
 
       # we can safely assume this exists because we got it from Dir.glob
       model_file = File.open file_name
 
       while line = model_file.gets()
         next if (line.length > 0 && line[0] == "#")
+        next unless line =~ /\s*field .*?(?:as).*?type/
+        
+        hash = eval(line);
 
-        match = line.match(/^\s*field\s+:([^,]*)\s*,\s*:type\s*=>\s*([^\s]+)\s*$/)        
-        next unless match
-
-        prop = match[0]
-        type = match[1].downcase
+        prop = (hash[:as] || hash[:field]).to_s
+        type = hash[:type].to_s
         model.add_property prop, type
       end
       @models << model
