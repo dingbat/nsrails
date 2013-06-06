@@ -85,7 +85,6 @@ class Model
         else
           p.type = p.nested_class
         end
-        
         @property_collection.properties << p
       end
     end    
@@ -363,10 +362,10 @@ class Generator
         next if (line.length > 0 && line[0] == "#")
         next unless line =~ /\s*field .*?(?:as).*?type/
         
-        hash = eval(line);
+        hash = eval(line)
 
         prop = (hash[:as] || hash[:field]).to_s
-        type = hash[:type].to_s
+        type = hash[:type].to_s.downcase
         model.add_property prop, type
       end
       @models << model
