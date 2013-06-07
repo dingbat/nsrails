@@ -530,5 +530,3 @@ begin
 rescue => e
   puts "Error! #{e}\nUse --help or -h for help."
 end
-
-
