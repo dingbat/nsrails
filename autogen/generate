@@ -61,10 +61,10 @@ class Model
 
       p = Property.new
       p.name = match 
-      p.has_many = line =~ /(has|embeds)_many/
-      p.belongs_to = line =~ /belongs_to|embedded_in/
+      p.has_many = line =~ /(has|embeds|references)_many/
+      p.belongs_to = line =~ /belongs_to|(embedded|referenced)_in/
       
-      if p.has_many || p.belongs_to || line =~ /(has|embeds)_one/
+      if p.has_many || p.belongs_to || line =~ /(has|embeds|references)_one/
         if line =~ /:class_name/
           match = line.match(/:class_name => ([^,]*)(,?)/)
           if match
