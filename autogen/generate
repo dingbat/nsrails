@@ -337,7 +337,7 @@ class Generator
     end
   end
 
-  # This is here so we can eval in generate_for mongoid
+  # This is here so we can eval in generate_for_mongoid
   class Boolean;end
   def field name, hash
     hash[:field] = name
