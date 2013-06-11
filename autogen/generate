@@ -110,6 +110,7 @@ class Model
   end
   
   def synthesize
+    return nil if @property_collection.property_names.empty?
     "@synthesize "+@property_collection.property_names.join(", ")+";"
   end
   
