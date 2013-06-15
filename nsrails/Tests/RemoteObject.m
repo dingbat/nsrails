@@ -598,5 +598,35 @@
 	STAssertEqualObjects(b.name, @"tweety", nil);
 }
 
+- (void) test_nscoding
+{
+    Post *pBefore = [[Post alloc] init];
+
+    pBefore.remoteID = @5;
+    pBefore.author = @"Arthur McWriterston";
+    pBefore.content = @"My name is ridiculous.";
+    pBefore.updatedAt = [NSDate date];
+    pBefore.remoteDestroyOnNesting = YES;
+    
+    NSData* pData = [NSKeyedArchiver archivedDataWithRootObject:pBefore];
+    Post* pAfter = [NSKeyedUnarchiver unarchiveObjectWithData:pData];
+
+
+    STAssertEqualObjects(pBefore.remoteID, pAfter.remoteID,
+                         @"The post's remoteID should match before and after being archived.");
+    STAssertEqualObjects(pBefore.content, pAfter.content,
+                         @"The post's remoteID should match before and after being archived.");
+    STAssertEqualObjects(pBefore.author, pAfter.author,
+                         @"The post's author should match before and after being archived.");
+    
+    // During the encoding/decoding process, we seem to lose a few milli/nanoseconds.
+    // Get around caring about these by doing an NSTimeInterval, which goes by seconds.
+    NSInteger tiBetween = [pBefore.updatedAt timeIntervalSinceDate:pAfter.updatedAt];
+    STAssertTrue(tiBetween == 0,
+                 @"The post's updatedAt should match before and after being archived.");
+    STAssertTrue(pAfter.remoteDestroyOnNesting, @"remoteDestroyOnNesting should match before and after being archived.");
+}
+
+
 
 @end
