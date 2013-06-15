@@ -40,7 +40,9 @@
 
 @interface NSRRemoteObject (private)
 
-- (NSDictionary *) dictionaryRepresentationWrapped:(BOOL)wrapped fromNesting:(BOOL)nesting remoteOnly:(BOOL)remote;
+- (NSDictionary *) dictionaryRepresentationWrapped:(BOOL)wrapped
+                                       fromNesting:(BOOL)nesting
+                                        remoteOnly:(BOOL)remote;
 + (NSArray *) arrayOfInstancesFromRemoteJSON:(id)json;
 
 - (BOOL) propertyIsTimestamp:(NSString *)property;
@@ -390,7 +392,9 @@
 	return [self dictionaryRepresentationWrapped:wrapped fromNesting:NO remoteOnly:YES];
 }
 
-- (NSDictionary *) dictionaryRepresentationWrapped:(BOOL)wrapped fromNesting:(BOOL)nesting remoteOnly:(BOOL)remote
+- (NSDictionary *) dictionaryRepresentationWrapped:(BOOL)wrapped
+                                       fromNesting:(BOOL)nesting
+                                        remoteOnly:(BOOL)remote
 {
 	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 	
