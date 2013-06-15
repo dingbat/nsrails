@@ -611,7 +611,6 @@
     NSData* pData = [NSKeyedArchiver archivedDataWithRootObject:pBefore];
     Post* pAfter = [NSKeyedUnarchiver unarchiveObjectWithData:pData];
 
-
     STAssertEqualObjects(pBefore.remoteID, pAfter.remoteID,
                          @"The post's remoteID should match before and after being archived.");
     STAssertEqualObjects(pBefore.content, pAfter.content,
