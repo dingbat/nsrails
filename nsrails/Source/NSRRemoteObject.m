@@ -40,7 +40,9 @@
 
 @interface NSRRemoteObject (private)
 
-- (NSDictionary *) remoteDictionaryRepresentationWrapped:(BOOL)wrapped fromNesting:(BOOL)nesting;
+- (NSDictionary *) dictionaryRepresentationWrapped:(BOOL)wrapped
+                                       fromNesting:(BOOL)nesting
+                                        remoteOnly:(BOOL)remote;
 + (NSArray *) arrayOfInstancesFromRemoteJSON:(id)json;
 
 - (BOOL) propertyIsTimestamp:(NSString *)property;
@@ -209,14 +211,18 @@
 			
 			for (id element in val)
 			{
-				id encodedObj = [element remoteDictionaryRepresentationWrapped:NO fromNesting:YES];
+				id encodedObj = [element dictionaryRepresentationWrapped:NO
+                                                             fromNesting:YES
+                                                              remoteOnly:YES];
 				[new addObject:encodedObj];
 			}
 			
 			return new;
 		}
 		
-		return [val remoteDictionaryRepresentationWrapped:NO fromNesting:YES];
+		return [val dictionaryRepresentationWrapped:NO
+                                        fromNesting:YES
+                                         remoteOnly:YES];
 	}
 
 	if ([val isKindOfClass:[NSDate class]])
@@ -383,16 +389,18 @@
 
 - (NSDictionary *) remoteDictionaryRepresentationWrapped:(BOOL)wrapped
 {
-	return [self remoteDictionaryRepresentationWrapped:wrapped fromNesting:NO];
+	return [self dictionaryRepresentationWrapped:wrapped fromNesting:NO remoteOnly:YES];
 }
 
-- (NSDictionary *) remoteDictionaryRepresentationWrapped:(BOOL)wrapped fromNesting:(BOOL)nesting
+- (NSDictionary *) dictionaryRepresentationWrapped:(BOOL)wrapped
+                                       fromNesting:(BOOL)nesting
+                                        remoteOnly:(BOOL)remote
 {
 	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 	
 	for (NSString *objcProperty in [self remoteProperties])
 	{
-		if (![self shouldSendProperty:objcProperty whenNested:nesting])
+		if (remote && ![self shouldSendProperty:objcProperty whenNested:nesting])
 			continue;
 		
 		NSString *remoteKey = objcProperty;
@@ -607,6 +615,7 @@
 	{
 		self.remoteID = [aDecoder decodeObjectForKey:@"remoteID"];
 		remoteAttributes = [aDecoder decodeObjectForKey:@"remoteAttributes"];
+        [self setPropertiesUsingRemoteDictionary:remoteAttributes];
 		self.remoteDestroyOnNesting = [aDecoder decodeBoolForKey:@"remoteDestroyOnNesting"];
 	}
 	return self;
@@ -615,7 +624,10 @@
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
 	[aCoder encodeObject:self.remoteID forKey:@"remoteID"];
-	[aCoder encodeObject:remoteAttributes forKey:@"remoteAttributes"];
+	[aCoder encodeObject:[self dictionaryRepresentationWrapped:NO
+                                                   fromNesting:NO
+                                                    remoteOnly:NO]
+                  forKey:@"remoteAttributes"];
 	[aCoder encodeBool:remoteDestroyOnNesting forKey:@"remoteDestroyOnNesting"];
 }
 
