@@ -108,9 +108,16 @@
     req = [NSRRequest POST];    
     NSString* strBody = @"this=that&thisarray[]=thatvalue";
     [req setBody:strBody];
+    [req setAdditionalHTTPHeaders:[@{@"Content-Type":@"application/x-www-form-urlencoded"} mutableCopy]];
     request = [req HTTPRequest];
     NSData* data = [strBody dataUsingEncoding:NSUTF8StringEncoding];
     STAssertEqualObjects(request.HTTPBody, data, @"Body of NSRRequest was not able to be set to an NSString");
+    
+    [req setAdditionalHTTPHeaders:[@{} mutableCopy]];
+    STAssertThrows([req HTTPRequest], @"Should throw exception because no Content-Type header was given when POST body was set as a string.");
+
+    
+    
 }
 
 /* With objects */
