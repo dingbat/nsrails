@@ -104,12 +104,13 @@
 	[req routeTo:@"hello"];
 	request = [req HTTPRequest];
 	STAssertEqualObjects([request.URL description], @"http://myapp.com/hello", nil);
-
-	req.body = @":f,aifj*(O#P:???";
-	STAssertThrows([req HTTPRequest], nil);
-
-	req.body = @"{hello:man}";
-	STAssertThrows([req HTTPRequest], nil);	
+    
+    req = [NSRRequest POST];    
+    NSString* strBody = @"this=that&thisarray[]=thatvalue";
+    [req setBody:strBody];
+    request = [req HTTPRequest];
+    NSData* data = [strBody dataUsingEncoding:NSUTF8StringEncoding];
+    STAssertEqualObjects(request.HTTPBody, data, @"Body of NSRRequest was not able to be set to an NSString");
 }
 
 /* With objects */
@@ -133,7 +134,7 @@
 	p.superString = @"dan";
 	[req setBodyToObject:p];
 	request = [req HTTPRequest];
-	STAssertEqualObjects([request HTTPBody], [@"{\"super_class\":{\"super_string\":\"dan\"}}" dataUsingEncoding:NSUTF8StringEncoding], nil);
+	STAssertEqualObjects([request HTTPBody], [@"{\"super_class\":{\"super_string\":\"dan\"}}" dataUsingEncoding:NSUTF8StringEncoding], nil);    
 }
 
 - (void) test_routing

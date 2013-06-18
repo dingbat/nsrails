@@ -360,11 +360,6 @@ static BOOL noServer = NO;
 	
 	e = nil;
 	
-    req = [NSRRequest POST];
-	[req routeTo:@"posts"];
-	req.body = @"STRING";
-	STAssertThrows([req sendSynchronous:&e], @"Should throw exception when sending invalid JSON");
-	
     req = [NSRRequest DELETE];
 	[req routeTo:[NSString stringWithFormat:@"posts/%@", p.remoteID]];
 	

@@ -334,7 +334,6 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
   {
         NSData *data;
         if ([body isKindOfClass:[NSString class]]){
-            [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
             data = [body dataUsingEncoding:NSUTF8StringEncoding];
         }
         else{
