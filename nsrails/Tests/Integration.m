@@ -364,7 +364,7 @@ static BOOL noServer = NO;
 	[req routeTo:@"posts/create"];
 	req.body = @"post%5Bauthor%5D=another+author&post%5Bcontent%5D=more+content";
     [req setAdditionalHTTPHeaders:[@{@"Content-Type":@"application/x-www-form-urlencoded"} mutableCopy]];
-	STAssertNil(e, @"Should be no error creating posting with body equal to an NSString",e);
+	STAssertNil(e, @"Should be no error creating posting with body equal to a url encoded string",e);
 	
     req = [NSRRequest DELETE];
 	[req routeTo:[NSString stringWithFormat:@"posts/%@", p.remoteID]];
