@@ -333,14 +333,13 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
   if (body)
   {
         NSData *data;
-        NSError *e = nil;
         if ([body isKindOfClass:[NSString class]]){
             [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-            data = [(NSString*)body dataUsingEncoding:NSUTF8StringEncoding];
+            data = [body dataUsingEncoding:NSUTF8StringEncoding];
         }
         else{
             //let it raise an exception if invalid json object
-            data = [NSJSONSerialization dataWithJSONObject:body options:0 error:&e];
+            data = [NSJSONSerialization dataWithJSONObject:body options:0 error:nil];
             if (data)
             {
                 [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];                
