@@ -361,9 +361,10 @@ static BOOL noServer = NO;
 	e = nil;
 	
     req = [NSRRequest POST];
-	[req routeTo:@"posts"];
-	req.body = @"STRING";
-	STAssertThrows([req sendSynchronous:&e], @"Should throw exception when sending invalid JSON");
+	[req routeTo:@"posts/create"];
+	req.body = @"post%5Bauthor%5D=another+author&post%5Bcontent%5D=more+content";
+    [req setAdditionalHTTPHeaders:[@{@"Content-Type":@"application/x-www-form-urlencoded"} mutableCopy]];
+	STAssertNil(e, @"Should be no error creating posting with body equal to a url encoded string",e);
 	
     req = [NSRRequest DELETE];
 	[req routeTo:[NSString stringWithFormat:@"posts/%@", p.remoteID]];
