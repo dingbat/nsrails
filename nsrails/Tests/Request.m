@@ -134,7 +134,7 @@
 	p.superString = @"dan";
 	[req setBodyToObject:p];
 	request = [req HTTPRequest];
-	STAssertEqualObjects([request HTTPBody], [@"{\"super_class\":{\"super_string\":\"dan\"}}" dataUsingEncoding:NSUTF8StringEncoding], nil);    
+	STAssertEqualObjects([request HTTPBody], [@"{\"super_class\":{\"super_string\":\"dan\"}}" dataUsingEncoding:NSUTF8StringEncoding], nil);
 }
 
 - (void) test_routing
