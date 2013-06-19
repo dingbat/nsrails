@@ -64,22 +64,6 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 @implementation NSRRequest
 @synthesize route, httpMethod, body, config, queryParameters, additionalHTTPHeaders;
 
-- (NSMutableDictionary *) queryParameters
-{
-	if (!queryParameters)
-		queryParameters = [[NSMutableDictionary alloc] init];
-
-	return queryParameters;
-}
-
-- (NSMutableDictionary *) additionalHTTPHeaders
-{
-    if (!additionalHTTPHeaders)
-        additionalHTTPHeaders = [[NSMutableDictionary alloc] init];
-    
-    return additionalHTTPHeaders;
-}
-
 # pragma mark - Convenient routing
 
 - (id) routeTo:(NSString *)r
@@ -333,7 +317,8 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
   if (body)
   {
         NSData *data;
-        if ([body isKindOfClass:[NSString class]]){
+        if ([body isKindOfClass:[NSString class]])
+		{
             data = [body dataUsingEncoding:NSUTF8StringEncoding];
             if (!additionalHTTPHeaders[@"Content-Type"])
             {
@@ -341,7 +326,8 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
                             format:@"POST body was set as a string, but no Content-Type header was specific. Please use -[NSRRequest setAdditionalHTTPHeaders:...]"];
             }
         }
-        else{
+        else
+		{
             //let it raise an exception if invalid json object
             data = [NSJSONSerialization dataWithJSONObject:body options:0 error:nil];
             if (data)

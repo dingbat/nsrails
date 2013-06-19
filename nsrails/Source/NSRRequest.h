@@ -53,7 +53,7 @@
  Factory methods also exist (used by NSRRemoteObject) if you'd like to make only an incremental change to an existing request:
  
 	NSRRequest *request = [NSRRequest requestToFetchAllObjectsOfClass:[Post class]];
-	[request.queryParameters setObject:@"search" forKey:@"q"];
+	request.queryParameters = @{@"q":@"search"};
 
 	//GET to /posts?q=search
 	id response = [request sendSynchronous:&e];
@@ -94,19 +94,19 @@
  The query parameters with which to make the request.
  
 	 NSRRequest *request = [[NSRRequest GET] routeTo:@"something"];
-	 [request.queryParameters setObject:@"search" forKey:@"q"];
+	 request.queryParameters = @{@"q":@"search"};
 	 
 	 //GET to /something?q=search
 	 id response = [request sendSynchronous:&e];
  
  @warning Doesn't escape anything! Make sure your params are RFC 1808 compliant.
  */
-@property (nonatomic, strong) NSMutableDictionary *queryParameters;
+@property (nonatomic, strong) NSDictionary *queryParameters;
 
 /**
  A dictionary of additional HTTP headers to send with the request.
   */
-@property (nonatomic, strong) NSMutableDictionary *additionalHTTPHeaders;
+@property (nonatomic, strong) NSDictionary *additionalHTTPHeaders;
 
 /**
  Request body.

@@ -363,7 +363,7 @@ static BOOL noServer = NO;
     req = [NSRRequest POST];
 	[req routeTo:@"posts/create"];
 	req.body = @"post%5Bauthor%5D=another+author&post%5Bcontent%5D=more+content";
-    [req setAdditionalHTTPHeaders:[@{@"Content-Type":@"application/x-www-form-urlencoded"} mutableCopy]];
+    [req setAdditionalHTTPHeaders:@{@"Content-Type":@"application/x-www-form-urlencoded"}];
 	STAssertNil(e, @"Should be no error creating posting with body equal to a url encoded string",e);
 	
     req = [NSRRequest DELETE];

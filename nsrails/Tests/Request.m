@@ -44,12 +44,12 @@
 	NSURLRequest *request = [req HTTPRequest];
 	STAssertEqualObjects([request.URL description], @"http://myapp.com", nil);
 
-	[req.queryParameters setObject:@"etc" forKey:@"q"];
+	req.queryParameters = @{@"q":@"etc"};
 	
 	request = [req HTTPRequest];
 	STAssertEqualObjects([request.URL description], @"http://myapp.com?q=etc", nil);
 	
-	[req.queryParameters setObject:@"num2" forKey:@"qz"];
+	req.queryParameters =@{@"q":@"etc", @"qz":@"num2"};
 	
 	request = [req HTTPRequest];
 	STAssertEqualObjects([request.URL description], @"http://myapp.com?q=etc&qz=num2", nil);
@@ -59,7 +59,7 @@
 	request = [req HTTPRequest];
 	STAssertEqualObjects([request.URL description], @"http://myapp.com/test?q=etc&qz=num2", nil);
 	
-	[req.queryParameters removeAllObjects];
+	req.queryParameters = nil;
 	
 	request = [req HTTPRequest];
 	STAssertEqualObjects([request.URL description], @"http://myapp.com/test", nil);
@@ -108,16 +108,13 @@
     req = [NSRRequest POST];    
     NSString* strBody = @"this=that&thisarray[]=thatvalue";
     [req setBody:strBody];
-    [req setAdditionalHTTPHeaders:[@{@"Content-Type":@"application/x-www-form-urlencoded"} mutableCopy]];
+    [req setAdditionalHTTPHeaders:@{@"Content-Type":@"application/x-www-form-urlencoded"}];
     request = [req HTTPRequest];
     NSData* data = [strBody dataUsingEncoding:NSUTF8StringEncoding];
     STAssertEqualObjects(request.HTTPBody, data, @"Body of NSRRequest was not able to be set to an NSString");
     
-    [req setAdditionalHTTPHeaders:[@{} mutableCopy]];
+    [req setAdditionalHTTPHeaders:nil];
     STAssertThrows([req HTTPRequest], @"Should throw exception because no Content-Type header was given when POST body was set as a string.");
-
-    
-    
 }
 
 /* With objects */
@@ -622,8 +619,8 @@
     req.config = config;
     req.body = @"test";
     
-    [req.queryParameters setObject:@"hi" forKey:@"t"];
-    [req.additionalHTTPHeaders setObject:@"hi" forKey:@"t"];
+    req.queryParameters = @{@"t":@"hi"};
+    req.additionalHTTPHeaders = @{@"t":@"hi"};
 		
 	STAssertTrue([NSKeyedArchiver archiveRootObject:req toFile:file], @"Archiving should've worked (serialize)");
 	
@@ -641,16 +638,16 @@
 	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
 	
 	NSRRequest *req = [NSRRequest GET];
-    [req.additionalHTTPHeaders setObject:@"hi" forKey:@"test"];
+	req.additionalHTTPHeaders = @{@"test":@"hi"};
     NSURLRequest *request = [req HTTPRequest];
     STAssertEqualObjects([request valueForHTTPHeaderField:@"test"], @"hi", @"Should send custom key");
 
-    [req.additionalHTTPHeaders setObject:@"hi" forKey:@"test2"];
+	req.additionalHTTPHeaders = @{@"test":@"hi",@"test2":@"hi"};
     request = [req HTTPRequest];
     STAssertEqualObjects([request valueForHTTPHeaderField:@"test2"], @"hi", @"Should send custom key");
     STAssertEqualObjects([request valueForHTTPHeaderField:@"test"], @"hi", @"Should still send custom key");
 
-    [req.additionalHTTPHeaders removeAllObjects];
+	req.additionalHTTPHeaders = nil;
     request = [req HTTPRequest];
     STAssertNil([request valueForHTTPHeaderField:@"test2"], @"Should've cleared custom key");
     STAssertNil([request valueForHTTPHeaderField:@"test"], @"Should've cleared custom key");
@@ -665,7 +662,7 @@
     NSURLRequest *request = [req HTTPRequest];
     STAssertEqualObjects([request valueForHTTPHeaderField:@"test"], @"hi", @"Should send custom key");
 	
-    [req.additionalHTTPHeaders setObject:@"hi" forKey:@"test2"];
+    req.additionalHTTPHeaders = @{@"test2":@"hi"};
     request = [req HTTPRequest];
     STAssertEqualObjects([request valueForHTTPHeaderField:@"test2"], @"hi", @"Should send custom key");
     STAssertEqualObjects([request valueForHTTPHeaderField:@"test"], @"hi", @"Should still send custom key");

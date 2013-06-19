@@ -229,7 +229,7 @@ extern NSString * const NSRCoreDataException;
 /**
  A dictionary of additional HTTP headers to send with each request that uses this configuration.
  */
-@property (nonatomic, strong) NSMutableDictionary *additionalHTTPHeaders;
+@property (nonatomic, strong) NSDictionary *additionalHTTPHeaders;
 
 /// =============================================================================================
 /// @name Server-side settings

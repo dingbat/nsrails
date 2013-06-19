@@ -203,7 +203,7 @@
 
 - (void) test_index_json_into_array_with_root
 {
-	NSArray *remoteJSON = NSRDictionary(NSRMArray(NSRDictionary(@"dan",@"author"), NSRDictionary(@"michael",@"author")), @"posts");
+	NSDictionary *remoteJSON = NSRDictionary(NSRMArray(NSRDictionary(@"dan",@"author"), NSRDictionary(@"michael",@"author")), @"posts");
 	NSArray *array = [Post arrayOfInstancesFromRemoteJSON:remoteJSON];
 	
 	STAssertNotNil(array, nil);
