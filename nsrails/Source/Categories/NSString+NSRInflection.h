@@ -3,7 +3,7 @@
  _|_|_|    _|_|  _|_|  _|_|  _|  _|      _|_|           
  _|  _|  _|_|    _|    _|_|  _|  _|_|  _|_| 
  
- NSString+Inflection.h
+ NSString+NSRInflection.h
  
  Copyright (c) 2012 Dan Hassin.
  

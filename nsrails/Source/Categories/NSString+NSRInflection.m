@@ -3,7 +3,7 @@
  _|_|_|    _|_|  _|_|  _|_|  _|  _|      _|_|           
  _|  _|  _|_|    _|    _|_|  _|  _|_|  _|_| 
  
- NSString+Inflection.m
+ NSString+NSRInflection.m
  
  Copyright (c) 2012 Dan Hassin.
  
@@ -28,7 +28,7 @@
  
  */
 
-#import "NSString+Inflection.h"
+#import "NSString+NSRInflection.h"
 
 @implementation NSString (NSRInflection)
 

@@ -32,7 +32,7 @@
 
 #import "NSRails.h"
 
-#import "NSString+Inflection.h"
+#import "NSString+NSRInflection.h"
 #import <objc/runtime.h>
 
 
