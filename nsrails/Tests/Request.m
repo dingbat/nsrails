@@ -104,12 +104,20 @@
 	[req routeTo:@"hello"];
 	request = [req HTTPRequest];
 	STAssertEqualObjects([request.URL description], @"http://myapp.com/hello", nil);
+    
+    req = [NSRRequest POST];    
+    NSString* strBody = @"this=that&thisarray[]=thatvalue";
+    [req setBody:strBody];
+    [req setAdditionalHTTPHeaders:[@{@"Content-Type":@"application/x-www-form-urlencoded"} mutableCopy]];
+    request = [req HTTPRequest];
+    NSData* data = [strBody dataUsingEncoding:NSUTF8StringEncoding];
+    STAssertEqualObjects(request.HTTPBody, data, @"Body of NSRRequest was not able to be set to an NSString");
+    
+    [req setAdditionalHTTPHeaders:[@{} mutableCopy]];
+    STAssertThrows([req HTTPRequest], @"Should throw exception because no Content-Type header was given when POST body was set as a string.");
 
-	req.body = @":f,aifj*(O#P:???";
-	STAssertThrows([req HTTPRequest], nil);
-
-	req.body = @"{hello:man}";
-	STAssertThrows([req HTTPRequest], nil);	
+    
+    
 }
 
 /* With objects */

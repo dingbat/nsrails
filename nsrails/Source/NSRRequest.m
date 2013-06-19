@@ -330,20 +330,28 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 		[request setValue:authHeader forHTTPHeaderField:@"Authorization"];
 	}
 	
-	if (body)
-	{
-		//let it raise an exception if invalid json object
-		NSError *e = nil;
-		NSData *data = [NSJSONSerialization dataWithJSONObject:body options:0 error:&e];
-		
-		if (data)
-		{
-			[request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-			[request setHTTPBody:data];
-			
-			[request setValue:[NSNumber numberWithUnsignedInteger:data.length].stringValue forHTTPHeaderField:@"Content-Length"];
-		}
- 	}
+  if (body)
+  {
+        NSData *data;
+        if ([body isKindOfClass:[NSString class]]){
+            data = [body dataUsingEncoding:NSUTF8StringEncoding];
+            if (!additionalHTTPHeaders[@"Content-Type"])
+            {
+                [NSException raise:@"NSRRequest Error"
+                            format:@"POST body was set as a string, but no Content-Type header was specific. Please use -[NSRRequest setAdditionalHTTPHeaders:...]"];
+            }
+        }
+        else{
+            //let it raise an exception if invalid json object
+            data = [NSJSONSerialization dataWithJSONObject:body options:0 error:nil];
+            if (data)
+            {
+                [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];                
+            }
+        }
+        [request setHTTPBody:data];
+        [request setValue:[NSNumber numberWithUnsignedInteger:data.length].stringValue forHTTPHeaderField:@"Content-Length"];
+  }
 	
 	return request;
 }
