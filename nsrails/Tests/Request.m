@@ -562,6 +562,11 @@
 	STAssertNil(val, @"There should be nil value for auth error");
 	STAssertEqualObjects([e.userInfo objectForKey:NSRErrorResponseBodyKey], @{@"message": @"Test string"}, @"Should include 401 error message in userInfo");
 	STAssertEquals([[e userInfo] objectForKey:NSRRequestObjectKey],r,@"Should include itself as the request");
+    
+    /* Error for a response sent with JSON */
+    NSDictionary *dict = @{@"key":@"val"};
+    NSError *dictError = [r errorForResponse:dict existingError:nil statusCode:422];
+    STAssertTrue(dict == dictError.userInfo[NSRErrorResponseBodyKey], @"Error response value did not match the response JSON");
 }
 
 - (void) test_authentication

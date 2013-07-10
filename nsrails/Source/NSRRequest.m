@@ -364,28 +364,26 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	NSString *errorMessage = response;
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
     
-    //422 means there was a validation error
-    if (statusCode == 422)
-    {
-        errorMessage = @"Unprocessable Entity";
-    }
-    else if (self.config.succinctErrorMessages)
+    if ([response isKindOfClass:[NSString class]])
 	{
-		//if error message is in HTML, parse between <pre></pre> or <h1></h1> for error message
-		if ([response rangeOfString:@"</html>"].location != NSNotFound)
-		{
-			NSString *succinctText = [self findSubstringInString:response surroundedByTag:@"pre"];
-			if (!succinctText)
-				succinctText = [self findSubstringInString:response surroundedByTag:@"h1"];
-			
-			if (succinctText)
-			{
-				errorMessage = [succinctText stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
-			}
-		}
+        if (self.config.succinctErrorMessages)
+        {
+            //if error message is in HTML, parse between <pre></pre> or <h1></h1> for error message
+            if ([response rangeOfString:@"</html>"].location != NSNotFound)
+            {
+                NSString *succinctText = [self findSubstringInString:response surroundedByTag:@"pre"];
+                if (!succinctText)
+                    succinctText = [self findSubstringInString:response surroundedByTag:@"h1"];
+                
+                if (succinctText)
+                {
+                    errorMessage = [succinctText stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
+                }
+            }
+        }
+
+        [userInfo setObject:errorMessage forKey:NSLocalizedDescriptionKey];
 	}
-    
-    [userInfo setObject:errorMessage forKey:NSLocalizedDescriptionKey];
     
     return [NSError errorWithDomain:NSRRemoteErrorDomain code:statusCode userInfo:userInfo];
 }
