@@ -63,7 +63,7 @@
 {
 	NSRRemoteManagedObject *obj = nil;
 	
-	NSNumber *objID = [dictionary objectForKey:@"id"];
+	NSNumber *objID = dictionary[@"id"];
 	
 	if (objID)
 		obj = [self findObjectWithRemoteID:objID];
@@ -78,7 +78,7 @@
 
 - (Class) containerClassForRelationProperty:(NSString *)property
 {
-	BOOL ordered = [[[[(id)self entity] propertiesByName] objectForKey:property] isOrdered];
+	BOOL ordered = [[[(id)self entity] propertiesByName][property] isOrdered];
 	return ordered ? [NSMutableOrderedSet class] : [NSMutableSet class];
 }
 
@@ -96,7 +96,7 @@
 	NSDictionary *relationships = [[(id)self entity] relationshipsByName];
 	if (relationships.count > 0)
 	{
-		NSRelationshipDescription *cdRelation = [relationships objectForKey:property];
+		NSRelationshipDescription *cdRelation = relationships[property];
 		if (cdRelation)
 		{
 			Class class = NSClassFromString(cdRelation.destinationEntity.managedObjectClassName);
@@ -278,7 +278,7 @@
 
 - (BOOL) validatesRemoteIDUniqueness
 {
-	return ([self.primitiveRemoteID intValue] != 0 && [[(id)self changedValues] objectForKey:@"remoteID"]);
+	return ([self.primitiveRemoteID intValue] != 0 && [(id)self changedValues][@"remoteID"]);
 }
 
 - (BOOL) validateRemoteID:(id *)value error:(NSError **)error
@@ -299,7 +299,7 @@
 		{
 			*error = [NSError errorWithDomain:NSRCoreDataException
 										 code:0
-									 userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"%@ with remoteID %@ already exists",self.class,*value] forKey:NSLocalizedDescriptionKey]];
+									 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"%@ with remoteID %@ already exists",self.class,*value]}];
 		}
 		
 		return NO;

@@ -126,7 +126,7 @@
 	// This will return some garbage like "Ti,GgetFoo,SsetFoo:,Vproperty"
 	// See https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html
 	
-	NSString *atts = [NSString stringWithCString:property_getAttributes(property) encoding:NSUTF8StringEncoding];
+	NSString *atts = @(property_getAttributes(property));
 	
 	for (NSString *att in [atts componentsSeparatedByString:@","])
 		if ([att hasPrefix:@"T"])
@@ -155,7 +155,7 @@
         {
             while (propertyCount--)
             {
-                NSString *name = [NSString stringWithCString:property_getName(properties[propertyCount]) encoding:NSASCIIStringEncoding];
+                NSString *name = @(property_getName(properties[propertyCount]));
                 // makes sure it's not primitive
                 if ([[self.class typeForProperty:name] rangeOfString:@"@"].location != NSNotFound)
                     [results addObject:name];
@@ -275,7 +275,7 @@
                     id decodedElement;
                     
                     //see if there's a nester that matches this ID - we'd just have to update it w/this dict
-                    NSNumber *railsID = [railsElement objectForKey:@"id"];
+                    NSNumber *railsID = railsElement[@"id"];
                     id existing = nil;
                     
                     if (railsID)
@@ -365,7 +365,7 @@
         remoteAttributes = dict;
 	
 	//support JSON that comes in like {"post"=>{"something":"something"}}
-	NSDictionary *innerDict = [dict objectForKey:[self.class remoteModelName]];
+	NSDictionary *innerDict = dict[[self.class remoteModelName]];
 	if (dict.count == 1 && [innerDict isKindOfClass:[NSDictionary class]])
 	{
 		dict = innerDict;
@@ -373,7 +373,7 @@
 		
 	for (NSString *remoteKey in dict)
 	{
-		id remoteObject = [dict objectForKey:remoteKey];
+		id remoteObject = dict[remoteKey];
 		if (remoteObject == [NSNull null])
 			remoteObject = nil;
 
@@ -415,16 +415,16 @@
 		}
 		
 		
-		[dict setObject:remoteRep forKey:remoteKey];
+		dict[remoteKey] = remoteRep;
 	}
 	
 	if (remoteDestroyOnNesting)
 	{
-		[dict setObject:[NSNumber numberWithBool:YES] forKey:@"_destroy"];
+		dict[@"_destroy"] = @YES;
 	}
 	
 	if (wrapped)
-		return [NSDictionary dictionaryWithObject:dict forKey:[self.class remoteModelName]];
+		return @{[self.class remoteModelName]: dict};
 	
 	return dict;
 }
@@ -579,7 +579,7 @@
 		//probably has root in front of it - "posts":[{},{}]
 		if ([json count] == 1)
 		{
-			remote = [[json allValues] objectAtIndex:0];
+			remote = [json allValues][0];
 		}
 	}
     

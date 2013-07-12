@@ -201,7 +201,7 @@ static NSMutableArray *overrideConfigStack = nil;
 	//start at the end of the stack
 	for (NSInteger i = overrideConfigStack.count-1; i >= 0; i--)
 	{
-		NSRConfigStackElement *c = [overrideConfigStack objectAtIndex:i];
+		NSRConfigStackElement *c = overrideConfigStack[i];
 		if (c.config == self)
 		{
 			[overrideConfigStack removeObjectAtIndex:i];

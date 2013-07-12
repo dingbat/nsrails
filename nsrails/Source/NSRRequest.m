@@ -336,7 +336,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
             }
         }
         [request setHTTPBody:data];
-        [request setValue:[NSNumber numberWithUnsignedInteger:data.length].stringValue forHTTPHeaderField:@"Content-Length"];
+        [request setValue:@(data.length).stringValue forHTTPHeaderField:@"Content-Length"];
   }
 	
 	return request;
@@ -381,7 +381,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
             }
         }
 
-        [userInfo setObject:response forKey:NSLocalizedDescriptionKey];
+        userInfo[NSLocalizedDescriptionKey] = response;
 	}
     
     return [NSError errorWithDomain:NSRRemoteErrorDomain code:statusCode userInfo:userInfo];
@@ -421,8 +421,8 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	NSInteger code = statusCode;
 	
 	// Add on some extra info in user info dict
-	[userInfo setObject:self forKey:NSRRequestObjectKey];
-	[userInfo setObject:jsonResponse forKey:NSRErrorResponseBodyKey];
+	userInfo[NSRRequestObjectKey] = self;
+	userInfo[NSRErrorResponseBodyKey] = jsonResponse;
 
 	return [NSError errorWithDomain:domain code:code userInfo:userInfo];
 }
