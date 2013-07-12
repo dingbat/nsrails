@@ -385,6 +385,16 @@
  */
 + (id) objectWithRemoteDictionary:(NSDictionary *)remoteDictionary;
 
+/**
+ Returns an array of new or existing instances of the receiver's class, based off input of any number of remote dictionaries (JSON array from the server).
+ 
+ @param remoteDictionaries Array of remote dictionaries to be evaluated.
+ 
+ Note that the dictionaries in this array need to be JSON-parasable, meaning all keys are strings and all objects are instances of NSString, NSNumber, NSArray, NSDictionary, or NSNull.
+ @return An array of new or existing instances of the receiver's class, with their properties set using the dictionaries in *remoteDictionaries*.
+ */
++ (NSArray *) objectsWithRemoteDictionaries:(NSArray *)remoteDictionaries;
+
 
 /// =============================================================================================
 /// @name Methods to override

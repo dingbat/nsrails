@@ -704,138 +704,39 @@ static BOOL noServer = NO;
 
 - (void) test_array_category
 {
-	NSMutableArray *array = [[NSMutableArray alloc] init];
-	
-	NSError *e = nil;
-	
-	STAssertThrowsSpecificNamed([array remoteFetchAll:[NSString class] error:&e], NSException, NSInvalidArgumentException, @"Should crash if class is not NSRailsModel subclass");
-	
-	STAssertThrowsSpecificNamed([array remoteFetchAll:nil error:&e], NSException, NSInvalidArgumentException, @"Should crash if class is not NSRailsModel subclass");
-	
-	NSRAssertNoServer(noServer);
-	
-	STAssertFalse([array remoteFetchAll:[Faker class] error:&e],@"");
-	
-	STAssertNotNil(e, @"Error should be present -- Faker doesn't really exist");
-	
-	e = nil;
-	
-	NSArray *posts = [Post remoteAll:&e];
-	STAssertNil(e,@"Should be no error retrieving all posts (e=%@)",e);
-	
-	for (Post *p in posts)
-	{
-		e = nil;
-		STAssertTrue([p remoteDestroy:&e], @"");
-		STAssertNil(e,@"Should be no error deleting this post (e=%@)",e);
-	}
-	
-	e = nil;
-	
-	STAssertTrue([array remoteFetchAll:[Post class] error:&e],@"");
-	
-	STAssertNil(e, @"Error shouldn't be present e=%@",e);
-	
-	e = nil;
-	
-	Post *p = [[Post alloc] init];
-	p.author = @"dan";
-	p.content = @"content";
-	STAssertTrue([p remoteCreate:&e], @"");
-	STAssertNil(e,@"Should be no error creating post (e=%@)",e);
-	
-	e = nil;
-	
-	STAssertTrue([array remoteFetchAll:[Post class] error:&e],@"");
-	
-	STAssertNil(e, @"Error shouldn't be present e=%@",e);
-	STAssertTrue(array.count == 1, @"array should have 1 post");
-	STAssertTrue([[array lastObject] isKindOfClass:[Post class]],@"should be Post class member");
-	
-	Post *thePost = [array lastObject];
-	
-	e = nil;
-	
-	STAssertTrue([array remoteFetchAll:[Post class] error:&e],@"");
-	
-	STAssertNil(e, @"Error shouldn't be present e=%@",e);
-	STAssertTrue(array.count == 1, @"array should have 1 post again");
-	STAssertTrue(thePost == [array lastObject],@"should be the same Post object");
-	
-	e = nil;
-	
-	STAssertTrue([p remoteDestroy:&e],@"");
-	STAssertNil(e,@"Should be no error destroying post e=%@",e);
-	
-	e = nil;
-	
-	//make a few posts
-	for (int i = 0; i < 4; i++)
-	{
-		Post *p2 = [[Post alloc] init];
-		p2.author = @"dan2";
-		p2.content = @"content2";
-		STAssertTrue([p2 remoteCreate:&e], @"");
-		STAssertNil(e,@"Should be no error creating post (e=%@)",e);
-	}
-	
-	e = nil;
-	
-	STAssertTrue([array remoteFetchAll:[Post class] error:&e],@"");
-	
-	STAssertNil(e, @"Error shouldn't be present e=%@",e);
-	STAssertTrue(array.count == 4, @"array should have 1 post again");
-	STAssertFalse(thePost == [array lastObject],@"should be a different Post object");
-	
-	e = nil;
-	
-	Post *thePost2 = [array lastObject];
-	
-	thePost2.content = @"changed!!";
-	STAssertTrue([thePost2 remoteUpdate:&e], @"");
-	STAssertNil(e,@"Should be no error updating post (e=%@)",e);
-	
-	e = nil;
-	
-	STAssertTrue([array remoteFetchAll:[Post class] error:&e],@"");
-	
-	STAssertNil(e, @"Error shouldn't be present e=%@",e);
-	STAssertTrue(array.count == 4, @"array should have 1 post again");
-	STAssertTrue(thePost2 == [array lastObject],@"should be the same Post object");
-	STAssertEqualObjects([[array lastObject] content], @"changed!!", @"content should be updated");
-	
-	e = nil;
-	
-	Post *thePostRetrieved = [Post remoteObjectWithID:thePost2.remoteID error:&e];
-	STAssertNotNil(thePostRetrieved, @"should exist (we just created it");
-	STAssertNil(e,@"Should be no error retrieving post (e=%@)",e);
-	
-	e = nil;
-	
-	thePostRetrieved.content = @"changed externally!";
-	STAssertTrue([thePostRetrieved remoteUpdate:&e], @"");
-	STAssertNil(e,@"Should be no error updating post (e=%@)",e);
+	NSMutableArray *array;
+    NSArray *a;
+
+	a = [Post objectsWithRemoteDictionaries:array];
+	STAssertNotNil(a, @"should still have 0 elements after empty array");
+    STAssertTrue(a.count == 0, @"should still have 0 elements after empty array");
+
+    array = [[NSMutableArray alloc] init];
+
+    a = [Post objectsWithRemoteDictionaries:array];
+	STAssertNotNil(a, @"should still have 0 elements after empty array");
+    STAssertTrue(a.count == 0, @"should still have 0 elements after empty array");
+
+	[array addObject:NSRDictionary(NSRNumber(5),@"id",@"hi",@"author")];
+	[array addObject:NSRDictionary(NSRNumber(6),@"id",@"hi",@"3f2f3f")];
 	
 	for (int i = 0; i < 2; i++)
 	{
-		e = nil;
+        a = [Post objectsWithRemoteDictionaries:array];
 		
-		STAssertTrue([array remoteFetchAll:[Post class] error:&e],@"");
+		STAssertTrue(a.count == 2, @"should still have X elements after translation");
 		
-		STAssertNil(e, @"Error shouldn't be present e=%@ (iteration %d)",e,i);
-		STAssertTrue(array.count == 4, @"array should have 1 post again (iteration %d)",i);
-		STAssertEqualObjects([[array lastObject] content], @"changed externally!", @"content should be updated (iteration %d)",i);
+		STAssertTrue([[a objectAtIndex:0] isKindOfClass:[Post class]], @"should be Post after translation");
+		STAssertEqualObjects([[a objectAtIndex:0] remoteID],NSRNumber(5), @"should have appropriate remoteID");
+		STAssertEqualObjects([[a objectAtIndex:0] author],@"hi", @"should have appropriate property1");
 		
-		//behavior should be identical to if it was empty to begin with
-		if (i == 0)
-			[array removeAllObjects];
+		STAssertTrue([[a objectAtIndex:1] isKindOfClass:[Post class]], @"should be Post after translation");
+		STAssertEqualObjects([[a objectAtIndex:1] remoteID],NSRNumber(6), @"should have appropriate remoteID");
+		STAssertNil([[a objectAtIndex:1] author],@"should have appropriate property1");
+		
+		[array addObject:@"str"];
 	}
-	
-	[array addObject:@"please remove me"];
-	
-	STAssertThrows([array remoteFetchAll:[Post class] error:nil],@"Should throw an exception if non-NSRRO object is entered (KVC)");
 }
-
 
 + (void)setUp
 {

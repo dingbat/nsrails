@@ -32,7 +32,6 @@
 		595B0274158E826F002B23D4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17A8155C74200092B048 /* Foundation.framework */; };
 		595B0277158E826F002B23D4 /* libNSRailsCD.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 595B0264158E826F002B23D4 /* libNSRailsCD.a */; };
 		595B0288158E82B1002B23D4 /* NSData+NSRBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF771575CD6E00DA25F4 /* NSData+NSRBase64.m */; };
-		595B0289158E82B1002B23D4 /* NSMutableArray+NSRails.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF791575CD6E00DA25F4 /* NSMutableArray+NSRails.m */; };
 		595B028A158E82B1002B23D4 /* NSString+NSRInflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 597C80141586B09400950019 /* NSString+NSRInflection.m */; };
 		595B028B158E82B1002B23D4 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF801575CD6E00DA25F4 /* NSRConfig.m */; };
 		595B028C158E82B1002B23D4 /* NSRRemoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF851575CD6E00DA25F4 /* NSRRemoteObject.m */; };
@@ -58,10 +57,6 @@
 		5993AF871575CD6E00DA25F4 /* NSData+NSRBase64.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF761575CD6E00DA25F4 /* NSData+NSRBase64.h */; };
 		5993AF891575CD6E00DA25F4 /* NSData+NSRBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF771575CD6E00DA25F4 /* NSData+NSRBase64.m */; };
 		5993AF8A1575CD6E00DA25F4 /* NSData+NSRBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF771575CD6E00DA25F4 /* NSData+NSRBase64.m */; };
-		5993AF8C1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF781575CD6E00DA25F4 /* NSMutableArray+NSRails.h */; };
-		5993AF8D1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF781575CD6E00DA25F4 /* NSMutableArray+NSRails.h */; };
-		5993AF8F1575CD6E00DA25F4 /* NSMutableArray+NSRails.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF791575CD6E00DA25F4 /* NSMutableArray+NSRails.m */; };
-		5993AF901575CD6E00DA25F4 /* NSMutableArray+NSRails.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF791575CD6E00DA25F4 /* NSMutableArray+NSRails.m */; };
 		5993AF9E1575CD6E00DA25F4 /* NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7E1575CD6E00DA25F4 /* NSRails.h */; };
 		5993AF9F1575CD6E00DA25F4 /* NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7E1575CD6E00DA25F4 /* NSRails.h */; };
 		5993AFA11575CD6E00DA25F4 /* NSRConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7F1575CD6E00DA25F4 /* NSRConfig.h */; };
@@ -80,8 +75,6 @@
 		59A2AF951586F855002765BA /* MockClasses.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A2AF931586F855002765BA /* MockClasses.m */; };
 		59A2AF9815870580002765BA /* Inflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A2AF9715870580002765BA /* Inflection.m */; };
 		59A2AF9915870580002765BA /* Inflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A2AF9715870580002765BA /* Inflection.m */; };
-		59A2AF9C158707D1002765BA /* ArrayCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A2AF9B158707D1002765BA /* ArrayCategory.m */; };
-		59A2AF9D158707D1002765BA /* ArrayCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A2AF9B158707D1002765BA /* ArrayCategory.m */; };
 		59A2AFA015870EB9002765BA /* Config.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A2AF9F15870EB8002765BA /* Config.m */; };
 		59A2AFA115870EB9002765BA /* Config.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A2AF9F15870EB8002765BA /* Config.m */; };
 		59CF24651571901B00476966 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59CF24641571901B00476966 /* CoreData.framework */; };
@@ -138,8 +131,6 @@
 		598D217515800AC2002CC996 /* NSRRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRequest.m; sourceTree = "<group>"; };
 		5993AF761575CD6E00DA25F4 /* NSData+NSRBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+NSRBase64.h"; sourceTree = "<group>"; };
 		5993AF771575CD6E00DA25F4 /* NSData+NSRBase64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+NSRBase64.m"; sourceTree = "<group>"; };
-		5993AF781575CD6E00DA25F4 /* NSMutableArray+NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+NSRails.h"; sourceTree = "<group>"; };
-		5993AF791575CD6E00DA25F4 /* NSMutableArray+NSRails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+NSRails.m"; sourceTree = "<group>"; };
 		5993AF7E1575CD6E00DA25F4 /* NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRails.h; sourceTree = "<group>"; };
 		5993AF7F1575CD6E00DA25F4 /* NSRConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRConfig.h; sourceTree = "<group>"; };
 		5993AF801575CD6E00DA25F4 /* NSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConfig.m; sourceTree = "<group>"; };
@@ -150,7 +141,6 @@
 		59A2AF921586F855002765BA /* MockClasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockClasses.h; sourceTree = "<group>"; };
 		59A2AF931586F855002765BA /* MockClasses.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockClasses.m; sourceTree = "<group>"; };
 		59A2AF9715870580002765BA /* Inflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Inflection.m; sourceTree = "<group>"; };
-		59A2AF9B158707D1002765BA /* ArrayCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArrayCategory.m; sourceTree = "<group>"; };
 		59A2AF9F15870EB8002765BA /* Config.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Config.m; sourceTree = "<group>"; };
 		59A2AFA315871160002765BA /* CoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreData.m; sourceTree = "<group>"; };
 		59C464D1155C59DF00920FD5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -243,7 +233,6 @@
 				59A2AF8D1586F7E2002765BA /* Request.m */,
 				59A2AF9715870580002765BA /* Inflection.m */,
 				594765B11569F9E100C07A62 /* Integration.m */,
-				59A2AF9B158707D1002765BA /* ArrayCategory.m */,
 				59A2AF9F15870EB8002765BA /* Config.m */,
 				59A2AFA315871160002765BA /* CoreData.m */,
 				59EC6A661572A24900AA6D79 /* Test.xcdatamodeld */,
@@ -288,8 +277,6 @@
 			children = (
 				5993AF761575CD6E00DA25F4 /* NSData+NSRBase64.h */,
 				5993AF771575CD6E00DA25F4 /* NSData+NSRBase64.m */,
-				5993AF781575CD6E00DA25F4 /* NSMutableArray+NSRails.h */,
-				5993AF791575CD6E00DA25F4 /* NSMutableArray+NSRails.m */,
 				597C80131586B09400950019 /* NSString+NSRInflection.h */,
 				597C80141586B09400950019 /* NSString+NSRInflection.m */,
 			);
@@ -342,7 +329,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5993AF861575CD6E00DA25F4 /* NSData+NSRBase64.h in Headers */,
-				5993AF8C1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */,
 				5993AF9E1575CD6E00DA25F4 /* NSRails.h in Headers */,
 				5993AFA11575CD6E00DA25F4 /* NSRConfig.h in Headers */,
 				5993AFB01575CD6E00DA25F4 /* NSRRemoteObject.h in Headers */,
@@ -357,7 +343,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5993AF871575CD6E00DA25F4 /* NSData+NSRBase64.h in Headers */,
-				5993AF8D1575CD6E00DA25F4 /* NSMutableArray+NSRails.h in Headers */,
 				5993AF9F1575CD6E00DA25F4 /* NSRails.h in Headers */,
 				5993AFA21575CD6E00DA25F4 /* NSRConfig.h in Headers */,
 				5993AFB11575CD6E00DA25F4 /* NSRRemoteObject.h in Headers */,
@@ -595,7 +580,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5993AF891575CD6E00DA25F4 /* NSData+NSRBase64.m in Sources */,
-				5993AF8F1575CD6E00DA25F4 /* NSMutableArray+NSRails.m in Sources */,
 				5993AFA41575CD6E00DA25F4 /* NSRConfig.m in Sources */,
 				5993AFB31575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */,
 				598D217915800AC2002CC996 /* NSRRequest.m in Sources */,
@@ -614,7 +598,6 @@
 				59A2AF901586F7E2002765BA /* Request.m in Sources */,
 				59A2AF941586F855002765BA /* MockClasses.m in Sources */,
 				59A2AF9815870580002765BA /* Inflection.m in Sources */,
-				59A2AF9C158707D1002765BA /* ArrayCategory.m in Sources */,
 				59A2AFA015870EB9002765BA /* Config.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -624,7 +607,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5993AF8A1575CD6E00DA25F4 /* NSData+NSRBase64.m in Sources */,
-				5993AF901575CD6E00DA25F4 /* NSMutableArray+NSRails.m in Sources */,
 				5993AFA51575CD6E00DA25F4 /* NSRConfig.m in Sources */,
 				5993AFB41575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */,
 				598D217A15800AC2002CC996 /* NSRRequest.m in Sources */,
@@ -643,7 +625,6 @@
 				59A2AF911586F7E2002765BA /* Request.m in Sources */,
 				59A2AF951586F855002765BA /* MockClasses.m in Sources */,
 				59A2AF9915870580002765BA /* Inflection.m in Sources */,
-				59A2AF9D158707D1002765BA /* ArrayCategory.m in Sources */,
 				59A2AFA115870EB9002765BA /* Config.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -653,7 +634,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				595B0288158E82B1002B23D4 /* NSData+NSRBase64.m in Sources */,
-				595B0289158E82B1002B23D4 /* NSMutableArray+NSRails.m in Sources */,
 				595B028A158E82B1002B23D4 /* NSString+NSRInflection.m in Sources */,
 				595B028B158E82B1002B23D4 /* NSRConfig.m in Sources */,
 				595B028C158E82B1002B23D4 /* NSRRemoteObject.m in Sources */,

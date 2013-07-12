@@ -555,22 +555,38 @@
 
 #pragma mark Get all objects (class-level)
 
++ (NSArray *) objectsWithRemoteDictionaries:(NSArray *)remoteDictionaries
+{
+    NSMutableArray *array = [NSMutableArray array];
+    
+	for (NSDictionary *dict in remoteDictionaries)
+	{
+		if ([dict isKindOfClass:[NSDictionary class]])
+		{
+			NSRRemoteObject *obj = [self objectWithRemoteDictionary:dict];
+            [array addObject:obj];
+		}
+	}
+    
+	return array;
+}
+
 + (NSArray *) arrayOfInstancesFromRemoteJSON:(id)json
 {
-	if (!json)
-		return nil;
-	
+	NSArray *remote = json;
 	if ([json isKindOfClass:[NSDictionary class]])
 	{
 		//probably has root in front of it - "posts":[{},{}]
 		if ([json count] == 1)
 		{
-			json = [[json allValues] objectAtIndex:0];
+			remote = [[json allValues] objectAtIndex:0];
 		}
 	}
-	
-	[json translateRemoteDictionariesIntoInstancesOfClass:self];
-	return json;
+    
+    if (![remote isKindOfClass:[NSArray class]])
+        return nil;
+    
+    return [self objectsWithRemoteDictionaries:remote];
 }
 
 + (NSArray *) remoteAll:(NSError **)error
