@@ -361,7 +361,6 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	if (statusCode >= 0 && statusCode < 400)
         return nil;
 	
-	NSString *errorMessage = response;
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
     
     if ([response isKindOfClass:[NSString class]])
@@ -377,12 +376,12 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
                 
                 if (succinctText)
                 {
-                    errorMessage = [succinctText stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
+                    response = [succinctText stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
                 }
             }
         }
 
-        [userInfo setObject:errorMessage forKey:NSLocalizedDescriptionKey];
+        [userInfo setObject:response forKey:NSLocalizedDescriptionKey];
 	}
     
     return [NSError errorWithDomain:NSRRemoteErrorDomain code:statusCode userInfo:userInfo];
