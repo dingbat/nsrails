@@ -254,6 +254,28 @@
 		</Token>
 		
 		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setAdditionalHTTPHeaders:</TokenIdentifier>
+			<Abstract>A dictionary of additional HTTP headers to send with each request that uses this configuration.</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSDictionary *additionalHTTPHeaders</Declaration>
+			
+			
+			<Anchor>//api/name/additionalHTTPHeaders</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/additionalHTTPHeaders</TokenIdentifier>
+			<Abstract>A dictionary of additional HTTP headers to send with each request that uses this configuration.</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSDictionary *additionalHTTPHeaders</Declaration>
+			
+			
+			<Anchor>//api/name/additionalHTTPHeaders</Anchor>
+		</Token>
+		
+		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setUpdateMethod:</TokenIdentifier>
 			<Abstract>HTTP method used for updating objects.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			

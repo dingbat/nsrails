@@ -82,7 +82,7 @@
 			<Abstract>The query parameters with which to make the request.</Abstract>
 			<DeclaredIn>NSRRequest.h</DeclaredIn>			
 			
-			<Declaration>@property (nonatomic, strong) NSMutableDictionary *queryParameters</Declaration>
+			<Declaration>@property (nonatomic, strong) NSDictionary *queryParameters</Declaration>
 			
 			
 			<Anchor>//api/name/queryParameters</Anchor>
@@ -93,7 +93,7 @@
 			<Abstract>The query parameters with which to make the request.</Abstract>
 			<DeclaredIn>NSRRequest.h</DeclaredIn>			
 			
-			<Declaration>@property (nonatomic, strong) NSMutableDictionary *queryParameters</Declaration>
+			<Declaration>@property (nonatomic, strong) NSDictionary *queryParameters</Declaration>
 			
 			
 			<Anchor>//api/name/queryParameters</Anchor>
@@ -105,7 +105,7 @@
   </Abstract>
 			<DeclaredIn>NSRRequest.h</DeclaredIn>			
 			
-			<Declaration>@property (nonatomic, strong) NSMutableDictionary *additionalHTTPHeaders</Declaration>
+			<Declaration>@property (nonatomic, strong) NSDictionary *additionalHTTPHeaders</Declaration>
 			
 			
 			<Anchor>//api/name/additionalHTTPHeaders</Anchor>
@@ -117,7 +117,7 @@
   </Abstract>
 			<DeclaredIn>NSRRequest.h</DeclaredIn>			
 			
-			<Declaration>@property (nonatomic, strong) NSMutableDictionary *additionalHTTPHeaders</Declaration>
+			<Declaration>@property (nonatomic, strong) NSDictionary *additionalHTTPHeaders</Declaration>
 			
 			
 			<Anchor>//api/name/additionalHTTPHeaders</Anchor>

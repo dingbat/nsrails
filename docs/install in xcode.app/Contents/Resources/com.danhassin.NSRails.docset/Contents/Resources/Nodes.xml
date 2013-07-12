@@ -19,15 +19,6 @@
 				</Node>
 				
 				
-				<Node type="folder">
-					<Name>Categories</Name>
-					<Path>index.html</Path>
-					<Subnodes>
-						<NodeRef refid="5"/>
-						
-					</Subnodes>
-				</Node>
-				
 				
 			</Subnodes>
         </Node>
@@ -50,10 +41,6 @@
 			<Path>Classes/NSRRequest.html</Path>
 		</Node>
 		
-		<Node id="5">
-			<Name>NSMutableArray(NSRFetch)</Name>
-			<Path>Categories/NSMutableArray+NSRFetch.html</Path>
-		</Node>
 		
 		
 	</Library>

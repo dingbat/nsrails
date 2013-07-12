@@ -405,6 +405,24 @@ Note that this dictionary needs to be JSON-parasable, meaning all keys are strin
 		</Token>
 		
 		<Token>
+			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/objectsWithRemoteDictionaries:</TokenIdentifier>
+			<Abstract>Returns an array of new or existing instances of the receiver's class, based off input of any number of remote dictionaries (JSON array from the server).</Abstract>
+			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
+			
+			<Declaration>+ (NSArray *)objectsWithRemoteDictionaries:(NSArray *)remoteDictionaries</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>remoteDictionaries</Name>
+					<Abstract>Array of remote dictionaries to be evaluated.
+
+Note that the dictionaries in this array need to be JSON-parasable, meaning all keys are strings and all objects are instances of NSString, NSNumber, NSArray, NSDictionary, or NSNull.</Abstract>
+				</Parameter>
+			</Parameters>
+			<ReturnValue><Abstract>An array of new or existing instances of the receiver's class, with their properties set using the dictionaries in remoteDictionaries.</Abstract></ReturnValue>
+			<Anchor>//api/name/objectsWithRemoteDictionaries:</Anchor>
+		</Token>
+		
+		<Token>
 			<TokenIdentifier>//apple_ref/occ/clm/NSRRemoteObject/remoteModelName</TokenIdentifier>
 			<Abstract>The equivalent name of this class on your server.</Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			

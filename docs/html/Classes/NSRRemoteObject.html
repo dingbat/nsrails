@@ -7,7 +7,7 @@
 		<meta name="viewport" content="width=550" />
 		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
 		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
-		<meta name="generator" content="appledoc 2.0.5 (build 789)" />
+		<meta name="generator" content="appledoc 2.1 (build 840)" />
 	</head>
 	<body>
 		<header id="top_header">
@@ -54,6 +54,8 @@
 	<option value="//api/name/config">&nbsp;&nbsp;&nbsp;&nbsp;+ config</option>
 	
 	<option value="//api/name/objectWithRemoteDictionary:">&nbsp;&nbsp;&nbsp;&nbsp;+ objectWithRemoteDictionary:</option>
+	
+	<option value="//api/name/objectsWithRemoteDictionaries:">&nbsp;&nbsp;&nbsp;&nbsp;+ objectsWithRemoteDictionaries:</option>
 	
 	<option value="//api/name/remoteAll:">&nbsp;&nbsp;&nbsp;&nbsp;+ remoteAll:</option>
 	
@@ -172,6 +174,8 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/objectWithRemoteDictionary:">objectWithRemoteDictionary:</a></span></li>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/objectsWithRemoteDictionaries:">objectsWithRemoteDictionaries:</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteAll:">remoteAll:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/remoteAllAsync:">remoteAllAsync:</a></span></li>
@@ -286,12 +290,12 @@
 
 <h1>Validation Errors</h1>
 
-<p>If a create or update failed due to validation reasons, NSRails will package the validation failures into a dictionary. This can be retrieved using the key constant <code>NSRValidationErrorsKey</code> in the <code>userInfo</code> property of the error. This dictionary contains <strong>each failed property as a key</strong>, with each respective object being <strong>an array of the reasons that property failed validation</strong>. For instance,</p>
+<p>If a create or update failed due to validation reasons, NSRails will package the validation failures into a dictionary. This can be retrieved using the key constant <code>NSRErrorResponseBodyKey</code> in the <code>userInfo</code> property of the error. This dictionary contains <strong>each failed property as a key</strong>, with each respective object being <strong>an array of the reasons that property failed validation</strong>. For instance,</p>
 
 <pre><code> NSError *error;
  if (![user createRemote:&amp;error])
  {
-     NSDictionary *validationErrors = [[error userInfo] objectForKey:NSRValidationErrorsKey];
+     NSDictionary *validationErrors = [[error userInfo] objectForKey:NSRErrorResponseBodyKey];
 
      for (NSString *property in validationErrors)
      {
@@ -510,6 +514,13 @@
 	<span class="tooltip">
 		<code><a href="#//api/name/objectWithRemoteDictionary:">+&nbsp;objectWithRemoteDictionary:</a></code>
 		<span class="tooltip"><p>Initializes a new instance of the receiver&rsquo;s class with a given dictionary input.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/objectsWithRemoteDictionaries:">+&nbsp;objectsWithRemoteDictionaries:</a></code>
+		<span class="tooltip"><p>Returns an array of new or existing instances of the receiver&rsquo;s class, based off input of any number of remote dictionaries (JSON array from the server).</p></span>
 	</span>
 	
 	
@@ -842,6 +853,57 @@ if ([myObj remoteFetch:&amp;error])
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
 		<p>A new instance of the receiver&rsquo;s class with properties set using <em>dictionary</em>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/objectsWithRemoteDictionaries:" title="objectsWithRemoteDictionaries:"></a>
+	<h3 class="subsubtitle method-title">objectsWithRemoteDictionaries:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns an array of new or existing instances of the receiver&rsquo;s class, based off input of any number of remote dictionaries (JSON array from the server).</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>+ (NSArray *)objectsWithRemoteDictionaries:(NSArray *)<em>remoteDictionaries</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>remoteDictionaries</em></dt>
+			<dd><p>Array of remote dictionaries to be evaluated.</p>
+
+<p>Note that the dictionaries in this array need to be JSON-parasable, meaning all keys are strings and all objects are instances of NSString, NSNumber, NSArray, NSDictionary, or NSNull.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An array of new or existing instances of the receiver&rsquo;s class, with their properties set using the dictionaries in <em>remoteDictionaries</em>.</p>
 	</div>
 	
 	
@@ -2688,9 +2750,9 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2012 Dan Hassin. All rights reserved. (Last updated: 2012-07-23)</span><br />
+						<p><span class="copyright">&copy; 2013 Dan Hassin. All rights reserved. (Last updated: 2013-07-12)</span><br />
 						
-						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.0.5 (build 789)</a>.</span></p>
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 840)</a>.</span></p>
 						
 					</div>
 				</div>
