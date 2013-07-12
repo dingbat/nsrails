@@ -111,7 +111,7 @@
  
  @return The object from CoreData, if it exists. If it does not exist, returns `nil`.
 */
-+ (id) findObjectWithRemoteID:(NSNumber *)remoteID;
++ (instancetype) findObjectWithRemoteID:(NSNumber *)remoteID;
 
 /**
  Instantiates a new instance, inserts it into the default CoreData context.
@@ -122,7 +122,7 @@
   
  @return The newly inserted object.
  */
-- (id) initInserted;
+- (instancetype) initInserted;
 
 /**
  Save the CoreData object context of the receiver.

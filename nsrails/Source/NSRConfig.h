@@ -278,7 +278,7 @@ extern NSString * const NSRCoreDataException;
  
  @return The default configuration.
  */
-+ (NSRConfig *) defaultConfig;
++ (instancetype) defaultConfig;
 
 /**
  Returns the contextually relevant configuration.
@@ -287,7 +287,7 @@ extern NSString * const NSRCoreDataException;
  
  @return The contextually relevant configuration, or default configuration is no explicit context is set.
  */
-+ (NSRConfig *) contextuallyRelevantConfig;
++ (instancetype) contextuallyRelevantConfig;
 
 /// =============================================================================================
 /// @name Using configs in specific locations

@@ -59,7 +59,7 @@
 
 #pragma mark - Behavior overrides
 
-+ (id) objectWithRemoteDictionary:(NSDictionary *)dictionary
++ (instancetype) objectWithRemoteDictionary:(NSDictionary *)dictionary
 {
 	NSRRemoteManagedObject *obj = nil;
 	
@@ -240,7 +240,7 @@
 	return !error;
 }
 
-+ (id) findObjectWithRemoteID:(NSNumber *)rID
++ (instancetype) findObjectWithRemoteID:(NSNumber *)rID
 {
     NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:self.entityName];
 	fetch.predicate = [NSPredicate predicateWithFormat:@"remoteID == %@", rID];

@@ -430,7 +430,7 @@
 }
 
 
-+ (id) objectWithRemoteDictionary:(NSDictionary *)dict
++ (instancetype) objectWithRemoteDictionary:(NSDictionary *)dict
 {
 	NSRRemoteObject *obj = [[self alloc] init];
 	[obj setPropertiesUsingRemoteDictionary:dict];
@@ -535,7 +535,7 @@
 
 #pragma mark Get specific object (class-level)
 
-+ (id) remoteObjectWithID:(NSNumber *)mID error:(NSError **)error
++ (instancetype) remoteObjectWithID:(NSNumber *)mID error:(NSError **)error
 {
 	NSDictionary *objData = [[NSRRequest requestToFetchObjectWithID:mID ofClass:self] sendSynchronous:error];
 	

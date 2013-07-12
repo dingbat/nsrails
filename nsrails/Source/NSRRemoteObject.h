@@ -190,7 +190,7 @@
  @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
  @return Instance of receiver's class with properties from the remote object with that ID.
  */
-+ (id) remoteObjectWithID:(NSNumber *)objectID error:(NSError **)error;
++ (instancetype) remoteObjectWithID:(NSNumber *)objectID error:(NSError **)error;
 
 /**
  Retrieves an instance receiver's class corresponding to the remote object with that ID.
@@ -383,7 +383,7 @@
  Note that this dictionary needs to be JSON-parasable, meaning all keys are strings and all objects are instances of NSString, NSNumber, NSArray, NSDictionary, or NSNull.
  @return A new instance of the receiver's class with properties set using *dictionary*.
  */
-+ (id) objectWithRemoteDictionary:(NSDictionary *)remoteDictionary;
++ (instancetype) objectWithRemoteDictionary:(NSDictionary *)remoteDictionary;
 
 /**
  Returns an array of new or existing instances of the receiver's class, based off input of any number of remote dictionaries (JSON array from the server).

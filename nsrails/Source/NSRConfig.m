@@ -93,7 +93,7 @@ static NSMutableArray *overrideConfigStack = nil;
     defaultConfig = self;
 }
 
-+ (NSRConfig *) defaultConfig
++ (instancetype) defaultConfig
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^
@@ -172,7 +172,7 @@ static NSMutableArray *overrideConfigStack = nil;
 #pragma mark -
 #pragma mark Contextual stuff
 
-+ (NSRConfig *) contextuallyRelevantConfig
++ (instancetype) contextuallyRelevantConfig
 {
     //get the last config on the stack (last in first out)
 	NSRConfig *override = [[overrideConfigStack lastObject] config];
