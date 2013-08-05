@@ -114,8 +114,8 @@ static NSMutableArray *overrideConfigStack = nil;
 		
 		//by default, set to accept datestring like "2012-02-01T00:56:24Z"
 		//this format (ISO 8601) is default in rails
-		self.dateFormat = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
-		
+		self.dateFormat = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSS'Z'";	
+	
 		self.autoinflectsClassNames = YES;
 		self.autoinflectsPropertyNames = YES;
 		self.ignoresClassPrefixes = YES;
