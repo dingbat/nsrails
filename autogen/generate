@@ -172,7 +172,7 @@ class Model
         belong_tos = []
         @property_collection.properties.each do |p|
           if p.belongs_to
-            belong_tos << "[property isEqualToString:\"#{p.name}\"]"
+            belong_tos << "[property isEqualToString:@\"#{p.name}\"]"
           end
         end
         conditional = belong_tos.join(" || ")
