@@ -377,14 +377,14 @@
     r2.remoteID = @2;
     
     Post *post = [[Post alloc] init];
-    post.responses = [NSMutableArray arrayWithArray:@[r1,r2]];
-    post.onlySendsIDForResponses = YES;
+    post.onlyIDResponses = [NSMutableArray arrayWithArray:@[r1,r2]];
     
     NSDictionary *dict = [post remoteDictionaryRepresentationWrapped:NO];
     NSArray *ids = @[@1,@2];
     
     STAssertNil(dict[@"responses"], nil);
-    STAssertEqualObjects(dict[@"response_ids"], ids, nil);
+    STAssertNil(dict[@"response_ids"], nil);
+    STAssertEqualObjects(dict[@"only_id_response_ids"], ids, nil);
 }
 
 /** Belongs-to **/

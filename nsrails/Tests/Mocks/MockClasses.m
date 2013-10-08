@@ -31,20 +31,28 @@
 @end
 
 @implementation Post
-@synthesize author, content, updatedAt, responses, noResponseRelationship, onlySendsIDForResponses;
+@synthesize author, content, updatedAt, responses, noResponseRelationship, onlyIDResponses;
 
 - (Class) nestedClassForProperty:(NSString *)property
 {
-	if ([property isEqualToString:@"responses"] && !noResponseRelationship)
+	if (([property isEqualToString:@"responses"] && !noResponseRelationship) || [property isEqualToString:@"onlyIDResponses"])
 	{
 		return [Response class];
 	}
 	return [super nestedClassForProperty:property];
 }
 
+- (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
+{
+    if ([property isEqualToString:@"onlyIDResponses"] && onlyIDResponses.count == 0)
+        return NO;
+    
+    return [super shouldSendProperty:property whenNested:nested];
+}
+
 - (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property
 {
-    if ([property isEqualToString:@"responses"] && onlySendsIDForResponses)
+    if ([property isEqualToString:@"onlyIDResponses"])
         return YES;
     
     return [super shouldOnlySendIDKeyForNestedObjectProperty:property];

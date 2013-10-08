@@ -198,7 +198,13 @@
 		{
             if ([self valueIsArray:val])
             {
-                *remoteKey = [[nestedClass remoteModelName] stringByAppendingString:@"_ids"];
+                NSString *singular = *remoteKey;
+                if ([singular hasSuffix:@"ies"])
+                    singular = [singular substringToIndex:singular.length-3];
+                else if ([singular hasSuffix:@"s"])
+                    singular = [singular substringToIndex:singular.length-1];
+                
+                *remoteKey = [singular stringByAppendingString:@"_ids"];
                 return [val valueForKeyPath:@"@unionOfObjects.remoteID"];
             }
             else
