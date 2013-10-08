@@ -704,16 +704,10 @@ static BOOL noServer = NO;
 
 - (void) test_array_category
 {
-	NSMutableArray *array;
+	NSMutableArray *array = [[NSMutableArray alloc] init];
     NSArray *a;
 
 	a = [Post objectsWithRemoteDictionaries:array];
-	STAssertNotNil(a, @"should still have 0 elements after empty array");
-    STAssertTrue(a.count == 0, @"should still have 0 elements after empty array");
-
-    array = [[NSMutableArray alloc] init];
-
-    a = [Post objectsWithRemoteDictionaries:array];
 	STAssertNotNil(a, @"should still have 0 elements after empty array");
     STAssertTrue(a.count == 0, @"should still have 0 elements after empty array");
 

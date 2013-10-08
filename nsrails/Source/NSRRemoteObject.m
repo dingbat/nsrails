@@ -41,7 +41,6 @@
 @interface NSRRemoteObject (private)
 
 - (NSDictionary *) remoteDictionaryRepresentationWrapped:(BOOL)wrapped fromNesting:(BOOL)nesting;
-+ (NSArray *) arrayOfInstancesFromRemoteJSON:(id)json;
 
 - (BOOL) propertyIsTimestamp:(NSString *)property;
 
@@ -557,6 +556,18 @@
 
 + (NSArray *) objectsWithRemoteDictionaries:(NSArray *)remoteDictionaries
 {
+	if ([remoteDictionaries isKindOfClass:[NSDictionary class]])
+	{
+		//probably has root in front of it - "posts":[{},{}]
+		if ([remoteDictionaries count] == 1)
+		{
+			remoteDictionaries = [(NSDictionary *)remoteDictionaries allValues][0];
+		}
+	}
+    
+    if (![remoteDictionaries isKindOfClass:[NSArray class]])
+        return nil;
+
     NSMutableArray *array = [NSMutableArray array];
     
 	for (NSDictionary *dict in remoteDictionaries)
@@ -571,24 +582,6 @@
 	return array;
 }
 
-+ (NSArray *) arrayOfInstancesFromRemoteJSON:(id)json
-{
-	NSArray *remote = json;
-	if ([json isKindOfClass:[NSDictionary class]])
-	{
-		//probably has root in front of it - "posts":[{},{}]
-		if ([json count] == 1)
-		{
-			remote = [json allValues][0];
-		}
-	}
-    
-    if (![remote isKindOfClass:[NSArray class]])
-        return nil;
-    
-    return [self objectsWithRemoteDictionaries:remote];
-}
-
 + (NSArray *) remoteAll:(NSError **)error
 {
 	return [self remoteAllViaObject:nil error:error];
@@ -597,7 +590,7 @@
 + (NSArray *) remoteAllViaObject:(NSRRemoteObject *)obj error:(NSError **)error
 {
     id json = [[NSRRequest requestToFetchAllObjectsOfClass:self viaObject:obj] sendSynchronous:error];
-	return [self arrayOfInstancesFromRemoteJSON:json];
+	return [self objectsWithRemoteDictionaries:json];
 }
 
 + (void) remoteAllAsync:(NSRFetchAllCompletionBlock)completionBlock
@@ -611,7 +604,7 @@
 	 ^(id result, NSError *error) 
 	 {
 		 if (completionBlock)
-			 completionBlock([self arrayOfInstancesFromRemoteJSON:result],error);
+			 completionBlock([self objectsWithRemoteDictionaries:result],error);
 	 }];
 }
 

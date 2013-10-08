@@ -11,7 +11,6 @@
 @interface NSRRemoteObject (private)
 
 + (NSString *) typeForProperty:(NSString *)prop;
-+ (NSArray *) arrayOfInstancesFromRemoteJSON:(id)json;
 
 @end
 
@@ -192,19 +191,19 @@
 
 - (void) test_index_json_into_array
 {
-	NSArray *remoteJSON = NSRMArray(NSRDictionary(@"dan",@"author"), NSRDictionary(@"michael",@"author"));
-	NSArray *array = [Post arrayOfInstancesFromRemoteJSON:remoteJSON];
+	id remoteJSON = NSRMArray(NSRDictionary(@"dan",@"author"), NSRDictionary(@"michael",@"author"));
+	NSArray *array = [Post objectsWithRemoteDictionaries:remoteJSON];
 	
 	STAssertNotNil(array, nil);
-	STAssertEquals(array.count, remoteJSON.count, nil);
+	STAssertEquals(array.count, [remoteJSON count], nil);
 	STAssertTrue([[array objectAtIndex:0] isKindOfClass:[Post class]], nil);
 	STAssertEqualObjects([[array objectAtIndex:0] author], @"dan", nil);
 }
 
 - (void) test_index_json_into_array_with_root
 {
-	NSDictionary *remoteJSON = NSRDictionary(NSRMArray(NSRDictionary(@"dan",@"author"), NSRDictionary(@"michael",@"author")), @"posts");
-	NSArray *array = [Post arrayOfInstancesFromRemoteJSON:remoteJSON];
+	id remoteJSON = NSRDictionary(NSRMArray(NSRDictionary(@"dan",@"author"), NSRDictionary(@"michael",@"author")), @"posts");
+	NSArray *array = [Post objectsWithRemoteDictionaries:remoteJSON];
 	
 	STAssertNotNil(array, nil);
 	STAssertEquals(array.count, (NSUInteger)2, nil);
