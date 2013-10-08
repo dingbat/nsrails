@@ -196,18 +196,16 @@
     {
 		if ([self shouldOnlySendIDKeyForNestedObjectProperty:property])
 		{
-            id returnVal;
             if ([self valueIsArray:val])
             {
-                returnVal = [val valueForKeyPath:@"@unionOfObjects.remoteID"];
+                *remoteKey = [[nestedClass remoteModelName] stringByAppendingString:@"_ids"];
+                return [val valueForKeyPath:@"@unionOfObjects.remoteID"];
             }
             else
             {
-                returnVal = [val remoteID];
+                *remoteKey = [*remoteKey stringByAppendingString:@"_id"];
+                return [val remoteID];
             }
-            
-			*remoteKey = [*remoteKey stringByAppendingString:@"_id"];
-			return returnVal;
 		}
 		
 		*remoteKey = [*remoteKey stringByAppendingString:@"_attributes"];

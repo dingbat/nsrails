@@ -384,7 +384,7 @@
     NSArray *ids = @[@1,@2];
     
     STAssertNil(dict[@"responses"], nil);
-    STAssertEqualObjects(dict[@"responses_id"], ids, nil);
+    STAssertEqualObjects(dict[@"response_ids"], ids, nil);
 }
 
 /** Belongs-to **/
