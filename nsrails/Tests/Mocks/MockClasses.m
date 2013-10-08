@@ -31,7 +31,7 @@
 @end
 
 @implementation Post
-@synthesize author, content, updatedAt, responses, noResponseRelationship;
+@synthesize author, content, updatedAt, responses, noResponseRelationship, onlySendsIDForResponses;
 
 - (Class) nestedClassForProperty:(NSString *)property
 {
@@ -40,6 +40,14 @@
 		return [Response class];
 	}
 	return [super nestedClassForProperty:property];
+}
+
+- (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property
+{
+    if ([property isEqualToString:@"responses"] && onlySendsIDForResponses)
+        return YES;
+    
+    return [super shouldOnlySendIDKeyForNestedObjectProperty:property];
 }
 
 @end

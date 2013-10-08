@@ -23,7 +23,7 @@
 @end
 
 @interface Post : NSRRemoteObject
-@property (nonatomic) BOOL noResponseRelationship;
+@property (nonatomic) BOOL noResponseRelationship, onlySendsIDForResponses;
 @property (nonatomic, strong) NSString *author, *content;
 @property (nonatomic, strong) NSDate *updatedAt;
 @property (nonatomic, strong) NSMutableArray *responses;

@@ -366,6 +366,27 @@
 	[nn setPropertiesUsingRemoteDictionary:sendDict];
 }
 
+/** Multiple belongs-to (array of ID's) **/
+
+- (void) test_array_ids_only
+{
+    Response *r1 = [[Response alloc] init];
+    r1.remoteID = @1;
+    
+    Response *r2 = [[Response alloc] init];
+    r2.remoteID = @2;
+    
+    Post *post = [[Post alloc] init];
+    post.responses = [NSMutableArray arrayWithArray:@[r1,r2]];
+    post.onlySendsIDForResponses = YES;
+    
+    NSDictionary *dict = [post remoteDictionaryRepresentationWrapped:NO];
+    NSArray *ids = @[@1,@2];
+    
+    STAssertNil(dict[@"responses"], nil);
+    STAssertEqualObjects(dict[@"responses_id"], ids, nil);
+}
+
 /** Belongs-to **/
 
 - (void) test_belongs_to
