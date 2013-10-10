@@ -436,6 +436,11 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	
 	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&appleError];
 	
+    if (appleError || !data) {
+        NSLog(@"connection error or data was nil");
+        return nil;
+    }
+	
 	id jsonResponse = [self jsonResponseFromData:data];
 	NSError *error = [self errorForResponse:jsonResponse existingError:appleError statusCode:response.statusCode];
 	
@@ -490,10 +495,16 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 			 }
 		 }
 #endif
-		 id jsonResponse = [self jsonResponseFromData:data];
-		 NSError *error = [self errorForResponse:jsonResponse existingError:appleError statusCode:[(NSHTTPURLResponse *)response statusCode]];
-		 
-		 if (block)
+		 NSError *error;
+         id jsonResponse;
+         if (!appleError && data) {
+             jsonResponse = [self jsonResponseFromData:data];
+             error = [self errorForResponse:jsonResponse existingError:appleError statusCode:[(NSHTTPURLResponse *)response statusCode]];
+         } else {
+             error = [NSError errorWithDomain:[NSRConfig defaultConfig].appURL code:404 userInfo:nil];
+             jsonResponse = nil;
+         }
+         if (block)
 			 [self performCompletionBlock:^{ block( (error ? nil : jsonResponse), error); }];
 	 }];
 }
