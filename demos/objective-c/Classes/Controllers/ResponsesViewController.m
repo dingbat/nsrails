@@ -24,33 +24,33 @@
 - (void) addResponse
 {
 	InputViewController *newPostVC = [[InputViewController alloc] initWithCompletionHandler:
-										  ^BOOL (NSString *author, NSString *content) 
+										  ^(NSString *author, NSString *content)
 										  {
-											  NSError *error;
-											  											  
 											  Response *newResp = [[Response alloc] init];
 											  newResp.author = author;
 											  newResp.content = content;
 											  newResp.post = post;    //check out Response.m for more detail on how this line is possible
 											  
-											  
-											  if (![newResp remoteCreate:&error])
-											  {
-												  [AppDelegate alertForError:error];
-												  
-												  return NO;
-											  }
-
-											  [post.responses addObject:newResp]; 
-											  [self.tableView reloadData];
-											  
-											  return YES;
+											  [newResp remoteCreateAsync:^(NSError *error)
+                                              {
+                                                  if (error)
+                                                  {
+                                                      [AppDelegate alertForError:error];
+                                                  }
+                                                  else
+                                                  {
+                                                      [post.responses addObject:newResp];
+                                                      [self.tableView reloadData];
+                                                      
+                                                      [self dismissViewControllerAnimated:YES completion:nil];
+                                                  }
+                                              }];
 											  
 											  /* 
-											   Instead of line 40 (the belongs_to trick), you could also add the new response to the post's "responses" array and then update it:
+											   Instead of line 32 (the belongs_to trick), you could also add the new response to the post's "responses" array and then update it:
 											   
 											     [post.responses addObject:newResp];
-											     [post remoteUpdate:&error];
+											     [post remoteUpdateAsync...];
 											   
 											   Doing this may be tempting since it'd already be in post's "responses" array, BUT: you'd have to take into account the Response validation failing (you'd then have to remove it from the array). Also, creating the Response rather than updating the Post will set newResp's remoteID, so we can do remote operations on it later!
 											  */
@@ -64,30 +64,31 @@
 
 - (void) deleteResponseAtIndexPath:(NSIndexPath *)indexPath
 {
-	NSError *error;
-	
 	Response *resp = [post.responses objectAtIndex:indexPath.row];
-	if ([resp remoteDestroy:&error])
-	{
-		// Remember to delete the object from our local array too
-		[post.responses removeObject:resp];
-		
-		[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-		
-		if (post.responses.count == 0)
-			[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
-	}
-	else
-	{
-		[AppDelegate alertForError:error];
-	}
+    [resp remoteDestroyAsync:^(NSError *error)
+    {
+        if (error)
+        {
+            [AppDelegate alertForError:error];
+        }
+        else
+        {
+            // Remember to delete the object from our local array too
+            [post.responses removeObject:resp];
+            
+            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            
+            if (post.responses.count == 0)
+                [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
+    }];
 	
 	/* 
 	 If we wanted to batch-delete or something, we could also do:
 	 
 		resp.remoteDestroyOnNesting = YES;
 		//do the same for other post's other responses
-		[post remoteUpdate:&e];
+		[post remoteUpdateAsync...];
 	 
 	 For this to work, you need to set `:allow_destroy => true` in Rails
 	 */

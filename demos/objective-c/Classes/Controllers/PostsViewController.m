@@ -14,7 +14,9 @@
 #import "Post.h"
 
 @implementation PostsViewController
-
+{
+	NSMutableArray *posts;
+}
 
 /*
  =================================================
@@ -24,20 +26,20 @@
 
 - (void) refresh
 {
-	// When the refresh button is hit, refresh our array of posts (uses a category on NSMutableArray)
+	// When the refresh button is hit, refresh our array of posts asynchronously
 	
-	NSError *error;
-	
-	if ([posts remoteFetchAll:[Post class] error:&error])
-	{
-		[self.tableView reloadData];
-	}
-	else
-	{
-		[AppDelegate alertForError:error];
-	}
-	
-	// This could also be done by setting posts to the result of [Post remoteAll:&error], but the NSMutableArray category will persist the same objects and update their respective properties instead of replacing everything, which could be desirable
+    [Post remoteAllAsync:^(NSArray *allRemote, NSError *error)
+    {
+        if (error)
+        {
+            [AppDelegate alertForError:error];
+        }
+        else
+        {
+            posts = [NSMutableArray arrayWithArray:allRemote];
+            [self.tableView reloadData];
+        }
+    }];
 }
 
 - (void) addPost
@@ -46,26 +48,26 @@
 	// It has an init method that accepts a completion block - this block of code will be executed when the user hits "save"
 	
 	InputViewController *newPostVC = [[InputViewController alloc] initWithCompletionHandler:
-										  ^BOOL (NSString *author, NSString *content) 
+										  ^(NSString *author, NSString *content)
 										  {
-											  NSError *error;
-											  
 											  Post *newPost = [[Post alloc] init];
 											  newPost.author = author;
 											  newPost.content = content;
-											  											  
-											  if (![newPost remoteCreate:&error])
-											  {
-												  [AppDelegate alertForError:error];
-												  
-												  //don't dismiss the input VC
-												  return NO;
-											  }
-											  											  
-											  [posts insertObject:newPost atIndex:0];
-											  [self.tableView reloadData];
-											  
-											  return YES;											  
+                                              
+                                              [newPost remoteCreateAsync:^(NSError *error)
+                                              {
+                                                  if (error)
+                                                  {
+                                                      [AppDelegate alertForError:error];
+                                                  }
+                                                  else
+                                                  {
+                                                      [posts insertObject:newPost atIndex:0];
+                                                      [self.tableView reloadData];
+                                                      
+                                                      [self dismissViewControllerAnimated:YES completion:nil];
+                                                  }
+                                              }];
 										  }];
 	
 	newPostVC.header = @"Post something to NSRails.com!";
@@ -76,20 +78,21 @@
 
 - (void) deletePostAtIndexPath:(NSIndexPath *)indexPath
 {
-	NSError *error;
-	
 	Post *post = [posts objectAtIndex:indexPath.row];
-	if ([post remoteDestroy:&error])
-	{
-		// Remember to delete the object from our local array too
-		[posts removeObject:post];
-		
-		[self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-	}
-	else
-	{
-		[AppDelegate alertForError:error];
-	}
+    [post remoteDestroyAsync:^(NSError *error)
+    {
+        if (error)
+        {
+            [AppDelegate alertForError:error];
+        }
+        else
+        {
+            // Remember to delete the object from our local array too
+            [posts removeObject:post];
+            
+            [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
+    }];
 }
 
 /*

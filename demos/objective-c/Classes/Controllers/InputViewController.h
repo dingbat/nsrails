@@ -19,18 +19,14 @@
 
 //needs to resolve to a BOOL (whether or not we should dismiss the VC)
 //provides the two strings the user entered
-typedef BOOL (^PostInputBlock)(NSString *author, NSString *content);
+typedef void(^PostInputBlock)(NSString *author, NSString *content);
 
 @interface InputViewController : UIViewController <UITextViewDelegate>
-{
-	PostInputBlock block;
-	
-	IBOutlet UITextField *authorField;
-	IBOutlet UITextView *contentField;
-	IBOutlet UILabel *headerLabel;
-}
 
-@property (nonatomic, retain) NSString *header, *messagePlaceholder;
+@property (nonatomic, strong) NSString *header, *messagePlaceholder;
+@property (nonatomic, strong) IBOutlet UITextField *authorField;
+@property (nonatomic, strong) IBOutlet UITextView *contentField;
+@property (nonatomic, strong) IBOutlet UILabel *headerLabel;
 
 //when the user hits "save", we'll execute this block
 //this just makes everything easier to visualize since all the relevant code is in the same VC

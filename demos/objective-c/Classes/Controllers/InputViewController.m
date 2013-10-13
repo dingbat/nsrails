@@ -23,7 +23,9 @@
 @end
 
 @implementation InputViewController
-@synthesize messagePlaceholder, header;
+{
+    PostInputBlock block;
+}
 
 - (id) initWithCompletionHandler:(PostInputBlock)completionBlock
 {
@@ -42,12 +44,10 @@
 
 - (void) save
 {
-	NSString *author = authorField.text;
-	NSString *message = (contentField.tag == 0 ? @"" : contentField.text); //blank if still on placeholder (tag 0)
+	NSString *author = _authorField.text;
+	NSString *message = (_contentField.tag == 0 ? @"" : _contentField.text); //blank if still on placeholder (tag 0)
 	
-	BOOL shouldDismiss = block(author, message);
-	if (shouldDismiss)
-		[self dismissModalViewControllerAnimated:YES];
+    block(author, message);
 }
 
 
@@ -59,24 +59,24 @@
 	 Boring UI stuff
 	 */
 	
-	headerLabel.text = header;
+	_headerLabel.text = _header;
 	
 	// Focus on authorField
-	[authorField becomeFirstResponder];
+	[_authorField becomeFirstResponder];
 	
 	// Make the fields look nice and round
-	contentField.layer.cornerRadius = 4;
-	contentField.layer.borderColor = [[UIColor grayColor] CGColor];
-	contentField.layer.borderWidth = 1;
+	_contentField.layer.cornerRadius = 4;
+	_contentField.layer.borderColor = [[UIColor grayColor] CGColor];
+	_contentField.layer.borderWidth = 1;
 	
-	authorField.layer.cornerRadius = 4;
-	authorField.layer.borderColor = [[UIColor grayColor] CGColor];
-	authorField.layer.borderWidth = 1;
+	_authorField.layer.cornerRadius = 4;
+	_authorField.layer.borderColor = [[UIColor grayColor] CGColor];
+	_authorField.layer.borderWidth = 1;
 
 	// Add some space to side of authorField
 	UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 20)];
-	authorField.leftView = paddingView;
-	authorField.leftViewMode = UITextFieldViewModeAlways;
+	_authorField.leftView = paddingView;
+	_authorField.leftViewMode = UITextFieldViewModeAlways;
 	
 	// Start off the textview with the placeholder
 	[self placehold];
@@ -90,11 +90,11 @@
 
 - (void) placehold
 {
-	contentField.text = messagePlaceholder;
-	contentField.textColor = [UIColor lightGrayColor];
-	contentField.tag = 0;
+	_contentField.text = _messagePlaceholder;
+	_contentField.textColor = [UIColor lightGrayColor];
+	_contentField.tag = 0;
 	
-	[contentField setSelectedTextRange:[contentField textRangeFromPosition:[contentField beginningOfDocument] toPosition:[contentField beginningOfDocument]]];
+	[_contentField setSelectedTextRange:[_contentField textRangeFromPosition:[_contentField beginningOfDocument] toPosition:[_contentField beginningOfDocument]]];
 }
 
 - (BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
