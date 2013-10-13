@@ -9,23 +9,22 @@ class ResponsesViewController < UITableViewController
       new_resp.content = content
       new_resp.post = @post    # check out response.rb for more detail on how this line is possible
       
-      p = Pointer.new(:object)
-      if !new_resp.remoteCreate(p)
-        AppDelegate.alertForError p[0]
-        return false
+      new_resp.remoteCreateAsync lambda do |error|
+        if error
+          AppDelegate.alertForError error
+        else
+          @post.responses.insert(0, new_resp)
+          self.tableView.reloadData
+          self.dismissViewControllerAnimated(true, completion:nil)
+        end
       end
 
-      @post.responses.insert(0, new_resp)
-      self.tableView.reloadData
-		  
-      # Instead of line 10 (the belongs_to trick), you could also add the new response to the post's "responses" array and then update it:
+      # Instead of line 16 (the belongs_to trick), you could also add the new response to the post's "responses" array and then update it:
       # 
       #    post.responses << newResp
       #    post.remoteUpdate(error_ptr)
       # 
       # Doing this may be tempting since it'd already be in post's "responses" array, BUT: you'd have to take into account the Response validation failing (you'd then have to *remove it* from the array). Also, creating the Response rather than updating the Post will set newResp's remoteID, so we can do remote operations on it later!
-      
-      true
     end
 
     new_post_vc.header = "Write your response to #{@post.author}"
@@ -39,18 +38,18 @@ class ResponsesViewController < UITableViewController
   def deleteResponseAtIndexPath(indexPath)
     resp = @post.responses[indexPath.row]
 
-    ptr = Pointer.new(:object)
-    if resp.remoteDestroy(ptr)
-      # Remember to delete the object from our local array too
-      @post.responses.delete resp
+    resp.remoteDestroyAsync lambda do |error|
+      if error
+        AppDelegate.alertForError error
+      else
+        @post.responses.delete resp
 
-      self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationAutomatic)
-      
-  		if @post.responses.empty?
-  			self.tableView.reloadSections(NSIndexSet.indexSetWithIndex(0), withRowAnimation:UITableViewRowAnimationAutomatic)
+        self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationAutomatic)
+        
+        if @post.responses.empty?
+          self.tableView.reloadSections(NSIndexSet.indexSetWithIndex(0), withRowAnimation:UITableViewRowAnimationAutomatic)
+        end
       end
-    else
-      AppDelegate.alertForError ptr[0]
     end
   	
     # If we wanted to batch-delete or something, we could also do:

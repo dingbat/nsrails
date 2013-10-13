@@ -9,17 +9,15 @@ class PostsViewController < UITableViewController
       new_post.author = author
       new_post.content = content
 
-      ptr = Pointer.new(:object)
-      if !new_post.remoteCreate(ptr)
-        AppDelegate.alertForError ptr[0]
-        # Don't dismiss the input VC
-        return false
+      new_post.remoteCreateAsync lambda do |error|
+        if error
+          AppDelegate.alertForError error
+        else
+          @posts.insert(0, new_post)
+          self.tableView.reloadData
+          self.dismissViewControllerAnimated(true, completion:nil)
+        end
       end
-
-      @posts.insert(0, new_post)
-      self.tableView.reloadData
-
-      true
     end
 
     new_post_vc.header = "Post something to NSRails.com!"
@@ -31,28 +29,29 @@ class PostsViewController < UITableViewController
   end
   
   def refresh
-    # When the refresh button is hit, refresh our array of posts (uses an extension on Array)
+    # When the refresh button is hit, refresh our array of posts
   	
-    e_ptr = Pointer.new(:object)
-    if @posts.remoteFetchAll(Post, error:e_ptr)
-      self.tableView.reloadData
-    else
-      AppDelegate.alertForError e_ptr[0]
+    Post.remoteAllAsync lambda do |all_remote, error|
+      if error
+        AppDelegate.alertForError error
+      else
+        @posts = all_remote
+        self.tableView.reloadData
+      end
     end
-    
-    # This could also be done by setting @posts to the result of Post.remoteAll(e_ptr), but using the Array method will persist the same objects and update their respective properties instead of replacing everything, which could be desirable
   end
   
   def deletePostAtIndexPath(indexPath)
     post = @posts[indexPath.row]
 
-    p = Pointer.new(:object)
-    if post.remoteDestroy(p)
-      # Remember to delete the object from our local array too
-      @posts.delete(post)
-      self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationAutomatic)
-    else
-      AppDelegate.alertForError p[0]
+    post.remoteDestroyAsync lambda do |error|
+      if error
+        AppDelegate.alertForError error
+      else
+        # Remember to delete the object from our local array too
+        @posts.delete(post)
+        self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation:UITableViewRowAnimationAutomatic)
+      end
     end
   end
   

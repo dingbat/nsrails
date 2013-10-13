@@ -15,8 +15,7 @@ class InputViewController < UIViewController
     author = @author_field.text
     message = (@content_field.tag == 0 ? "" : @content_field.text) # blank if still on placeholder (tag 0)
 
-    # If the block returned true (it worked), we should dismiss
-    self.cancel if @completion_block.call(author, message)
+    @completion_block.call(author, message)
   end
   
   def viewDidLoad
