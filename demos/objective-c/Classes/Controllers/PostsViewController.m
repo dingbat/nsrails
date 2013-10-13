@@ -71,9 +71,10 @@
 										  }];
 	
 	newPostVC.header = @"Post something to NSRails.com!";
-	newPostVC.messagePlaceholder = @"A comment about NSRails, a philosophical inquiry, or simply a \"Hello world\"!";
+	newPostVC.messagePlaceholder = @"A comment about NSRails, a philosophical inquiry, or simply a \"hello world!\"";
 	
-	[self presentModalViewController:newPostVC animated:YES];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:newPostVC];
+	[self presentModalViewController:nav animated:YES];
 }
 
 - (void) deletePostAtIndexPath:(NSIndexPath *)indexPath

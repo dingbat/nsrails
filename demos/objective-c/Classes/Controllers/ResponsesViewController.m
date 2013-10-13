@@ -59,7 +59,8 @@
 	newPostVC.header = [NSString stringWithFormat:@"Write your response to %@:",post.author];
 	newPostVC.messagePlaceholder = @"Your response";
 	
-	[self presentModalViewController:newPostVC animated:YES];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:newPostVC];
+	[self presentModalViewController:nav animated:YES];
 }
 
 - (void) deleteResponseAtIndexPath:(NSIndexPath *)indexPath

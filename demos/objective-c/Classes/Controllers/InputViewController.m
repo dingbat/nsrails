@@ -80,7 +80,12 @@
 	
 	// Start off the textview with the placeholder
 	[self placehold];
+
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Post" style:UIBarButtonItemStyleDone target:self action:@selector(save)];
 	
+    self.title = @"New Post";
+    
     [super viewDidLoad];
 }
 
