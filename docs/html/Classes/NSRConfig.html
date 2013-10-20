@@ -84,6 +84,8 @@
 	
 	<option value="instance_methods">Instance Methods</option>
 	
+	<option value="//api/name/configureToRailsVersion:">&nbsp;&nbsp;&nbsp;&nbsp;- configureToRailsVersion:</option>
+	
 	<option value="//api/name/dateFromString:">&nbsp;&nbsp;&nbsp;&nbsp;- dateFromString:</option>
 	
 	<option value="//api/name/end">&nbsp;&nbsp;&nbsp;&nbsp;- end</option>
@@ -123,6 +125,8 @@
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Server-side settings">Server-side settings</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_CoreData">CoreData</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Configuring to a Rails version">Configuring to a Rails version</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Retrieving global configs">Retrieving global configs</a></span></li>
 	
@@ -185,6 +189,8 @@
 
 
 <li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/configureToRailsVersion:">configureToRailsVersion:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/dateFromString:">dateFromString:</a></span></li>
 	
@@ -443,6 +449,21 @@
 		<span class="tooltip"><p>Managed object context for CoreData support. <strong>(Required if CoreData is enabled)</strong></p></span>
 	</span>
 	<span class="task-item-suffix">property</span>
+	
+</li>
+						</ul>
+						
+						
+						<a title="Configuring to a Rails version" name="task_Configuring to a Rails version"></a>
+						<h3 class="subsubtitle task-title">Configuring to a Rails version</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/configureToRailsVersion:">&ndash;&nbsp;configureToRailsVersion:</a></code>
+		<span class="tooltip"><p>Sets <a href="#//api/name/dateFormat"><code>dateFormat</code></a> and <a href="#//api/name/updateMethod"><code>updateMethod</code></a> to the standards for the given Rails version.</p></span>
+	</span>
+	
 	
 </li>
 						</ul>
@@ -836,7 +857,9 @@
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>This should not be changed unless the format is also changed server-side; the default is the default Rails format.</p>
 
-<p><strong>Default:</strong> <code>"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'"</code> (Rails default).</p>
+<p><strong>Default:</strong> <code>@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"</code> (Rails 4 default).</p>
+
+<p><strong>Note:</strong> if you&rsquo;re not using Rails 4, you can configure your settings to the Rails 3 defaults using <a href="#//api/name/configureToRailsVersion:"><code>configureToRailsVersion:</code></a>.</p>
 	</div>
 	
 	
@@ -1127,9 +1150,9 @@
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Rails is currently at 3.2.3 and using PUT, but 4.0 will use PATCH by default.</p>
+		<p><strong>Default:</strong> <code>@"PATCH"</code> (Rails 4 default).</p>
 
-<p><strong>Default:</strong> <code>@"PUT"</code></p><div class="warning"><p><strong>Warning:</strong> When Rails 4.0 is released, this default value will be changed to <code>@"PATCH"</code>.</p></div>
+<p><strong>Note:</strong> if you&rsquo;re not using Rails 4, you can configure your settings to the Rails 3 defaults using <a href="#//api/name/configureToRailsVersion:"><code>configureToRailsVersion:</code></a>.</p>
 	</div>
 	
 	
@@ -1165,7 +1188,7 @@
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>+ (NSRConfig *)contextuallyRelevantConfig</code></div>
+	<div class="method-subsection method-declaration"><code>+ (instancetype)contextuallyRelevantConfig</code></div>
 	
 	
 	
@@ -1209,7 +1232,7 @@
 	</div>		
 	
 	
-	<div class="method-subsection method-declaration"><code>+ (NSRConfig *)defaultConfig</code></div>
+	<div class="method-subsection method-declaration"><code>+ (instancetype)defaultConfig</code></div>
 	
 	
 	
@@ -1244,6 +1267,76 @@
 					<div class="section section-methods">
 						<a title="Instance Methods" name="instance_methods"></a>
 						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/configureToRailsVersion:" title="configureToRailsVersion:"></a>
+	<h3 class="subsubtitle method-title">configureToRailsVersion:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Sets <a href="#//api/name/dateFormat"><code>dateFormat</code></a> and <a href="#//api/name/updateMethod"><code>updateMethod</code></a> to the standards for the given Rails version.</p>
+	</div>		
+	
+	
+	<div class="method-subsection method-declaration"><code>- (void)configureToRailsVersion:(NSRRailsVersion)<em>railsVersion</em></code></div>
+	
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>railsVersion</em></dt>
+			<dd><p>The version of Rails to configure to (<code>NSRRailsVersion3</code> or <code>NSRRailsVersion4</code>).</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<table>
+<thead>
+<tr>
+<th>Rails version </th>
+<th> Date format </th>
+<th> <code>update</code> method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rails 3.x </td>
+<td> <code>yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'</code> </td>
+<td> PUT</td>
+</tr>
+<tr>
+<td>Rails 4.x </td>
+<td> <code>yyyy-MM-dd'T'HH:mm:ss.SSSZ</code> </td>
+<td> PATCH</td>
+</tr>
+</tbody>
+</table>
+
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRConfig.h</code><br />
+	</div>				
+	
+	
+</div>
 						
 						<div class="section-method">
 	<a name="//api/name/dateFromString:" title="dateFromString:"></a>
@@ -1612,7 +1705,7 @@
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2013 Dan Hassin. All rights reserved. (Last updated: 2013-07-12)</span><br />
+						<p><span class="copyright">&copy; 2013 Dan Hassin. All rights reserved. (Last updated: 2013-10-20)</span><br />
 						
 						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 840)</a>.</span></p>
 						

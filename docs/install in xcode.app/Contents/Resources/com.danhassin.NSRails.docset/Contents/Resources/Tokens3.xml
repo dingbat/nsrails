@@ -156,7 +156,7 @@ Note that you do not have to define an id property for your Objective-C class, a
 			<Abstract>Returns an instance of receiver's class corresponding to the remote object with that ID.</Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>+ (id)remoteObjectWithID:(NSNumber *)objectID error:(NSError **)error</Declaration>
+			<Declaration>+ (instancetype)remoteObjectWithID:(NSNumber *)objectID error:(NSError **)error</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>objectID</Name>
@@ -391,7 +391,7 @@ Uses the coding methods.</Abstract>
    </Abstract>
 			<DeclaredIn>NSRRemoteObject.h</DeclaredIn>			
 			
-			<Declaration>+ (id)objectWithRemoteDictionary:(NSDictionary *)remoteDictionary</Declaration>
+			<Declaration>+ (instancetype)objectWithRemoteDictionary:(NSDictionary *)remoteDictionary</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>remoteDictionary</Name>

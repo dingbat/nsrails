@@ -17,7 +17,7 @@
   </Abstract>
 			<DeclaredIn>NSRRemoteManagedObject.h</DeclaredIn>			
 			
-			<Declaration>+ (id)findObjectWithRemoteID:(NSNumber *)remoteID</Declaration>
+			<Declaration>+ (instancetype)findObjectWithRemoteID:(NSNumber *)remoteID</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>remoteID</Name>
@@ -33,7 +33,7 @@
 			<Abstract>Instantiates a new instance, inserts it into the default CoreData context.</Abstract>
 			<DeclaredIn>NSRRemoteManagedObject.h</DeclaredIn>			
 			
-			<Declaration>- (id)initInserted</Declaration>
+			<Declaration>- (instancetype)initInserted</Declaration>
 			
 			<ReturnValue><Abstract>The newly inserted object.</Abstract></ReturnValue>
 			<Anchor>//api/name/initInserted</Anchor>

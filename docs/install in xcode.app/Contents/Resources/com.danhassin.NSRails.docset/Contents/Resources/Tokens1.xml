@@ -342,11 +342,27 @@
 		</Token>
 		
 		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/configureToRailsVersion:</TokenIdentifier>
+			<Abstract>Sets dateFormat and updateMethod to the standards for the given Rails version.</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>- (void)configureToRailsVersion:(NSRRailsVersion)railsVersion</Declaration>
+			<Parameters>
+				<Parameter>
+					<Name>railsVersion</Name>
+					<Abstract>The version of Rails to configure to (NSRRailsVersion3 or NSRRailsVersion4).</Abstract>
+				</Parameter>
+			</Parameters>
+			
+			<Anchor>//api/name/configureToRailsVersion:</Anchor>
+		</Token>
+		
+		<Token>
 			<TokenIdentifier>//apple_ref/occ/clm/NSRConfig/defaultConfig</TokenIdentifier>
 			<Abstract>Returns the current default configuration.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
-			<Declaration>+ (NSRConfig *)defaultConfig</Declaration>
+			<Declaration>+ (instancetype)defaultConfig</Declaration>
 			
 			<ReturnValue><Abstract>The default configuration.</Abstract></ReturnValue>
 			<Anchor>//api/name/defaultConfig</Anchor>
@@ -357,7 +373,7 @@
 			<Abstract>Returns the contextually relevant configuration.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
-			<Declaration>+ (NSRConfig *)contextuallyRelevantConfig</Declaration>
+			<Declaration>+ (instancetype)contextuallyRelevantConfig</Declaration>
 			
 			<ReturnValue><Abstract>The contextually relevant configuration, or default configuration is no explicit context is set.</Abstract></ReturnValue>
 			<Anchor>//api/name/contextuallyRelevantConfig</Anchor>
