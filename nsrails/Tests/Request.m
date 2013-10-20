@@ -365,15 +365,20 @@
 	norm.remoteID = nil;
 	STAssertThrows([NSRRequest requestToUpdateObject:norm], @"Should throw nil rID");
 	
+    [[NSRConfig defaultConfig] configureToRailsVersion:NSRRailsVersion3];
 	norm.remoteID = NSRNumber(5);
 	NSRRequest *update = [NSRRequest requestToUpdateObject:norm];
 	STAssertEqualObjects(update.route, @"parents/5", nil);
 	STAssertEqualObjects(update.httpMethod, @"PUT", nil);
 	STAssertEqualObjects(update.body, [norm remoteDictionaryRepresentationWrapped:YES], nil);
 	
-	[[NSRConfig defaultConfig] setUpdateMethod:@"PATCH"];
+    [[NSRConfig defaultConfig] configureToRailsVersion:NSRRailsVersion4];
 	update = [NSRRequest requestToUpdateObject:norm];
 	STAssertEqualObjects(update.httpMethod, @"PATCH", nil);
+	
+	[[NSRConfig defaultConfig] setUpdateMethod:@"xxx"];
+	update = [NSRRequest requestToUpdateObject:norm];
+	STAssertEqualObjects(update.httpMethod, @"xxx", nil);
 		
 	/* DELETE */
 	

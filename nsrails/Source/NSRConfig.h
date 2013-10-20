@@ -54,6 +54,11 @@ extern NSString * const NSRMissingURLException;
 extern NSString * const NSRNullRemoteIDException;
 extern NSString * const NSRCoreDataException;
 
+typedef NS_ENUM(NSInteger, NSRRailsVersion) {
+    NSRRailsVersion3,
+    NSRRailsVersion4
+};
+
 ////////////////////////////////
 
 /**
@@ -238,11 +243,10 @@ extern NSString * const NSRCoreDataException;
 /**
  HTTP method used for updating objects.
  
- Rails is currently at 3.2.3 and using PUT, but 4.0 will use PATCH by default.
+ **Default:** `@"PATCH"` (Rails 4 default).
  
- **Default:** `@"PUT"`
-
- @warning When Rails 4.0 is released, this default value will be changed to `@"PATCH"`.
+ **Note:** if you're not using Rails 4, you can configure your settings to the Rails 3 defaults using `<configureToRailsVersion:>`.
+ 
  */
 @property (nonatomic, strong) NSString *updateMethod;
 
@@ -251,7 +255,10 @@ extern NSString * const NSRCoreDataException;
  
  This should not be changed unless the format is also changed server-side; the default is the default Rails format.
  
- **Default:** `"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'"` (Rails default).
+ **Default:** `@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"` (Rails 4 default).
+ 
+ **Note:** if you're not using Rails 4, you can configure your settings to the Rails 3 defaults using `<configureToRailsVersion:>`.
+ 
  */
 @property (nonatomic, strong) NSString *dateFormat;
 
@@ -267,6 +274,23 @@ extern NSString * const NSRCoreDataException;
  Should stay `nil` (default) if CoreData is not being used.
  */
 @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+
+/// =============================================================================================
+/// @name Configuring to a Rails version
+/// =============================================================================================
+
+/**
+ Sets `<dateFormat>` and `<updateMethod>` to the standards for the given Rails version.
+ 
+ Rails version | Date format | `update` method
+ -----|-----|-----
+ Rails 3.x | `yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'` | PUT
+ Rails 4.x | `yyyy-MM-dd'T'HH:mm:ss.SSSZ` | PATCH
+
+ @param railsVersion The version of Rails to configure to (`NSRRailsVersion3` or `NSRRailsVersion4`).
+ */
+
+- (void) configureToRailsVersion:(NSRRailsVersion)railsVersion;
 
 
 /// =============================================================================================

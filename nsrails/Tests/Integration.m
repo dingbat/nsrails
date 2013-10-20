@@ -783,6 +783,7 @@ static BOOL noServer = NO;
 	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
 	[[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
 	[[NSRConfig defaultConfig] setAppPassword:@"iphone"];
+    [[NSRConfig defaultConfig] configureToRailsVersion:NSRRailsVersion3];
 	
 	// Run before each test method
 }

@@ -69,6 +69,9 @@ NSString * const NSRMissingURLException				= @"NSRMissingURLException";
 NSString * const NSRNullRemoteIDException			= @"NSRNullRemoteIDException";
 NSString * const NSRCoreDataException				= @"NSRCoreDataException";
 
+NSString * const NSRRails3DateFormat        = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
+NSString * const NSRRails4DateFormat        = @"yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
 
 @implementation NSRConfig
 @synthesize appURL, appUsername, appPassword, appOAuthToken;
@@ -112,10 +115,6 @@ static NSMutableArray *overrideConfigStack = nil;
 		dateFormatter = [[NSDateFormatter alloc] init];
 		asyncOperationQueue = [[NSOperationQueue alloc] init];
 		
-		//by default, set to accept datestring like "2012-02-01T00:56:24Z"
-		//this format (ISO 8601) is default in rails
-		self.dateFormat = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
-		
 		self.autoinflectsClassNames = YES;
 		self.autoinflectsPropertyNames = YES;
 		self.ignoresClassPrefixes = YES;
@@ -123,9 +122,8 @@ static NSMutableArray *overrideConfigStack = nil;
 		self.succinctErrorMessages = YES;
 		self.timeoutInterval = 60.0f;
 		self.performsCompletionBlocksOnMainThread = YES;
-		
-		//by default, use PUT for updates
-		self.updateMethod = @"PUT";
+        
+        [self configureToRailsVersion:NSRRailsVersion4];
 	}
 	return self;
 }
@@ -133,10 +131,24 @@ static NSMutableArray *overrideConfigStack = nil;
 - (id) initWithAppURL:(NSString *)url
 {
 	if ((self = [self init]))
-	{		
+	{
 		[self setAppURL:url];
 	}
 	return self;
+}
+
+- (void) configureToRailsVersion:(NSRRailsVersion)railsVersion
+{
+    if (railsVersion == NSRRailsVersion3)
+    {
+		self.dateFormat = NSRRails3DateFormat;
+		self.updateMethod = @"PUT";
+    }
+    else if (railsVersion == NSRRailsVersion4)
+    {
+		self.dateFormat = NSRRails4DateFormat;
+        self.updateMethod = @"PATCH";
+    }
 }
 
 
@@ -163,7 +175,16 @@ static NSMutableArray *overrideConfigStack = nil;
 	
 	if (!date && string)
 	{
-        NSLog(@"NSR Warning: Attempted to convert remote date string (\"%@\") into an NSDate object, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation). Setting to nil",string,dateFormatter.dateFormat);
+        NSDateFormatter *rails3Checker = [[NSDateFormatter alloc] init];
+        rails3Checker.dateFormat = NSRRails3DateFormat;
+        if ([rails3Checker dateFromString:string])
+        {
+            NSLog(@"NSR Warning: Date conversion failed. Looks like your server is running Rails version 3, but NSRConfig is not configured for this (Rails 4 is default). Try using -[NSRConfig configureToRailsVersion:] with NSRRailsVersion3.");
+        }
+        else
+        {
+            NSLog(@"NSR Warning: Attempted to convert remote date string (\"%@\") into an NSDate object, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation). Setting to nil",string,dateFormatter.dateFormat);
+        }
 	}
 	
 	return date;

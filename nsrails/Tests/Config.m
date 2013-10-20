@@ -8,6 +8,9 @@
 
 #import "NSRAsserts.h"
 
+extern NSString * const NSRRails3DateFormat;
+extern NSString * const NSRRails4DateFormat;
+
 @interface Config : SenTestCase
 
 @end
@@ -66,6 +69,8 @@ STAssertEqualObjects(string, [NSRConfig contextuallyRelevantConfig].appURL, nil)
 
 - (void) test_date_conversion
 {
+    [[NSRConfig defaultConfig] configureToRailsVersion:NSRRailsVersion3];
+
 	NSString *mockDatetime = [MockServer datetime];
 	
 	//Default Rails format
@@ -97,6 +102,28 @@ STAssertEqualObjects(string, [NSRConfig contextuallyRelevantConfig].appURL, nil)
 	[[NSRConfig defaultConfig] setDateFormat:@"!@#@$"];
 
 	STAssertEqualObjects([[NSRConfig defaultConfig] stringFromDate:[NSDate dateWithTimeIntervalSince1970:0]], @"!@#@$", @"New format should've been applied");
+}
+
+- (void) test_rails_versions
+{
+    //rails 4 should be the default rails configuration
+    
+    NSString *df3 = NSRRails3DateFormat;
+    NSString *um3 = @"PUT";
+
+    NSString *df4 = NSRRails4DateFormat;
+    NSString *um4 = @"PATCH";
+
+    STAssertEqualObjects([NSRConfig defaultConfig].dateFormat, df4, nil);
+    STAssertEqualObjects([NSRConfig defaultConfig].updateMethod, um4, nil);
+
+    [[NSRConfig defaultConfig] configureToRailsVersion:NSRRailsVersion3];
+    STAssertEqualObjects([NSRConfig defaultConfig].dateFormat, df3, nil);
+    STAssertEqualObjects([NSRConfig defaultConfig].updateMethod, um3, nil);
+    
+    [[NSRConfig defaultConfig] configureToRailsVersion:NSRRailsVersion4];
+    STAssertEqualObjects([NSRConfig defaultConfig].dateFormat, df4, nil);
+    STAssertEqualObjects([NSRConfig defaultConfig].updateMethod, um4, nil);
 }
 
 @end
