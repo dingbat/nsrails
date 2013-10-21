@@ -10,19 +10,29 @@ Instances will inherit methods to remotely create, read, update, or destroy a re
 Post *newPost = [[Post alloc] init];
 newPost.author = @"Me";
 newPost.content = @"Some text";
-[newPost remoteCreate:&error];     // This post and its properties created right on a Rails server
+// Create this post with its properties right on a Rails server
+// POST /posts.json
+[newPost remoteCreateAsync:^(NSError *e) {
+    if (e) { ... }
+}];
 ```
 
 Classes will inherit methods to retrieve all objects, or only certain ones:
 
 ```objc
-NSArray *allPosts = [Post remoteAll:&error];
-Post *postNumber1 = [Post remoteObjectWithID:1 error:&error];
+// GET /posts.json
+[Post remoteAllAsync:^(NSArray *allPosts, NSError *error) {
+    //allPosts => [<#Post1#>, <#Post2#>]
+}];
 
-// Display your article(s)! They're ready with their properties populated directly from your remote DB
+// GET /posts/1.json
+[Post remoteObjectWithID:1 async:^(Post *post, NSError *error) {
+    //post => <#Post#>
+    //post.content => "First!!11!"
+}];
 ```
 
-NSRails is very accessible while very customizable, and keeps your code clean and organized. It simply uses your classes' names and standard `@properties` to map to your remote models, making it super easy to fit into your project!
+NSRails is accessible while very flexible, and keeps your code clean and organized. It uses your classes' names and standard `@properties` to map to your remote models, so it's easy to fit into any project.
 
 Features
 --------
@@ -45,16 +55,17 @@ Quick links
 Getting started - Objective-C
 ---------
 
-1. Drop the `Source` folder into your Xcode project. You'll also need the CoreData framework linked in Build Phases.
-  * If you're using Git, you should add NSRails as a submodule to your project so you can `git pull` and always be up to date:
-   
+1. Add NSRails to your project. You can:
+  * Use CocoaPods (highly recommended). Add `pod 'NSRails'` to your Podfile.
+  * Use a Git submodule, so you can `git pull` and always be up to date. The following will clone the entire NSRails repo, but you'll only need to add `nsrails/Source` to Xcode:
+ 
       ```
       $ git submodule add git@github.com:dingbat/nsrails.git NSRails
       ```
-  
-      This will clone the entire NSRails repo, but you'll only need to add `nsrails/Source` to your project in Xcode.
+  * Drop the `Source` folder into your Xcode project. You'll also need the CoreData framework linked in Build Phases.
+      
 
-2. Make an Objective-C class for your Rails model and have it subclass **NSRRemoteObject** (you'll need to `#import NSRails.h`)
+2. Make a class for your Rails model that subclasses **NSRRemoteObject** (you'll need to `#import NSRails.h`)
 
   ```objc
   #import "NSRails.h"
@@ -67,7 +78,7 @@ Getting started - Objective-C
   @end
   ```
 
-3. Somewhere in your app setup, set your server URL using the `defaultConfig` singleton:
+3. Set your server URL in your app setup:
 
   ```objc
   #import "NSRails.h"
@@ -75,9 +86,12 @@ Getting started - Objective-C
   - (BOOL)application:(UIApplication *)app didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
   {
         [NSRConfig defaultConfig].appURL = @"http://localhost:3000";
+        // If you're using Rails 3
+        [[NSRConfig defaultConfig] configureToRailsVersion:NSRRailsVersion3];
         ...
   }
   ```
+  **Note:** By default, NSRails assumes you're using Rails 4. If not, make sure you configure to Rails 3 standards (ie, PUT instead of PATCH and a different date format) as shown above.
 
 You're done! By subclassing NSRRemoteObject, your class gets instance and class methods that'll act on your remote objects. Here are a few of the things you can do with your new class:
 
@@ -143,6 +157,9 @@ Getting started - Ruby
 
 	# Don't look for camelCase when receiving remote underscored_properties, since we're in Ruby
 	NSRConfig.defaultConfig.autoinflectsPropertyNames = false
+	
+	# If you're using Rails 3
+	NSRConfig.defaultConfig.configureToRailsVersion NSRRailsVersion3
 	```
 	
 Now have fun! These are just examples of how you can use pointers/blocks in Ruby, but see the Objective-C example above for more!
