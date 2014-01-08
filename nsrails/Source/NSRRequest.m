@@ -277,8 +277,6 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	
 	NSURL *url = [NSURL URLWithString:appendedRoute relativeToURL:base];
 	
-	NSRLogInOut(@"OUT", body, @"===> %@ to %@", httpMethod, [url absoluteString]);	
-	
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url
 														   cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
 													   timeoutInterval:self.config.timeoutInterval];
@@ -392,7 +390,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	id jsonResponse = [NSJSONSerialization JSONObjectWithData:data
                                                       options:NSJSONReadingAllowFragments | NSJSONReadingMutableContainers
                                                         error:nil];
-
+    
 	//TODO - workaround for bug with NSJSONReadingMutableContainers. it simply... doesn't work???
 	if ([jsonResponse isKindOfClass:[NSArray class]] && ![jsonResponse isKindOfClass:[NSMutableArray class]])
 		jsonResponse = [NSMutableArray arrayWithArray:jsonResponse];
@@ -434,11 +432,14 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	NSError *appleError = nil;
 	NSHTTPURLResponse *response = nil;
 	
+    [self logOut:request];
 	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&appleError];
 	
 	id jsonResponse = [self jsonResponseFromData:data];
 	NSError *error = [self errorForResponse:jsonResponse existingError:appleError statusCode:response.statusCode];
 	
+    [self logIn:jsonResponse error:error];
+    
 	if (errorOut)
 		*errorOut = error;
 
@@ -476,6 +477,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	});
 	
 	NSURLRequest *request = [self HTTPRequest];
+    [self logOut:request];
 
 	[NSURLConnection sendAsynchronousRequest:request queue:asyncOperationQueue completionHandler:
 	 ^(NSURLResponse *response, NSData *data, NSError *appleError) 
@@ -493,9 +495,23 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 		 id jsonResponse = [self jsonResponseFromData:data];
 		 NSError *error = [self errorForResponse:jsonResponse existingError:appleError statusCode:[(NSHTTPURLResponse *)response statusCode]];
 		 
+         [self logIn:jsonResponse error:error];
+         
 		 if (block)
 			 [self performCompletionBlock:^{ block( (error ? nil : jsonResponse), error); }];
 	 }];
+}
+
+#pragma mark - Logging
+
+- (void) logOut:(NSURLRequest *)request
+{
+    NSRLogInOut(@"OUT", body, @"===> %@ to %@", httpMethod, [request.URL absoluteString]);
+}
+
+- (void) logIn:(id)json error:(NSError *)error
+{
+    NSRLogInOut(@"IN", error ? @"" : json, @"<=== Code %d; %@", (int)error.code, error ? error : @"");
 }
 
 #pragma mark - NSCoding
