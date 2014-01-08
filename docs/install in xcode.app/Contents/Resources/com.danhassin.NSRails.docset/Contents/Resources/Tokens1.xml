@@ -4,7 +4,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/cl/NSRConfig</TokenIdentifier>
-			<Abstract>The NSRails configuration class is NSRConfig, a class that stores your Rails app's configuration settings (server URL, etc) for either your app globally or in specific instances. It also supports basic HTTP authentication and very simple OAuth authentication.</Abstract>
+			<Abstract type="html">The NSRails configuration class is NSRConfig, a class that stores your Rails app&apos;s configuration settings (server URL, etc) for either your app globally or in specific instances. It also supports basic HTTP authentication and very simple OAuth authentication.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>
 			
 			<NodeRef refid="1"/>
@@ -13,7 +13,18 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setAppURL:</TokenIdentifier>
-			<Abstract>Root URL for your Rails server.</Abstract>
+			<Abstract type="html">Root URL for your Rails server.</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSString *appURL</Declaration>
+			
+			
+			<Anchor>//api/name/appURL</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/appURL</TokenIdentifier>
+			<Abstract type="html">Root URL for your Rails server.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSString *appURL</Declaration>
@@ -24,7 +35,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/appURL</TokenIdentifier>
-			<Abstract>Root URL for your Rails server.</Abstract>
+			<Abstract type="html">Root URL for your Rails server.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSString *appURL</Declaration>
@@ -35,7 +46,18 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setPerformsCompletionBlocksOnMainThread:</TokenIdentifier>
-			<Abstract>When true, the completion blocks passed into asynchronous remote methods will be called on the main thread.</Abstract>
+			<Abstract type="html">When true, the completion blocks passed into asynchronous remote methods will be called on the main thread.</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic) BOOL performsCompletionBlocksOnMainThread</Declaration>
+			
+			
+			<Anchor>//api/name/performsCompletionBlocksOnMainThread</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/performsCompletionBlocksOnMainThread</TokenIdentifier>
+			<Abstract type="html">When true, the completion blocks passed into asynchronous remote methods will be called on the main thread.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic) BOOL performsCompletionBlocksOnMainThread</Declaration>
@@ -46,7 +68,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/performsCompletionBlocksOnMainThread</TokenIdentifier>
-			<Abstract>When true, the completion blocks passed into asynchronous remote methods will be called on the main thread.</Abstract>
+			<Abstract type="html">When true, the completion blocks passed into asynchronous remote methods will be called on the main thread.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic) BOOL performsCompletionBlocksOnMainThread</Declaration>
@@ -57,7 +79,18 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setManagesNetworkActivityIndicator:</TokenIdentifier>
-			<Abstract>The network activity indicator (gray spinning wheel on the status bar) will automatically turn on and off with requests.</Abstract>
+			<Abstract type="html">The network activity indicator (gray spinning wheel on the status bar) will automatically turn on and off with requests.</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic) BOOL managesNetworkActivityIndicator</Declaration>
+			
+			
+			<Anchor>//api/name/managesNetworkActivityIndicator</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/managesNetworkActivityIndicator</TokenIdentifier>
+			<Abstract type="html">The network activity indicator (gray spinning wheel on the status bar) will automatically turn on and off with requests.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic) BOOL managesNetworkActivityIndicator</Declaration>
@@ -68,7 +101,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/managesNetworkActivityIndicator</TokenIdentifier>
-			<Abstract>The network activity indicator (gray spinning wheel on the status bar) will automatically turn on and off with requests.</Abstract>
+			<Abstract type="html">The network activity indicator (gray spinning wheel on the status bar) will automatically turn on and off with requests.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic) BOOL managesNetworkActivityIndicator</Declaration>
@@ -79,7 +112,18 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setSuccinctErrorMessages:</TokenIdentifier>
-			<Abstract>Cleaner error messages when generating NSError objects.</Abstract>
+			<Abstract type="html">Cleaner error messages when generating NSError objects.</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic) BOOL succinctErrorMessages</Declaration>
+			
+			
+			<Anchor>//api/name/succinctErrorMessages</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/succinctErrorMessages</TokenIdentifier>
+			<Abstract type="html">Cleaner error messages when generating NSError objects.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic) BOOL succinctErrorMessages</Declaration>
@@ -90,7 +134,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/succinctErrorMessages</TokenIdentifier>
-			<Abstract>Cleaner error messages when generating NSError objects.</Abstract>
+			<Abstract type="html">Cleaner error messages when generating NSError objects.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic) BOOL succinctErrorMessages</Declaration>
@@ -101,7 +145,18 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setTimeoutInterval:</TokenIdentifier>
-			<Abstract>Timeout interval for HTTP requests.</Abstract>
+			<Abstract type="html">Timeout interval for HTTP requests.</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic) NSTimeInterval timeoutInterval</Declaration>
+			
+			
+			<Anchor>//api/name/timeoutInterval</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/timeoutInterval</TokenIdentifier>
+			<Abstract type="html">Timeout interval for HTTP requests.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic) NSTimeInterval timeoutInterval</Declaration>
@@ -112,7 +167,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/timeoutInterval</TokenIdentifier>
-			<Abstract>Timeout interval for HTTP requests.</Abstract>
+			<Abstract type="html">Timeout interval for HTTP requests.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic) NSTimeInterval timeoutInterval</Declaration>
@@ -123,7 +178,18 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setAutoinflectsClassNames:</TokenIdentifier>
-			<Abstract>When true, all Objective-C class names will have a default equivalence to their under_scored versions.</Abstract>
+			<Abstract type="html">When true, all Objective-C class names will have a default equivalence to their under_scored versions.</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic) BOOL autoinflectsClassNames</Declaration>
+			
+			
+			<Anchor>//api/name/autoinflectsClassNames</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/autoinflectsClassNames</TokenIdentifier>
+			<Abstract type="html">When true, all Objective-C class names will have a default equivalence to their under_scored versions.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic) BOOL autoinflectsClassNames</Declaration>
@@ -134,7 +200,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/autoinflectsClassNames</TokenIdentifier>
-			<Abstract>When true, all Objective-C class names will have a default equivalence to their under_scored versions.</Abstract>
+			<Abstract type="html">When true, all Objective-C class names will have a default equivalence to their under_scored versions.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic) BOOL autoinflectsClassNames</Declaration>
@@ -145,7 +211,18 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setAutoinflectsPropertyNames:</TokenIdentifier>
-			<Abstract>When true, all Objective-C property names will have a default equivalence to their under_scored versions.</Abstract>
+			<Abstract type="html">When true, all Objective-C property names will have a default equivalence to their under_scored versions.</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic) BOOL autoinflectsPropertyNames</Declaration>
+			
+			
+			<Anchor>//api/name/autoinflectsPropertyNames</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/autoinflectsPropertyNames</TokenIdentifier>
+			<Abstract type="html">When true, all Objective-C property names will have a default equivalence to their under_scored versions.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic) BOOL autoinflectsPropertyNames</Declaration>
@@ -156,7 +233,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/autoinflectsPropertyNames</TokenIdentifier>
-			<Abstract>When true, all Objective-C property names will have a default equivalence to their under_scored versions.</Abstract>
+			<Abstract type="html">When true, all Objective-C property names will have a default equivalence to their under_scored versions.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic) BOOL autoinflectsPropertyNames</Declaration>
@@ -167,7 +244,18 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setIgnoresClassPrefixes:</TokenIdentifier>
-			<Abstract>When converting class names to their Rails equivalents, prefixes will be omitted.</Abstract>
+			<Abstract type="html">When converting class names to their Rails equivalents, prefixes will be omitted.</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic) BOOL ignoresClassPrefixes</Declaration>
+			
+			
+			<Anchor>//api/name/ignoresClassPrefixes</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/ignoresClassPrefixes</TokenIdentifier>
+			<Abstract type="html">When converting class names to their Rails equivalents, prefixes will be omitted.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic) BOOL ignoresClassPrefixes</Declaration>
@@ -178,7 +266,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/ignoresClassPrefixes</TokenIdentifier>
-			<Abstract>When converting class names to their Rails equivalents, prefixes will be omitted.</Abstract>
+			<Abstract type="html">When converting class names to their Rails equivalents, prefixes will be omitted.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic) BOOL ignoresClassPrefixes</Declaration>
@@ -189,7 +277,18 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setAppUsername:</TokenIdentifier>
-			<Abstract>Username for basic HTTP authentication (if used by server.)</Abstract>
+			<Abstract type="html">Username for basic HTTP authentication (if used by server.)</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSString *appUsername</Declaration>
+			
+			
+			<Anchor>//api/name/appUsername</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/appUsername</TokenIdentifier>
+			<Abstract type="html">Username for basic HTTP authentication (if used by server.)</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSString *appUsername</Declaration>
@@ -200,7 +299,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/appUsername</TokenIdentifier>
-			<Abstract>Username for basic HTTP authentication (if used by server.)</Abstract>
+			<Abstract type="html">Username for basic HTTP authentication (if used by server.)</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSString *appUsername</Declaration>
@@ -211,7 +310,18 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setAppPassword:</TokenIdentifier>
-			<Abstract>Password for basic HTTP authentication (if used by server.)</Abstract>
+			<Abstract type="html">Password for basic HTTP authentication (if used by server.)</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSString *appPassword</Declaration>
+			
+			
+			<Anchor>//api/name/appPassword</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/appPassword</TokenIdentifier>
+			<Abstract type="html">Password for basic HTTP authentication (if used by server.)</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSString *appPassword</Declaration>
@@ -222,7 +332,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/appPassword</TokenIdentifier>
-			<Abstract>Password for basic HTTP authentication (if used by server.)</Abstract>
+			<Abstract type="html">Password for basic HTTP authentication (if used by server.)</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSString *appPassword</Declaration>
@@ -233,7 +343,18 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setAppOAuthToken:</TokenIdentifier>
-			<Abstract>Token for OAuth authentication (if used by server.)</Abstract>
+			<Abstract type="html">Token for OAuth authentication (if used by server.)</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSString *appOAuthToken</Declaration>
+			
+			
+			<Anchor>//api/name/appOAuthToken</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/appOAuthToken</TokenIdentifier>
+			<Abstract type="html">Token for OAuth authentication (if used by server.)</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSString *appOAuthToken</Declaration>
@@ -244,7 +365,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/appOAuthToken</TokenIdentifier>
-			<Abstract>Token for OAuth authentication (if used by server.)</Abstract>
+			<Abstract type="html">Token for OAuth authentication (if used by server.)</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSString *appOAuthToken</Declaration>
@@ -255,7 +376,18 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setAdditionalHTTPHeaders:</TokenIdentifier>
-			<Abstract>A dictionary of additional HTTP headers to send with each request that uses this configuration.</Abstract>
+			<Abstract type="html">A dictionary of additional HTTP headers to send with each request that uses this configuration.</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSDictionary *additionalHTTPHeaders</Declaration>
+			
+			
+			<Anchor>//api/name/additionalHTTPHeaders</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/additionalHTTPHeaders</TokenIdentifier>
+			<Abstract type="html">A dictionary of additional HTTP headers to send with each request that uses this configuration.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSDictionary *additionalHTTPHeaders</Declaration>
@@ -266,7 +398,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/additionalHTTPHeaders</TokenIdentifier>
-			<Abstract>A dictionary of additional HTTP headers to send with each request that uses this configuration.</Abstract>
+			<Abstract type="html">A dictionary of additional HTTP headers to send with each request that uses this configuration.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSDictionary *additionalHTTPHeaders</Declaration>
@@ -277,7 +409,18 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setUpdateMethod:</TokenIdentifier>
-			<Abstract>HTTP method used for updating objects.</Abstract>
+			<Abstract type="html">HTTP method used for updating objects.</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSString *updateMethod</Declaration>
+			
+			
+			<Anchor>//api/name/updateMethod</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/updateMethod</TokenIdentifier>
+			<Abstract type="html">HTTP method used for updating objects.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSString *updateMethod</Declaration>
@@ -288,7 +431,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/updateMethod</TokenIdentifier>
-			<Abstract>HTTP method used for updating objects.</Abstract>
+			<Abstract type="html">HTTP method used for updating objects.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSString *updateMethod</Declaration>
@@ -299,7 +442,18 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setDateFormat:</TokenIdentifier>
-			<Abstract>Date format used if a property of type NSDate is encountered, to encode and decode NSDate objects.</Abstract>
+			<Abstract type="html">Date format used if a property of type NSDate is encountered, to encode and decode NSDate objects.</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSString *dateFormat</Declaration>
+			
+			
+			<Anchor>//api/name/dateFormat</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/dateFormat</TokenIdentifier>
+			<Abstract type="html">Date format used if a property of type NSDate is encountered, to encode and decode NSDate objects.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSString *dateFormat</Declaration>
@@ -310,7 +464,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/dateFormat</TokenIdentifier>
-			<Abstract>Date format used if a property of type NSDate is encountered, to encode and decode NSDate objects.</Abstract>
+			<Abstract type="html">Date format used if a property of type NSDate is encountered, to encode and decode NSDate objects.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSString *dateFormat</Declaration>
@@ -321,7 +475,18 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/setManagedObjectContext:</TokenIdentifier>
-			<Abstract>Managed object context for CoreData support. (Required if CoreData is enabled)</Abstract>
+			<Abstract type="html">Managed object context for CoreData support. (Required if CoreData is enabled)</Abstract>
+			<DeclaredIn>NSRConfig.h</DeclaredIn>			
+			
+			<Declaration>@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext</Declaration>
+			
+			
+			<Anchor>//api/name/managedObjectContext</Anchor>
+		</Token>
+		
+		<Token>
+			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/managedObjectContext</TokenIdentifier>
+			<Abstract type="html">Managed object context for CoreData support. (Required if CoreData is enabled)</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext</Declaration>
@@ -332,7 +497,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instp/NSRConfig/managedObjectContext</TokenIdentifier>
-			<Abstract>Managed object context for CoreData support. (Required if CoreData is enabled)</Abstract>
+			<Abstract type="html">Managed object context for CoreData support. (Required if CoreData is enabled)</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext</Declaration>
@@ -343,14 +508,14 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/configureToRailsVersion:</TokenIdentifier>
-			<Abstract>Sets dateFormat and updateMethod to the standards for the given Rails version.</Abstract>
+			<Abstract type="html">Sets dateFormat and updateMethod to the standards for the given Rails version.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>- (void)configureToRailsVersion:(NSRRailsVersion)railsVersion</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>railsVersion</Name>
-					<Abstract>The version of Rails to configure to (NSRRailsVersion3 or NSRRailsVersion4).</Abstract>
+					<Abstract type="html">The version of Rails to configure to (NSRRailsVersion3 or NSRRailsVersion4).</Abstract>
 				</Parameter>
 			</Parameters>
 			
@@ -359,29 +524,29 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/clm/NSRConfig/defaultConfig</TokenIdentifier>
-			<Abstract>Returns the current default configuration.</Abstract>
+			<Abstract type="html">Returns the current default configuration.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>+ (instancetype)defaultConfig</Declaration>
 			
-			<ReturnValue><Abstract>The default configuration.</Abstract></ReturnValue>
+			<ReturnValue><Abstract type="html">The default configuration.</Abstract></ReturnValue>
 			<Anchor>//api/name/defaultConfig</Anchor>
 		</Token>
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/clm/NSRConfig/contextuallyRelevantConfig</TokenIdentifier>
-			<Abstract>Returns the contextually relevant configuration.</Abstract>
+			<Abstract type="html">Returns the contextually relevant configuration.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>+ (instancetype)contextuallyRelevantConfig</Declaration>
 			
-			<ReturnValue><Abstract>The contextually relevant configuration, or default configuration is no explicit context is set.</Abstract></ReturnValue>
+			<ReturnValue><Abstract type="html">The contextually relevant configuration, or default configuration is no explicit context is set.</Abstract></ReturnValue>
 			<Anchor>//api/name/contextuallyRelevantConfig</Anchor>
 		</Token>
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/use</TokenIdentifier>
-			<Abstract>Begins a context block of code to use the receiver as the default config.</Abstract>
+			<Abstract type="html">Begins a context block of code to use the receiver as the default config.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 	<RelatedTokens>
@@ -397,7 +562,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/end</TokenIdentifier>
-			<Abstract>Ends a context block of code to use the receiver as the default config.</Abstract>
+			<Abstract type="html">Ends a context block of code to use the receiver as the default config.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 	<RelatedTokens>
@@ -413,7 +578,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/useIn:</TokenIdentifier>
-			<Abstract>Executes a given block with the receiver as the default config in that block.</Abstract>
+			<Abstract type="html">Executes a given block with the receiver as the default config in that block.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 	<RelatedTokens>
@@ -426,7 +591,7 @@
 			<Parameters>
 				<Parameter>
 					<Name>block</Name>
-					<Abstract>Block to be executed with the default config context of receiver.</Abstract>
+					<Abstract type="html">Block to be executed with the default config context of receiver.</Abstract>
 				</Parameter>
 			</Parameters>
 			
@@ -435,7 +600,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/useAsDefault</TokenIdentifier>
-			<Abstract>Specifies for all NSRails actions to use the receiver.</Abstract>
+			<Abstract type="html">Specifies for all NSRails actions to use the receiver.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>- (void)useAsDefault</Declaration>
@@ -446,7 +611,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/stringFromDate:</TokenIdentifier>
-			<Abstract>Returns a string representation of a given date formatted using dateFormat.</Abstract>
+			<Abstract type="html">Returns a string representation of a given date formatted using dateFormat.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 	<RelatedTokens>
@@ -459,7 +624,7 @@
 			<Parameters>
 				<Parameter>
 					<Name>date</Name>
-					<Abstract>The date to format.</Abstract>
+					<Abstract type="html">The date to format.</Abstract>
 				</Parameter>
 			</Parameters>
 			
@@ -468,7 +633,7 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/dateFromString:</TokenIdentifier>
-			<Abstract>Returns a date representation of a given string interpreted using dateFormat.</Abstract>
+			<Abstract type="html">Returns a date representation of a given string interpreted using dateFormat.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 	<RelatedTokens>
@@ -481,7 +646,7 @@
 			<Parameters>
 				<Parameter>
 					<Name>string</Name>
-					<Abstract>The string to parse.</Abstract>
+					<Abstract type="html">The string to parse.</Abstract>
 				</Parameter>
 			</Parameters>
 			
@@ -490,14 +655,14 @@
 		
 		<Token>
 			<TokenIdentifier>//apple_ref/occ/instm/NSRConfig/initWithAppURL:</TokenIdentifier>
-			<Abstract>Initializes a new NSRConfig instance with an app URL.</Abstract>
+			<Abstract type="html">Initializes a new NSRConfig instance with an app URL.</Abstract>
 			<DeclaredIn>NSRConfig.h</DeclaredIn>			
 			
 			<Declaration>- (id)initWithAppURL:(NSString *)url</Declaration>
 			<Parameters>
 				<Parameter>
 					<Name>url</Name>
-					<Abstract>App URL to be set to the new instance.</Abstract>
+					<Abstract type="html">App URL to be set to the new instance.</Abstract>
 				</Parameter>
 			</Parameters>
 			

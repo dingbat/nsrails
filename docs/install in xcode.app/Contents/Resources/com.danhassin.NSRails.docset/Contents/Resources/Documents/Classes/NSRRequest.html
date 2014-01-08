@@ -7,7 +7,7 @@
 		<meta name="viewport" content="width=550" />
 		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
 		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
-		<meta name="generator" content="appledoc 2.1 (build 840)" />
+		<meta name="generator" content="appledoc 2.2 (build 961)" />
 	</head>
 	<body>
 		<header id="top_header">
@@ -535,9 +535,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>A dictionary of additional HTTP headers to send with the request.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSDictionary *additionalHTTPHeaders</code></div>
-	
+
+    
 	
 	
 	
@@ -569,9 +571,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Request body.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) id body</code></div>
-	
+
+    
 	
 	
 	
@@ -608,9 +612,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Config used to make the request.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSRConfig *config</code></div>
-	
+
+    
 	
 	
 	
@@ -651,9 +657,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>The HTTP verb with which to make the request.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>@property (nonatomic, readonly) NSString *httpMethod</code></div>
-	
+
+    
 	
 	
 	
@@ -690,9 +698,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>The query parameters with which to make the request.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSDictionary *queryParameters</code></div>
-	
+
+    
 	
 	
 	
@@ -734,9 +744,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>The path to be appended to config&rsquo;s <a href="NSRConfig.html#//api/name/appURL">appURL</a> (the base URL of your app).</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>@property (nonatomic, readonly) NSString *route</code></div>
-	
+
+    
 	
 	
 	
@@ -746,7 +758,7 @@ id response = [request sendSynchronous:&amp;e];
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>You cannot set this variable directly &ndash; use the <code>routeTo</code> methods below.</p>
+		<p>You cannot set this variable directly - use the <code>routeTo</code> methods below.</p>
 	</div>
 	
 	
@@ -781,9 +793,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"DELETE"</code>.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)DELETE</code></div>
-	
+
+    
 	
 	
 	
@@ -820,9 +834,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"GET"</code>.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)GET</code></div>
-	
+
+    
 	
 	
 	
@@ -859,9 +875,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"PATCH"</code>.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)PATCH</code></div>
-	
+
+    
 	
 	
 	
@@ -898,9 +916,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"POST"</code>.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)POST</code></div>
-	
+
+    
 	
 	
 	
@@ -937,9 +957,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"PUT"</code>.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)PUT</code></div>
-	
+
+    
 	
 	
 	
@@ -976,9 +998,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Creates and returns an NSRRequest object set to remotely create a given object.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)requestToCreateObject:(NSRRemoteObject *)<em>obj</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1038,9 +1062,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Creates and returns an NSRRequest object set to remotely destroy a given object.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)requestToDestroyObject:(NSRRemoteObject *)<em>obj</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1100,9 +1126,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Creates and returns an NSRRequest object set to fetch all objects of a given class.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)requestToFetchAllObjectsOfClass:(Class)<em>class</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1157,9 +1185,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Creates and returns an NSRRequest object set to fetch all objects of a given class given a parent object.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)requestToFetchAllObjectsOfClass:(Class)<em>class</em> viaObject:(NSRRemoteObject *)<em>obj</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1219,9 +1249,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Creates and returns an NSRRequest object set to fetch a given object&rsquo;s remote correspondance.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)requestToFetchObject:(NSRRemoteObject *)<em>obj</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1281,9 +1313,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Creates and returns an NSRRequest object set to fetch an object with a specified ID.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)requestToFetchObjectWithID:(NSNumber *)<em>remoteID</em> ofClass:(Class)<em>class</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1343,9 +1377,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Creates and returns an NSRRequest object set to remotely &ldquo;put&rdquo; (replace) a given object.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)requestToReplaceObject:(NSRRemoteObject *)<em>obj</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1405,9 +1441,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Creates and returns an NSRRequest object set to remotely update a given object.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)requestToUpdateObject:(NSRRemoteObject *)<em>obj</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1475,9 +1513,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Routes the request to the given string.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (NSRRequest *)routeTo:(NSString *)<em>route</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1519,9 +1559,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Routes the request to a given class&rsquo;s controller.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (NSRRequest *)routeToClass:(Class)<em>class</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1563,9 +1605,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Routes the request to a given class&rsquo;s controller.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (NSRRequest *)routeToClass:(Class)<em>class</em> withCustomMethod:(NSString *)<em>customMethod</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1612,9 +1656,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Routes the request to a given object.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (NSRRequest *)routeToObject:(NSRRemoteObject *)<em>object</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1656,9 +1702,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Routes the request to a given object.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (NSRRequest *)routeToObject:(NSRRemoteObject *)<em>object</em> withCustomMethod:(NSString *)<em>customMethod</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1710,9 +1758,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Sends the request asynchronously.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (void)sendAsynchronous:(NSRHTTPCompletionBlock)<em>completionBlock</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1759,9 +1809,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Sends the request synchronously.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (id)sendSynchronous:(NSError **)<em>error</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1813,9 +1865,11 @@ id response = [request sendSynchronous:&amp;e];
 		<p>Sets the body to a given object.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (void)setBodyToObject:(NSRRemoteObject *)<em>object</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1865,9 +1919,9 @@ id response = [request sendSynchronous:&amp;e];
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2013 Dan Hassin. All rights reserved. (Last updated: 2013-10-20)</span><br />
+						<p><span class="copyright">&copy; 2014 Dan Hassin. All rights reserved. (Last updated: 2014-01-08)</span><br />
 						
-						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 840)</a>.</span></p>
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2 (build 961)</a>.</span></p>
 						
 					</div>
 				</div>
@@ -1955,6 +2009,14 @@ id response = [request sendSynchronous:&amp;e];
 			}
 			
 			window.onload = init;
+			
+			// If showing in Xcode, hide the TOC and Header
+			if (navigator.userAgent.match(/xcode/i)) {
+				document.getElementById("contents").className = "hideInXcode"
+				document.getElementById("tocContainer").className = "hideInXcode"
+				document.getElementById("top_header").className = "hideInXcode"
+			}
+			
 		</script>
 	</body>
 </html>

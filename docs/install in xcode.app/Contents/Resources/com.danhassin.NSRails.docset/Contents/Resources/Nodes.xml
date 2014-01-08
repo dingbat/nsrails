@@ -5,6 +5,7 @@
             <Name>NSRails</Name>
             <Path>index.html</Path>
 			<Subnodes>
+                
 				
 				<Node type="folder">
 					<Name>Classes</Name>
@@ -24,19 +25,20 @@
         </Node>
     </TOC>
 	<Library>
-		<Node id="1">
+		
+		<Node id="1" type="file">
 			<Name>NSRConfig</Name>
 			<Path>Classes/NSRConfig.html</Path>
 		</Node>
-		<Node id="2">
+		<Node id="2" type="file">
 			<Name>NSRRemoteManagedObject</Name>
 			<Path>Classes/NSRRemoteManagedObject.html</Path>
 		</Node>
-		<Node id="3">
+		<Node id="3" type="file">
 			<Name>NSRRemoteObject</Name>
 			<Path>Classes/NSRRemoteObject.html</Path>
 		</Node>
-		<Node id="4">
+		<Node id="4" type="file">
 			<Name>NSRRequest</Name>
 			<Path>Classes/NSRRequest.html</Path>
 		</Node>
