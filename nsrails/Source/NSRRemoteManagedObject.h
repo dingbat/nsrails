@@ -35,12 +35,11 @@
  
  ### You can either:
  
- - Go into **`NSRails.h`** and uncomment this line:
+ - Add the following line to your Prefix.pch file:
  
         #define NSR_USE_COREDATA
  
- - OR, if you don't want to mess with NSRails source, you can also add **`NSR_USE_COREDATA`** to "Preprocessor Macros Not Used in Precompiled Headers" in your target's build settings:
- 
+ - Or you can add **`NSR_USE_COREDATA`** to "Preprocessor Macros Not Used in Precompiled Headers" in your target's build settings:
  
  <div style="text-align:center"><a href="../docs/img/cd-flag.png"><img src="../docs/img/cd-flag.png" width=380></img></a></div>
  

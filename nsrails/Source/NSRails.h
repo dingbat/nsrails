@@ -28,15 +28,6 @@
  
  */
 
-// CoreData
-// ============
-// #define NSR_USE_COREDATA
-
-// Uncomment the line above if you want to enable CoreData
-// You can also add NSR_USE_COREDATA to "Preprocessor Macros Not Used in Precompiled Headers" in your target's build settings
-//   See http://dingbat.github.com/nsrails/Classes/NSRRemoteManagedObject.html for more details
-
-
 // Logging
 // =============
 //					As undefined, NSRails will log nothing

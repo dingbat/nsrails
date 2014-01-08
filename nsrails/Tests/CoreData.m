@@ -97,6 +97,9 @@
 
 - (void) test_crud
 {
+    //test server is rails 3
+    [[NSRConfig defaultConfig] configureToRailsVersion:NSRRailsVersion3];
+    
 	NSError *e = nil;
 	[[[NSRRequest GET] routeTo:@"404.html"] sendSynchronous:&e];
 	NSRAssertNoServer([[e domain] isEqualToString:NSURLErrorDomain]);

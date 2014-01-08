@@ -266,7 +266,7 @@
 {
 	if (![self isKindOfClass:[NSManagedObject class]])
 	{
-		[NSException raise:NSRCoreDataException format:@"Trying to use NSRails with CoreData? Go in NSRails.h and uncomment `#define NSR_CORE_DATA`. You can also add NSR_USE_COREDATA to \"Preprocessor Macros Not Used in Precompiled Headers\" in your target's build settings. If you're in RubyMotion, change \":target => 'NSRails'\" to \":target => 'NSRailsCD'\" in your Rakefile."];
+		[NSException raise:NSRCoreDataException format:@"Trying to use NSRails with CoreData? Add `#define NSR_CORE_DATA` to your Prefix.pch file. You can also add NSR_USE_COREDATA to \"Preprocessor Macros Not Used in Precompiled Headers\" in your target's build settings. If you're in RubyMotion, change \":target => 'NSRails'\" to \":target => 'NSRailsCD'\" in your Rakefile."];
 	}
 	
 	NSManagedObjectContext *context = [[self class] getGlobalManagedObjectContextFromCmd:_cmd];
