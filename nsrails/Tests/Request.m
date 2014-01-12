@@ -572,6 +572,12 @@
     NSDictionary *dict = @{@"key":@"val"};
     NSError *dictError = [r errorForResponse:dict existingError:nil statusCode:422];
     STAssertTrue(dict == dictError.userInfo[NSRErrorResponseBodyKey], @"Error response value did not match the response JSON");
+    
+    /* Try a bogus hostname */
+    e = nil;
+    [[NSRConfig defaultConfig] setAppURL:@"http://ojeaoifjif"];
+    [[NSRRequest GET] sendSynchronous:&e];
+    STAssertNotNil(e, @"Should error with bogus hostname");
 }
 
 - (void) test_authentication

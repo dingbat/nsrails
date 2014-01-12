@@ -387,6 +387,9 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (id) jsonResponseFromData:(NSData *)data
 {
+    if (!data)
+        return nil;
+    
 	id jsonResponse = [NSJSONSerialization JSONObjectWithData:data
                                                       options:NSJSONReadingAllowFragments | NSJSONReadingMutableContainers
                                                         error:nil];
@@ -416,11 +419,12 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	
 	NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:existing.userInfo];
 	NSString *domain = existing.domain;
-	NSInteger code = statusCode;
+	NSInteger code = existing.code;
 	
 	// Add on some extra info in user info dict
 	userInfo[NSRRequestObjectKey] = self;
-	userInfo[NSRErrorResponseBodyKey] = jsonResponse;
+    if (jsonResponse)
+        userInfo[NSRErrorResponseBodyKey] = jsonResponse;
 
 	return [NSError errorWithDomain:domain code:code userInfo:userInfo];
 }
