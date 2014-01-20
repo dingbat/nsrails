@@ -327,7 +327,9 @@
 	STAssertNil(sendDict[@"eggs"], nil);
 	STAssertNil(sendDict[@"eggs_attributes"], nil);
 
-	[nn.eggs addObject:[[Egg alloc] init]];
+    Egg *egg = [[Egg alloc] init];
+    egg.remoteID = @999;
+	[nn.eggs addObject:egg];
 		
 	sendDict = [nn remoteDictionaryRepresentationWrapped:NO];
 	STAssertNil(sendDict[@"eggs"], nil);
@@ -342,7 +344,7 @@
 	STAssertNil(sendDict[@"eggs_attributes"], @"'array' key shouldn't exist if empty");
 	STAssertNil(sendDict[@"eggs"], @"'array' key shouldn't exist if empty");
 	
-	nn.eggs = [[NSMutableArray alloc] initWithObjects:[[Egg alloc] init], nil];
+	nn.eggs = [[NSMutableArray alloc] initWithObjects:egg, nil];
 	
 	sendDict = [nn remoteDictionaryRepresentationWrapped:NO];
 	STAssertTrue([[sendDict[@"eggs_attributes"] lastObject] isKindOfClass:[NSDictionary class]], @"'array' key should exist & be a dict (egg representation)");
@@ -359,6 +361,12 @@
 	STAssertTrue([nn.eggs isKindOfClass:[NSArray class]], @"plain.array should be set to array");
 	STAssertTrue(nn.eggs.count == 1, @"plain.array should have one element");
 	STAssertTrue([[nn.eggs lastObject] isKindOfClass:[Egg class]], @"plain.array should be filled w/Egg");
+    
+    //"wrap" an element of the has-many
+    inDict[@"eggs"] = @[@{@"egg":inDict[@"eggs"][0]}];
+	[nn setPropertiesUsingRemoteDictionary:inDict];
+	STAssertTrue(nn.eggs.count == 1, @"plain.array should have one element");
+	STAssertTrue(nn.eggs[0] == egg, @"should be the same egg");
 }
 
 /** Multiple belongs-to (array of ID's) **/

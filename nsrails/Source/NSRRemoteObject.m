@@ -289,6 +289,15 @@
                     
                     //see if there's a nester that matches this ID - we'd just have to update it w/this dict
                     NSNumber *railsID = railsElement[@"id"];
+                    
+                    //maybe the object is wrapped in a dict like {"post"=>{"something":"something"}}, so check to make sure
+                    if (!railsID)
+                    {
+                        NSDictionary *innerDict = railsElement[[nestedClass remoteModelName]];
+                        if ([railsElement count] == 1 && [innerDict isKindOfClass:[NSDictionary class]])
+                            railsID = innerDict[@"id"];
+                    }
+                        
                     id existing = nil;
                     
                     if (railsID)
