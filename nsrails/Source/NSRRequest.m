@@ -439,6 +439,13 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
     [self logOut:request];
 	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&appleError];
 	
+    if (!data) {
+        if (errorOut)
+            *errorOut = appleError;
+        
+        return nil;
+    }
+    
 	id jsonResponse = [self jsonResponseFromData:data];
 	NSError *error = [self errorForResponse:jsonResponse existingError:appleError statusCode:response.statusCode];
 	
@@ -496,13 +503,19 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 			 }
 		 }
 #endif
-		 id jsonResponse = [self jsonResponseFromData:data];
-		 NSError *error = [self errorForResponse:jsonResponse existingError:appleError statusCode:[(NSHTTPURLResponse *)response statusCode]];
-		 
-         [self logIn:jsonResponse error:error];
-         
-		 if (block)
-			 [self performCompletionBlock:^{ block( (error ? nil : jsonResponse), error); }];
+         if (!data) {
+             if (block)
+                 [self performCompletionBlock:^{ block( nil, appleError); }];
+                     
+         } else {
+             id jsonResponse = [self jsonResponseFromData:data];
+             NSError *error = [self errorForResponse:jsonResponse existingError:appleError statusCode:[(NSHTTPURLResponse *)response statusCode]];
+             
+             [self logIn:jsonResponse error:error];
+             
+             if (block)
+                 [self performCompletionBlock:^{ block( (error ? nil : jsonResponse), error); }];
+         }
 	 }];
 }
 
