@@ -26,8 +26,9 @@
 - (void) test_introspection
 {
 	NSArray *props = [[[SubClass alloc] init] remoteProperties];
-	
-	NSRAssertEqualArraysNoOrder(props, NSRArray(@"remoteID", @"superString", @"subDate", @"anything"));
+	NSArray *a = @[@"remoteID", @"superString", @"subDate", @"anything"];
+    
+	NSRAssertEqualArraysNoOrder(props, a);
 	
 	
 	STAssertNil([SubClass typeForProperty:@"unknown"], @"Introspection should not pick up non-existent properties");
@@ -50,7 +51,7 @@
 	STAssertEqualObjects([sendDict objectForKey:@"author"], @"hi", nil);
 	
 	NSDictionary *sendDictWrapped = [p remoteDictionaryRepresentationWrapped:YES];
-	NSRAssertEqualArraysNoOrder(sendDictWrapped.allKeys, NSRArray(@"post"));
+	NSRAssertEqualArraysNoOrder(sendDictWrapped.allKeys, @[@"post"]);
 	STAssertTrue([[sendDictWrapped objectForKey:@"post"] isKindOfClass:[NSDictionary class]], @"Should include itself as a key for no wrap, and object should be a dict");
 	STAssertEquals([[sendDictWrapped objectForKey:@"post"] count], [sendDict count], @"Inner dict should have same amount of keys as nowrap");
 	
@@ -82,11 +83,11 @@
 	
 	for (int i = 0; i < 2; i++)
 	{
-		NSDictionary *dict = NSRDictionary(@"dan",@"author", @"hi",@"content", NSRNumber(10),@"id");
+		NSDictionary *dict = @{@"author":@"dan", @"content":@"hi", @"id":@10};
 		
 		//should be identical with wrapped dict
 		if (i == 1)
-			dict = [[NSDictionary alloc] initWithObjectsAndKeys:dict, @"post", nil];
+			dict = @{@"post":dict};
 		
 		p.author = nil; p.content = nil; p.remoteID = nil;
 		
@@ -95,7 +96,7 @@
 			[p setPropertiesUsingRemoteDictionary:dict];
 			STAssertEqualObjects(p.author, @"dan", nil);
 			STAssertEqualObjects(p.content, @"hi", nil);
-			STAssertEqualObjects(p.remoteID, NSRNumber(10), nil);
+			STAssertEqualObjects(p.remoteID, @(10), nil);
 			
 			if (i == 0)
 				p.author = @"CHANGE";
@@ -108,7 +109,7 @@
 
 	/** Dates **/
 	
-	NSDictionary *dict = NSRDictionary([MockServer datetime],@"updated_at");
+	NSDictionary *dict = @{@"updated_at":[MockServer datetime]};
 
 	[p setPropertiesUsingRemoteDictionary:dict];
 	STAssertEqualObjects(p.author, @"dan", nil);
@@ -124,8 +125,8 @@
 	
 	Tester *t = [[Tester alloc] init];
 	
-	NSArray *array = NSRArray(@"hello", NSRNumber(15), NSRDictionary(@"hi",@"there"), NSRArray(@"hop"));
-	dict = NSRDictionary(array,@"array");
+	NSArray *array = @[@"hello", @15, @{@"there":@"hi"}, @[@"hop"]];
+	dict = @{@"array":array};
 	
 	[t setPropertiesUsingRemoteDictionary:dict];
 	STAssertEqualObjects(t.array, array, nil);
@@ -133,16 +134,16 @@
 	[t setPropertiesUsingRemoteDictionary:dict];
 	STAssertEqualObjects(t.array, array, nil);
 
-	array = NSRArray(@"hello", @"CHANGE", NSRDictionary(@"hi",@"there"), NSRArray(@"hop"));
-	dict = NSRDictionary(array,@"array");
+	array = @[@"hello", @"CHANGE", @{@"there":@"hi"}, @[@"hop"]];
+	dict = @{@"array":array};
 
 	[t setPropertiesUsingRemoteDictionary:dict];
 	STAssertEqualObjects(t.array, array, nil);
 
 	/** Dicts **/
 	
-	NSDictionary *dictionary = NSRDictionary(NSRNumber(34), @"key", NSRArray(array), @"array", @"xx", @"string");
-	dict = NSRDictionary(dictionary,@"dictionary");
+	NSDictionary *dictionary = @{@"key":@34, @"array":@[array], @"string":@"xx"};
+	dict = @{@"dictionary":dictionary};
 	
 	[t setPropertiesUsingRemoteDictionary:dict];
 	STAssertEqualObjects(t.dictionary, dictionary, nil);
@@ -151,7 +152,7 @@
 	STAssertEqualObjects(t.dictionary, dictionary, nil);
 	
 	[t setPropertiesUsingRemoteDictionary:dict];
-	dict = NSRDictionary(dictionary,@"dictionary");
+	dict = @{@"dictionary":dictionary};
 
 	[t setPropertiesUsingRemoteDictionary:dict];
 	STAssertEqualObjects(t.dictionary, dictionary, nil);
@@ -160,10 +161,10 @@
 		
 	STAssertNoThrow([t setPropertiesUsingRemoteDictionary:nil], @"Shouldn't blow up on setting to nil dictionary");
 	
-	[t setPropertiesUsingRemoteDictionary:NSRDictionary([NSNull null], @"tester")];
+	[t setPropertiesUsingRemoteDictionary:@{@"tester":[NSNull null]}];
 	STAssertNil(t.tester, @"tester should be nil after setting from JSON");
 	
-	[t setPropertiesUsingRemoteDictionary:NSRDictionary(NSRDictionary([NSNull null], @"tester"), @"tester")];
+	[t setPropertiesUsingRemoteDictionary:@{@"tester":@{@"tester":[NSNull null]}}];
 	STAssertNil(t.tester, @"tester should be nil after setting from JSON");
 	
 	t.tester = (id)[[NSScanner alloc] init];
@@ -191,7 +192,7 @@
 
 - (void) test_index_json_into_array
 {
-	id remoteJSON = NSRMArray(NSRDictionary(@"dan",@"author"), NSRDictionary(@"michael",@"author"));
+	id remoteJSON = @[@{@"author":@"dan"}, @{@"author":@"michael"}];
 	NSArray *array = [Post objectsWithRemoteDictionaries:remoteJSON];
 	
 	STAssertNotNil(array, nil);
@@ -202,7 +203,7 @@
 
 - (void) test_index_json_into_array_with_root
 {
-	id remoteJSON = NSRDictionary(NSRMArray(NSRDictionary(@"dan",@"author"), NSRDictionary(@"michael",@"author")), @"posts");
+	id remoteJSON = @{@"posts":@[@{@"author":@"dan"}, @{@"author":@"michael"}]};
 	NSArray *array = [Post objectsWithRemoteDictionaries:remoteJSON];
 	
 	STAssertNotNil(array, nil);
@@ -225,7 +226,8 @@
 	STAssertTrue([p.dateOverrideRet isEqualToDate:[p customDate]], @"Should've used custom decode");
 	STAssertNil(p.codeToNil, @"Should've decoded codeToNil into nil");
 	STAssertEqualObjects([p.locallyURL description], @"http://nsrails.com", @"Should've decoded into URL & retain content");
-	STAssertEqualObjects(p.csvArray, NSRArray(@"one", @"two", @"three"), @"Should've decoded into an array & retain content");
+    NSArray *a = @[@"one", @"two", @"three"];
+	STAssertEqualObjects(p.csvArray, a, @"Should've decoded into an array & retain content");
 	STAssertEqualObjects(p.locallyLowercase, @"lowercase?", @"Should've decoded into lowercase");
 	STAssertEqualObjects(p.remotelyUppercase, @"upper", @"Should've kept the same");
 	STAssertEqualObjects(p.componentWithFlippingName.componentName, @"comp lowercase?", @"Should've decoded comp name into lowercase");
@@ -405,12 +407,12 @@
 	STAssertNil([sendDict objectForKey:@"bird"], nil);
 	STAssertTrue([[sendDict objectForKey:@"bird_id"] isKindOfClass:[NSNull class]], nil);
 	
-	nn.bird.remoteID = NSRNumber(15);
+	nn.bird.remoteID = @(15);
 	
 	sendDict = [nn remoteDictionaryRepresentationWrapped:NO];
 
 	STAssertNil([sendDict objectForKey:@"bird"], nil);
-	STAssertEqualObjects([sendDict objectForKey:@"bird_id"], NSRNumber(15), nil);
+	STAssertEqualObjects([sendDict objectForKey:@"bird_id"], @(15), nil);
 }
 
 /** Has-one **/
@@ -431,12 +433,12 @@
 	STAssertNil([sendDict objectForKey:@"nest"], nil);
 	STAssertTrue([[sendDict objectForKey:@"nest_attributes"] isKindOfClass:[NSDictionary class]], nil);
 	
-	nn.nest.remoteID = NSRNumber(20);
+	nn.nest.remoteID = @(20);
 	
 	sendDict = [nn remoteDictionaryRepresentationWrapped:NO];
 	
 	STAssertNil([sendDict objectForKey:@"nest"], nil);
-	STAssertEqualObjects([[sendDict objectForKey:@"nest_attributes"] objectForKey:@"id"], NSRNumber(20), nil);
+	STAssertEqualObjects([[sendDict objectForKey:@"nest_attributes"] objectForKey:@"id"], @(20), nil);
 }
 
 - (void) test_nesting_dictionaries
@@ -606,13 +608,13 @@
 {
 	Bird *b = [[Bird alloc] init];
 	b.eggs = [[NSMutableArray alloc] init];
-	b.remoteID = NSRNumber(1);
+	b.remoteID = @(1);
 	
 	Egg *e = [[Egg alloc] init];
 	e.bird = b;
 	[b.eggs addObject:e];
 
-	NSDictionary *updateDict = NSRDictionary(NSRNumber(2), @"remoteID",NSRDictionary(NSRNumber(1), @"remoteID", @"tweety", @"name"),@"bird");
+	NSDictionary *updateDict = @{@"remoteID":@2,@"bird":@{@"remoteID":@1, @"name":@"tweety"}};
 	[e setPropertiesUsingRemoteDictionary:updateDict];
 	
 	STAssertEqualObjects(b.name, @"tweety", nil);

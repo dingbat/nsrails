@@ -165,7 +165,7 @@
 	STAssertEqualObjects(request.route, @"parents/action", nil);
 	
 	//object (id)
-	NSDictionary *idDict = NSRDictionary(NSRNumber(1), @"id");
+	NSDictionary *idDict = @{@"id":@1};
 	
 	[request routeToObject:[NestParent objectWithRemoteDictionary:idDict]];	
 	STAssertEqualObjects(request.route, @"parents/1", nil);
@@ -216,14 +216,14 @@
 	pref.parent = [[NestParent alloc] init];
 	STAssertThrows([request routeToObject:pref], @"Should throw exception bc association's rID is nil");
 	
-	pref.parent.remoteID = NSRNumber(1);
+	pref.parent.remoteID = @1;
 	[request routeToObject:pref];
 	STAssertEqualObjects(request.route, @"parents/1/prefs", nil);
 	
 	[request routeToObject:pref withCustomMethod:@"action"];
 	STAssertEqualObjects(request.route, @"parents/1/prefs/action", nil);
 	
-	pref.remoteID = NSRNumber(5);
+	pref.remoteID = @5;
 	[request routeToObject:pref];
 	STAssertEqualObjects(request.route, @"parents/1/prefs/5", nil);
 	
@@ -344,7 +344,7 @@
 	STAssertEqualObjects(create.httpMethod, @"POST", nil);
 	STAssertEqualObjects(create.body, [norm remoteDictionaryRepresentationWrapped:YES], nil);
 	
-	norm.remoteID = NSRNumber(5);
+	norm.remoteID = @5;
 	
 	create = [NSRRequest requestToCreateObject:norm];
 	STAssertEqualObjects(create.route, @"parents", @"Should ignore ID in route");
@@ -354,7 +354,7 @@
 	norm.remoteID = nil;
 	STAssertThrows([NSRRequest requestToFetchObject:norm], @"Should throw nil rID");
 	
-	norm.remoteID = NSRNumber(5);
+	norm.remoteID = @5;
 	NSRRequest *fetch = [NSRRequest requestToFetchObject:norm];
 	STAssertEqualObjects(fetch.route, @"parents/5", nil);
 	STAssertEqualObjects(fetch.httpMethod, @"GET", nil);
@@ -366,7 +366,7 @@
 	STAssertThrows([NSRRequest requestToUpdateObject:norm], @"Should throw nil rID");
 	
     [[NSRConfig defaultConfig] configureToRailsVersion:NSRRailsVersion3];
-	norm.remoteID = NSRNumber(5);
+	norm.remoteID = @5;
 	NSRRequest *update = [NSRRequest requestToUpdateObject:norm];
 	STAssertEqualObjects(update.route, @"parents/5", nil);
 	STAssertEqualObjects(update.httpMethod, @"PUT", nil);
@@ -385,7 +385,7 @@
 	norm.remoteID = nil;
 	STAssertThrows([NSRRequest requestToDestroyObject:norm], @"Should throw nil rID");
 	
-	norm.remoteID = NSRNumber(5);
+	norm.remoteID = @5;
 	NSRRequest *delete = [NSRRequest requestToDestroyObject:norm];
 	STAssertEqualObjects(delete.route, @"parents/5", nil);
 	STAssertEqualObjects(delete.httpMethod, @"DELETE", nil);
@@ -396,7 +396,7 @@
 	norm.remoteID = nil;
 	STAssertThrows([NSRRequest requestToReplaceObject:norm], @"Should throw nil rID");
 	
-	norm.remoteID = NSRNumber(5);
+	norm.remoteID = @5;
 	NSRRequest *replace = [NSRRequest requestToReplaceObject:norm];
 	STAssertEqualObjects(replace.route, @"parents/5", nil);
 	STAssertEqualObjects(replace.httpMethod, @"PUT", nil);
@@ -406,7 +406,7 @@
 	
 	STAssertThrows([NSRRequest requestToFetchObjectWithID:nil ofClass:[NestParent class]], @"Should throw nil rID");
 	
-	NSRRequest *findOne = [NSRRequest requestToFetchObjectWithID:NSRNumber(1) ofClass:[NestParent class]];
+	NSRRequest *findOne = [NSRRequest requestToFetchObjectWithID:@1 ofClass:[NestParent class]];
 	STAssertEqualObjects(findOne.route, @"parents/1", nil);
 	STAssertEqualObjects(findOne.httpMethod, @"GET", nil);
 	STAssertNil(findOne.body, nil);
@@ -429,7 +429,7 @@
 	
 	/* FIND ALL VIA OBJECT */
 	
-	norm.remoteID = NSRNumber(5);
+	norm.remoteID = @5;
 	
 	NSRRequest *findAllObj = [NSRRequest requestToFetchAllObjectsOfClass:[NestChildPrefixed class] viaObject:norm];
 	STAssertEqualObjects(findAllObj.route, @"parents/5/prefs", nil);
@@ -672,7 +672,7 @@
 - (void) test_additional_config_headers
 {
 	[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
-	[[NSRConfig defaultConfig] setAdditionalHTTPHeaders:NSRDictionary(@"hi", @"test")];
+	[[NSRConfig defaultConfig] setAdditionalHTTPHeaders:@{@"test":@"hi"}];
 	
 	NSRRequest *req = [NSRRequest GET];
     NSURLRequest *request = [req HTTPRequest];

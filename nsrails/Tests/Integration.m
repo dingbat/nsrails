@@ -51,7 +51,7 @@ static BOOL noServer = NO;
 	//TEST READ BY ID
 	
 	//try to retrieve ID = -1, obviously error
-	[Post remoteObjectWithID:NSRNumber(-1) async:^(id post, NSError *error) {
+	[Post remoteObjectWithID:@-1 async:^(id post, NSError *error) {
 		STAssertNotNil(error, @"ASYNC Obviously no one with ID -1, where's the error?");
 		STAssertNil(post, @"ASYNC There was an error on remoteObjectWithID, post should be nil.");
 	}];
@@ -163,7 +163,7 @@ static BOOL noServer = NO;
 	//TEST READ BY ID
 	
 	//try to retrieve ID = -1, obviously error
-	Post *post = [Post remoteObjectWithID:NSRNumber(-1) error:&e];
+	Post *post = [Post remoteObjectWithID:@(-1) error:&e];
 	
 	STAssertNotNil(e, @"Obviously no one with ID -1, where's the error?");
 	STAssertNil(post, @"There was an error on remoteObjectWithID, post should be nil.");
@@ -711,8 +711,8 @@ static BOOL noServer = NO;
 	STAssertNotNil(a, @"should still have 0 elements after empty array");
     STAssertTrue(a.count == 0, @"should still have 0 elements after empty array");
 
-	[array addObject:NSRDictionary(NSRNumber(5),@"id",@"hi",@"author")];
-	[array addObject:NSRDictionary(NSRNumber(6),@"id",@"hi",@"3f2f3f")];
+	[array addObject:@{@"id":@5,@"author":@"hi"}];
+	[array addObject:@{@"id":@6,@"3f2f3f":@"hi"}];
 	
 	for (int i = 0; i < 2; i++)
 	{
@@ -721,11 +721,11 @@ static BOOL noServer = NO;
 		STAssertTrue(a.count == 2, @"should still have X elements after translation");
 		
 		STAssertTrue([[a objectAtIndex:0] isKindOfClass:[Post class]], @"should be Post after translation");
-		STAssertEqualObjects([[a objectAtIndex:0] remoteID],NSRNumber(5), @"should have appropriate remoteID");
+		STAssertEqualObjects([[a objectAtIndex:0] remoteID],@(5), @"should have appropriate remoteID");
 		STAssertEqualObjects([[a objectAtIndex:0] author],@"hi", @"should have appropriate property1");
 		
 		STAssertTrue([[a objectAtIndex:1] isKindOfClass:[Post class]], @"should be Post after translation");
-		STAssertEqualObjects([[a objectAtIndex:1] remoteID],NSRNumber(6), @"should have appropriate remoteID");
+		STAssertEqualObjects([[a objectAtIndex:1] remoteID],@(6), @"should have appropriate remoteID");
 		STAssertNil([[a objectAtIndex:1] author],@"should have appropriate property1");
 		
 		[array addObject:@"str"];
