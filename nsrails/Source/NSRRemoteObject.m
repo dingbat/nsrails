@@ -257,6 +257,11 @@
 	return [NSMutableArray class];
 }
 
+- (BOOL) shouldReplaceCollectionForProperty:(NSString *)property
+{
+    return YES;
+}
+
 - (void) decodeRemoteValue:(id)railsObject forRemoteKey:(NSString *)remoteKey
 {
 	NSString *property = [self propertyForRemoteKey:remoteKey];
@@ -283,6 +288,11 @@
                                     [previousVal array] :
                                     previousVal);
                 
+                if (![self shouldReplaceCollectionForProperty:property])
+                {
+                    [decodedObj addObjectsFromArray:previousArray];
+                }
+                
                 for (id railsElement in railsObject)
                 {
                     id decodedElement;
@@ -297,7 +307,7 @@
                         if ([railsElement count] == 1 && [innerDict isKindOfClass:[NSDictionary class]])
                             railsID = innerDict[@"id"];
                     }
-                        
+                    
                     id existing = nil;
                     
                     if (railsID)
@@ -315,7 +325,8 @@
                         [decodedElement setPropertiesUsingRemoteDictionary:railsElement];
                     }
                     
-                    [decodedObj addObject:decodedElement];
+                    if (!existing || [self shouldReplaceCollectionForProperty:property])
+                        [decodedObj addObject:decodedElement];
                 }
             }
             else

@@ -369,6 +369,34 @@
 	STAssertTrue(nn.eggs[0] == egg, @"should be the same egg");
 }
 
+- (void) test_nondestructive_hasmany
+{
+    Bird *bird = [[Bird alloc] init];
+    
+    Egg *e1 = [[Egg alloc] init];
+    e1.remoteID = @1;
+    Egg *e2 = [[Egg alloc] init];
+    e2.remoteID = @2;
+    
+    bird.eggs = [NSMutableArray arrayWithArray:@[e1,e2]];
+    
+    NSDictionary *railsDict = @{@"eggs":@[@{@"id":@3}]};
+    [bird setPropertiesUsingRemoteDictionary:railsDict];
+    STAssertTrue(bird.eggs.count == 1, @"Should be destructive");
+    STAssertTrue([bird.eggs[0] remoteID].intValue == 3, @"Should be the third egg");
+    
+    bird.nondestructiveEggs = YES;
+    
+    railsDict = @{@"eggs":@[@{@"id":@4}]};
+    [bird setPropertiesUsingRemoteDictionary:railsDict];
+    STAssertTrue(bird.eggs.count == 2, @"Should be additive");
+    STAssertTrue([[bird.eggs lastObject] remoteID].intValue == 4, @"Should be the fourth egg");
+    
+    [bird setPropertiesUsingRemoteDictionary:railsDict];
+    STAssertTrue(bird.eggs.count == 2, @"Should be additive, but unique");
+    STAssertTrue([[bird.eggs lastObject] remoteID].intValue == 4, @"Should be the fourth egg");
+}
+
 /** Multiple belongs-to (array of ID's) **/
 
 - (void) test_array_ids_only

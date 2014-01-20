@@ -65,7 +65,7 @@
 @end
 
 @interface Bird : NSRRemoteObject
-@property (nonatomic) BOOL nestEggs;
+@property (nonatomic) BOOL nestEggs, nondestructiveEggs;
 @property (nonatomic, strong) NSMutableArray *eggs;
 @property (nonatomic, strong) NSString *name;
 @end

@@ -157,7 +157,7 @@
 @end
 
 @implementation Bird
-@synthesize eggs, nestEggs, name;
+@synthesize eggs, nestEggs, name, nondestructiveEggs;
 
 - (Class) nestedClassForProperty:(NSString *)property
 {
@@ -171,6 +171,11 @@
 	if ([property isEqualToString:@"eggs"] && nested && nestEggs)
 		return YES;
 	return [super shouldSendProperty:property whenNested:nested];
+}
+
+- (BOOL) shouldReplaceCollectionForProperty:(NSString *)property
+{
+    return !nondestructiveEggs;
 }
 
 @end

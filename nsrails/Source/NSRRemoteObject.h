@@ -718,6 +718,16 @@
 - (NSString *) propertyForRemoteKey:(NSString *)remoteKey;
 
 /**
+ Whether or not to fully replace a collection for a given property, as opposed to simply adding to it.
+ 
+ Will only be called for collection properties.
+ 
+ @param property The name of the collection property.
+ @return Whether or not to fully replace a collection for a given property, as opposed to simply adding to it.
+ */
+- (BOOL) shouldReplaceCollectionForProperty:(NSString *)property;
+
+/**
  Should return a configuration for this class and its members.
  
  The default behavior is to return <NSRConfig's> `contextuallyRelevantConfig`.
