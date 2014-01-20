@@ -66,7 +66,7 @@ static BOOL noServer = NO;
 	[failedPost remoteCreateAsync:^(NSError *e) {
 		STAssertNotNil(e, @"ASYNC Post should have failed validation b/c no content... where is error?");
 		STAssertNotNil(failedPost, @"ASYNC Post did fail but object should not be nil.");
-		STAssertNotNil([[e userInfo] objectForKey:NSRErrorResponseBodyKey], @"ASYNC There was an error by validation, so validation error dictionary should be present.");
+		STAssertNotNil([e userInfo][NSRErrorResponseBodyKey], @"ASYNC There was an error by validation, so validation error dictionary should be present.");
 	}];
 	
 	//this should go through
@@ -106,7 +106,7 @@ static BOOL noServer = NO;
 				newPost.author = nil;
 				[newPost remoteUpdateAsync:^(NSError *e4) {
 					STAssertNotNil(e4, @"ASYNC New post should've failed, there should be an error.");
-					STAssertNotNil([[e4 userInfo] objectForKey:NSRErrorResponseBodyKey], @"ASYNC There was an error by validation, so validation error dictionary should be present.");
+					STAssertNotNil([e4 userInfo][NSRErrorResponseBodyKey], @"ASYNC There was an error by validation, so validation error dictionary should be present.");
 					STAssertNil(newPost.author, @"ASYNC New author failed validation (unchanged) but it should still be nil locally.");
 					
 					///////////////////////
@@ -181,7 +181,7 @@ static BOOL noServer = NO;
 	
 	STAssertNotNil(e, @"Post should have failed validation b/c no content... where is error?");
 	STAssertNotNil(failedPost, @"Post did fail but object should not be nil.");
-	STAssertNotNil([[e userInfo] objectForKey:NSRErrorResponseBodyKey], @"There was an error by validation, so validation error dictionary should be present.");
+	STAssertNotNil([e userInfo][NSRErrorResponseBodyKey], @"There was an error by validation, so validation error dictionary should be present.");
 	
 	e = nil;
 	
@@ -194,7 +194,7 @@ static BOOL noServer = NO;
 	STAssertNil(e, @"New post should've been created fine, there should be no error.");
 	STAssertNotNil(newPost.remoteID, @"New post was just created, remoteID shouldn't be nil.");
 	STAssertNotNil(newPost.remoteAttributes, @"New post was just created, remoteAttributes shouldn't be nil.");
-	STAssertNotNil([newPost.remoteAttributes objectForKey:@"updated_at"], @"Remote attributes should have updated_at, even though not declared in class.");
+	STAssertNotNil((newPost.remoteAttributes)[@"updated_at"], @"Remote attributes should have updated_at, even though not declared in class.");
 	
 	NSNumber *oldID = newPost.remoteID;
 	
@@ -254,7 +254,7 @@ static BOOL noServer = NO;
 			STAssertFalse([newPost remoteUpdate:&e],@"");
 		
 		STAssertNotNil(e, @"New post should've failed, there should be an error.");
-		STAssertNotNil([[e userInfo] objectForKey:NSRErrorResponseBodyKey], @"There was an error by validation, so validation error dictionary should be present.");
+		STAssertNotNil([e userInfo][NSRErrorResponseBodyKey], @"There was an error by validation, so validation error dictionary should be present.");
 		STAssertNil(newPost.author, @"New author failed validation (unchanged) but it should still be nil locally.");
 		
 		e = nil;
@@ -339,7 +339,7 @@ static BOOL noServer = NO;
 	
 	STAssertNil(e, @"Should be no error getting a post (e=%@)",e);
 	STAssertTrue([post isKindOfClass:[NSDictionary class]], @"Response should be a dictionary");
-	STAssertNotNil([post objectForKey:@"created_at"], @"Should be have created_at, etc");
+	STAssertNotNil(post[@"created_at"], @"Should be have created_at, etc");
 	
 	e = nil;
 	
@@ -476,8 +476,8 @@ static BOOL noServer = NO;
 	
 	
 	STAssertTrue(array.count > 0, @"Should be have at least one post (just made one)");
-	STAssertTrue([[array objectAtIndex:0] isKindOfClass:[Post class]], @"Object should be Post instance");
-	STAssertEqualObjects(p.remoteID, [[array objectAtIndex:0] remoteID], @"Object should have same ID");
+	STAssertTrue([array[0] isKindOfClass:[Post class]], @"Object should be Post instance");
+	STAssertEqualObjects(p.remoteID, [array[0] remoteID], @"Object should have same ID");
 	
 	e = nil;
 	
@@ -520,7 +520,7 @@ static BOOL noServer = NO;
 	
 	STAssertFalse([post remoteUpdate:&e],@"");
 	
-	STAssertNotNil([[e userInfo] objectForKey:NSRErrorResponseBodyKey], @"Should've been a validation error in sending reponse without content/author.");
+	STAssertNotNil([e userInfo][NSRErrorResponseBodyKey], @"Should've been a validation error in sending reponse without content/author.");
 	STAssertTrue(post.responses.count == 1, @"Local array should still have response even though wasn't created properly.");
 	STAssertNotNil(response, @"Validation failed on nested create but local object should still be there (external)");
 	
@@ -650,7 +650,7 @@ static BOOL noServer = NO;
 	STAssertTrue([dictionariesPost remoteFetch:&e],@"e=%@",e);
 	STAssertNil(e, @"There should've been no errors on the retrieve, even if no nested model defined.");
 	STAssertEquals(dictionariesPost.responses.count, post.responses.count, @"Should still come back with same number of dicts as responses (1)");
-	STAssertTrue([[dictionariesPost.responses objectAtIndex:0] isKindOfClass:[NSDictionary class]], @"Should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([[dictionariesPost.responses objectAtIndex:0] class]));
+	STAssertTrue([(dictionariesPost.responses)[0] isKindOfClass:[NSDictionary class]], @"Should've filled it with NSDictionaries. Got %@ instead",NSStringFromClass([dictionariesPost.responses[0] class]));
 	
 	e = nil;
 	
@@ -660,7 +660,7 @@ static BOOL noServer = NO;
 	e = nil;
 	
 	//now, let's manually add it from the dictionary and destroy
-	testResponse.remoteID = [[dictionariesPost.responses objectAtIndex:0] objectForKey:@"id"];
+	testResponse.remoteID = (dictionariesPost.responses)[0][@"id"];
 	STAssertTrue([testResponse remoteDestroy:&e],@"");	
 	STAssertNil(e, @"testResponse object should've been destroyed fine after manually setting ID from dictionary (nothing to do with nesting, just cleaning up)");
 }
@@ -720,13 +720,13 @@ static BOOL noServer = NO;
 		
 		STAssertTrue(a.count == 2, @"should still have X elements after translation");
 		
-		STAssertTrue([[a objectAtIndex:0] isKindOfClass:[Post class]], @"should be Post after translation");
-		STAssertEqualObjects([[a objectAtIndex:0] remoteID],@(5), @"should have appropriate remoteID");
-		STAssertEqualObjects([[a objectAtIndex:0] author],@"hi", @"should have appropriate property1");
+		STAssertTrue([a[0] isKindOfClass:[Post class]], @"should be Post after translation");
+		STAssertEqualObjects([a[0] remoteID],@(5), @"should have appropriate remoteID");
+		STAssertEqualObjects([a[0] author],@"hi", @"should have appropriate property1");
 		
-		STAssertTrue([[a objectAtIndex:1] isKindOfClass:[Post class]], @"should be Post after translation");
-		STAssertEqualObjects([[a objectAtIndex:1] remoteID],@(6), @"should have appropriate remoteID");
-		STAssertNil([[a objectAtIndex:1] author],@"should have appropriate property1");
+		STAssertTrue([a[1] isKindOfClass:[Post class]], @"should be Post after translation");
+		STAssertEqualObjects([a[1] remoteID],@(6), @"should have appropriate remoteID");
+		STAssertNil([a[1] author],@"should have appropriate property1");
 		
 		[array addObject:@"str"];
 	}

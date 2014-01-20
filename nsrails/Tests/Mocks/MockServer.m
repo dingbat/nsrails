@@ -75,17 +75,17 @@
 
 + (NSArray *) statusCodes
 {
-	return [NSArray arrayWithObjects:[NSNumber numberWithInt:404], [NSNumber numberWithInt:404], [NSNumber numberWithInt:500], [NSNumber numberWithInt:422], nil];
+	return @[@404, @404, @500, @422];
 }
 
 + (NSArray *) fullErrors
 {
-	return [NSArray arrayWithObjects:[self full404Error], [self full404Error2], [self full500Error], @"Unprocessable Entity", nil];
+	return @[[self full404Error], [self full404Error2], [self full500Error], @"Unprocessable Entity"];
 }
 
 + (NSArray *) shortErrors
 {	
-	return [NSArray arrayWithObjects:[self short404Error], [self short404Error2], [self short500Error], @"Unprocessable Entity", nil];
+	return @[[self short404Error], [self short404Error2], [self short500Error], @"Unprocessable Entity"];
 }
 
 

@@ -97,7 +97,7 @@
 	STAssertEqualObjects([request HTTPMethod], @"GET", nil);
 	STAssertNil([request HTTPBody], nil);
 
-	req.body = [NSArray array];
+	req.body = @[];
 	request = [req HTTPRequest];
 	STAssertEqualObjects([request HTTPBody], [@"[]" dataUsingEncoding:NSUTF8StringEncoding], nil);
 
@@ -251,7 +251,7 @@
 	[request routeToObject:smth2 withCustomMethod:@"action"];
 	STAssertEqualObjects(request.route, @"pref2s/action", nil);
 	
-	smth2.remoteID = [NSNumber numberWithInt:15];
+	smth2.remoteID = @15;
 	
 	for (int i = 0; i < 2; i++)
 	{
@@ -281,7 +281,7 @@
 		[request routeToObject:smth2 withCustomMethod:@"action"];
 		STAssertEqualObjects(request.route, @"pref2s/action", nil);
 		
-		smth2.remoteID = [NSNumber numberWithInt:1];
+		smth2.remoteID = @1;
 		
 		[request routeToObject:smth2];
 		STAssertEqualObjects(request.route, @"pref2s/1", nil);
@@ -292,7 +292,7 @@
 		smth2.childParent = [[NestChildPrefixed alloc] init];
 		STAssertThrowsSpecificNamed([request routeToObject:smth2], NSException, NSRNullRemoteIDException, @"Should still crash, because 'thePrefixer' relation has a nil remoteID");
 		
-		smth2.childParent.remoteID = [NSNumber numberWithInt:15];
+		smth2.childParent.remoteID = @15;
 		
 		[request routeToObject:smth2];
 		STAssertEqualObjects(request.route, @"prefs/15/pref2s/1", nil);
@@ -303,7 +303,7 @@
 		smth2.childParent.parent = [[NestParent alloc] init];
 		STAssertThrowsSpecificNamed([request routeToObject:smth2], NSException, NSRNullRemoteIDException, @"Should STILL crash, because 'thePrefixer' relation's 'custom' has a nil remoteID");
 		
-		smth2.childParent.parent.remoteID = [NSNumber numberWithInt:23];
+		smth2.childParent.parent.remoteID = @23;
 		
 		[request routeToObject:smth2];
 		STAssertEqualObjects(request.route, @"parents/23/prefs/15/pref2s/1", nil);
@@ -512,25 +512,25 @@
 	
 	for (int i = 0; i < [MockServer fullErrors].count; i++)
 	{
-		NSString *fullError = [[MockServer fullErrors] objectAtIndex:i];
-		NSString *shortError = [[MockServer shortErrors] objectAtIndex:i];
-		NSInteger code = [[[MockServer statusCodes] objectAtIndex:i] integerValue];
+		NSString *fullError = [MockServer fullErrors][i];
+		NSString *shortError = [MockServer shortErrors][i];
+		NSInteger code = [[MockServer statusCodes][i] integerValue];
 		
 		//Test with succinct (default)
 		[[NSRConfig defaultConfig] setSuccinctErrorMessages:YES];
 		
 		NSError *error = [r errorForResponse:fullError existingError:nil statusCode:code];
 		STAssertEqualObjects([error domain], NSRRemoteErrorDomain, @"Succinct error messages failed");
-		STAssertEqualObjects([[error userInfo] objectForKey:NSLocalizedDescriptionKey], shortError, @"Succinct message extraction failed for short message");
-		STAssertEquals([[error userInfo] objectForKey:NSRRequestObjectKey],r,@"Should include itself as the request");
+		STAssertEqualObjects([error userInfo][NSLocalizedDescriptionKey], shortError, @"Succinct message extraction failed for short message");
+		STAssertEquals([error userInfo][NSRRequestObjectKey],r,@"Should include itself as the request");
 
 		//Test without succinct
 		[[NSRConfig defaultConfig] setSuccinctErrorMessages:NO];
 		
 		NSError *error2 = [r errorForResponse:fullError existingError:nil statusCode:code];
 		STAssertEqualObjects([error2 domain], NSRRemoteErrorDomain, @"Succinct error messages failed");
-		STAssertTrue([[[error2 userInfo] objectForKey:NSLocalizedDescriptionKey] isEqualToString:fullError], @"NO succinct error messages failed (bad!)");
-		STAssertEquals([[error2 userInfo] objectForKey:NSRRequestObjectKey],r,@"Should include itself as the request");
+		STAssertTrue([[error2 userInfo][NSLocalizedDescriptionKey] isEqualToString:fullError], @"NO succinct error messages failed (bad!)");
+		STAssertEquals([error2 userInfo][NSRRequestObjectKey],r,@"Should include itself as the request");
     }
 	
 	// 422 Validation
@@ -540,9 +540,9 @@
 	NSError *valError = [r errorForResponse:response existingError:nil statusCode:422];
 	STAssertTrue([valError code] == 422, @"422 was returned, not picked up by config");
 	STAssertEqualObjects([valError domain], NSRRemoteErrorDomain, @"Succinct error messages failed");
-	STAssertEquals([[valError userInfo] objectForKey:NSRRequestObjectKey],r,@"Should include itself as the request");
+	STAssertEquals([valError userInfo][NSRRequestObjectKey],r,@"Should include itself as the request");
 
-	id valDict = [[valError userInfo] objectForKey:NSRErrorResponseBodyKey];
+	id valDict = [valError userInfo][NSRErrorResponseBodyKey];
 	STAssertNotNil(valDict, @"Validation errors dict not compiled");
 	STAssertTrue([valDict isKindOfClass:[NSDictionary class]], @"Object for validation key needs to be a dict");
 	STAssertTrue([[[valDict allKeys] lastObject] isKindOfClass:[NSString class]], @"Keys in val dict need to be a string");
@@ -565,8 +565,8 @@
 	NSError *e;
 	id val = [r sendSynchronous:&e];
 	STAssertNil(val, @"There should be nil value for auth error");
-	STAssertEqualObjects([e.userInfo objectForKey:NSRErrorResponseBodyKey], @{@"message": @"Test string"}, @"Should include 401 error message in userInfo");
-	STAssertEquals([[e userInfo] objectForKey:NSRRequestObjectKey],r,@"Should include itself as the request");
+	STAssertEqualObjects((e.userInfo)[NSRErrorResponseBodyKey], @{@"message": @"Test string"}, @"Should include 401 error message in userInfo");
+	STAssertEquals([e userInfo][NSRRequestObjectKey],r,@"Should include itself as the request");
     
     /* Error for a response sent with JSON */
     NSDictionary *dict = @{@"key":@"val"};
