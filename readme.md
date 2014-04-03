@@ -45,12 +45,13 @@ Features
 * Written with ARC
 * [Autogenerate](https://github.com/dingbat/nsrails/tree/master/autogen) NSRails-ready classes from a Rails project
 
-Quick links
+Support
 --------
 
 * [Documentation](http://dingbat.github.com/nsrails)
 * [CoreData guide](http://dingbat.github.com/nsrails/Classes/NSRRemoteManagedObject.html)
 * [Cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook)
+* Hop on [Gitter](https://gitter.im/dingbat/nsrails) if you need any help or want to talk about the project!
 
 Getting started
 ---------
