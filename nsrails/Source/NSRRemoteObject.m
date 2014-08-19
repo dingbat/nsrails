@@ -50,11 +50,15 @@
 
 
 @implementation NSRRemoteObject
-@synthesize remoteDestroyOnNesting, remoteAttributes, remoteID;
+
+//Need these to be explicit when subclassing from NSManagedObject
+@synthesize remoteID=_remoteID;
+@synthesize remoteAttributes=_remoteAttributes;
+@synthesize remoteDestroyOnNesting=_remoteDestroyOnNesting;
 
 - (NSNumber *) primitiveRemoteID
 {
-    return remoteID;
+    return _remoteID;
 }
 
 #pragma mark - Overrides
@@ -412,7 +416,7 @@
 - (void) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict
 {
     if (dict) {
-        remoteAttributes = dict;
+        _remoteAttributes = dict;
     }
     
     //support JSON that comes in like {"post"=>{"something":"something"}}
@@ -473,7 +477,7 @@
         dict[remoteKey] = remoteRep;
     }
     
-    if (remoteDestroyOnNesting)
+    if (self.remoteDestroyOnNesting)
     {
         dict[@"_destroy"] = @YES;
     }
@@ -682,8 +686,8 @@
     if (self = [super init])
     {
         self.remoteID = [aDecoder decodeObjectForKey:@"remoteID"];
-        remoteAttributes = [aDecoder decodeObjectForKey:@"remoteAttributes"];
         self.remoteDestroyOnNesting = [aDecoder decodeBoolForKey:@"remoteDestroyOnNesting"];
+        _remoteAttributes = [aDecoder decodeObjectForKey:@"remoteAttributes"];
     }
     return self;
 }
@@ -691,8 +695,8 @@
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
     [aCoder encodeObject:self.remoteID forKey:@"remoteID"];
-    [aCoder encodeObject:remoteAttributes forKey:@"remoteAttributes"];
-    [aCoder encodeBool:remoteDestroyOnNesting forKey:@"remoteDestroyOnNesting"];
+    [aCoder encodeObject:self.remoteAttributes forKey:@"remoteAttributes"];
+    [aCoder encodeBool:self.remoteDestroyOnNesting forKey:@"remoteDestroyOnNesting"];
 }
 
 @end

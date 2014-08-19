@@ -41,12 +41,11 @@
 
 @interface NSRConfigStackElement : NSObject
 
-@property (nonatomic, assign) NSRConfig *config;
+@property (nonatomic, weak) NSRConfig *config;
 
 @end
 
 @implementation NSRConfigStackElement
-@synthesize config;
 
 + (NSRConfigStackElement *) elementForConfig:(NSRConfig *)c
 {
@@ -74,9 +73,6 @@ NSString * const NSRRails4DateFormat        = @"yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
 
 @implementation NSRConfig
-@synthesize appURL, appUsername, appPassword, appOAuthToken;
-@synthesize autoinflectsClassNames, autoinflectsPropertyNames, managesNetworkActivityIndicator, timeoutInterval, ignoresClassPrefixes, succinctErrorMessages, performsCompletionBlocksOnMainThread, managedObjectContext, updateMethod, additionalHTTPHeaders;
-@dynamic dateFormat;
 
 #pragma mark -
 #pragma mark Config inits
@@ -273,15 +269,15 @@ static NSMutableArray *overrideConfigStack = nil;
 {
     [aCoder encodeObject:self.dateFormat forKey:@"dateFormat"];
 
-    [aCoder encodeBool:autoinflectsClassNames forKey:@"autoinflectsClassNames"];
-    [aCoder encodeBool:autoinflectsPropertyNames forKey:@"autoinflectsPropertyNames"];
-    [aCoder encodeBool:ignoresClassPrefixes forKey:@"ignoresClassPrefixes"];
+    [aCoder encodeBool:self.autoinflectsClassNames forKey:@"autoinflectsClassNames"];
+    [aCoder encodeBool:self.autoinflectsPropertyNames forKey:@"autoinflectsPropertyNames"];
+    [aCoder encodeBool:self.ignoresClassPrefixes forKey:@"ignoresClassPrefixes"];
     
-    [aCoder encodeBool:succinctErrorMessages forKey:@"succinctErrorMessages"];
-    [aCoder encodeBool:performsCompletionBlocksOnMainThread forKey:@"performsCompletionBlocksOnMainThread"];
-    [aCoder encodeDouble:timeoutInterval forKey:@"timeoutInterval"];
+    [aCoder encodeBool:self.succinctErrorMessages forKey:@"succinctErrorMessages"];
+    [aCoder encodeBool:self.performsCompletionBlocksOnMainThread forKey:@"performsCompletionBlocksOnMainThread"];
+    [aCoder encodeDouble:self.timeoutInterval forKey:@"timeoutInterval"];
     
-    [aCoder encodeBool:managesNetworkActivityIndicator forKey:@"managesNetworkActivityIndicator"];
+    [aCoder encodeBool:self.managesNetworkActivityIndicator forKey:@"managesNetworkActivityIndicator"];
     
     [aCoder encodeObject:self.appURL forKey:@"appURL"];
     [aCoder encodeObject:self.appUsername forKey:@"appUsername"];

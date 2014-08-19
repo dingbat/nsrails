@@ -62,13 +62,12 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 @end
 
 @implementation NSRRequest
-@synthesize route, httpMethod, body, config, queryParameters, additionalHTTPHeaders;
 
 # pragma mark - Convenient routing
 
 - (id) routeTo:(NSString *)r
 {
-    route = r;
+    _route = r;
     return self;
 }
 
@@ -143,8 +142,8 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
     self = [super init];
     if (self)
     {
-        config = [NSRConfig defaultConfig];
-        httpMethod = method;
+        _httpMethod = method;
+        self.config = [NSRConfig defaultConfig];
     }
     
     return self;
@@ -257,11 +256,11 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (NSURLRequest *) HTTPRequest
 {    
-    NSString *appendedRoute = (route ? route : @"");
-    if (queryParameters.count > 0)
+    NSString *appendedRoute = (self.route ?: @"");
+    if (self.queryParameters.count > 0)
     {
-        NSMutableArray *params = [NSMutableArray arrayWithCapacity:queryParameters.count];
-        [queryParameters enumerateKeysAndObjectsUsingBlock:
+        NSMutableArray *params = [NSMutableArray arrayWithCapacity:self.queryParameters.count];
+        [self.queryParameters enumerateKeysAndObjectsUsingBlock:
          ^(id key, id obj, BOOL *stop) 
          {
              //TODO
@@ -284,11 +283,11 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
                                                        timeoutInterval:self.config.timeoutInterval];
     
-    [request setHTTPMethod:httpMethod];
+    [request setHTTPMethod:self.httpMethod];
     [request setHTTPShouldHandleCookies:NO];
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     
-    [additionalHTTPHeaders enumerateKeysAndObjectsUsingBlock:
+    [self.additionalHTTPHeaders enumerateKeysAndObjectsUsingBlock:
      ^(id key, id obj, BOOL *stop) 
      {
          [request setValue:obj forHTTPHeaderField:key];
@@ -315,28 +314,28 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
         [request setValue:authHeader forHTTPHeaderField:@"Authorization"];
     }
     
-    if (body)
+    if (self.body)
     {
         NSData *data;
       
-        if ([body isKindOfClass:[NSString class]])
+        if ([self.body isKindOfClass:[NSString class]])
         {
-            if (!additionalHTTPHeaders[@"Content-Type"]) {
+            if (!self.additionalHTTPHeaders[@"Content-Type"]) {
                 [NSException raise:@"NSRRequest Error"
                             format:@"POST body is a string, but no Content-Type header was specified. Please use -[NSRRequest setAdditionalHTTPHeaders:...]"];
             }
 
-            data = [body dataUsingEncoding:NSUTF8StringEncoding];
+            data = [self.body dataUsingEncoding:NSUTF8StringEncoding];
         }
         else
         {
             //raise if given an invalid json object
-            if (![NSJSONSerialization isValidJSONObject:body]) {
+            if (![NSJSONSerialization isValidJSONObject:self.body]) {
                 [NSException raise:NSRJSONParsingException
                             format:@"NSRRequest POST body is not a valid top-level JSON object (only array or dictionary allowed)."];
             }
             
-            data = [NSJSONSerialization dataWithJSONObject:body options:0 error:nil];
+            data = [NSJSONSerialization dataWithJSONObject:self.body options:0 error:nil];
         }
       
         if (data)
@@ -522,7 +521,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (void) logOut:(NSURLRequest *)request
 {
-    NSRLogInOut(@"OUT", body, @"===> %@ to %@", httpMethod, [request.URL absoluteString]);
+    NSRLogInOut(@"OUT", self.body, @"===> %@ to %@", self.httpMethod, [request.URL absoluteString]);
 }
 
 - (void) logIn:(id)json error:(NSError *)error
@@ -536,7 +535,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 {
     if ((self = [self initWithHTTPMethod:[aDecoder decodeObjectForKey:@"httpMethod"]]))
     {
-        route = [aDecoder decodeObjectForKey:@"route"];
+        _route = [aDecoder decodeObjectForKey:@"route"];
         self.body = [aDecoder decodeObjectForKey:@"body"];
         self.config = [aDecoder decodeObjectForKey:@"config"];
         self.queryParameters = [aDecoder decodeObjectForKey:@"queryParameters"];
@@ -547,12 +546,12 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
-    [aCoder encodeObject:route forKey:@"route"];
-    [aCoder encodeObject:httpMethod forKey:@"httpMethod"];
-    [aCoder encodeObject:body forKey:@"body"];
-    [aCoder encodeObject:config forKey:@"config"];
-    [aCoder encodeObject:queryParameters forKey:@"queryParameters"];
-    [aCoder encodeObject:additionalHTTPHeaders forKey:@"additionalHTTPHeaders"];
+    [aCoder encodeObject:self.route forKey:@"route"];
+    [aCoder encodeObject:self.httpMethod forKey:@"httpMethod"];
+    [aCoder encodeObject:self.body forKey:@"body"];
+    [aCoder encodeObject:self.config forKey:@"config"];
+    [aCoder encodeObject:self.queryParameters forKey:@"queryParameters"];
+    [aCoder encodeObject:self.additionalHTTPHeaders forKey:@"additionalHTTPHeaders"];
 }
 
 @end

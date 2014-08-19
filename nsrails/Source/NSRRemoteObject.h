@@ -468,11 +468,10 @@
  Typically, this method is overriden with an instance variable that represents a parent:
  
      @implementation Invite
-     @synthesize user, foo;
  
      - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request
      {
-         return user;
+         return self.user;
      }
      
      @end
