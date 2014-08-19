@@ -15,19 +15,19 @@
 
 @implementation PostsViewController
 {
-	NSMutableArray *posts;
+    NSMutableArray *posts;
 }
 
 /*
  =================================================
-	RELEVANT NSRAILS STUFF
+    RELEVANT NSRAILS STUFF
  =================================================
  */
 
 - (void) refresh
 {
-	// When the refresh button is hit, refresh our array of posts asynchronously
-	
+    // When the refresh button is hit, refresh our array of posts asynchronously
+    
     [Post remoteAllAsync:^(NSArray *allRemote, NSError *error)
     {
         if (error)
@@ -44,15 +44,15 @@
 
 - (void) addPost
 {
-	// When the + button is hit, display an InputViewController (this is the shared input view for both posts and responses)
-	// It has an init method that accepts a completion block - this block of code will be executed when the user hits "save"
-	
-	InputViewController *newPostVC = [[InputViewController alloc] initWithCompletionHandler:
-										  ^(NSString *author, NSString *content)
-										  {
-											  Post *newPost = [[Post alloc] init];
-											  newPost.author = author;
-											  newPost.content = content;
+    // When the + button is hit, display an InputViewController (this is the shared input view for both posts and responses)
+    // It has an init method that accepts a completion block - this block of code will be executed when the user hits "save"
+    
+    InputViewController *newPostVC = [[InputViewController alloc] initWithCompletionHandler:
+                                          ^(NSString *author, NSString *content)
+                                          {
+                                              Post *newPost = [[Post alloc] init];
+                                              newPost.author = author;
+                                              newPost.content = content;
                                               
                                               [newPost remoteCreateAsync:^(NSError *error)
                                               {
@@ -68,18 +68,18 @@
                                                       [self dismissViewControllerAnimated:YES completion:nil];
                                                   }
                                               }];
-										  }];
-	
-	newPostVC.header = @"Post something to NSRails.com!";
-	newPostVC.messagePlaceholder = @"A comment about NSRails, a philosophical inquiry, or simply a \"hello world!\"";
-	
+                                          }];
+    
+    newPostVC.header = @"Post something to NSRails.com!";
+    newPostVC.messagePlaceholder = @"A comment about NSRails, a philosophical inquiry, or simply a \"hello world!\"";
+    
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:newPostVC];
-	[self presentModalViewController:nav animated:YES];
+    [self presentModalViewController:nav animated:YES];
 }
 
 - (void) deletePostAtIndexPath:(NSIndexPath *)indexPath
 {
-	Post *post = [posts objectAtIndex:indexPath.row];
+    Post *post = [posts objectAtIndex:indexPath.row];
     [post remoteDestroyAsync:^(NSError *error)
     {
         if (error)
@@ -104,24 +104,24 @@
 
 - (void)viewDidLoad
 {
-	posts = [[NSMutableArray alloc] init];
-	
-	[self refresh];
-	
-	self.title = @"Posts";
-	
-	// Add refresh button
-	UIBarButtonItem *refresh = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh 
-																			 target:self 
-																			 action:@selector(refresh)];
-	self.navigationItem.leftBarButtonItem = refresh;
-	
-	// Add the + button
-	UIBarButtonItem *new = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd 
-																		 target:self 
-																		 action:@selector(addPost)];
-	self.navigationItem.rightBarButtonItem = new;
-	
+    posts = [[NSMutableArray alloc] init];
+    
+    [self refresh];
+    
+    self.title = @"Posts";
+    
+    // Add refresh button
+    UIBarButtonItem *refresh = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh 
+                                                                             target:self 
+                                                                             action:@selector(refresh)];
+    self.navigationItem.leftBarButtonItem = refresh;
+    
+    // Add the + button
+    UIBarButtonItem *new = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd 
+                                                                         target:self 
+                                                                         action:@selector(addPost)];
+    self.navigationItem.rightBarButtonItem = new;
+    
     [super viewDidLoad];
 }
 
@@ -129,17 +129,17 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-	return 1;
+    return 1;
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	return 60;
+    return 60;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	return posts.count;
+    return posts.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -148,30 +148,30 @@
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) 
-	{
+    {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
 
-	Post *post = [posts objectAtIndex:indexPath.row];
-	cell.textLabel.text = post.content;
-	cell.detailTextLabel.text = post.author;
-	
-	return cell;
+    Post *post = [posts objectAtIndex:indexPath.row];
+    cell.textLabel.text = post.content;
+    cell.detailTextLabel.text = post.author;
+    
+    return cell;
 }
 
 - (void) tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	[self deletePostAtIndexPath:indexPath];
+    [self deletePostAtIndexPath:indexPath];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	Post *post = [posts objectAtIndex:indexPath.row];
+    Post *post = [posts objectAtIndex:indexPath.row];
 
-	ResponsesViewController *rvc = [[ResponsesViewController alloc] initWithStyle:UITableViewStyleGrouped];
-	rvc.post = post;
-	[self.navigationController pushViewController:rvc animated:YES];
+    ResponsesViewController *rvc = [[ResponsesViewController alloc] initWithStyle:UITableViewStyleGrouped];
+    rvc.post = post;
+    [self.navigationController pushViewController:rvc animated:YES];
 }
 
 @end

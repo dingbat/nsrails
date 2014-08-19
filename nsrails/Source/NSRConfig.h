@@ -68,54 +68,54 @@ typedef NS_ENUM(NSInteger, NSRRailsVersion) {
  
  This should meet the needs of the vast majority of Rails apps. Somewhere in your app setup, set your server URL (and optionally a username and password) using the `<defaultConfig>` singleton:
 
-	//AppDelegate.m
+    //AppDelegate.m
 
-	#import "NSRConfig.h"
+    #import "NSRConfig.h"
 
-	- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-	{
-	 [[NSRConfig defaultConfig] setAppURL:@"http://myapp.com"];
-	 
-	 //Similarly, if using HTTP Authentication, you can set your app's username and password like this:
-	 //[[NSRConfig defaultConfig] setAppUsername:@"username"];
-	 //[[NSRConfig defaultConfig] setAppPassword:@"password"];
-	 ...
-	}
+    - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+    {
+     [[NSRConfig defaultConfig] setAppURL:@"http://myapp.com"];
+     
+     //Similarly, if using HTTP Authentication, you can set your app's username and password like this:
+     //[[NSRConfig defaultConfig] setAppUsername:@"username"];
+     //[[NSRConfig defaultConfig] setAppPassword:@"password"];
+     ...
+    }
   
  ## Using several configs in one project
  
  - When NSRails needs to retrieve configuration settings, it calls the <NSRRemoteObject> `config` method. The default behavior is to return `<contextuallyRelevantConfig>`, but this can be overridden by your NSRRemoteObject subclass. Simply initialize your own NSRConfig instance and return it, and base URLs, autoinflection, date formats, and any other NSRConfig configurations will be used for NSRails actions called on this class or its instances.
  
  - If specific actions must be called using a separate config, an NSRConfig instance can be used to define a context block in which to call those config-specific methods:
-		
-		NSRConfig *myConfig = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com/"];
-		
-		[myConfig use];
-		NSArray *peopleFromOtherServer = [Person getAllRemote];
-		[myConfig end];
+        
+        NSRConfig *myConfig = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com/"];
+        
+        [myConfig use];
+        NSArray *peopleFromOtherServer = [Person getAllRemote];
+        [myConfig end];
  
-	Or, using block notation:
+    Or, using block notation:
  
-		NSArray *peopleToTransfer = [Person getAllRemote];
-		NSRConfig *myConfig = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com/"];
-		[myConfig useIn:^
-			{
-				for (Person *p in peopleToTransfer)
-				{
-					[p remoteCreate];
-				}
-			}
-		];
+        NSArray *peopleToTransfer = [Person getAllRemote];
+        NSRConfig *myConfig = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com/"];
+        [myConfig useIn:^
+            {
+                for (Person *p in peopleToTransfer)
+                {
+                    [p remoteCreate];
+                }
+            }
+        ];
  
-	In these examples, everything within the blocks will be called using the config context specified, regardless of `<defaultConfig>`. The config for the current context can be retrieved using the `<contextuallyRelevantConfig>` class method.
+    In these examples, everything within the blocks will be called using the config context specified, regardless of `<defaultConfig>`. The config for the current context can be retrieved using the `<contextuallyRelevantConfig>` class method.
  
-	You can nest several config contexts within each other.
+    You can nest several config contexts within each other.
  */
 
 @interface NSRConfig : NSObject <NSCoding>
 {
-	NSDateFormatter *dateFormatter;
-	NSOperationQueue *asyncOperationQueue; //used for async requests
+    NSDateFormatter *dateFormatter;
+    NSOperationQueue *asyncOperationQueue; //used for async requests
 }
 
 

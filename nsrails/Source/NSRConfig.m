@@ -50,24 +50,24 @@
 
 + (NSRConfigStackElement *) elementForConfig:(NSRConfig *)c
 {
-	NSRConfigStackElement *element = [[NSRConfigStackElement alloc] init];
-	element.config = c;
-	return element;
+    NSRConfigStackElement *element = [[NSRConfigStackElement alloc] init];
+    element.config = c;
+    return element;
 }
 
 @end
 
 
 NSString * const NSRRequestObjectKey                    = @"NSRRequestObjectKey";
-NSString * const NSRErrorResponseBodyKey				= @"NSRErrorResponseBodyKey";
+NSString * const NSRErrorResponseBodyKey                = @"NSRErrorResponseBodyKey";
 //backwards compatibility
-NSString * const NSRValidationErrorsKey					= @"NSRErrorResponseBodyKey";
+NSString * const NSRValidationErrorsKey                    = @"NSRErrorResponseBodyKey";
 
-NSString * const NSRRemoteErrorDomain				= @"NSRRemoteErrorDomain";
-NSString * const NSRJSONParsingException			= @"NSRJSONParsingException";
-NSString * const NSRMissingURLException				= @"NSRMissingURLException";
-NSString * const NSRNullRemoteIDException			= @"NSRNullRemoteIDException";
-NSString * const NSRCoreDataException				= @"NSRCoreDataException";
+NSString * const NSRRemoteErrorDomain                = @"NSRRemoteErrorDomain";
+NSString * const NSRJSONParsingException            = @"NSRJSONParsingException";
+NSString * const NSRMissingURLException                = @"NSRMissingURLException";
+NSString * const NSRNullRemoteIDException            = @"NSRNullRemoteIDException";
+NSString * const NSRCoreDataException                = @"NSRCoreDataException";
 
 NSString * const NSRRails3DateFormat        = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
 NSString * const NSRRails4DateFormat        = @"yyyy-MM-dd'T'HH:mm:ss.SSSZ";
@@ -87,8 +87,8 @@ static NSMutableArray *overrideConfigStack = nil;
 //purely for testing purposes
 + (void) resetConfigs
 {
-	[overrideConfigStack removeAllObjects];
-	defaultConfig = [[NSRConfig alloc] init];
+    [overrideConfigStack removeAllObjects];
+    defaultConfig = [[NSRConfig alloc] init];
 }
 
 - (void) useAsDefault
@@ -103,50 +103,50 @@ static NSMutableArray *overrideConfigStack = nil;
     {
         NSRConfig *newConfig = [[NSRConfig alloc] init];
         [newConfig useAsDefault];
-	});
+    });
 
-	return defaultConfig;
+    return defaultConfig;
 }
 
 - (id) init
 {
-	if ((self = [super init]))
-	{
-		dateFormatter = [[NSDateFormatter alloc] init];
-		asyncOperationQueue = [[NSOperationQueue alloc] init];
-		
-		self.autoinflectsClassNames = YES;
-		self.autoinflectsPropertyNames = YES;
-		self.ignoresClassPrefixes = YES;
-		
-		self.succinctErrorMessages = YES;
-		self.timeoutInterval = 60.0f;
-		self.performsCompletionBlocksOnMainThread = YES;
+    if ((self = [super init]))
+    {
+        dateFormatter = [[NSDateFormatter alloc] init];
+        asyncOperationQueue = [[NSOperationQueue alloc] init];
+        
+        self.autoinflectsClassNames = YES;
+        self.autoinflectsPropertyNames = YES;
+        self.ignoresClassPrefixes = YES;
+        
+        self.succinctErrorMessages = YES;
+        self.timeoutInterval = 60.0f;
+        self.performsCompletionBlocksOnMainThread = YES;
         
         [self configureToRailsVersion:NSRRailsVersion4];
-	}
-	return self;
+    }
+    return self;
 }
 
 - (id) initWithAppURL:(NSString *)url
 {
-	if ((self = [self init]))
-	{
-		[self setAppURL:url];
-	}
-	return self;
+    if ((self = [self init]))
+    {
+        [self setAppURL:url];
+    }
+    return self;
 }
 
 - (void) configureToRailsVersion:(NSRRailsVersion)railsVersion
 {
     if (railsVersion == NSRRailsVersion3)
     {
-		self.dateFormat = NSRRails3DateFormat;
-		self.updateMethod = @"PUT";
+        self.dateFormat = NSRRails3DateFormat;
+        self.updateMethod = @"PUT";
     }
     else if (railsVersion == NSRRailsVersion4)
     {
-		self.dateFormat = NSRRails4DateFormat;
+        self.dateFormat = NSRRails4DateFormat;
         self.updateMethod = @"PATCH";
     }
 }
@@ -156,25 +156,25 @@ static NSMutableArray *overrideConfigStack = nil;
 
 - (void) setDateFormat:(NSString *)dateFormat
 {
-	[dateFormatter setDateFormat:dateFormat];
+    [dateFormatter setDateFormat:dateFormat];
 }
 
 - (NSString *) dateFormat
 {
-	return dateFormatter.dateFormat;
+    return dateFormatter.dateFormat;
 }
 
 - (NSString *) stringFromDate:(NSDate *)date
 {
-	return [dateFormatter stringFromDate:date];
+    return [dateFormatter stringFromDate:date];
 }
 
 - (NSDate *) dateFromString:(NSString *)string
 {
-	NSDate *date = [dateFormatter dateFromString:string];
-	
-	if (!date && string)
-	{
+    NSDate *date = [dateFormatter dateFromString:string];
+    
+    if (!date && string)
+    {
         NSDateFormatter *rails3Checker = [[NSDateFormatter alloc] init];
         rails3Checker.dateFormat = NSRRails3DateFormat;
         if ([rails3Checker dateFromString:string])
@@ -185,9 +185,9 @@ static NSMutableArray *overrideConfigStack = nil;
         {
             NSLog(@"NSR Warning: Attempted to convert remote date string (\"%@\") into an NSDate object, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation). Setting to nil",string,dateFormatter.dateFormat);
         }
-	}
-	
-	return date;
+    }
+    
+    return date;
 }
 
 #pragma mark -
@@ -196,7 +196,7 @@ static NSMutableArray *overrideConfigStack = nil;
 + (instancetype) contextuallyRelevantConfig
 {
     //get the last config on the stack (last in first out)
-	NSRConfig *override = [[overrideConfigStack lastObject] config];
+    NSRConfig *override = [[overrideConfigStack lastObject] config];
     
     //if stack is nil or empty, this will be nil, signifying that there's no overriding context, so return default
     if (override) {
@@ -208,86 +208,86 @@ static NSMutableArray *overrideConfigStack = nil;
 
 - (void) use
 {
-	static dispatch_once_t onceToken;
-	dispatch_once(&onceToken, ^
-	{
-		overrideConfigStack = [[NSMutableArray alloc] init];
-	});
-	
-	// make a new stack element for this config (explained at top of the file) and push it to the stack
-	[overrideConfigStack addObject:[NSRConfigStackElement elementForConfig:self]];
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^
+    {
+        overrideConfigStack = [[NSMutableArray alloc] init];
+    });
+    
+    // make a new stack element for this config (explained at top of the file) and push it to the stack
+    [overrideConfigStack addObject:[NSRConfigStackElement elementForConfig:self]];
 }
 
 - (void) end
 {
-	//start at the end of the stack
-	for (NSInteger i = overrideConfigStack.count-1; i >= 0; i--)
-	{
-		NSRConfigStackElement *c = overrideConfigStack[i];
-		if (c.config == self)
-		{
-			[overrideConfigStack removeObjectAtIndex:i];
-			break;
-		}
-	}
+    //start at the end of the stack
+    for (NSInteger i = overrideConfigStack.count-1; i >= 0; i--)
+    {
+        NSRConfigStackElement *c = overrideConfigStack[i];
+        if (c.config == self)
+        {
+            [overrideConfigStack removeObjectAtIndex:i];
+            break;
+        }
+    }
 }
 
 - (void) useIn:(void (^)(void))block
 {
-	[self use];
-	block();
-	[self end];
+    [self use];
+    block();
+    [self end];
 }
 
 #pragma mark - NSCoding
 
 - (id) initWithCoder:(NSCoder *)aDecoder
 {
-	if (self = [super init])
-	{
-		dateFormatter = [[NSDateFormatter alloc] init];
-		asyncOperationQueue = [[NSOperationQueue alloc] init];
-		
-		self.dateFormat = [aDecoder decodeObjectForKey:@"dateFormat"];
-		
-		self.autoinflectsClassNames = [aDecoder decodeBoolForKey:@"autoinflectsClassNames"];
-		self.autoinflectsPropertyNames = [aDecoder decodeBoolForKey:@"autoinflectsPropertyNames"];
-		self.ignoresClassPrefixes = [aDecoder decodeBoolForKey:@"ignoresClassPrefixes"];
+    if (self = [super init])
+    {
+        dateFormatter = [[NSDateFormatter alloc] init];
+        asyncOperationQueue = [[NSOperationQueue alloc] init];
+        
+        self.dateFormat = [aDecoder decodeObjectForKey:@"dateFormat"];
+        
+        self.autoinflectsClassNames = [aDecoder decodeBoolForKey:@"autoinflectsClassNames"];
+        self.autoinflectsPropertyNames = [aDecoder decodeBoolForKey:@"autoinflectsPropertyNames"];
+        self.ignoresClassPrefixes = [aDecoder decodeBoolForKey:@"ignoresClassPrefixes"];
 
-		self.succinctErrorMessages = [aDecoder decodeBoolForKey:@"succinctErrorMessages"];
-		self.performsCompletionBlocksOnMainThread = [aDecoder decodeBoolForKey:@"performsCompletionBlocksOnMainThread"];
-		self.timeoutInterval = [aDecoder decodeDoubleForKey:@"timeoutInterval"];
+        self.succinctErrorMessages = [aDecoder decodeBoolForKey:@"succinctErrorMessages"];
+        self.performsCompletionBlocksOnMainThread = [aDecoder decodeBoolForKey:@"performsCompletionBlocksOnMainThread"];
+        self.timeoutInterval = [aDecoder decodeDoubleForKey:@"timeoutInterval"];
 
-		self.managesNetworkActivityIndicator = [aDecoder decodeBoolForKey:@"managesNetworkActivityIndicator"];
+        self.managesNetworkActivityIndicator = [aDecoder decodeBoolForKey:@"managesNetworkActivityIndicator"];
 
-		self.appURL = [aDecoder decodeObjectForKey:@"appURL"];
-		self.appUsername = [aDecoder decodeObjectForKey:@"appUsername"];
-		self.appPassword = [aDecoder decodeObjectForKey:@"appPassword"];
-		
-		self.additionalHTTPHeaders = [aDecoder decodeObjectForKey:@"additionalHTTPHeaders"];
-	}
-	return self;
+        self.appURL = [aDecoder decodeObjectForKey:@"appURL"];
+        self.appUsername = [aDecoder decodeObjectForKey:@"appUsername"];
+        self.appPassword = [aDecoder decodeObjectForKey:@"appPassword"];
+        
+        self.additionalHTTPHeaders = [aDecoder decodeObjectForKey:@"additionalHTTPHeaders"];
+    }
+    return self;
 }
 
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
-	[aCoder encodeObject:self.dateFormat forKey:@"dateFormat"];
+    [aCoder encodeObject:self.dateFormat forKey:@"dateFormat"];
 
-	[aCoder encodeBool:autoinflectsClassNames forKey:@"autoinflectsClassNames"];
-	[aCoder encodeBool:autoinflectsPropertyNames forKey:@"autoinflectsPropertyNames"];
-	[aCoder encodeBool:ignoresClassPrefixes forKey:@"ignoresClassPrefixes"];
-	
-	[aCoder encodeBool:succinctErrorMessages forKey:@"succinctErrorMessages"];
-	[aCoder encodeBool:performsCompletionBlocksOnMainThread forKey:@"performsCompletionBlocksOnMainThread"];
-	[aCoder encodeDouble:timeoutInterval forKey:@"timeoutInterval"];
-	
-	[aCoder encodeBool:managesNetworkActivityIndicator forKey:@"managesNetworkActivityIndicator"];
-	
-	[aCoder encodeObject:self.appURL forKey:@"appURL"];
-	[aCoder encodeObject:self.appUsername forKey:@"appUsername"];
-	[aCoder encodeObject:self.appPassword forKey:@"appPassword"];
+    [aCoder encodeBool:autoinflectsClassNames forKey:@"autoinflectsClassNames"];
+    [aCoder encodeBool:autoinflectsPropertyNames forKey:@"autoinflectsPropertyNames"];
+    [aCoder encodeBool:ignoresClassPrefixes forKey:@"ignoresClassPrefixes"];
+    
+    [aCoder encodeBool:succinctErrorMessages forKey:@"succinctErrorMessages"];
+    [aCoder encodeBool:performsCompletionBlocksOnMainThread forKey:@"performsCompletionBlocksOnMainThread"];
+    [aCoder encodeDouble:timeoutInterval forKey:@"timeoutInterval"];
+    
+    [aCoder encodeBool:managesNetworkActivityIndicator forKey:@"managesNetworkActivityIndicator"];
+    
+    [aCoder encodeObject:self.appURL forKey:@"appURL"];
+    [aCoder encodeObject:self.appUsername forKey:@"appUsername"];
+    [aCoder encodeObject:self.appPassword forKey:@"appPassword"];
 
-	[aCoder encodeObject:self.additionalHTTPHeaders forKey:@"additionalHTTPHeaders"];
+    [aCoder encodeObject:self.additionalHTTPHeaders forKey:@"additionalHTTPHeaders"];
 }
 
 

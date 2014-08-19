@@ -36,10 +36,10 @@
 
 #if NSRLog > 0
 
-#define NSRLogTagged(tag, ...)			\
+#define NSRLogTagged(tag, ...)            \
 NSLog(@"[NSRails][%@] %@", tag, [NSString stringWithFormat:__VA_ARGS__])
 
-#define NSRLogInOut(inout, json, ...)	\
+#define NSRLogInOut(inout, json, ...)    \
 NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 1) ? (json ? json : @"") : @"")
 
 #else
@@ -68,72 +68,72 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (id) routeTo:(NSString *)r
 {
-	route = r;
-	return self;
+    route = r;
+    return self;
 }
 
 - (id) routeToClass:(Class)c withCustomMethod:(NSString *)optionalRESTMethod
 {
-	self.config = [c config];
+    self.config = [c config];
 
-	NSString *controller = [c remoteControllerName];
-	if (!controller) {
-		return [self routeTo:optionalRESTMethod];
-	}
+    NSString *controller = [c remoteControllerName];
+    if (!controller) {
+        return [self routeTo:optionalRESTMethod];
+    }
 
-	return [self routeTo:[controller stringByAppendingPathComponent:optionalRESTMethod]];
+    return [self routeTo:[controller stringByAppendingPathComponent:optionalRESTMethod]];
 }
 
 - (id) routeToClass:(Class)c
 {
-	return [self routeToClass:c withCustomMethod:nil];
+    return [self routeToClass:c withCustomMethod:nil];
 }
 
 - (id) routeToObject:(NSRRemoteObject *)o withCustomMethod:(NSString *)method ignoreID:(BOOL)ignoreID
 {
-	self.config = [o.class config];
-	
-	//prepend the ID: action -> 1/action
-	if (o.remoteID && !ignoreID) {
-		method = [[o.remoteID stringValue] stringByAppendingPathComponent:method];
-	}
-	
-	//prepend the classname: 1/action -> class/1/action
-	[self routeToClass:[o class] withCustomMethod:method];
-	
-	NSRRemoteObject *prefix = [o objectUsedToPrefixRequest:self];
-	if (prefix)
-	{
-		if (!prefix.remoteID)
-		{
-			[NSException raise:NSRNullRemoteIDException format:@"Attempt to %@ %@ instance with a prefix association (%@ instance) that has a nil remoteID.",self.httpMethod ? self.httpMethod : @"remotely access",[o class],[prefix class]];
-		}
-		
-		//if prefix, prepend the route to prefix: class/1/action -> prefixes/15/class/1/action (+ recursive)
-		[self routeToObject:prefix withCustomMethod:self.route];
-	}
-	
-	return self;
+    self.config = [o.class config];
+    
+    //prepend the ID: action -> 1/action
+    if (o.remoteID && !ignoreID) {
+        method = [[o.remoteID stringValue] stringByAppendingPathComponent:method];
+    }
+    
+    //prepend the classname: 1/action -> class/1/action
+    [self routeToClass:[o class] withCustomMethod:method];
+    
+    NSRRemoteObject *prefix = [o objectUsedToPrefixRequest:self];
+    if (prefix)
+    {
+        if (!prefix.remoteID)
+        {
+            [NSException raise:NSRNullRemoteIDException format:@"Attempt to %@ %@ instance with a prefix association (%@ instance) that has a nil remoteID.",self.httpMethod ? self.httpMethod : @"remotely access",[o class],[prefix class]];
+        }
+        
+        //if prefix, prepend the route to prefix: class/1/action -> prefixes/15/class/1/action (+ recursive)
+        [self routeToObject:prefix withCustomMethod:self.route];
+    }
+    
+    return self;
 }
 
 - (id) routeToObject:(NSRRemoteObject *)o withCustomMethod:(NSString *)method
 {
-	return [self routeToObject:o withCustomMethod:method ignoreID:NO];
+    return [self routeToObject:o withCustomMethod:method ignoreID:NO];
 }
 
 - (id) routeToObject:(NSRRemoteObject *)o ignoreID:(BOOL)ignore
 {
-	return [self routeToObject:o withCustomMethod:nil ignoreID:ignore];
+    return [self routeToObject:o withCustomMethod:nil ignoreID:ignore];
 }
 
 - (id) routeToObject:(NSRRemoteObject *)o
 {
-	return [self routeToObject:o withCustomMethod:nil];
+    return [self routeToObject:o withCustomMethod:nil];
 }
 
 - (void) setBodyToObject:(NSRRemoteObject *)obj
 {
-	self.body = [obj remoteDictionaryRepresentationWrapped:YES];
+    self.body = [obj remoteDictionaryRepresentationWrapped:YES];
 }
 
 # pragma mark - Factory requests
@@ -152,43 +152,43 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 + (NSRRequest *) GET
 {
-	return [[self alloc] initWithHTTPMethod:@"GET"];
+    return [[self alloc] initWithHTTPMethod:@"GET"];
 }
 
 + (NSRRequest *) DELETE
 {
-	return [[self alloc] initWithHTTPMethod:@"DELETE"];	
+    return [[self alloc] initWithHTTPMethod:@"DELETE"];    
 }
 
 + (NSRRequest *) POST
 {
-	return [[self alloc] initWithHTTPMethod:@"POST"];
+    return [[self alloc] initWithHTTPMethod:@"POST"];
 }
 
 + (NSRRequest *) PUT
 {
-	return [[self alloc] initWithHTTPMethod:@"PUT"];
+    return [[self alloc] initWithHTTPMethod:@"PUT"];
 }
 
 + (NSRRequest *) PATCH
 {
-	return [[self alloc] initWithHTTPMethod:@"PATCH"];
+    return [[self alloc] initWithHTTPMethod:@"PATCH"];
 }
 
 
 + (NSRRequest *) requestToFetchObjectWithID:(NSNumber *)rID ofClass:(Class)c
 {
-	if (!rID)
-	{
-		[NSException raise:NSInvalidArgumentException format:@"Attempt to fetch remote %@ objectWithID but ID passed in was nil.", c];
-	}
+    if (!rID)
+    {
+        [NSException raise:NSInvalidArgumentException format:@"Attempt to fetch remote %@ objectWithID but ID passed in was nil.", c];
+    }
 
-	return [[NSRRequest GET] routeToClass:c withCustomMethod:rID.stringValue];
+    return [[NSRRequest GET] routeToClass:c withCustomMethod:rID.stringValue];
 }
 
 + (NSRRequest *) requestToFetchAllObjectsOfClass:(Class)c
 {
-	return [[NSRRequest GET] routeToClass:c];
+    return [[NSRRequest GET] routeToClass:c];
 }
 
 + (NSRRequest *) requestToFetchAllObjectsOfClass:(Class)c viaObject:(NSRRemoteObject *)obj
@@ -201,125 +201,125 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
     {
         [NSException raise:NSRNullRemoteIDException format:@"Attempt to fetch all %@s via object %@, but the object's remoteID was nil.",[self class],[obj class]];
     }
-	
-	return [[NSRRequest GET] routeToObject:obj withCustomMethod:[c remoteControllerName]];
+    
+    return [[NSRRequest GET] routeToObject:obj withCustomMethod:[c remoteControllerName]];
 }
 
 + (void) assertPresentRemoteID:(NSRRemoteObject *)obj forMethod:(NSString *)str
 {
-	if (!obj.remoteID) {
-		[NSException raise:NSRNullRemoteIDException format:@"Attempt to %@ a %@ with a nil remoteID.",str,[obj class]];
-	}
+    if (!obj.remoteID) {
+        [NSException raise:NSRNullRemoteIDException format:@"Attempt to %@ a %@ with a nil remoteID.",str,[obj class]];
+    }
 }
 
 + (NSRRequest *) requestToCreateObject:(NSRRemoteObject *)obj
 {
-	NSRRequest *req = [[NSRRequest POST] routeToObject:obj ignoreID:YES];	
-	[req setBodyToObject:obj];
-	return req;
+    NSRRequest *req = [[NSRRequest POST] routeToObject:obj ignoreID:YES];    
+    [req setBodyToObject:obj];
+    return req;
 }
 
 + (NSRRequest *) requestToFetchObject:(NSRRemoteObject *)obj
 {
-	[self assertPresentRemoteID:obj forMethod:@"fetch"];
-	
-	return [[NSRRequest GET] routeToObject:obj];
+    [self assertPresentRemoteID:obj forMethod:@"fetch"];
+    
+    return [[NSRRequest GET] routeToObject:obj];
 }
 
 + (NSRRequest *) requestToDestroyObject:(NSRRemoteObject *)obj
 {
-	[self assertPresentRemoteID:obj forMethod:@"destroy"];
+    [self assertPresentRemoteID:obj forMethod:@"destroy"];
 
-	return [[NSRRequest DELETE] routeToObject:obj];
+    return [[NSRRequest DELETE] routeToObject:obj];
 }
 
 + (NSRRequest *) requestToUpdateObject:(NSRRemoteObject *)obj
 {
-	[self assertPresentRemoteID:obj forMethod:@"update"];
+    [self assertPresentRemoteID:obj forMethod:@"update"];
 
-	NSRRequest *req = [[NSRRequest alloc] initWithHTTPMethod:[obj.class config].updateMethod];
+    NSRRequest *req = [[NSRRequest alloc] initWithHTTPMethod:[obj.class config].updateMethod];
     [req routeToObject:obj];
-	[req setBodyToObject:obj];
-	
-	return req;
+    [req setBodyToObject:obj];
+    
+    return req;
 }
 
 + (NSRRequest *) requestToReplaceObject:(NSRRemoteObject *)obj
 {
-	[self assertPresentRemoteID:obj forMethod:@"replace"];
+    [self assertPresentRemoteID:obj forMethod:@"replace"];
 
-	NSRRequest *req = [[NSRRequest PUT] routeToObject:obj];
-	[req setBodyToObject:obj];
-	return req;
+    NSRRequest *req = [[NSRRequest PUT] routeToObject:obj];
+    [req setBodyToObject:obj];
+    return req;
 }
 
 # pragma mark - Making the request
 
 - (NSURLRequest *) HTTPRequest
-{	
-	NSString *appendedRoute = (route ? route : @"");
-	if (queryParameters.count > 0)
-	{
-		NSMutableArray *params = [NSMutableArray arrayWithCapacity:queryParameters.count];
-		[queryParameters enumerateKeysAndObjectsUsingBlock:
-		 ^(id key, id obj, BOOL *stop) 
-		 {
-			 //TODO
-			 //Escape to be RFC 1808 compliant
-			 [params addObject:[NSString stringWithFormat:@"%@=%@",key,obj]];
-		 }];
-		appendedRoute = [appendedRoute stringByAppendingFormat:@"?%@",[params componentsJoinedByString:@"&"]];
-	}
-	
-	NSURL *base = [NSURL URLWithString:self.config.appURL];
-	if (!base)
-	{
-		[NSException raise:NSRMissingURLException format:@"No server root URL specified. Set your rails app's root with [[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup."];
-	}
+{    
+    NSString *appendedRoute = (route ? route : @"");
+    if (queryParameters.count > 0)
+    {
+        NSMutableArray *params = [NSMutableArray arrayWithCapacity:queryParameters.count];
+        [queryParameters enumerateKeysAndObjectsUsingBlock:
+         ^(id key, id obj, BOOL *stop) 
+         {
+             //TODO
+             //Escape to be RFC 1808 compliant
+             [params addObject:[NSString stringWithFormat:@"%@=%@",key,obj]];
+         }];
+        appendedRoute = [appendedRoute stringByAppendingFormat:@"?%@",[params componentsJoinedByString:@"&"]];
+    }
+    
+    NSURL *base = [NSURL URLWithString:self.config.appURL];
+    if (!base)
+    {
+        [NSException raise:NSRMissingURLException format:@"No server root URL specified. Set your rails app's root with [[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup."];
+    }
 
-	
-	NSURL *url = [NSURL URLWithString:appendedRoute relativeToURL:base];
-	
-	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url
-														   cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
-													   timeoutInterval:self.config.timeoutInterval];
-	
-	[request setHTTPMethod:httpMethod];
-	[request setHTTPShouldHandleCookies:NO];
+    
+    NSURL *url = [NSURL URLWithString:appendedRoute relativeToURL:base];
+    
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url
+                                                           cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
+                                                       timeoutInterval:self.config.timeoutInterval];
+    
+    [request setHTTPMethod:httpMethod];
+    [request setHTTPShouldHandleCookies:NO];
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
     
-	[additionalHTTPHeaders enumerateKeysAndObjectsUsingBlock:
+    [additionalHTTPHeaders enumerateKeysAndObjectsUsingBlock:
      ^(id key, id obj, BOOL *stop) 
      {
          [request setValue:obj forHTTPHeaderField:key];
      }];
-	
-	[self.config.additionalHTTPHeaders enumerateKeysAndObjectsUsingBlock:
+    
+    [self.config.additionalHTTPHeaders enumerateKeysAndObjectsUsingBlock:
      ^(id key, id obj, BOOL *stop)
      {
          [request setValue:obj forHTTPHeaderField:key];
      }];
-	
-	if (self.config.appUsername && self.config.appPassword)
-	{
-		//add auth header encoded in base64
-		NSString *authStr = [NSString stringWithFormat:@"%@:%@", self.config.appUsername, self.config.appPassword];
-		NSData *authData = [authStr dataUsingEncoding:NSUTF8StringEncoding];
-		NSString *authHeader = [NSString stringWithFormat:@"Basic %@", [authData nsr_base64Encoding]];
-		
-		[request setValue:authHeader forHTTPHeaderField:@"Authorization"]; 
-	}
-	else if (self.config.appOAuthToken)
-	{
-		NSString *authHeader = [NSString stringWithFormat:@"OAuth %@", self.config.appOAuthToken];
-		[request setValue:authHeader forHTTPHeaderField:@"Authorization"];
-	}
-	
+    
+    if (self.config.appUsername && self.config.appPassword)
+    {
+        //add auth header encoded in base64
+        NSString *authStr = [NSString stringWithFormat:@"%@:%@", self.config.appUsername, self.config.appPassword];
+        NSData *authData = [authStr dataUsingEncoding:NSUTF8StringEncoding];
+        NSString *authHeader = [NSString stringWithFormat:@"Basic %@", [authData nsr_base64Encoding]];
+        
+        [request setValue:authHeader forHTTPHeaderField:@"Authorization"]; 
+    }
+    else if (self.config.appOAuthToken)
+    {
+        NSString *authHeader = [NSString stringWithFormat:@"OAuth %@", self.config.appOAuthToken];
+        [request setValue:authHeader forHTTPHeaderField:@"Authorization"];
+    }
+    
   if (body)
   {
         NSData *data;
         if ([body isKindOfClass:[NSString class]])
-		{
+        {
             data = [body dataUsingEncoding:NSUTF8StringEncoding];
             if (!additionalHTTPHeaders[@"Content-Type"])
             {
@@ -328,7 +328,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
             }
         }
         else
-		{
+        {
             //let it raise an exception if invalid json object
             data = [NSJSONSerialization dataWithJSONObject:body options:0 error:nil];
             if (data)
@@ -339,8 +339,8 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
         [request setHTTPBody:data];
         [request setValue:@(data.length).stringValue forHTTPHeaderField:@"Content-Length"];
   }
-	
-	return request;
+    
+    return request;
 }
 
 - (NSString *) findSubstringInString:(NSString *)string surroundedByTag:(NSString *)tag
@@ -359,14 +359,14 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 - (NSError *) serverErrorForResponse:(id)response statusCode:(NSInteger)statusCode
 {
     //everything ok
-	if (statusCode >= 0 && statusCode < 400) {
+    if (statusCode >= 0 && statusCode < 400) {
         return nil;
-	}
-	
+    }
+    
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
     
     if ([response isKindOfClass:[NSString class]])
-	{
+    {
         if (self.config.succinctErrorMessages)
         {
             //if error message is in HTML, parse between <pre></pre> or <h1></h1> for error message
@@ -385,7 +385,7 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
         }
 
         userInfo[NSLocalizedDescriptionKey] = response;
-	}
+    }
     
     return [NSError errorWithDomain:NSRRemoteErrorDomain code:statusCode userInfo:userInfo];
 }
@@ -396,125 +396,125 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
         return nil;
     }
     
-	id jsonResponse = [NSJSONSerialization JSONObjectWithData:data
+    id jsonResponse = [NSJSONSerialization JSONObjectWithData:data
                                                       options:NSJSONReadingAllowFragments | NSJSONReadingMutableContainers
                                                         error:nil];
     
-	//TODO - workaround for bug with NSJSONReadingMutableContainers. it simply... doesn't work???
-	if ([jsonResponse isKindOfClass:[NSArray class]] && ![jsonResponse isKindOfClass:[NSMutableArray class]]) {
-		jsonResponse = [NSMutableArray arrayWithArray:jsonResponse];
-	}
-	
-	if (!jsonResponse) {
-		jsonResponse = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-	}
+    //TODO - workaround for bug with NSJSONReadingMutableContainers. it simply... doesn't work???
+    if ([jsonResponse isKindOfClass:[NSArray class]] && ![jsonResponse isKindOfClass:[NSMutableArray class]]) {
+        jsonResponse = [NSMutableArray arrayWithArray:jsonResponse];
+    }
+    
+    if (!jsonResponse) {
+        jsonResponse = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    }
 
-	return jsonResponse;
+    return jsonResponse;
 }
 
 - (NSError *) errorForResponse:(id)jsonResponse existingError:(NSError *)existing statusCode:(NSInteger)statusCode
 {
-	if (!existing)
-	{
-		existing = [self serverErrorForResponse:jsonResponse statusCode:statusCode];
-	}
-	
-	if (!existing)
-	{
-		// No errors
-		return nil;
-	}
-	
-	NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:existing.userInfo];
-	NSString *domain = existing.domain;
-	NSInteger code = existing.code;
-	
-	// Add on some extra info in user info dict
-	userInfo[NSRRequestObjectKey] = self;
+    if (!existing)
+    {
+        existing = [self serverErrorForResponse:jsonResponse statusCode:statusCode];
+    }
+    
+    if (!existing)
+    {
+        // No errors
+        return nil;
+    }
+    
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:existing.userInfo];
+    NSString *domain = existing.domain;
+    NSInteger code = existing.code;
+    
+    // Add on some extra info in user info dict
+    userInfo[NSRRequestObjectKey] = self;
     if (jsonResponse) {
         userInfo[NSRErrorResponseBodyKey] = jsonResponse;
     }
 
-	return [NSError errorWithDomain:domain code:code userInfo:userInfo];
+    return [NSError errorWithDomain:domain code:code userInfo:userInfo];
 }
 
 - (id) sendSynchronous:(NSError **)errorOut
 {
-	NSURLRequest *request = [self HTTPRequest];
-	
-	NSError *appleError = nil;
-	NSHTTPURLResponse *response = nil;
-	
+    NSURLRequest *request = [self HTTPRequest];
+    
+    NSError *appleError = nil;
+    NSHTTPURLResponse *response = nil;
+    
     [self logOut:request];
-	NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&appleError];
-	
-	id jsonResponse = [self jsonResponseFromData:data];
-	NSError *error = [self errorForResponse:jsonResponse existingError:appleError statusCode:response.statusCode];
-	
+    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&appleError];
+    
+    id jsonResponse = [self jsonResponseFromData:data];
+    NSError *error = [self errorForResponse:jsonResponse existingError:appleError statusCode:response.statusCode];
+    
     [self logIn:jsonResponse error:error];
     
-	if (errorOut) {
-		*errorOut = error;
-	}
+    if (errorOut) {
+        *errorOut = error;
+    }
 
-	return (error ? nil : jsonResponse);
+    return (error ? nil : jsonResponse);
 }
 
 - (void) performCompletionBlock:(void(^)(void))block
 {
-	if (self.config.performsCompletionBlocksOnMainThread)
-	{
-		dispatch_sync(dispatch_get_main_queue(), block);
-	}
-	else
-	{
-		block();
-	}
+    if (self.config.performsCompletionBlocksOnMainThread)
+    {
+        dispatch_sync(dispatch_get_main_queue(), block);
+    }
+    else
+    {
+        block();
+    }
 }
 
 - (void) sendAsynchronous:(NSRHTTPCompletionBlock)block
 {
 #if TARGET_OS_IPHONE
-	static int networkActivityRequests = 0;
-	
-	if (self.config.managesNetworkActivityIndicator)
-	{
-		networkActivityRequests++;
-		[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
-	}
+    static int networkActivityRequests = 0;
+    
+    if (self.config.managesNetworkActivityIndicator)
+    {
+        networkActivityRequests++;
+        [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+    }
 #endif
 
-	static NSOperationQueue *asyncOperationQueue;
-	static dispatch_once_t onceToken;
-	dispatch_once(&onceToken, ^{
-		asyncOperationQueue = [[NSOperationQueue alloc] init];
-	});
-	
-	NSURLRequest *request = [self HTTPRequest];
+    static NSOperationQueue *asyncOperationQueue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        asyncOperationQueue = [[NSOperationQueue alloc] init];
+    });
+    
+    NSURLRequest *request = [self HTTPRequest];
     [self logOut:request];
 
-	[NSURLConnection sendAsynchronousRequest:request queue:asyncOperationQueue completionHandler:
-	 ^(NSURLResponse *response, NSData *data, NSError *appleError) 
-	 {
+    [NSURLConnection sendAsynchronousRequest:request queue:asyncOperationQueue completionHandler:
+     ^(NSURLResponse *response, NSData *data, NSError *appleError) 
+     {
 #if TARGET_OS_IPHONE
-		 if (self.config.managesNetworkActivityIndicator)
-		 {
-			 networkActivityRequests--;
-			 if (networkActivityRequests == 0)
-			 {
-				 [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
-			 }
-		 }
+         if (self.config.managesNetworkActivityIndicator)
+         {
+             networkActivityRequests--;
+             if (networkActivityRequests == 0)
+             {
+                 [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+             }
+         }
 #endif
-		 id jsonResponse = [self jsonResponseFromData:data];
-		 NSError *error = [self errorForResponse:jsonResponse existingError:appleError statusCode:[(NSHTTPURLResponse *)response statusCode]];
-		 
+         id jsonResponse = [self jsonResponseFromData:data];
+         NSError *error = [self errorForResponse:jsonResponse existingError:appleError statusCode:[(NSHTTPURLResponse *)response statusCode]];
+         
          [self logIn:jsonResponse error:error];
          
-		 if (block) {
-			 [self performCompletionBlock:^{ block( (error ? nil : jsonResponse), error); }];
-		 }
-	 }];
+         if (block) {
+             [self performCompletionBlock:^{ block( (error ? nil : jsonResponse), error); }];
+         }
+     }];
 }
 
 #pragma mark - Logging

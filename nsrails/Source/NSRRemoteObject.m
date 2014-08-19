@@ -54,7 +54,7 @@
 
 - (NSNumber *) primitiveRemoteID
 {
-	return remoteID;
+    return remoteID;
 }
 
 #pragma mark - Overrides
@@ -68,41 +68,41 @@
 
 + (NSString *) remoteModelName
 {
-	if (self == [NSRRemoteObject class]) {
-		return nil;
-	}
-		
-	NSString *class = NSStringFromClass(self);
-	
-	if ([self config].autoinflectsClassNames)
-	{
-		return [class nsr_stringByUnderscoringIgnoringPrefix:[self config].ignoresClassPrefixes];
-	}
-	else
-	{
-		return class;
-	}
+    if (self == [NSRRemoteObject class]) {
+        return nil;
+    }
+        
+    NSString *class = NSStringFromClass(self);
+    
+    if ([self config].autoinflectsClassNames)
+    {
+        return [class nsr_stringByUnderscoringIgnoringPrefix:[self config].ignoresClassPrefixes];
+    }
+    else
+    {
+        return class;
+    }
 }
 
 + (NSString *) remoteControllerName
 {
-	NSString *singular = [self remoteModelName];
-	    
-	if ([singular hasSuffix:@"y"] && ![singular hasSuffix:@"ey"]) {
-		return [[singular substringToIndex:singular.length-1] stringByAppendingString:@"ies"];
-	}
-	
-	if ([singular hasSuffix:@"s"]) {
-		return [singular stringByAppendingString:@"es"];
-	}
-	
-	return [singular stringByAppendingString:@"s"];
+    NSString *singular = [self remoteModelName];
+        
+    if ([singular hasSuffix:@"y"] && ![singular hasSuffix:@"ey"]) {
+        return [[singular substringToIndex:singular.length-1] stringByAppendingString:@"ies"];
+    }
+    
+    if ([singular hasSuffix:@"s"]) {
+        return [singular stringByAppendingString:@"es"];
+    }
+    
+    return [singular stringByAppendingString:@"s"];
 }
 
 - (BOOL) propertyIsTimestamp:(NSString *)property
 {
-	return ([property isEqualToString:@"createdAt"] || [property isEqualToString:@"updatedAt"] ||
-			[property isEqualToString:@"created_at"] || [property isEqualToString:@"updated_at"]);
+    return ([property isEqualToString:@"createdAt"] || [property isEqualToString:@"updatedAt"] ||
+            [property isEqualToString:@"created_at"] || [property isEqualToString:@"updated_at"]);
 }
 
 - (BOOL) valueIsArray:(id)value
@@ -114,29 +114,29 @@
 
 - (BOOL) propertyIsDate:(NSString *)property
 {
-	//give rubymotion the _at dates for frees
-	return ([self propertyIsTimestamp:property] ||
-			[[self.class typeForProperty:property] isEqualToString:@"@\"NSDate\""]);
+    //give rubymotion the _at dates for frees
+    return ([self propertyIsTimestamp:property] ||
+            [[self.class typeForProperty:property] isEqualToString:@"@\"NSDate\""]);
 }
 
 + (NSString *) typeForProperty:(NSString *)prop
 {
-	objc_property_t property = class_getProperty(self, [prop UTF8String]);
-	if (!property) {
-		return nil;
-	}
-	
-	// This will return some garbage like "Ti,GgetFoo,SsetFoo:,Vproperty"
-	// See https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html
-	
-	NSString *atts = @(property_getAttributes(property));
-	
-	for (NSString *att in [atts componentsSeparatedByString:@","])
-		if ([att hasPrefix:@"T"]) {
-			return [att substringFromIndex:1];
-		}
-	
-	return nil;
+    objc_property_t property = class_getProperty(self, [prop UTF8String]);
+    if (!property) {
+        return nil;
+    }
+    
+    // This will return some garbage like "Ti,GgetFoo,SsetFoo:,Vproperty"
+    // See https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html
+    
+    NSString *atts = @(property_getAttributes(property));
+    
+    for (NSString *att in [atts componentsSeparatedByString:@","])
+        if ([att hasPrefix:@"T"]) {
+            return [att substringFromIndex:1];
+        }
+    
+    return nil;
 }
 
 + (Class) typeClassForProperty:(NSString *)property
@@ -176,7 +176,7 @@
 
 - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)verb
 {
-	return nil;
+    return nil;
 }
 
 - (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property
@@ -186,23 +186,23 @@
 
 - (Class) nestedClassForProperty:(NSString *)property
 { 
-	Class class = [self.class typeClassForProperty:property];
+    Class class = [self.class typeClassForProperty:property];
     return ([class isSubclassOfClass:[NSRRemoteObject class]] ? class : nil);
 }
 
 - (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
-{	
-	if ([property isEqualToString:@"remoteID"]) {
-		*remoteKey = @"id";
-	}
-	
+{    
+    if ([property isEqualToString:@"remoteID"]) {
+        *remoteKey = @"id";
+    }
+    
     Class nestedClass = [self nestedClassForProperty:property];
     id val = [self valueForKey:property];
     
     if (nestedClass)
     {
-		if ([self shouldOnlySendIDKeyForNestedObjectProperty:property])
-		{
+        if ([self shouldOnlySendIDKeyForNestedObjectProperty:property])
+        {
             if ([self valueIsArray:val])
             {
                 NSString *singular = *remoteKey;
@@ -221,51 +221,51 @@
                 *remoteKey = [*remoteKey stringByAppendingString:@"_id"];
                 return [val remoteID];
             }
-		}
-		
-		*remoteKey = [*remoteKey stringByAppendingString:@"_attributes"];
-		
-		if ([self valueIsArray:val])
-		{
-			NSMutableArray *new = [NSMutableArray arrayWithCapacity:[val count]];
-			
-			for (id element in val)
-			{
-				id encodedObj = [element remoteDictionaryRepresentationWrapped:NO fromNesting:YES];
-				[new addObject:encodedObj];
-			}
-			
-			return new;
-		}
-		
-		return [val remoteDictionaryRepresentationWrapped:NO fromNesting:YES];
-	}
+        }
+        
+        *remoteKey = [*remoteKey stringByAppendingString:@"_attributes"];
+        
+        if ([self valueIsArray:val])
+        {
+            NSMutableArray *new = [NSMutableArray arrayWithCapacity:[val count]];
+            
+            for (id element in val)
+            {
+                id encodedObj = [element remoteDictionaryRepresentationWrapped:NO fromNesting:YES];
+                [new addObject:encodedObj];
+            }
+            
+            return new;
+        }
+        
+        return [val remoteDictionaryRepresentationWrapped:NO fromNesting:YES];
+    }
 
-	if ([val isKindOfClass:[NSDate class]])
-	{
-		return [[self.class config] stringFromDate:val];
-	}
+    if ([val isKindOfClass:[NSDate class]])
+    {
+        return [[self.class config] stringFromDate:val];
+    }
 
-	return val;
+    return val;
 }
 
 - (NSString *) propertyForRemoteKey:(NSString *)remoteKey
 {
-	if ([remoteKey isEqualToString:@"id"]) {
-		return @"remoteID";
-	}
+    if ([remoteKey isEqualToString:@"id"]) {
+        return @"remoteID";
+    }
 
-	NSString *property = remoteKey;
-	if ([self.class config].autoinflectsPropertyNames) {
-		property = [property nsr_stringByCamelizing];
-	}
-	
-	return ([self.remoteProperties containsObject:property] ? property : nil);
+    NSString *property = remoteKey;
+    if ([self.class config].autoinflectsPropertyNames) {
+        property = [property nsr_stringByCamelizing];
+    }
+    
+    return ([self.remoteProperties containsObject:property] ? property : nil);
 }
 
 - (Class) containerClassForRelationProperty:(NSString *)property
 {
-	return [NSMutableArray class];
+    return [NSMutableArray class];
 }
 
 - (BOOL) shouldReplaceCollectionForProperty:(NSString *)property
@@ -275,19 +275,19 @@
 
 - (void) decodeRemoteValue:(id)railsObject forRemoteKey:(NSString *)remoteKey
 {
-	NSString *property = [self propertyForRemoteKey:remoteKey];
-	
-	if (!property) {
-		return;
-	}
+    NSString *property = [self propertyForRemoteKey:remoteKey];
+    
+    if (!property) {
+        return;
+    }
 
-	Class nestedClass = [self nestedClassForProperty:property];
-	
-	id previousVal = [self valueForKey:property];
-	id decodedObj = nil;
-	
-	if (railsObject)
-	{
+    Class nestedClass = [self nestedClassForProperty:property];
+    
+    id previousVal = [self valueForKey:property];
+    id decodedObj = nil;
+    
+    if (railsObject)
+    {
         if (nestedClass)
         {
             if ([self valueIsArray:railsObject])
@@ -355,56 +355,56 @@
                 else
                 {
                     decodedObj = previousVal;
-					[decodedObj setPropertiesUsingRemoteDictionary:railsObject];
+                    [decodedObj setPropertiesUsingRemoteDictionary:railsObject];
                 }
             }
         }
         else if ([self propertyIsDate:property])
-		{
-			decodedObj = [[self.class config] dateFromString:railsObject];
-		}
-		//otherwise, if not nested or anything, just use what we got (number, string, dictionary, array)
-		else
-		{
-			decodedObj = railsObject;
-		}
-	}
-	
-	[self setValue:decodedObj forKey:property];
+        {
+            decodedObj = [[self.class config] dateFromString:railsObject];
+        }
+        //otherwise, if not nested or anything, just use what we got (number, string, dictionary, array)
+        else
+        {
+            decodedObj = railsObject;
+        }
+    }
+    
+    [self setValue:decodedObj forKey:property];
 }
 
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
 {
-	//don't include id if it's nil or on the main object (nested guys need their IDs)
-	if ([property isEqualToString:@"remoteID"] && (!self.remoteID || !nested)) {
-		return NO;
-	}
-	
-	//don't include updated_at or created_at
-	if ([self propertyIsTimestamp:property]) {
-		return NO;
-	}
+    //don't include id if it's nil or on the main object (nested guys need their IDs)
+    if ([property isEqualToString:@"remoteID"] && (!self.remoteID || !nested)) {
+        return NO;
+    }
+    
+    //don't include updated_at or created_at
+    if ([self propertyIsTimestamp:property]) {
+        return NO;
+    }
     
     Class nestedClass = [self nestedClassForProperty:property];
-	
-	if (nestedClass && ![self shouldOnlySendIDKeyForNestedObjectProperty:property])
-	{
-		//this is recursion-protection. we don't want to include every nested class in this class because one of those nested class could nest us, causing infinite loop. of course, overridable
-		if (nested)
-		{
-			return NO;
-		}
-		
-		id val = [self valueForKey:property];
+    
+    if (nestedClass && ![self shouldOnlySendIDKeyForNestedObjectProperty:property])
+    {
+        //this is recursion-protection. we don't want to include every nested class in this class because one of those nested class could nest us, causing infinite loop. of course, overridable
+        if (nested)
+        {
+            return NO;
+        }
+        
+        id val = [self valueForKey:property];
 
-		//don't send if there's no val or empty (is okay on belongs_to bc we send a null id)
-		if (!val || ([self valueIsArray:val] && [val count] == 0))
-		{
-			return NO;
-		}
-	}
-	
-	return YES;
+        //don't send if there's no val or empty (is okay on belongs_to bc we send a null id)
+        if (!val || ([self valueIsArray:val] && [val count] == 0))
+        {
+            return NO;
+        }
+    }
+    
+    return YES;
 }
 
 #pragma mark - Internal NSR stuff
@@ -414,221 +414,221 @@
     if (dict) {
         remoteAttributes = dict;
     }
-	
-	//support JSON that comes in like {"post"=>{"something":"something"}}
-	NSDictionary *innerDict = dict[[self.class remoteModelName]];
-	if (dict.count == 1 && [innerDict isKindOfClass:[NSDictionary class]])
-	{
-		dict = innerDict;
-	}
-		
-	for (NSString *remoteKey in dict)
-	{
-		id remoteObject = dict[remoteKey];
-		if (remoteObject == [NSNull null]) {
-			remoteObject = nil;
-		}
+    
+    //support JSON that comes in like {"post"=>{"something":"something"}}
+    NSDictionary *innerDict = dict[[self.class remoteModelName]];
+    if (dict.count == 1 && [innerDict isKindOfClass:[NSDictionary class]])
+    {
+        dict = innerDict;
+    }
+        
+    for (NSString *remoteKey in dict)
+    {
+        id remoteObject = dict[remoteKey];
+        if (remoteObject == [NSNull null]) {
+            remoteObject = nil;
+        }
 
-		[self decodeRemoteValue:remoteObject forRemoteKey:remoteKey];
-	}
+        [self decodeRemoteValue:remoteObject forRemoteKey:remoteKey];
+    }
 }
 
 - (NSDictionary *) remoteDictionaryRepresentationWrapped:(BOOL)wrapped
 {
-	return [self remoteDictionaryRepresentationWrapped:wrapped fromNesting:NO];
+    return [self remoteDictionaryRepresentationWrapped:wrapped fromNesting:NO];
 }
 
 - (NSDictionary *) remoteDictionaryRepresentationWrapped:(BOOL)wrapped fromNesting:(BOOL)nesting
 {
-	NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-	
-	for (NSString *objcProperty in [self remoteProperties])
-	{
-		if (![self shouldSendProperty:objcProperty whenNested:nesting]) {
-			continue;
-		}
-		
-		NSString *remoteKey = objcProperty;
-		if ([self.class config].autoinflectsPropertyNames) {
-			remoteKey = [remoteKey nsr_stringByUnderscoring];
-		}
-		
-		id remoteRep = [self encodeValueForProperty:objcProperty remoteKey:&remoteKey];
-		if (!remoteRep) {
-			remoteRep = [NSNull null];
-		}
-		
-		BOOL JSONParsable = ([remoteRep isKindOfClass:[NSArray class]] ||
-							 [remoteRep isKindOfClass:[NSDictionary class]] ||
-							 [remoteRep isKindOfClass:[NSString class]] ||
-							 [remoteRep isKindOfClass:[NSNumber class]] ||
-							 [remoteRep isKindOfClass:[NSNull class]]);
-		
-		if (!JSONParsable)
-		{
-			[NSException raise:NSRJSONParsingException format:@"Trying to encode property '%@' in class '%@', but the result (%@) was not JSON-parsable. Override -[NSRRemoteObject encodeValueForProperty:remoteKey:] if you want to encode a property that's not NSDictionary, NSArray, NSString, NSNumber, or NSNull. Remember to call super if it doesn't need custom encoding.",objcProperty, self.class, remoteRep];
-		}
-		
-		
-		dict[remoteKey] = remoteRep;
-	}
-	
-	if (remoteDestroyOnNesting)
-	{
-		dict[@"_destroy"] = @YES;
-	}
-	
-	if (wrapped) {
-		return @{[self.class remoteModelName]: dict};
-	}
-	
-	return dict;
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    
+    for (NSString *objcProperty in [self remoteProperties])
+    {
+        if (![self shouldSendProperty:objcProperty whenNested:nesting]) {
+            continue;
+        }
+        
+        NSString *remoteKey = objcProperty;
+        if ([self.class config].autoinflectsPropertyNames) {
+            remoteKey = [remoteKey nsr_stringByUnderscoring];
+        }
+        
+        id remoteRep = [self encodeValueForProperty:objcProperty remoteKey:&remoteKey];
+        if (!remoteRep) {
+            remoteRep = [NSNull null];
+        }
+        
+        BOOL JSONParsable = ([remoteRep isKindOfClass:[NSArray class]] ||
+                             [remoteRep isKindOfClass:[NSDictionary class]] ||
+                             [remoteRep isKindOfClass:[NSString class]] ||
+                             [remoteRep isKindOfClass:[NSNumber class]] ||
+                             [remoteRep isKindOfClass:[NSNull class]]);
+        
+        if (!JSONParsable)
+        {
+            [NSException raise:NSRJSONParsingException format:@"Trying to encode property '%@' in class '%@', but the result (%@) was not JSON-parsable. Override -[NSRRemoteObject encodeValueForProperty:remoteKey:] if you want to encode a property that's not NSDictionary, NSArray, NSString, NSNumber, or NSNull. Remember to call super if it doesn't need custom encoding.",objcProperty, self.class, remoteRep];
+        }
+        
+        
+        dict[remoteKey] = remoteRep;
+    }
+    
+    if (remoteDestroyOnNesting)
+    {
+        dict[@"_destroy"] = @YES;
+    }
+    
+    if (wrapped) {
+        return @{[self.class remoteModelName]: dict};
+    }
+    
+    return dict;
 }
 
 
 + (instancetype) objectWithRemoteDictionary:(NSDictionary *)dict
 {
-	NSRRemoteObject *obj = [[self alloc] init];
-	[obj setPropertiesUsingRemoteDictionary:dict];
-	return obj;
+    NSRRemoteObject *obj = [[self alloc] init];
+    [obj setPropertiesUsingRemoteDictionary:dict];
+    return obj;
 }
 
 #pragma mark - Create
 
 - (BOOL) remoteCreate:(NSError **)error
 {
-	NSDictionary *jsonResponse = [[NSRRequest requestToCreateObject:self] sendSynchronous:error];
-	
-	[self setPropertiesUsingRemoteDictionary:jsonResponse];
-	return !!jsonResponse;
+    NSDictionary *jsonResponse = [[NSRRequest requestToCreateObject:self] sendSynchronous:error];
+    
+    [self setPropertiesUsingRemoteDictionary:jsonResponse];
+    return !!jsonResponse;
 }
 
 - (void) remoteCreateAsync:(NSRBasicCompletionBlock)completionBlock
 {
-	[[NSRRequest requestToCreateObject:self] sendAsynchronous:
-	 ^(id result, NSError *error) 
-	 {
-		 [self setPropertiesUsingRemoteDictionary:result];
-		 if (completionBlock) {
-			 completionBlock(error);
-		 }
-	 }];
+    [[NSRRequest requestToCreateObject:self] sendAsynchronous:
+     ^(id result, NSError *error) 
+     {
+         [self setPropertiesUsingRemoteDictionary:result];
+         if (completionBlock) {
+             completionBlock(error);
+         }
+     }];
 }
 
 #pragma mark Update
 
 - (BOOL) remoteUpdate:(NSError **)error
 {
-	return !![[NSRRequest requestToUpdateObject:self] sendSynchronous:error];
+    return !![[NSRRequest requestToUpdateObject:self] sendSynchronous:error];
 }
 
 - (void) remoteUpdateAsync:(NSRBasicCompletionBlock)completionBlock
 {
-	[[NSRRequest requestToUpdateObject:self] sendAsynchronous:
-	 ^(id result, NSError *error) 
-	 {
-		 if (completionBlock) {
-			 completionBlock(error);
-		 }
-	 }];
+    [[NSRRequest requestToUpdateObject:self] sendAsynchronous:
+     ^(id result, NSError *error) 
+     {
+         if (completionBlock) {
+             completionBlock(error);
+         }
+     }];
 }
 
 #pragma mark Replace
 
 - (BOOL) remoteReplace:(NSError **)error
 {
-	return !![[NSRRequest requestToReplaceObject:self] sendSynchronous:error];
+    return !![[NSRRequest requestToReplaceObject:self] sendSynchronous:error];
 }
 
 - (void) remoteReplaceAsync:(NSRBasicCompletionBlock)completionBlock
 {
-	[[NSRRequest requestToReplaceObject:self] sendAsynchronous:
-	 ^(id result, NSError *error) 
-	 {
-		 if (completionBlock) {
-			 completionBlock(error);
-		 }
-	 }];
+    [[NSRRequest requestToReplaceObject:self] sendAsynchronous:
+     ^(id result, NSError *error) 
+     {
+         if (completionBlock) {
+             completionBlock(error);
+         }
+     }];
 }
 
 #pragma mark Destroy
 
 - (BOOL) remoteDestroy:(NSError **)error
 {
-	return !![[NSRRequest requestToDestroyObject:self] sendSynchronous:error];
+    return !![[NSRRequest requestToDestroyObject:self] sendSynchronous:error];
 }
 
 - (void) remoteDestroyAsync:(NSRBasicCompletionBlock)completionBlock
 {
-	[[NSRRequest requestToDestroyObject:self] sendAsynchronous:
-	 ^(id result, NSError *error) 
-	 {
-		 if (completionBlock) {
-			 completionBlock(error);
-		 }
-	 }];
+    [[NSRRequest requestToDestroyObject:self] sendAsynchronous:
+     ^(id result, NSError *error) 
+     {
+         if (completionBlock) {
+             completionBlock(error);
+         }
+     }];
 }
 
 #pragma mark Get latest
 
 - (BOOL) remoteFetch:(NSError **)error
 {
-	NSDictionary *jsonResponse = [[NSRRequest requestToFetchObject:self] sendSynchronous:error];
-	
-	if (jsonResponse) {
-		[self setPropertiesUsingRemoteDictionary:jsonResponse];
-	}
-	
-	return !!jsonResponse;
+    NSDictionary *jsonResponse = [[NSRRequest requestToFetchObject:self] sendSynchronous:error];
+    
+    if (jsonResponse) {
+        [self setPropertiesUsingRemoteDictionary:jsonResponse];
+    }
+    
+    return !!jsonResponse;
 }
 
 - (void) remoteFetchAsync:(NSRBasicCompletionBlock)completionBlock
 {
-	[[NSRRequest requestToFetchObject:self] sendAsynchronous:
-	 ^(id jsonRep, NSError *error) 
-	 {
-		 if (jsonRep) {
-			 [self setPropertiesUsingRemoteDictionary:jsonRep];
-		 }
-		 if (completionBlock) {
-			 completionBlock(error);
-		 }
-	 }];
+    [[NSRRequest requestToFetchObject:self] sendAsynchronous:
+     ^(id jsonRep, NSError *error) 
+     {
+         if (jsonRep) {
+             [self setPropertiesUsingRemoteDictionary:jsonRep];
+         }
+         if (completionBlock) {
+             completionBlock(error);
+         }
+     }];
 }
 
 #pragma mark Get specific object (class-level)
 
 + (instancetype) remoteObjectWithID:(NSNumber *)mID error:(NSError **)error
 {
-	NSDictionary *objData = [[NSRRequest requestToFetchObjectWithID:mID ofClass:self] sendSynchronous:error];
-	
+    NSDictionary *objData = [[NSRRequest requestToFetchObjectWithID:mID ofClass:self] sendSynchronous:error];
+    
     return (objData ? [self objectWithRemoteDictionary:objData] : nil);
 }
 
 + (void) remoteObjectWithID:(NSNumber *)mID async:(NSRFetchObjectCompletionBlock)completionBlock
 {
-	[[NSRRequest requestToFetchObjectWithID:mID ofClass:self] sendAsynchronous:
-	 ^(id jsonRep, NSError *error) 
-	 {
+    [[NSRRequest requestToFetchObjectWithID:mID ofClass:self] sendAsynchronous:
+     ^(id jsonRep, NSError *error) 
+     {
          id obj = (jsonRep ? [self objectWithRemoteDictionary:jsonRep] : nil);
-		 if (completionBlock) {
-			 completionBlock(obj, error);
-		 }
-	 }];
+         if (completionBlock) {
+             completionBlock(obj, error);
+         }
+     }];
 }
 
 #pragma mark Get all objects (class-level)
 
 + (NSArray *) objectsWithRemoteDictionaries:(NSArray *)remoteDictionaries
 {
-	if ([remoteDictionaries isKindOfClass:[NSDictionary class]])
-	{
-		//probably has root in front of it - "posts":[{},{}]
-		if ([remoteDictionaries count] == 1)
-		{
-			remoteDictionaries = [(NSDictionary *)remoteDictionaries allValues][0];
-		}
-	}
+    if ([remoteDictionaries isKindOfClass:[NSDictionary class]])
+    {
+        //probably has root in front of it - "posts":[{},{}]
+        if ([remoteDictionaries count] == 1)
+        {
+            remoteDictionaries = [(NSDictionary *)remoteDictionaries allValues][0];
+        }
+    }
     
     if (![remoteDictionaries isKindOfClass:[NSArray class]]) {
         return nil;
@@ -636,63 +636,63 @@
 
     NSMutableArray *array = [NSMutableArray array];
     
-	for (NSDictionary *dict in remoteDictionaries)
-	{
-		if ([dict isKindOfClass:[NSDictionary class]])
-		{
-			NSRRemoteObject *obj = [self objectWithRemoteDictionary:dict];
+    for (NSDictionary *dict in remoteDictionaries)
+    {
+        if ([dict isKindOfClass:[NSDictionary class]])
+        {
+            NSRRemoteObject *obj = [self objectWithRemoteDictionary:dict];
             [array addObject:obj];
-		}
-	}
+        }
+    }
     
-	return array;
+    return array;
 }
 
 + (NSArray *) remoteAll:(NSError **)error
 {
-	return [self remoteAllViaObject:nil error:error];
+    return [self remoteAllViaObject:nil error:error];
 }
 
 + (NSArray *) remoteAllViaObject:(NSRRemoteObject *)obj error:(NSError **)error
 {
     id json = [[NSRRequest requestToFetchAllObjectsOfClass:self viaObject:obj] sendSynchronous:error];
-	return [self objectsWithRemoteDictionaries:json];
+    return [self objectsWithRemoteDictionaries:json];
 }
 
 + (void) remoteAllAsync:(NSRFetchAllCompletionBlock)completionBlock
 {
-	[self remoteAllViaObject:nil async:completionBlock];
+    [self remoteAllViaObject:nil async:completionBlock];
 }
 
 + (void) remoteAllViaObject:(NSRRemoteObject *)obj async:(NSRFetchAllCompletionBlock)completionBlock
 {
     [[NSRRequest requestToFetchAllObjectsOfClass:self viaObject:obj] sendAsynchronous:
-	 ^(id result, NSError *error) 
-	 {
-		 if (completionBlock) {
-			 completionBlock([self objectsWithRemoteDictionaries:result],error);
-		 }
-	 }];
+     ^(id result, NSError *error) 
+     {
+         if (completionBlock) {
+             completionBlock([self objectsWithRemoteDictionaries:result],error);
+         }
+     }];
 }
 
 #pragma mark - NSCoding
 
 - (id) initWithCoder:(NSCoder *)aDecoder
 {
-	if (self = [super init])
-	{
-		self.remoteID = [aDecoder decodeObjectForKey:@"remoteID"];
-		remoteAttributes = [aDecoder decodeObjectForKey:@"remoteAttributes"];
-		self.remoteDestroyOnNesting = [aDecoder decodeBoolForKey:@"remoteDestroyOnNesting"];
-	}
-	return self;
+    if (self = [super init])
+    {
+        self.remoteID = [aDecoder decodeObjectForKey:@"remoteID"];
+        remoteAttributes = [aDecoder decodeObjectForKey:@"remoteAttributes"];
+        self.remoteDestroyOnNesting = [aDecoder decodeBoolForKey:@"remoteDestroyOnNesting"];
+    }
+    return self;
 }
 
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
-	[aCoder encodeObject:self.remoteID forKey:@"remoteID"];
-	[aCoder encodeObject:remoteAttributes forKey:@"remoteAttributes"];
-	[aCoder encodeBool:remoteDestroyOnNesting forKey:@"remoteDestroyOnNesting"];
+    [aCoder encodeObject:self.remoteID forKey:@"remoteID"];
+    [aCoder encodeObject:remoteAttributes forKey:@"remoteAttributes"];
+    [aCoder encodeBool:remoteDestroyOnNesting forKey:@"remoteDestroyOnNesting"];
 }
 
 @end

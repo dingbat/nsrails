@@ -14,7 +14,7 @@
 
 @interface SubClass : SuperClass
 {
-	NSString *private;
+    NSString *private;
 }
 @property (nonatomic, strong) NSDate *subDate;
 @property (nonatomic, strong) id anything;

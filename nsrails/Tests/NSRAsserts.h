@@ -20,7 +20,7 @@
 
 @end
 
-#define NSRAssertNoServer(x)	if (x) { STFail(@"Test Rails server not running -- run rails s on the demo app."); return; }
+#define NSRAssertNoServer(x)    if (x) { STFail(@"Test Rails server not running -- run rails s on the demo app."); return; }
 
 #define NSRAssertEqualArraysNoOrder(arr, arr2) \
 if ([arr2 count] != [arr count]) STFail(@"%@ should be equal (order doesn't matter) to %@",arr,arr2); \

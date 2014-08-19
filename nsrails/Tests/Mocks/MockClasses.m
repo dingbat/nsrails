@@ -17,7 +17,7 @@
 
 + (NSString *) remoteModelName
 {
-	return @"custom";
+    return @"custom";
 }
 
 @end
@@ -35,11 +35,11 @@
 
 - (Class) nestedClassForProperty:(NSString *)property
 {
-	if (([property isEqualToString:@"responses"] && !noResponseRelationship) || [property isEqualToString:@"onlyIDResponses"])
-	{
-		return [Response class];
-	}
-	return [super nestedClassForProperty:property];
+    if (([property isEqualToString:@"responses"] && !noResponseRelationship) || [property isEqualToString:@"onlyIDResponses"])
+    {
+        return [Response class];
+    }
+    return [super nestedClassForProperty:property];
 }
 
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
@@ -67,7 +67,7 @@
 
 - (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property
 {
-	return [property isEqualToString:@"post"] && belongsToPost;
+    return [property isEqualToString:@"post"] && belongsToPost;
 }
 
 @end
@@ -77,7 +77,7 @@
 
 + (NSString *) remoteModelName
 {
-	return @"parent";
+    return @"parent";
 }
 
 @end
@@ -91,12 +91,12 @@
 
 + (NSString *) remoteModelName
 {
-	return @"pref";
+    return @"pref";
 }
 
 - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)req
 {
-	return self.parent;
+    return self.parent;
 }
 
 @end
@@ -106,15 +106,15 @@
 
 + (NSString *) remoteModelName
 {
-	return @"pref2";
+    return @"pref2";
 }
 
 - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)req
 {
-	if ([req.httpMethod isEqualToString:@"GET"] || [req.httpMethod isEqualToString:@"PATCH"]) {
-		return childParent;
-	}
-	return nil;
+    if ([req.httpMethod isEqualToString:@"GET"] || [req.httpMethod isEqualToString:@"PATCH"]) {
+        return childParent;
+    }
+    return nil;
 }
 
 @end
@@ -129,20 +129,20 @@
 
 - (Class) nestedClassForProperty:(NSString *)property
 {
-	if ([property isEqualToString:@"owners"])
-	{
-		return [Person class];
-	}
-	return [super nestedClassForProperty:property];
+    if ([property isEqualToString:@"owners"])
+    {
+        return [Person class];
+    }
+    return [super nestedClassForProperty:property];
 }
 
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
 {
-	if (nestPerson && nested && [property isEqualToString:@"owners"]) {
-		return YES;
-	}
-	
-	return [super shouldSendProperty:property whenNested:nested];
+    if (nestPerson && nested && [property isEqualToString:@"owners"]) {
+        return YES;
+    }
+    
+    return [super shouldSendProperty:property whenNested:nested];
 }
 
 @end
@@ -152,11 +152,11 @@
 
 - (Class) nestedClassForProperty:(NSString *)property
 {
-	if ([property isEqualToString:@"books"]) {
-		return [Book class];
-	}
-	
-	return [super nestedClassForProperty:property];
+    if ([property isEqualToString:@"books"]) {
+        return [Book class];
+    }
+    
+    return [super nestedClassForProperty:property];
 }
 
 @end
@@ -166,18 +166,18 @@
 
 - (Class) nestedClassForProperty:(NSString *)property
 {
-	if ([property isEqualToString:@"eggs"]) {
-		return [Egg class];
-	}
-	return [super nestedClassForProperty:property];
+    if ([property isEqualToString:@"eggs"]) {
+        return [Egg class];
+    }
+    return [super nestedClassForProperty:property];
 }
 
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
 {
-	if ([property isEqualToString:@"eggs"] && nested && nestEggs) {
-		return YES;
-	}
-	return [super shouldSendProperty:property whenNested:nested];
+    if ([property isEqualToString:@"eggs"] && nested && nestEggs) {
+        return YES;
+    }
+    return [super shouldSendProperty:property whenNested:nested];
 }
 
 - (BOOL) shouldReplaceCollectionForProperty:(NSString *)property
@@ -192,15 +192,15 @@
 
 - (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property
 {
-	return ([property isEqualToString:@"bird"] && !hasOneBird);
+    return ([property isEqualToString:@"bird"] && !hasOneBird);
 }
 
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
 {
-	if ([property isEqualToString:@"bird"] && nested && nestBird) {
-		return YES;
-	}
-	return [super shouldSendProperty:property whenNested:nested];
+    if ([property isEqualToString:@"bird"] && nested && nestBird) {
+        return YES;
+    }
+    return [super shouldSendProperty:property whenNested:nested];
 }
 
 @end
@@ -220,89 +220,89 @@
 
 - (NSString *) propertyForRemoteKey:(NSString *)remoteKey
 {
-	if ([remoteKey isEqualToString:@"rails"]) {
-		return @"objc";
-	}
-	
-	return [super propertyForRemoteKey:remoteKey];
+    if ([remoteKey isEqualToString:@"rails"]) {
+        return @"objc";
+    }
+    
+    return [super propertyForRemoteKey:remoteKey];
 }
 
 - (id) encodeValueForProperty:(NSString *)key remoteKey:(NSString **)remoteKey
 {
-	if ([key isEqualToString:@"remoteOnly"])
-	{
-		if (encodeNonJSON) {
-			return [[NSScanner alloc] init];
-		}
-		return @"remote";		
-	}
-	if ([key isEqualToString:@"dateOverrideSend"])
-	{
-		return @"override!";
-	}
-	if ([key isEqualToString:@"csvArray"])
-	{
-		return [csvArray componentsJoinedByString:@","];
-	}
-	if ([key isEqualToString:@"componentWithFlippingName"])
-	{
-		*remoteKey = @"component";
-		componentWithFlippingName.componentName = [componentWithFlippingName.componentName uppercaseString];
-		return [componentWithFlippingName remoteDictionaryRepresentationWrapped:YES];	
-	}
-	if ([key isEqualToString:@"locallyURL"])
-	{
-		return [locallyURL absoluteString];	
-	}
-	if ([key isEqualToString:@"remotelyUppercase"])
-	{
-		return [remotelyUppercase uppercaseString];
-	}
-	if ([key isEqualToString:@"codeToNil"])
-	{
-		return nil;
-	}
-	
-	return [super encodeValueForProperty:key remoteKey:remoteKey];
+    if ([key isEqualToString:@"remoteOnly"])
+    {
+        if (encodeNonJSON) {
+            return [[NSScanner alloc] init];
+        }
+        return @"remote";        
+    }
+    if ([key isEqualToString:@"dateOverrideSend"])
+    {
+        return @"override!";
+    }
+    if ([key isEqualToString:@"csvArray"])
+    {
+        return [csvArray componentsJoinedByString:@","];
+    }
+    if ([key isEqualToString:@"componentWithFlippingName"])
+    {
+        *remoteKey = @"component";
+        componentWithFlippingName.componentName = [componentWithFlippingName.componentName uppercaseString];
+        return [componentWithFlippingName remoteDictionaryRepresentationWrapped:YES];    
+    }
+    if ([key isEqualToString:@"locallyURL"])
+    {
+        return [locallyURL absoluteString];    
+    }
+    if ([key isEqualToString:@"remotelyUppercase"])
+    {
+        return [remotelyUppercase uppercaseString];
+    }
+    if ([key isEqualToString:@"codeToNil"])
+    {
+        return nil;
+    }
+    
+    return [super encodeValueForProperty:key remoteKey:remoteKey];
 }
 
 - (NSDate *) customDate
 {
-	return [NSDate dateWithTimeIntervalSince1970:100];	
+    return [NSDate dateWithTimeIntervalSince1970:100];    
 }
 
 - (void) decodeRemoteValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey
 {
-	if ([remoteKey isEqualToString:@"date_override_ret"])
-	{
-		self.dateOverrideRet = [self customDate];
-	}
-	else if ([remoteKey isEqualToString:@"csv_array"])
-	{
-		self.csvArray = [remoteObject componentsSeparatedByString:@","];
-	}
-	else if ([remoteKey isEqualToString:@"code_to_nil"])
-	{
-		self.codeToNil = nil;
-	}
-	else if ([remoteKey isEqualToString:@"locally_url"])
-	{
-		self.locallyURL = [NSURL URLWithString:remoteObject];
-	}
-	else if ([remoteKey isEqualToString:@"locally_lowercase"])
-	{
-		self.locallyLowercase = [remoteObject lowercaseString];
-	}
-	else if ([remoteKey isEqualToString:@"component"])
-	{
-		CustomCoderComponent *new = [CustomCoderComponent objectWithRemoteDictionary:remoteObject];
-		new.componentName = [new.componentName lowercaseString];
-		self.componentWithFlippingName = new;
-	}
-	else if (![remoteKey isEqualToString:@"remote_only"])
-	{
-		[super decodeRemoteValue:remoteObject forRemoteKey:remoteKey];
-	}
+    if ([remoteKey isEqualToString:@"date_override_ret"])
+    {
+        self.dateOverrideRet = [self customDate];
+    }
+    else if ([remoteKey isEqualToString:@"csv_array"])
+    {
+        self.csvArray = [remoteObject componentsSeparatedByString:@","];
+    }
+    else if ([remoteKey isEqualToString:@"code_to_nil"])
+    {
+        self.codeToNil = nil;
+    }
+    else if ([remoteKey isEqualToString:@"locally_url"])
+    {
+        self.locallyURL = [NSURL URLWithString:remoteObject];
+    }
+    else if ([remoteKey isEqualToString:@"locally_lowercase"])
+    {
+        self.locallyLowercase = [remoteObject lowercaseString];
+    }
+    else if ([remoteKey isEqualToString:@"component"])
+    {
+        CustomCoderComponent *new = [CustomCoderComponent objectWithRemoteDictionary:remoteObject];
+        new.componentName = [new.componentName lowercaseString];
+        self.componentWithFlippingName = new;
+    }
+    else if (![remoteKey isEqualToString:@"remote_only"])
+    {
+        [super decodeRemoteValue:remoteObject forRemoteKey:remoteKey];
+    }
 }
 
 @end
@@ -312,25 +312,25 @@
 
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
 {
-	if ([property isEqualToString:@"retrieveOnly"] || [property isEqualToString:@"local"]) {
-		return NO;
-	}
-	
-	return [super shouldSendProperty:property whenNested:nested];
+    if ([property isEqualToString:@"retrieveOnly"] || [property isEqualToString:@"local"]) {
+        return NO;
+    }
+    
+    return [super shouldSendProperty:property whenNested:nested];
 }
 
 - (void) decodeRemoteValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey
 {
-	if (![remoteKey isEqualToString:@"send_only"] || [remoteKey isEqualToString:@"local"]) {
-		[super decodeRemoteValue:remoteObject forRemoteKey:remoteKey];
-	}
+    if (![remoteKey isEqualToString:@"send_only"] || [remoteKey isEqualToString:@"local"]) {
+        [super decodeRemoteValue:remoteObject forRemoteKey:remoteKey];
+    }
 }
 
 - (NSMutableArray *) remoteProperties
 {
-	NSMutableArray *props = [super remoteProperties];
-	[props removeObject:@"undefined"];
-	return props;
+    NSMutableArray *props = [super remoteProperties];
+    [props removeObject:@"undefined"];
+    return props;
 }
 
 @end

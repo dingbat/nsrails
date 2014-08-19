@@ -34,88 +34,88 @@
 
 - (NSString *) nsr_stringByCamelizing
 {
-	NSMutableString *camelized = [NSMutableString string];
-	BOOL capitalizeNext = NO;
-	for (int i = 0; i < self.length; i++) 
-	{
-		NSString *str = [self substringWithRange:NSMakeRange(i, 1)];
-		
-		if ([str isEqualToString:@"_"])
-		{
-			capitalizeNext = YES;
-			continue;
-		}
-		
-		if (capitalizeNext) 
-		{
-			[camelized appendString:[str uppercaseString]];
-			capitalizeNext = NO;
-		} 
-		else
-		{
-			[camelized appendString:str];
-		}
-	}
-	
-	// replace items that end in Id with ID
-	if ([camelized hasSuffix:@"Id"]) {
-		[camelized replaceCharactersInRange:NSMakeRange(camelized.length - 2, 2) withString:@"ID"];
-	}
-	
-	// replace items that end in Ids with IDs
-	if ([camelized hasSuffix:@"Ids"]) {
-		[camelized replaceCharactersInRange:NSMakeRange(camelized.length - 3, 3) withString:@"IDs"];
-	}
-	
-	return camelized;
+    NSMutableString *camelized = [NSMutableString string];
+    BOOL capitalizeNext = NO;
+    for (int i = 0; i < self.length; i++) 
+    {
+        NSString *str = [self substringWithRange:NSMakeRange(i, 1)];
+        
+        if ([str isEqualToString:@"_"])
+        {
+            capitalizeNext = YES;
+            continue;
+        }
+        
+        if (capitalizeNext) 
+        {
+            [camelized appendString:[str uppercaseString]];
+            capitalizeNext = NO;
+        } 
+        else
+        {
+            [camelized appendString:str];
+        }
+    }
+    
+    // replace items that end in Id with ID
+    if ([camelized hasSuffix:@"Id"]) {
+        [camelized replaceCharactersInRange:NSMakeRange(camelized.length - 2, 2) withString:@"ID"];
+    }
+    
+    // replace items that end in Ids with IDs
+    if ([camelized hasSuffix:@"Ids"]) {
+        [camelized replaceCharactersInRange:NSMakeRange(camelized.length - 3, 3) withString:@"IDs"];
+    }
+    
+    return camelized;
 }
 
 - (NSString *) nsr_stringByUnderscoring
 {
-	return [self nsr_stringByUnderscoringIgnoringPrefix:NO];
+    return [self nsr_stringByUnderscoringIgnoringPrefix:NO];
 }
 
 - (NSString *) nsr_stringByUnderscoringIgnoringPrefix:(BOOL)stripPrefix
 {
-	NSCharacterSet *caps = [NSCharacterSet uppercaseLetterCharacterSet];
-	
-	NSMutableString *underscored = [NSMutableString string];
-	BOOL isPrefix = YES;
-	BOOL previousLetterWasCaps = NO;
-	
-	for (int i = 0; i < self.length; i++) 
-	{
-		unichar c = [self characterAtIndex:i];
-		NSString *currChar = [NSString stringWithFormat:@"%C",c];
-		if ([caps characterIsMember:c]) 
-		{
-			BOOL nextLetterIsCaps = (i+1 == self.length || [caps characterIsMember:[self characterAtIndex:i+1]]);
-			
-			//only add the delimiter if, it's not the first letter, it's not in the middle of a bunch of caps, and it's not a _ repeat
-			if (i != 0 && !(previousLetterWasCaps && nextLetterIsCaps) && [self characterAtIndex:i-1] != '_')
-			{
-				if (isPrefix && stripPrefix)
-				{
-					underscored = [NSMutableString string];
-				}
-				else 
-				{
-					[underscored appendString:@"_"];
-				}
-			}
-			[underscored appendString:[currChar lowercaseString]];
-			previousLetterWasCaps = YES;
-		}
-		else 
-		{
-			isPrefix = NO;
-			
-			[underscored appendString:currChar];
-			previousLetterWasCaps = NO;
-		}
-	}
-	
-	return underscored;
+    NSCharacterSet *caps = [NSCharacterSet uppercaseLetterCharacterSet];
+    
+    NSMutableString *underscored = [NSMutableString string];
+    BOOL isPrefix = YES;
+    BOOL previousLetterWasCaps = NO;
+    
+    for (int i = 0; i < self.length; i++) 
+    {
+        unichar c = [self characterAtIndex:i];
+        NSString *currChar = [NSString stringWithFormat:@"%C",c];
+        if ([caps characterIsMember:c]) 
+        {
+            BOOL nextLetterIsCaps = (i+1 == self.length || [caps characterIsMember:[self characterAtIndex:i+1]]);
+            
+            //only add the delimiter if, it's not the first letter, it's not in the middle of a bunch of caps, and it's not a _ repeat
+            if (i != 0 && !(previousLetterWasCaps && nextLetterIsCaps) && [self characterAtIndex:i-1] != '_')
+            {
+                if (isPrefix && stripPrefix)
+                {
+                    underscored = [NSMutableString string];
+                }
+                else 
+                {
+                    [underscored appendString:@"_"];
+                }
+            }
+            [underscored appendString:[currChar lowercaseString]];
+            previousLetterWasCaps = YES;
+        }
+        else 
+        {
+            isPrefix = NO;
+            
+            [underscored appendString:currChar];
+            previousLetterWasCaps = NO;
+        }
+    }
+    
+    return underscored;
 }
 
 

@@ -58,19 +58,19 @@
  
  If a create or update failed due to validation reasons, NSRails will package the validation failures into a dictionary. This can be retrieved using the key constant `NSRErrorResponseBodyKey` in the `userInfo` property of the error. This dictionary contains **each failed property as a key**, with each respective object being **an array of the reasons that property failed validation**. For instance,
  
-	 NSError *error;
-	 if (![user createRemote:&error])
-	 {
-		 NSDictionary *validationErrors = [[error userInfo] objectForKey:NSRErrorResponseBodyKey];
-		 
-		 for (NSString *property in validationErrors)
-		 {
-			 for (NSString *reasonForFailure in [validationErrors objectForKey:property])
-			 {
-				 NSLog(@"%@ %@",property,reasonForFailure);  //=> "Name can't be blank"
-			 }
-		 }
-	 }
+     NSError *error;
+     if (![user createRemote:&error])
+     {
+         NSDictionary *validationErrors = [[error userInfo] objectForKey:NSRErrorResponseBodyKey];
+         
+         for (NSString *property in validationErrors)
+         {
+             for (NSString *reasonForFailure in [validationErrors objectForKey:property])
+             {
+                 NSLog(@"%@ %@",property,reasonForFailure);  //=> "Name can't be blank"
+             }
+         }
+     }
  
  # Overriding Behavior
  
@@ -82,9 +82,9 @@
   */
 
 #ifdef NSR_USE_COREDATA
-#define _NSR_SUPERCLASS		NSManagedObject
+#define _NSR_SUPERCLASS        NSManagedObject
 #else
-#define _NSR_SUPERCLASS		NSObject
+#define _NSR_SUPERCLASS        NSObject
 #endif
 
 @interface NSRRemoteObject : _NSR_SUPERCLASS <NSCoding>
@@ -106,13 +106,13 @@
  This will include properties that you may not have defined in your Objective-C class, allowing you to dynamically add fields to your app if the server-side model changes. This dictionary won't go through any of the encoding methods - it'll be exactly the dictionary as was sent in JSON.
  
  You're safe to use this property after any method that sets your object's properties from remote. For example:
-	
-	NSError *error;
-	if ([myObj remoteFetch:&error])
-	{
-		NSDictionary *hashSentByRails = myObj.remoteAttributes;
-		…
-	}
+    
+    NSError *error;
+    if ([myObj remoteFetch:&error])
+    {
+        NSDictionary *hashSentByRails = myObj.remoteAttributes;
+        …
+    }
  
  Calling `<setPropertiesUsingRemoteDictionary:>` will also update remoteAttributes to the dictionary passed in.
  */
@@ -353,7 +353,7 @@
 
  @param wrapped If `YES`, wraps the dictionary with a key of the model name:
  
-	{"user"=>{"name"=>"x", "email"=>"y"}}
+    {"user"=>{"name"=>"x", "email"=>"y"}}
  
  @return The receiver's properties as a dictionary.
  */
@@ -591,9 +591,9 @@
             self.URL = [NSURL URLWithString:remoteObject];
          }
          else
-		 {
+         {
             [super decodeValue:remoteObject forRemoteKey:remoteKey];
-		 }
+         }
      }
 
  Note: the default implementation of this method will automatically take care of NSDates for you, decoding them into an NSDate object using the Rails date format. The format used can be changed in [this](NSRConfig.html#//api/name/dateFormat) NSRConfig property.
@@ -653,8 +653,8 @@
  
      - (Class) nestedClassForProperty:(NSString *)property
      {
-		 // Only necessary for 'responses' (to-many)
-		 // By default, the Author class (to-one) will be picked up through its property type
+         // Only necessary for 'responses' (to-many)
+         // By default, the Author class (to-one) will be picked up through its property type
          if ([property isEqualToString:@"responses"]) {
              return [Response class];
          }

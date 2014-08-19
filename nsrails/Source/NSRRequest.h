@@ -41,22 +41,22 @@
  
  The methods in this class are set up so that making requests is concise and visually logical:
  
-	//GET to /posts/1
-	id response = [[[NSRRequest GET] routeToObject:post] sendSynchronous:&e];
+    //GET to /posts/1
+    id response = [[[NSRRequest GET] routeToObject:post] sendSynchronous:&e];
   
-	//PATCH to /posts/1 with post as body
-	NSRRequest *request = [NSRRequest PATCH];
-	[request routeToObject:post];
-	[request setBodyToObject:post];
-	id response = [request sendSynchronous:&e];
+    //PATCH to /posts/1 with post as body
+    NSRRequest *request = [NSRRequest PATCH];
+    [request routeToObject:post];
+    [request setBodyToObject:post];
+    id response = [request sendSynchronous:&e];
  
  Factory methods also exist (used by NSRRemoteObject) if you'd like to make only an incremental change to an existing request:
  
-	NSRRequest *request = [NSRRequest requestToFetchAllObjectsOfClass:[Post class]];
-	request.queryParameters = @{@"q":@"search"};
+    NSRRequest *request = [NSRRequest requestToFetchAllObjectsOfClass:[Post class]];
+    request.queryParameters = @{@"q":@"search"};
 
-	//GET to /posts?q=search
-	id response = [request sendSynchronous:&e];
+    //GET to /posts?q=search
+    id response = [request sendSynchronous:&e];
 */
 
 @interface NSRRequest : NSObject <NSCoding>
@@ -93,11 +93,11 @@
 /**
  The query parameters with which to make the request.
  
-	 NSRRequest *request = [[NSRRequest GET] routeTo:@"something"];
-	 request.queryParameters = @{@"q":@"search"};
-	 
-	 //GET to /something?q=search
-	 id response = [request sendSynchronous:&e];
+     NSRRequest *request = [[NSRRequest GET] routeTo:@"something"];
+     request.queryParameters = @{@"q":@"search"};
+     
+     //GET to /something?q=search
+     id response = [request sendSynchronous:&e];
  
  @warning Doesn't escape anything! Make sure your params are RFC 1808 compliant.
  */
@@ -165,7 +165,7 @@
  
  `GET` request routed to the given class, the custom method being the remoteID.
  
-	GET /posts/1
+    GET /posts/1
  
  @param remoteID Remote ID of the object you wish to fetch. Will raise an exception if this is `nil`.
  @param class Class of the object you wish to fetch. Must be an NSRRemoteObject subclass.
@@ -178,7 +178,7 @@
  
  `GET` request routed to the given class.
  
-	GET /posts
+    GET /posts
  
  @param class Class of the object you wish to fetch. Must be an NSRRemoteObject subclass.
  @return An NSRRequest object set to fetch all objects of a given class.
@@ -190,7 +190,7 @@
  
  `GET` request routed to the given parent object, the custom method being the class's index page.
  
-	GET /users/3/posts
+    GET /users/3/posts
  
  @param class Class of the object you wish to fetch. Must be an NSRRemoteObject subclass.
  @param obj Parent object used to prefix the route.
@@ -203,11 +203,11 @@
  
  `POST` request routed to the given object (ID is ignored).
  
-	POST /posts
+    POST /posts
  
  Or, if <NSRRemoteObject>'s `objectUsedToPrefixRequest:` is overriden and returns a non-nil object,
  
-	POST /users/3/posts
+    POST /users/3/posts
  
  @param obj Object you wish to create.
  @return An NSRRequest object set to remotely create a given object.
@@ -219,11 +219,11 @@
  
  `GET` request routed to the given object.
  
-	GET /posts/1
+    GET /posts/1
  
  Or, if <NSRRemoteObject>'s `objectUsedToPrefixRequest:` is overriden and returns a non-nil object,
  
-	GET /users/3/posts/1
+    GET /users/3/posts/1
  
  @param obj Object you wish to fetch.
  @return An NSRRequest object set to fetch a given object's remote correspondance.
@@ -235,11 +235,11 @@
  
  `DELETE` request routed to the given object.
  
-	DELETE /posts/1
+    DELETE /posts/1
  
  Or, if <NSRRemoteObject>'s `objectUsedToPrefixRequest:` is overriden and returns a non-nil object,
  
-	DELETE /users/3/posts/1
+    DELETE /users/3/posts/1
  
  @param obj Object you wish to fetch.
  @return An NSRRequest object set to destroy a given object's remote correspondance.
@@ -251,11 +251,11 @@
  
  Request routed to the given object. HTTP method depends on config's [`updateMethod`](NSRConfig.html#//api/name/updateMethod).
  
-	(PUT, PATCH, etc) /posts/1
+    (PUT, PATCH, etc) /posts/1
  
  Or, if <NSRRemoteObject>'s `objectUsedToPrefixRequest:` is overriden and returns a non-nil object,
  
-	(PUT, PATCH, etc) /users/3/posts/1
+    (PUT, PATCH, etc) /users/3/posts/1
  
  @param obj Object you wish to update.
  @return An NSRRequest object set to remotely update a given object.
@@ -267,11 +267,11 @@
  
  `PUT` request routed to the given object.
  
-	PUT /posts/1
+    PUT /posts/1
  
  Or, if <NSRRemoteObject>'s `objectUsedToPrefixRequest:` is overriden and returns a non-nil object,
  
-	PUT /users/3/posts/1
+    PUT /users/3/posts/1
  
  @param obj Object you wish to update.
  @return An NSRRequest object set to remotely "put" (replace) a given object.

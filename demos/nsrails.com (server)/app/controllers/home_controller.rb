@@ -4,6 +4,6 @@ class HomeController < ApplicationController
   end
 
   def auth_error
-  	render status:401, json: {message:"Test string"}
+      render status:401, json: {message:"Test string"}
   end
 end

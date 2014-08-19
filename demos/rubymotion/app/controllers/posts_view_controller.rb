@@ -30,7 +30,7 @@ class PostsViewController < UITableViewController
   
   def refresh
     # When the refresh button is hit, refresh our array of posts
-  	
+      
     Post.remoteAllAsync lambda do |all_remote, error|
       if error
         AppDelegate.alertForError error
