@@ -8,15 +8,15 @@
 
 #import "NSRAsserts.h"
 
-@interface Inflection : SenTestCase
+@interface Inflection : XCTestCase
 
 @end
 
 #define NSRAssertEqualsUnderscored(string, underscored, strip) \
-STAssertEqualObjects([string nsr_stringByUnderscoringIgnoringPrefix:strip], underscored, nil)
+XCTAssertEqualObjects([string nsr_stringByUnderscoringIgnoringPrefix:strip], underscored)
 
 #define NSRAssertEqualsCamelized(string, camelized) \
-STAssertEqualObjects([string nsr_stringByCamelizing], camelized, nil)
+XCTAssertEqualObjects([string nsr_stringByCamelizing], camelized)
 
 @implementation Inflection
 

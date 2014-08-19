@@ -7,13 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3729375B19A4046E000BDE87 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3729375A19A4046E000BDE87 /* XCTest.framework */; };
+		3729375C19A40478000BDE87 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3729375A19A4046E000BDE87 /* XCTest.framework */; };
+		3729375D19A40480000BDE87 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3729375A19A4046E000BDE87 /* XCTest.framework */; };
 		5947645B1569F24400C07A62 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17A8155C74200092B048 /* Foundation.framework */; };
-		594764681569F24400C07A62 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592585C21569F067009AD599 /* SenTestingKit.framework */; };
 		594764691569F24400C07A62 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17AA155C74890092B048 /* UIKit.framework */; };
 		5947646A1569F24400C07A62 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17A8155C74200092B048 /* Foundation.framework */; };
 		5947646D1569F24400C07A62 /* libNSRails.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5947645A1569F24400C07A62 /* libNSRails.a */; };
 		594764EC1569F63200C07A62 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59C464D1155C59DF00920FD5 /* Cocoa.framework */; };
-		594764F91569F63200C07A62 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592585C21569F067009AD599 /* SenTestingKit.framework */; };
 		594764FA1569F63200C07A62 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59C464D1155C59DF00920FD5 /* Cocoa.framework */; };
 		594764FD1569F63200C07A62 /* NSRailsMac.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 594764EB1569F63200C07A62 /* NSRailsMac.dylib */; };
 		594765921569F67600C07A62 /* 404-2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 594765851569F67600C07A62 /* 404-2.txt */; };
@@ -27,7 +28,6 @@
 		594765BA1569F9E100C07A62 /* Integration.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B11569F9E100C07A62 /* Integration.m */; };
 		594765BB1569F9E100C07A62 /* Integration.m in Sources */ = {isa = PBXBuildFile; fileRef = 594765B11569F9E100C07A62 /* Integration.m */; };
 		595B0265158E826F002B23D4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17A8155C74200092B048 /* Foundation.framework */; };
-		595B0272158E826F002B23D4 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 592585C21569F067009AD599 /* SenTestingKit.framework */; };
 		595B0273158E826F002B23D4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17AA155C74890092B048 /* UIKit.framework */; };
 		595B0274158E826F002B23D4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17A8155C74200092B048 /* Foundation.framework */; };
 		595B0277158E826F002B23D4 /* libNSRailsCD.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 595B0264158E826F002B23D4 /* libNSRailsCD.a */; };
@@ -106,14 +106,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		592585C21569F067009AD599 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		3729375A19A4046E000BDE87 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		592585DA1569F079009AD599 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		592585DB1569F079009AD599 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		592585DC1569F079009AD599 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5947645A1569F24400C07A62 /* libNSRails.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNSRails.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		594764671569F24400C07A62 /* NSRailsTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NSRailsTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		594764671569F24400C07A62 /* NSRailsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NSRailsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		594764EB1569F63200C07A62 /* NSRailsMac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = NSRailsMac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		594764F81569F63200C07A62 /* NSRailsMacTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NSRailsMacTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		594764F81569F63200C07A62 /* NSRailsMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NSRailsMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		594765851569F67600C07A62 /* 404-2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 0; path = "404-2.txt"; sourceTree = "<group>"; };
 		594765861569F67600C07A62 /* 404.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 404.txt; sourceTree = "<group>"; };
 		594765871569F67600C07A62 /* 500.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 500.txt; sourceTree = "<group>"; };
@@ -122,7 +122,7 @@
 		594765B11569F9E100C07A62 /* Integration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Integration.m; sourceTree = "<group>"; };
 		594765B31569F9E100C07A62 /* NSRAsserts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRAsserts.h; sourceTree = "<group>"; };
 		595B0264158E826F002B23D4 /* libNSRailsCD.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNSRailsCD.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		595B0271158E826F002B23D4 /* NSRailsCDTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NSRailsCDTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		595B0271158E826F002B23D4 /* NSRailsCDTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NSRailsCDTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5974F248158FA9A60068B5B8 /* NSRRemoteManagedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRRemoteManagedObject.h; sourceTree = "<group>"; };
 		5974F249158FA9A60068B5B8 /* NSRRemoteManagedObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRemoteManagedObject.m; sourceTree = "<group>"; };
 		597C80131586B09400950019 /* NSString+NSRInflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+NSRInflection.h"; sourceTree = "<group>"; };
@@ -165,8 +165,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3729375B19A4046E000BDE87 /* XCTest.framework in Frameworks */,
 				59CF24651571901B00476966 /* CoreData.framework in Frameworks */,
-				594764681569F24400C07A62 /* SenTestingKit.framework in Frameworks */,
 				594764691569F24400C07A62 /* UIKit.framework in Frameworks */,
 				5947646A1569F24400C07A62 /* Foundation.framework in Frameworks */,
 				5947646D1569F24400C07A62 /* libNSRails.a in Frameworks */,
@@ -185,8 +185,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3729375C19A40478000BDE87 /* XCTest.framework in Frameworks */,
 				59CF246F1571917500476966 /* CoreData.framework in Frameworks */,
-				594764F91569F63200C07A62 /* SenTestingKit.framework in Frameworks */,
 				594764FA1569F63200C07A62 /* Cocoa.framework in Frameworks */,
 				594764FD1569F63200C07A62 /* NSRailsMac.dylib in Frameworks */,
 			);
@@ -204,8 +204,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3729375D19A40480000BDE87 /* XCTest.framework in Frameworks */,
 				595B0291158E8440002B23D4 /* CoreData.framework in Frameworks */,
-				595B0272158E826F002B23D4 /* SenTestingKit.framework in Frameworks */,
 				595B0273158E826F002B23D4 /* UIKit.framework in Frameworks */,
 				595B0274158E826F002B23D4 /* Foundation.framework in Frameworks */,
 				595B0277158E826F002B23D4 /* libNSRailsCD.a in Frameworks */,
@@ -297,11 +297,11 @@
 			isa = PBXGroup;
 			children = (
 				5947645A1569F24400C07A62 /* libNSRails.a */,
-				594764671569F24400C07A62 /* NSRailsTests.octest */,
+				594764671569F24400C07A62 /* NSRailsTests.xctest */,
 				594764EB1569F63200C07A62 /* NSRailsMac.dylib */,
-				594764F81569F63200C07A62 /* NSRailsMacTests.octest */,
+				594764F81569F63200C07A62 /* NSRailsMacTests.xctest */,
 				595B0264158E826F002B23D4 /* libNSRailsCD.a */,
-				595B0271158E826F002B23D4 /* NSRailsCDTests.octest */,
+				595B0271158E826F002B23D4 /* NSRailsCDTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -309,13 +309,13 @@
 		59C4649B155C583900920FD5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3729375A19A4046E000BDE87 /* XCTest.framework */,
 				59CF246E1571917500476966 /* CoreData.framework */,
 				59CF24641571901B00476966 /* CoreData.framework */,
 				59DD17AE155C74BE0092B048 /* CoreGraphics.framework */,
 				59DD17AA155C74890092B048 /* UIKit.framework */,
 				59DD17A8155C74200092B048 /* Foundation.framework */,
 				59C464D1155C59DF00920FD5 /* Cocoa.framework */,
-				592585C21569F067009AD599 /* SenTestingKit.framework */,
 				592585D91569F079009AD599 /* Other Frameworks */,
 			);
 			name = Frameworks;
@@ -396,8 +396,8 @@
 			);
 			name = NSRailsTests;
 			productName = NSRailsTests;
-			productReference = 594764671569F24400C07A62 /* NSRailsTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productReference = 594764671569F24400C07A62 /* NSRailsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		594764EA1569F63200C07A62 /* NSRailsMac */ = {
 			isa = PBXNativeTarget;
@@ -432,7 +432,7 @@
 			);
 			name = NSRailsMacTests;
 			productName = NSRailsMacTests;
-			productReference = 594764F81569F63200C07A62 /* NSRailsMacTests.octest */;
+			productReference = 594764F81569F63200C07A62 /* NSRailsMacTests.xctest */;
 			productType = "com.apple.product-type.bundle";
 		};
 		595B0263158E826F002B23D4 /* NSRailsCD */ = {
@@ -468,7 +468,7 @@
 			);
 			name = NSRailsCDTests;
 			productName = NSRailsCDTests;
-			productReference = 595B0271158E826F002B23D4 /* NSRailsCDTests.octest */;
+			productReference = 595B0271158E826F002B23D4 /* NSRailsCDTests.xctest */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -477,6 +477,7 @@
 		59C4648D155C580D00920FD5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastTestingUpgradeCheck = 0510;
 				LastUpgradeCheck = 0500;
 			};
 			buildConfigurationList = 59C46490155C580D00920FD5 /* Build configuration list for PBXProject "NSRails" */;
@@ -727,7 +728,8 @@
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -751,7 +753,6 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
 		};
@@ -763,7 +764,8 @@
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -781,7 +783,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};
@@ -845,7 +846,10 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -866,7 +870,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				WRAPPER_EXTENSION = octest;
+				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
 		};
@@ -878,7 +882,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -891,7 +898,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				WRAPPER_EXTENSION = octest;
+				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
 		};
@@ -952,6 +959,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -975,7 +983,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				WRAPPER_EXTENSION = octest;
+				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
 		};
@@ -988,6 +996,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1005,7 +1014,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
-				WRAPPER_EXTENSION = octest;
+				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
 		};

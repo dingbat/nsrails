@@ -11,12 +11,12 @@
 extern NSString * const NSRRails3DateFormat;
 extern NSString * const NSRRails4DateFormat;
 
-@interface Config : SenTestCase
+@interface Config : XCTestCase
 
 @end
 
 #define NSRAssertRelevantConfigURL(string) \
-STAssertEqualObjects(string, [NSRConfig contextuallyRelevantConfig].appURL, nil)
+XCTAssertEqualObjects(string, [NSRConfig contextuallyRelevantConfig].appURL)
 
 @implementation Config
 
@@ -53,7 +53,7 @@ STAssertEqualObjects(string, [NSRConfig contextuallyRelevantConfig].appURL, nil)
          NSRAssertRelevantConfigURL(@"Default");
      }];
     
-    STAssertEqualObjects(@"custom_coder", [CustomCoder remoteModelName], @"auto-underscoring");
+    XCTAssertEqualObjects(@"custom_coder", [CustomCoder remoteModelName], @"auto-underscoring");
     
     NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"NoAuto"];
     c.autoinflectsClassNames = NO;
@@ -61,7 +61,7 @@ STAssertEqualObjects(string, [NSRConfig contextuallyRelevantConfig].appURL, nil)
      ^{
          NSRAssertRelevantConfigURL(@"NoAuto");
          
-         STAssertEqualObjects(@"CustomCoder", [CustomCoder remoteModelName], @"No auto-underscoring");
+         XCTAssertEqualObjects(@"CustomCoder", [CustomCoder remoteModelName], @"No auto-underscoring");
      }];
     
     NSRAssertRelevantConfigURL(@"Default");
@@ -77,31 +77,31 @@ STAssertEqualObjects(string, [NSRConfig contextuallyRelevantConfig].appURL, nil)
     
     //string -> date
     NSDate *date = [[NSRConfig defaultConfig] dateFromString:mockDatetime];
-    STAssertNotNil(date, @"String -> date conversion failed (default format)");
+    XCTAssertNotNil(date, @"String -> date conversion failed (default format)");
     
     //date -> string
     NSString *string = [[NSRConfig defaultConfig] stringFromDate:date];
-    STAssertNotNil(string, @"Date -> string conversion failed (default format)");
-    STAssertEqualObjects(string, mockDatetime, @"Date -> string conversion didn't return same result from server");
+    XCTAssertNotNil(string, @"Date -> string conversion failed (default format)");
+    XCTAssertEqualObjects(string, mockDatetime, @"Date -> string conversion didn't return same result from server");
     
     
     //If format changes...
     [[NSRConfig defaultConfig] setDateFormat:@"yyyy"];
     
     //string -> date
-    STAssertNil([[NSRConfig defaultConfig] dateFromString:mockDatetime], @"Should be nil - receiving config format != server format");
+    XCTAssertNil([[NSRConfig defaultConfig] dateFromString:mockDatetime], @"Should be nil - receiving config format != server format");
     
     //date -> string
     NSString *string2 = [[NSRConfig defaultConfig] stringFromDate:date];
-    STAssertFalse([string2 isEqualToString:mockDatetime], @"Datetime string sent and datetime string server accepts should not be equal. (format mismatch)");
+    XCTAssertFalse([string2 isEqualToString:mockDatetime], @"Datetime string sent and datetime string server accepts should not be equal. (format mismatch)");
     
     NSString *string3 = [[NSRConfig defaultConfig] stringFromDate:[NSDate dateWithTimeIntervalSince1970:100000]];
-    STAssertEqualObjects(string3, @"1970", @"Datetime string should be formatted to 'yyyy'");
+    XCTAssertEqualObjects(string3, @"1970", @"Datetime string should be formatted to 'yyyy'");
     
     //invalid date format
     [[NSRConfig defaultConfig] setDateFormat:@"!@#@$"];
 
-    STAssertEqualObjects([[NSRConfig defaultConfig] stringFromDate:[NSDate dateWithTimeIntervalSince1970:0]], @"!@#@$", @"New format should've been applied");
+    XCTAssertEqualObjects([[NSRConfig defaultConfig] stringFromDate:[NSDate dateWithTimeIntervalSince1970:0]], @"!@#@$", @"New format should've been applied");
 }
 
 - (void) test_rails_versions
@@ -114,16 +114,16 @@ STAssertEqualObjects(string, [NSRConfig contextuallyRelevantConfig].appURL, nil)
     NSString *df4 = NSRRails4DateFormat;
     NSString *um4 = @"PATCH";
 
-    STAssertEqualObjects([NSRConfig defaultConfig].dateFormat, df4, nil);
-    STAssertEqualObjects([NSRConfig defaultConfig].updateMethod, um4, nil);
+    XCTAssertEqualObjects([NSRConfig defaultConfig].dateFormat, df4);
+    XCTAssertEqualObjects([NSRConfig defaultConfig].updateMethod, um4);
 
     [[NSRConfig defaultConfig] configureToRailsVersion:NSRRailsVersion3];
-    STAssertEqualObjects([NSRConfig defaultConfig].dateFormat, df3, nil);
-    STAssertEqualObjects([NSRConfig defaultConfig].updateMethod, um3, nil);
+    XCTAssertEqualObjects([NSRConfig defaultConfig].dateFormat, df3);
+    XCTAssertEqualObjects([NSRConfig defaultConfig].updateMethod, um3);
     
     [[NSRConfig defaultConfig] configureToRailsVersion:NSRRailsVersion4];
-    STAssertEqualObjects([NSRConfig defaultConfig].dateFormat, df4, nil);
-    STAssertEqualObjects([NSRConfig defaultConfig].updateMethod, um4, nil);
+    XCTAssertEqualObjects([NSRConfig defaultConfig].dateFormat, df4);
+    XCTAssertEqualObjects([NSRConfig defaultConfig].updateMethod, um4);
 }
 
 @end

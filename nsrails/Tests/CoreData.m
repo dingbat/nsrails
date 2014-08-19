@@ -69,7 +69,7 @@
 
 /******** **********/
 
-@interface CoreData : SenTestCase
+@interface CoreData : XCTestCase
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
@@ -86,13 +86,13 @@
 {
     [[NSRConfig defaultConfig] setManagedObjectContext:nil];
     
-    STAssertThrows(([[CDPost alloc] initInserted]), @"");
-    STAssertThrows([[NSRRemoteManagedObject alloc] initInserted], @"");
+    XCTAssertThrows(([[CDPost alloc] initInserted]), @"");
+    XCTAssertThrows([[NSRRemoteManagedObject alloc] initInserted], @"");
 
     [[NSRConfig defaultConfig] setManagedObjectContext:__managedObjectContext];
 
     CDPost *p = [[CDPost alloc] initInserted];
-    p.remoteID = NSRNumber(15);
+    p.remoteID = @(15);
     [p saveContext];
 }
 
@@ -109,20 +109,20 @@
     CDPost *p = [[CDPost alloc] initInserted];
     
     //shouldn't save the context
-    STAssertTrue(p.hasChanges, @"");
+    XCTAssertTrue(p.hasChanges, @"");
     
-    p.remoteID = NSRNumber(15);
+    p.remoteID = @(15);
     
-    STAssertTrue(p.hasChanges, @"");
+    XCTAssertTrue(p.hasChanges, @"");
     
     [p setPropertiesUsingRemoteDictionary:[NSDictionary dictionaryWithObjectsAndKeys:@"hi", @"author", @"hello", @"content", nil]];
     
-    STAssertTrue(p.hasChanges, @"");
+    XCTAssertTrue(p.hasChanges, @"");
     
-    STAssertTrue([p remoteCreate:nil], @"");
-    STAssertTrue(p == [CDPost findObjectWithRemoteID:NSRNumber(p.remoteID.integerValue)], @"should find obj with that ID (just made)");
+    XCTAssertTrue([p remoteCreate:nil], @"");
+    XCTAssertTrue(p == [CDPost findObjectWithRemoteID:@(p.remoteID.integerValue)], @"should find obj with that ID (just made)");
     
-    STAssertFalse(p.hasChanges, @"");
+    XCTAssertFalse(p.hasChanges, @"");
     
     
     CDResponse *r = [[CDResponse alloc] initInserted];
@@ -130,89 +130,89 @@
     r.content = @"po";
     r.post = p;
     
-    STAssertTrue([r remoteCreate:nil],@"");
-    STAssertTrue(r == [CDResponse findObjectWithRemoteID:NSRNumber(r.remoteID.integerValue)], @"should find obj with that ID (just made)");
+    XCTAssertTrue([r remoteCreate:nil],@"");
+    XCTAssertTrue(r == [CDResponse findObjectWithRemoteID:@(r.remoteID.integerValue)], @"should find obj with that ID (just made)");
     
     
-    STAssertTrue([p remoteFetch:nil], @"");
-    STAssertEquals(p.responses.count, (NSUInteger)1, @"");
-    STAssertTrue([[p.responses anyObject] isKindOfClass:[CDResponse class]], @"");
-    STAssertTrue([p.responses anyObject] == r, @"");
-    STAssertEquals([[p.responses anyObject] post], p, @"");
+    XCTAssertTrue([p remoteFetch:nil], @"");
+    XCTAssertEqual(p.responses.count, (NSUInteger)1, @"");
+    XCTAssertTrue([[p.responses anyObject] isKindOfClass:[CDResponse class]], @"");
+    XCTAssertTrue([p.responses anyObject] == r, @"");
+    XCTAssertEqual((CDPost *)[[p.responses anyObject] post], p, @"");
     
     
     p.content = @"changed!";
     
-    STAssertTrue(p.isUpdated, @"");
-    STAssertTrue([p remoteUpdate:nil], @"");
-    STAssertFalse(p.hasChanges, @"");
+    XCTAssertTrue(p.isUpdated, @"");
+    XCTAssertTrue([p remoteUpdate:nil], @"");
+    XCTAssertFalse(p.hasChanges, @"");
     
-    CDPost *retrieved = [CDPost findObjectWithRemoteID:NSRNumber(p.remoteID.integerValue)];
-    STAssertTrue(p == retrieved, @"");
-    STAssertEqualObjects(retrieved.content, p.content, @"");
-    STAssertEqualObjects(retrieved.author, p.author, @"");
+    CDPost *retrieved = [CDPost findObjectWithRemoteID:@(p.remoteID.integerValue)];
+    XCTAssertTrue(p == retrieved, @"");
+    XCTAssertEqualObjects(retrieved.content, p.content, @"");
+    XCTAssertEqualObjects(retrieved.author, p.author, @"");
     
-    STAssertTrue([p remoteDestroy:nil],@"");
+    XCTAssertTrue([p remoteDestroy:nil],@"");
     
-    STAssertNil([CDPost findObjectWithRemoteID:p.remoteID], @"");
+    XCTAssertNil([CDPost findObjectWithRemoteID:p.remoteID], @"");
 }
 
 - (void) test_finds
 {
-    STAssertNil([CDPost findObjectWithRemoteID:NSRNumber(12)], @"should be nothing with rID 12");
+    XCTAssertNil([CDPost findObjectWithRemoteID:@(12)], @"should be nothing with rID 12");
     
     CDPost *p = [CDPost objectWithRemoteDictionary:@{@"id":@12}];
     
-    STAssertNotNil(p, @"");
-    STAssertEqualObjects(p.remoteID, NSRNumber(12), @"");
-    STAssertTrue(p.hasChanges, @"");
+    XCTAssertNotNil(p, @"");
+    XCTAssertEqualObjects(p.remoteID, @(12), @"");
+    XCTAssertTrue(p.hasChanges, @"");
     
-    CDPost *p2 = [CDPost findObjectWithRemoteID:NSRNumber(12)];
-    STAssertNotNil(p2,@"");
-    STAssertTrue(p2 == p, @"");
-    STAssertEqualObjects(p2.remoteID, NSRNumber(12), @"");
-    STAssertTrue(p2.hasChanges, @"");
+    CDPost *p2 = [CDPost findObjectWithRemoteID:@(12)];
+    XCTAssertNotNil(p2,@"");
+    XCTAssertTrue(p2 == p, @"");
+    XCTAssertEqualObjects(p2.remoteID, @(12), @"");
+    XCTAssertTrue(p2.hasChanges, @"");
     
     CDPost *p3 = [CDPost objectWithRemoteDictionary:@{@"id":@12,@"content":@"hi"}];
     
-    STAssertNotNil(p3,@"");
-    STAssertTrue(p3 == p2,@"");
-    STAssertEqualObjects(p3.content, @"hi", @"");
-    STAssertTrue(p3.hasChanges, @"");
+    XCTAssertNotNil(p3,@"");
+    XCTAssertTrue(p3 == p2,@"");
+    XCTAssertEqualObjects(p3.content, @"hi", @"");
+    XCTAssertTrue(p3.hasChanges, @"");
     
     CDPost *p4 = [CDPost objectWithRemoteDictionary:@{@"content":@"hi"}];
     
-    STAssertNotNil(p4,@"");
-    STAssertEqualObjects(p4.remoteID, NSRNumber(0), nil);
-    STAssertEqualObjects(p4.content, @"hi", @"");
-    STAssertTrue(p4.hasChanges, @"");
+    XCTAssertNotNil(p4,@"");
+    XCTAssertEqualObjects(p4.remoteID, @(0));
+    XCTAssertEqualObjects(p4.content, @"hi", @"");
+    XCTAssertTrue(p4.hasChanges, @"");
 }
 
 - (void) test_remote_id_uniqueness_validation
 {
     CDPost *p = [[CDPost alloc] initInserted];
-    p.remoteID = NSRNumber(99);
+    p.remoteID = @(99);
     
-    STAssertTrue([p saveContext],nil);
+    XCTAssertTrue([p saveContext]);
     
     CDPost *p2 = [[CDPost alloc] initInserted];
-    p2.remoteID = NSRNumber(99);
+    p2.remoteID = @(99);
     
-    STAssertFalse([p2 saveContext],nil);
+    XCTAssertFalse([p2 saveContext]);
 }
 
 - (void) test_no_remote_id_uniqueness_validation
 {
     CDPost *p = [[CDPost alloc] initInserted];
-    p.remoteID = NSRNumber(99);
+    p.remoteID = @(99);
     
-    STAssertTrue([p saveContext],nil);
+    XCTAssertTrue([p saveContext]);
     
     CDPost *p2 = [[CDPost alloc] initInserted];
-    p2.remoteID = NSRNumber(99);
+    p2.remoteID = @(99);
     p2.shouldNotValidateUniqueness = YES;
     
-    STAssertTrue([p2 saveContext],nil);
+    XCTAssertTrue([p2 saveContext]);
 }
 
 - (void) test_nested_class_override
@@ -221,10 +221,10 @@
     CDResponse *r = [CDResponse objectWithRemoteDictionary:@{@"id":@12}];
     
     Class responseClass = [p nestedClassForProperty:@"responses"];
-    STAssertEquals(responseClass, [CDResponse class], nil);
+    XCTAssertEqual(responseClass, [CDResponse class]);
 
     Class postClass = [r nestedClassForProperty:@"post"];
-    STAssertEquals(postClass, [CDPost class], nil);
+    XCTAssertEqual(postClass, [CDPost class]);
 }
 
 - (void) test_container_class_override
@@ -232,10 +232,10 @@
     CDPost *p = [CDPost objectWithRemoteDictionary:@{@"id":@12}];
 
     Class unorderedClass = [p containerClassForRelationProperty:@"responses"];
-    STAssertEquals(unorderedClass, [NSMutableSet class], nil);
+    XCTAssertEqual(unorderedClass, [NSMutableSet class]);
 
     Class orderedClass = [p containerClassForRelationProperty:@"orderedResponses"];
-    STAssertEquals(orderedClass, [NSMutableOrderedSet class], nil);
+    XCTAssertEqual(orderedClass, [NSMutableOrderedSet class]);
 }
 
 
