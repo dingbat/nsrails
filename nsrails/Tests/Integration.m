@@ -226,8 +226,9 @@ static BOOL noServer = NO;
 	{
 		//update should go through
 		newPost.author = @"Dan 2";
-		if (i == 0)
+		if (i == 0) {
 			STAssertTrue([newPost remoteUpdate:&e], @"Should return YES");
+		}
 		else
 			STAssertTrue([newPost remoteReplace:&e], @"Should return YES");
 		STAssertNil(e, @"Update should've gone through, there should be no error");
@@ -237,8 +238,9 @@ static BOOL noServer = NO;
 		newPost.remoteID = nil;
 		
 		//test to see that it'll fail on trying to update instance with nil ID
-		if (i == 0)
+		if (i == 0) {
 			STAssertThrowsSpecificNamed([newPost remoteUpdate:&e], NSException, NSRNullRemoteIDException, @"Tried to update an instance with a nil ID, where's the exception?");
+		}
 		else
 			STAssertThrowsSpecificNamed([newPost remoteReplace:&e], NSException, NSRNullRemoteIDException, @"Tried to update an instance with a nil ID, where's the exception?");
 		
@@ -248,8 +250,9 @@ static BOOL noServer = NO;
 		
 		//update should fail validation b/c no author
 		newPost.author = nil;
-		if (i == 0)
+		if (i == 0) {
 			STAssertFalse([newPost remoteUpdate:&e],@"");
+		}
 		else
 			STAssertFalse([newPost remoteUpdate:&e],@"");
 		

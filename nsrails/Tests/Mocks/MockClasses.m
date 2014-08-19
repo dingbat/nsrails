@@ -44,16 +44,18 @@
 
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
 {
-    if ([property isEqualToString:@"onlyIDResponses"] && onlyIDResponses.count == 0)
+    if ([property isEqualToString:@"onlyIDResponses"] && onlyIDResponses.count == 0) {
         return NO;
+    }
     
     return [super shouldSendProperty:property whenNested:nested];
 }
 
 - (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property
 {
-    if ([property isEqualToString:@"onlyIDResponses"])
+    if ([property isEqualToString:@"onlyIDResponses"]) {
         return YES;
+    }
     
     return [super shouldOnlySendIDKeyForNestedObjectProperty:property];
 }
@@ -109,8 +111,9 @@
 
 - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)req
 {
-	if ([req.httpMethod isEqualToString:@"GET"] || [req.httpMethod isEqualToString:@"PATCH"])
+	if ([req.httpMethod isEqualToString:@"GET"] || [req.httpMethod isEqualToString:@"PATCH"]) {
 		return childParent;
+	}
 	return nil;
 }
 
@@ -135,8 +138,9 @@
 
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
 {
-	if (nestPerson && nested && [property isEqualToString:@"owners"])
+	if (nestPerson && nested && [property isEqualToString:@"owners"]) {
 		return YES;
+	}
 	
 	return [super shouldSendProperty:property whenNested:nested];
 }
@@ -148,8 +152,9 @@
 
 - (Class) nestedClassForProperty:(NSString *)property
 {
-	if ([property isEqualToString:@"books"])
+	if ([property isEqualToString:@"books"]) {
 		return [Book class];
+	}
 	
 	return [super nestedClassForProperty:property];
 }
@@ -161,15 +166,17 @@
 
 - (Class) nestedClassForProperty:(NSString *)property
 {
-	if ([property isEqualToString:@"eggs"])
+	if ([property isEqualToString:@"eggs"]) {
 		return [Egg class];
+	}
 	return [super nestedClassForProperty:property];
 }
 
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
 {
-	if ([property isEqualToString:@"eggs"] && nested && nestEggs)
+	if ([property isEqualToString:@"eggs"] && nested && nestEggs) {
 		return YES;
+	}
 	return [super shouldSendProperty:property whenNested:nested];
 }
 
@@ -190,8 +197,9 @@
 
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
 {
-	if ([property isEqualToString:@"bird"] && nested && nestBird)
+	if ([property isEqualToString:@"bird"] && nested && nestBird) {
 		return YES;
+	}
 	return [super shouldSendProperty:property whenNested:nested];
 }
 
@@ -212,8 +220,9 @@
 
 - (NSString *) propertyForRemoteKey:(NSString *)remoteKey
 {
-	if ([remoteKey isEqualToString:@"rails"])
+	if ([remoteKey isEqualToString:@"rails"]) {
 		return @"objc";
+	}
 	
 	return [super propertyForRemoteKey:remoteKey];
 }
@@ -222,8 +231,9 @@
 {
 	if ([key isEqualToString:@"remoteOnly"])
 	{
-		if (encodeNonJSON)
+		if (encodeNonJSON) {
 			return [[NSScanner alloc] init];
+		}
 		return @"remote";		
 	}
 	if ([key isEqualToString:@"dateOverrideSend"])
@@ -302,16 +312,18 @@
 
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
 {
-	if ([property isEqualToString:@"retrieveOnly"] || [property isEqualToString:@"local"])
+	if ([property isEqualToString:@"retrieveOnly"] || [property isEqualToString:@"local"]) {
 		return NO;
+	}
 	
 	return [super shouldSendProperty:property whenNested:nested];
 }
 
 - (void) decodeRemoteValue:(id)remoteObject forRemoteKey:(NSString *)remoteKey
 {
-	if (![remoteKey isEqualToString:@"send_only"] || [remoteKey isEqualToString:@"local"])
+	if (![remoteKey isEqualToString:@"send_only"] || [remoteKey isEqualToString:@"local"]) {
 		[super decodeRemoteValue:remoteObject forRemoteKey:remoteKey];
+	}
 }
 
 - (NSMutableArray *) remoteProperties

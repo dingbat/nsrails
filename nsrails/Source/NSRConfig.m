@@ -199,8 +199,9 @@ static NSMutableArray *overrideConfigStack = nil;
 	NSRConfig *override = [[overrideConfigStack lastObject] config];
     
     //if stack is nil or empty, this will be nil, signifying that there's no overriding context, so return default
-    if (override)
+    if (override) {
         return override;
+    }
     
     return [self defaultConfig];
 }

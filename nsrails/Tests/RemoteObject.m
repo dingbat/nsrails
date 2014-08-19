@@ -86,8 +86,9 @@
 		NSDictionary *dict = @{@"author":@"dan", @"content":@"hi", @"id":@10};
 		
 		//should be identical with wrapped dict
-		if (i == 1)
+		if (i == 1) {
 			dict = @{@"post":dict};
+		}
 		
 		p.author = nil; p.content = nil; p.remoteID = nil;
 		
@@ -98,8 +99,9 @@
 			STAssertEqualObjects(p.content, @"hi", nil);
 			STAssertEqualObjects(p.remoteID, @(10), nil);
 			
-			if (i == 0)
+			if (i == 0) {
 				p.author = @"CHANGE";
+			}
 		}
 		
 		[p setPropertiesUsingRemoteDictionary:dict];

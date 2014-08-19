@@ -497,8 +497,9 @@
  
      - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request
      {
-         if ([request.httpMethod isEqualToString:@"GET"] || [request.httpMethod isEqualToString:@"POST"])
+         if ([request.httpMethod isEqualToString:@"GET"] || [request.httpMethod isEqualToString:@"POST"]) {
              return user;
+         }
          return nil;
      }
 
@@ -530,11 +531,13 @@
      
      - (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
      {
-         if ([property isEqualToString:@"csvArray"])
+         if ([property isEqualToString:@"csvArray"]) {
              return [csvArray componentsJoinedByString:@","];
+         }
          
-         if ([property isEqualToString:@"URL"])
+         if ([property isEqualToString:@"URL"]) {
              return [URL absoluteString];
+         }
          
          return [super encodeValueForProperty:property remoteKey:remoteKey];
      }
@@ -545,8 +548,9 @@
  
      - (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
      {
-         if ([property isEqualToString:@"objcProperty"])
+         if ([property isEqualToString:@"objcProperty"]) {
              *remoteKey = @"rails_attr";
+         }
          
          return [super encodeValueForProperty:property remoteKey:remoteKey];
      }
@@ -618,12 +622,14 @@
      - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
      {
         //never send retrieveOnlyProperty to your server
-        if ([property isEqualToString:@"retrieveOnlyProperty"])
+        if ([property isEqualToString:@"retrieveOnlyProperty"]) {
             return NO;
+        }
  
         //deepNest is a property with a has-one/has-many relationship that would otherwise not be sent when this object is *nested*
-        if ([property isEqualToString:@"deepNest"] && nested)
+        if ([property isEqualToString:@"deepNest"] && nested) {
             return YES;
+        }
      
         return [super shouldSendProperty:property whenNested:nested];
      }
@@ -649,8 +655,9 @@
      {
 		 // Only necessary for 'responses' (to-many)
 		 // By default, the Author class (to-one) will be picked up through its property type
-         if ([property isEqualToString:@"responses"])
+         if ([property isEqualToString:@"responses"]) {
              return [Response class];
+         }
          
          return [super nestedClassForProperty:property];
      }
@@ -702,8 +709,9 @@
      - (NSString *) propertyForRemoteKey:(NSString *)remoteKey
      {
          //the "rails" key given from a Rails hash will be translated to the "objc" property when decoding
-         if ([remoteKey isEqualToString:@"rails"])
+         if ([remoteKey isEqualToString:@"rails"]) {
              return @"objc";
+         }
          
          return [super propertyForRemoteKey:remoteKey];
      }

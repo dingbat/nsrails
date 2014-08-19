@@ -32,8 +32,9 @@
 												 usedEncoding:NULL
 														error:nil];
 	
-	if (!text)
+	if (!text) {
 		[NSException raise:@"Mock server error" format:@"Could not load text file '%@.txt'",file];
+	}
 	
 	return text;
 }

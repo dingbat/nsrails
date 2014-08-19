@@ -65,11 +65,13 @@
 	
 	NSNumber *objID = dictionary[@"id"];
 	
-	if (objID)
+	if (objID) {
 		obj = [self findObjectWithRemoteID:objID];
+	}
 	
-	if (!obj)
+	if (!obj) {
 		obj = [[self alloc] initInserted];
+	}
 
 	[obj setPropertiesUsingRemoteDictionary:dictionary];
 	
@@ -111,8 +113,9 @@
 
 - (BOOL) remoteFetch:(NSError *__autoreleasing *)error
 {
-	if (![super remoteFetch:error])
+	if (![super remoteFetch:error]) {
 		return NO;
+	}
 	
 	[self saveContext];
 	return YES;
@@ -123,18 +126,21 @@
 	[super remoteFetchAsync:
 	 ^(NSError *error)
 	 {
-		 if (!error)
+		 if (!error) {
 			 [self saveContext];
+		 }
 		 
-		 if (completionBlock)
+		 if (completionBlock) {
 			 completionBlock(error);
+		 }
 	 }];
 }
 
 - (BOOL) remoteCreate:(NSError **)error
 {
-	if (![super remoteCreate:error])
+	if (![super remoteCreate:error]) {
 		return NO;
+	}
 	
 	[self saveContext];
 	return YES;
@@ -145,18 +151,21 @@
 	[super remoteCreateAsync:
 	 ^(NSError *error)
 	 {
-		 if (!error)
+		 if (!error) {
 			 [self saveContext];
+		 }
 		 
-		 if (completionBlock)
+		 if (completionBlock) {
 			 completionBlock(error);
+		 }
 	 }];
 }
 
 - (BOOL) remoteUpdate:(NSError **)error
 {
-	if (![super remoteUpdate:error])
+	if (![super remoteUpdate:error]) {
 		return NO;
+	}
 	
 	[self saveContext];
 	return YES;
@@ -167,18 +176,21 @@
 	[super remoteUpdateAsync:
 	 ^(NSError *error)
 	 {
-		 if (!error)
+		 if (!error) {
 			 [self saveContext];
+		 }
 		 
-		 if (completionBlock)
+		 if (completionBlock) {
 			 completionBlock(error);
+		 }
 	 }];
 }
 
 - (BOOL) remoteReplace:(NSError **)error
 {
-	if (![super remoteReplace:error])
+	if (![super remoteReplace:error]) {
 		return NO;
+	}
 	
 	[self saveContext];
 	return YES;
@@ -189,18 +201,21 @@
 	[super remoteReplaceAsync:
 	 ^(NSError *error)
 	 {
-		 if (!error)
+		 if (!error) {
 			 [self saveContext];
+		 }
 		 
-		 if (completionBlock)
+		 if (completionBlock) {
 			 completionBlock(error);
+		 }
 	 }];
 }
 
 - (BOOL) remoteDestroy:(NSError **)error
 {
-	if (![super remoteDestroy:error])
+	if (![super remoteDestroy:error]) {
 		return NO;
+	}
 	
 	[[(id)self managedObjectContext] deleteObject:(id)self];
 	[self saveContext];
@@ -217,8 +232,9 @@
 			 [[(id)self managedObjectContext] deleteObject:(id)self];
 			 [self saveContext];
 		 }
-		 if (completionBlock)
+		 if (completionBlock) {
 			 completionBlock(error);
+		 }
 	 }];
 }
 
@@ -283,8 +299,9 @@
 
 - (BOOL) validateRemoteID:(id *)value error:(NSError **)error
 {
-	if (![self validatesRemoteIDUniqueness])
+	if (![self validatesRemoteIDUniqueness]) {
 		return YES;
+	}
 	
 	NSFetchRequest *fetch = [[NSFetchRequest alloc] initWithEntityName:self.class.entityName];
 	fetch.includesPropertyValues = NO;

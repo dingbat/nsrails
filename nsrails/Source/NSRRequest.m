@@ -77,8 +77,9 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	self.config = [c config];
 
 	NSString *controller = [c remoteControllerName];
-	if (!controller)
+	if (!controller) {
 		return [self routeTo:optionalRESTMethod];
+	}
 
 	return [self routeTo:[controller stringByAppendingPathComponent:optionalRESTMethod]];
 }
@@ -93,8 +94,9 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	self.config = [o.class config];
 	
 	//prepend the ID: action -> 1/action
-	if (o.remoteID && !ignoreID)
+	if (o.remoteID && !ignoreID) {
 		method = [[o.remoteID stringValue] stringByAppendingPathComponent:method];
+	}
 	
 	//prepend the classname: 1/action -> class/1/action
 	[self routeToClass:[o class] withCustomMethod:method];
@@ -205,8 +207,9 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 + (void) assertPresentRemoteID:(NSRRemoteObject *)obj forMethod:(NSString *)str
 {
-	if (!obj.remoteID)
+	if (!obj.remoteID) {
 		[NSException raise:NSRNullRemoteIDException format:@"Attempt to %@ a %@ with a nil remoteID.",str,[obj class]];
+	}
 }
 
 + (NSRRequest *) requestToCreateObject:(NSRRemoteObject *)obj
@@ -356,8 +359,9 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 - (NSError *) serverErrorForResponse:(id)response statusCode:(NSInteger)statusCode
 {
     //everything ok
-	if (statusCode >= 0 && statusCode < 400)
+	if (statusCode >= 0 && statusCode < 400) {
         return nil;
+	}
 	
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
     
@@ -369,8 +373,9 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
             if ([response rangeOfString:@"</html>"].location != NSNotFound)
             {
                 NSString *succinctText = [self findSubstringInString:response surroundedByTag:@"pre"];
-                if (!succinctText)
+                if (!succinctText) {
                     succinctText = [self findSubstringInString:response surroundedByTag:@"h1"];
+                }
                 
                 if (succinctText)
                 {
@@ -387,19 +392,22 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 - (id) jsonResponseFromData:(NSData *)data
 {
-    if (!data)
+    if (!data) {
         return nil;
+    }
     
 	id jsonResponse = [NSJSONSerialization JSONObjectWithData:data
                                                       options:NSJSONReadingAllowFragments | NSJSONReadingMutableContainers
                                                         error:nil];
     
 	//TODO - workaround for bug with NSJSONReadingMutableContainers. it simply... doesn't work???
-	if ([jsonResponse isKindOfClass:[NSArray class]] && ![jsonResponse isKindOfClass:[NSMutableArray class]])
+	if ([jsonResponse isKindOfClass:[NSArray class]] && ![jsonResponse isKindOfClass:[NSMutableArray class]]) {
 		jsonResponse = [NSMutableArray arrayWithArray:jsonResponse];
+	}
 	
-	if (!jsonResponse)
+	if (!jsonResponse) {
 		jsonResponse = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+	}
 
 	return jsonResponse;
 }
@@ -423,8 +431,9 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	
 	// Add on some extra info in user info dict
 	userInfo[NSRRequestObjectKey] = self;
-    if (jsonResponse)
+    if (jsonResponse) {
         userInfo[NSRErrorResponseBodyKey] = jsonResponse;
+    }
 
 	return [NSError errorWithDomain:domain code:code userInfo:userInfo];
 }
@@ -444,8 +453,9 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 	
     [self logIn:jsonResponse error:error];
     
-	if (errorOut)
+	if (errorOut) {
 		*errorOut = error;
+	}
 
 	return (error ? nil : jsonResponse);
 }
@@ -501,8 +511,9 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 		 
          [self logIn:jsonResponse error:error];
          
-		 if (block)
+		 if (block) {
 			 [self performCompletionBlock:^{ block( (error ? nil : jsonResponse), error); }];
+		 }
 	 }];
 }
 

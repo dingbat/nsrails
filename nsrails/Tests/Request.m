@@ -266,8 +266,9 @@
 	
 	for (int i = 0; i < 2; i++)
 	{
-		if (i == 0)
+		if (i == 0) {
             request = [NSRRequest PATCH];
+		}
 		else
             request = [NSRRequest GET];
 		
@@ -416,8 +417,9 @@
 	for (int i = 0; i < 2; i++)
 	{
 		NSRRequest *findAll;
-		if (i == 0)
+		if (i == 0) {
 			findAll = [NSRRequest requestToFetchAllObjectsOfClass:[NestParent class] viaObject:nil];
+		}
 		else
 			findAll = [NSRRequest requestToFetchAllObjectsOfClass:[NestParent class]];
 		

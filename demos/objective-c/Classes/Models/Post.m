@@ -14,8 +14,9 @@
 
 - (Class) nestedClassForProperty:(NSString *)property
 {
-	if ([property isEqualToString:@"responses"])
+	if ([property isEqualToString:@"responses"]) {
 		return [Response class];
+	}
 	
 	return [super nestedClassForProperty:property];    
 }

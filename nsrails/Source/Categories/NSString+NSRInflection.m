@@ -58,12 +58,14 @@
 	}
 	
 	// replace items that end in Id with ID
-	if ([camelized hasSuffix:@"Id"])
+	if ([camelized hasSuffix:@"Id"]) {
 		[camelized replaceCharactersInRange:NSMakeRange(camelized.length - 2, 2) withString:@"ID"];
+	}
 	
 	// replace items that end in Ids with IDs
-	if ([camelized hasSuffix:@"Ids"])
+	if ([camelized hasSuffix:@"Ids"]) {
 		[camelized replaceCharactersInRange:NSMakeRange(camelized.length - 3, 3) withString:@"IDs"];
+	}
 	
 	return camelized;
 }

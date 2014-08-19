@@ -38,8 +38,9 @@
 
 - (BOOL) validatesRemoteIDUniqueness
 {
-	if (shouldNotValidateUniqueness)
+	if (shouldNotValidateUniqueness) {
 		return NO;
+	}
 	return [super validatesRemoteIDUniqueness];
 }
 

@@ -68,8 +68,9 @@
 
 + (NSString *) remoteModelName
 {
-	if (self == [NSRRemoteObject class])
+	if (self == [NSRRemoteObject class]) {
 		return nil;
+	}
 		
 	NSString *class = NSStringFromClass(self);
 	
@@ -87,11 +88,13 @@
 {
 	NSString *singular = [self remoteModelName];
 	    
-	if ([singular hasSuffix:@"y"] && ![singular hasSuffix:@"ey"])
+	if ([singular hasSuffix:@"y"] && ![singular hasSuffix:@"ey"]) {
 		return [[singular substringToIndex:singular.length-1] stringByAppendingString:@"ies"];
+	}
 	
-	if ([singular hasSuffix:@"s"])
+	if ([singular hasSuffix:@"s"]) {
 		return [singular stringByAppendingString:@"es"];
+	}
 	
 	return [singular stringByAppendingString:@"s"];
 }
@@ -119,8 +122,9 @@
 + (NSString *) typeForProperty:(NSString *)prop
 {
 	objc_property_t property = class_getProperty(self, [prop UTF8String]);
-	if (!property)
+	if (!property) {
 		return nil;
+	}
 	
 	// This will return some garbage like "Ti,GgetFoo,SsetFoo:,Vproperty"
 	// See https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtPropertyIntrospection.html
@@ -128,8 +132,9 @@
 	NSString *atts = @(property_getAttributes(property));
 	
 	for (NSString *att in [atts componentsSeparatedByString:@","])
-		if ([att hasPrefix:@"T"])
+		if ([att hasPrefix:@"T"]) {
 			return [att substringFromIndex:1];
+		}
 	
 	return nil;
 }
@@ -156,8 +161,9 @@
             {
                 NSString *name = @(property_getName(properties[propertyCount]));
                 // makes sure it's not primitive
-                if ([[self.class typeForProperty:name] rangeOfString:@"@"].location != NSNotFound)
+                if ([[self.class typeForProperty:name] rangeOfString:@"@"].location != NSNotFound) {
                     [results addObject:name];
+                }
             }
             
             free(properties);
@@ -186,8 +192,9 @@
 
 - (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
 {	
-	if ([property isEqualToString:@"remoteID"])
+	if ([property isEqualToString:@"remoteID"]) {
 		*remoteKey = @"id";
+	}
 	
     Class nestedClass = [self nestedClassForProperty:property];
     id val = [self valueForKey:property];
@@ -199,10 +206,12 @@
             if ([self valueIsArray:val])
             {
                 NSString *singular = *remoteKey;
-                if ([singular hasSuffix:@"ies"])
+                if ([singular hasSuffix:@"ies"]) {
                     singular = [singular substringToIndex:singular.length-3];
-                else if ([singular hasSuffix:@"s"])
+                }
+                else if ([singular hasSuffix:@"s"]) {
                     singular = [singular substringToIndex:singular.length-1];
+                }
                 
                 *remoteKey = [singular stringByAppendingString:@"_ids"];
                 return [val valueForKeyPath:@"@unionOfObjects.remoteID"];
@@ -242,12 +251,14 @@
 
 - (NSString *) propertyForRemoteKey:(NSString *)remoteKey
 {
-	if ([remoteKey isEqualToString:@"id"])
+	if ([remoteKey isEqualToString:@"id"]) {
 		return @"remoteID";
+	}
 
 	NSString *property = remoteKey;
-	if ([self.class config].autoinflectsPropertyNames)
+	if ([self.class config].autoinflectsPropertyNames) {
 		property = [property nsr_stringByCamelizing];
+	}
 	
 	return ([self.remoteProperties containsObject:property] ? property : nil);
 }
@@ -266,8 +277,9 @@
 {
 	NSString *property = [self propertyForRemoteKey:remoteKey];
 	
-	if (!property)
+	if (!property) {
 		return;
+	}
 
 	Class nestedClass = [self nestedClassForProperty:property];
 	
@@ -304,14 +316,16 @@
                     if (!railsID)
                     {
                         NSDictionary *innerDict = railsElement[[nestedClass remoteModelName]];
-                        if ([railsElement count] == 1 && [innerDict isKindOfClass:[NSDictionary class]])
+                        if ([railsElement count] == 1 && [innerDict isKindOfClass:[NSDictionary class]]) {
                             railsID = innerDict[@"id"];
+                        }
                     }
                     
                     id existing = nil;
                     
-                    if (railsID)
+                    if (railsID) {
                         existing = [[previousArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"remoteID == %@",railsID]] lastObject];
+                    }
                     
                     if (!existing)
                     {
@@ -325,8 +339,9 @@
                         [decodedElement setPropertiesUsingRemoteDictionary:railsElement];
                     }
                     
-                    if (!existing || [self shouldReplaceCollectionForProperty:property])
+                    if (!existing || [self shouldReplaceCollectionForProperty:property]) {
                         [decodedObj addObject:decodedElement];
+                    }
                 }
             }
             else
@@ -361,12 +376,14 @@
 - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
 {
 	//don't include id if it's nil or on the main object (nested guys need their IDs)
-	if ([property isEqualToString:@"remoteID"] && (!self.remoteID || !nested))
+	if ([property isEqualToString:@"remoteID"] && (!self.remoteID || !nested)) {
 		return NO;
+	}
 	
 	//don't include updated_at or created_at
-	if ([self propertyIsTimestamp:property])
+	if ([self propertyIsTimestamp:property]) {
 		return NO;
+	}
     
     Class nestedClass = [self nestedClassForProperty:property];
 	
@@ -394,8 +411,9 @@
 
 - (void) setPropertiesUsingRemoteDictionary:(NSDictionary *)dict
 {
-    if (dict)
+    if (dict) {
         remoteAttributes = dict;
+    }
 	
 	//support JSON that comes in like {"post"=>{"something":"something"}}
 	NSDictionary *innerDict = dict[[self.class remoteModelName]];
@@ -407,8 +425,9 @@
 	for (NSString *remoteKey in dict)
 	{
 		id remoteObject = dict[remoteKey];
-		if (remoteObject == [NSNull null])
+		if (remoteObject == [NSNull null]) {
 			remoteObject = nil;
+		}
 
 		[self decodeRemoteValue:remoteObject forRemoteKey:remoteKey];
 	}
@@ -425,16 +444,19 @@
 	
 	for (NSString *objcProperty in [self remoteProperties])
 	{
-		if (![self shouldSendProperty:objcProperty whenNested:nesting])
+		if (![self shouldSendProperty:objcProperty whenNested:nesting]) {
 			continue;
+		}
 		
 		NSString *remoteKey = objcProperty;
-		if ([self.class config].autoinflectsPropertyNames)
+		if ([self.class config].autoinflectsPropertyNames) {
 			remoteKey = [remoteKey nsr_stringByUnderscoring];
+		}
 		
 		id remoteRep = [self encodeValueForProperty:objcProperty remoteKey:&remoteKey];
-		if (!remoteRep)
+		if (!remoteRep) {
 			remoteRep = [NSNull null];
+		}
 		
 		BOOL JSONParsable = ([remoteRep isKindOfClass:[NSArray class]] ||
 							 [remoteRep isKindOfClass:[NSDictionary class]] ||
@@ -456,8 +478,9 @@
 		dict[@"_destroy"] = @YES;
 	}
 	
-	if (wrapped)
+	if (wrapped) {
 		return @{[self.class remoteModelName]: dict};
+	}
 	
 	return dict;
 }
@@ -486,8 +509,9 @@
 	 ^(id result, NSError *error) 
 	 {
 		 [self setPropertiesUsingRemoteDictionary:result];
-		 if (completionBlock)
+		 if (completionBlock) {
 			 completionBlock(error);
+		 }
 	 }];
 }
 
@@ -503,8 +527,9 @@
 	[[NSRRequest requestToUpdateObject:self] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
-		 if (completionBlock)
+		 if (completionBlock) {
 			 completionBlock(error);
+		 }
 	 }];
 }
 
@@ -520,8 +545,9 @@
 	[[NSRRequest requestToReplaceObject:self] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
-		 if (completionBlock)
+		 if (completionBlock) {
 			 completionBlock(error);
+		 }
 	 }];
 }
 
@@ -537,8 +563,9 @@
 	[[NSRRequest requestToDestroyObject:self] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
-		 if (completionBlock)
+		 if (completionBlock) {
 			 completionBlock(error);
+		 }
 	 }];
 }
 
@@ -548,8 +575,9 @@
 {
 	NSDictionary *jsonResponse = [[NSRRequest requestToFetchObject:self] sendSynchronous:error];
 	
-	if (jsonResponse)
+	if (jsonResponse) {
 		[self setPropertiesUsingRemoteDictionary:jsonResponse];
+	}
 	
 	return !!jsonResponse;
 }
@@ -559,10 +587,12 @@
 	[[NSRRequest requestToFetchObject:self] sendAsynchronous:
 	 ^(id jsonRep, NSError *error) 
 	 {
-		 if (jsonRep)
+		 if (jsonRep) {
 			 [self setPropertiesUsingRemoteDictionary:jsonRep];
-		 if (completionBlock)
+		 }
+		 if (completionBlock) {
 			 completionBlock(error);
+		 }
 	 }];
 }
 
@@ -581,8 +611,9 @@
 	 ^(id jsonRep, NSError *error) 
 	 {
          id obj = (jsonRep ? [self objectWithRemoteDictionary:jsonRep] : nil);
-		 if (completionBlock)
+		 if (completionBlock) {
 			 completionBlock(obj, error);
+		 }
 	 }];
 }
 
@@ -599,8 +630,9 @@
 		}
 	}
     
-    if (![remoteDictionaries isKindOfClass:[NSArray class]])
+    if (![remoteDictionaries isKindOfClass:[NSArray class]]) {
         return nil;
+    }
 
     NSMutableArray *array = [NSMutableArray array];
     
@@ -637,8 +669,9 @@
     [[NSRRequest requestToFetchAllObjectsOfClass:self viaObject:obj] sendAsynchronous:
 	 ^(id result, NSError *error) 
 	 {
-		 if (completionBlock)
+		 if (completionBlock) {
 			 completionBlock([self objectsWithRemoteDictionaries:result],error);
+		 }
 	 }];
 }
 
