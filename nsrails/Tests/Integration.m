@@ -229,8 +229,9 @@ static BOOL noServer = NO;
 		if (i == 0) {
 			STAssertTrue([newPost remoteUpdate:&e], @"Should return YES");
 		}
-		else
+		else {
 			STAssertTrue([newPost remoteReplace:&e], @"Should return YES");
+		}
 		STAssertNil(e, @"Update should've gone through, there should be no error");
 		
 		e = nil;
@@ -241,8 +242,9 @@ static BOOL noServer = NO;
 		if (i == 0) {
 			STAssertThrowsSpecificNamed([newPost remoteUpdate:&e], NSException, NSRNullRemoteIDException, @"Tried to update an instance with a nil ID, where's the exception?");
 		}
-		else
+		else {
 			STAssertThrowsSpecificNamed([newPost remoteReplace:&e], NSException, NSRNullRemoteIDException, @"Tried to update an instance with a nil ID, where's the exception?");
+		}
 		
 		newPost.remoteID = postID;
 		
@@ -253,8 +255,9 @@ static BOOL noServer = NO;
 		if (i == 0) {
 			STAssertFalse([newPost remoteUpdate:&e],@"");
 		}
-		else
+		else {
 			STAssertFalse([newPost remoteUpdate:&e],@"");
+		}
 		
 		STAssertNotNil(e, @"New post should've failed, there should be an error.");
 		STAssertNotNil([e userInfo][NSRErrorResponseBodyKey], @"There was an error by validation, so validation error dictionary should be present.");

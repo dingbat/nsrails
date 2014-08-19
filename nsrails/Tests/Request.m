@@ -269,8 +269,9 @@
 		if (i == 0) {
             request = [NSRRequest PATCH];
 		}
-		else
+		else {
             request = [NSRRequest GET];
+		}
 		
 		smth2.remoteID = nil;
 		smth2.childParent = nil;
@@ -420,8 +421,9 @@
 		if (i == 0) {
 			findAll = [NSRRequest requestToFetchAllObjectsOfClass:[NestParent class] viaObject:nil];
 		}
-		else
+		else {
 			findAll = [NSRRequest requestToFetchAllObjectsOfClass:[NestParent class]];
+		}
 		
 		STAssertEqualObjects(findAll.route, @"parents", nil);
 		STAssertEqualObjects(findAll.httpMethod, @"GET", nil);
