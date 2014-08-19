@@ -315,30 +315,37 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
         [request setValue:authHeader forHTTPHeaderField:@"Authorization"];
     }
     
-  if (body)
-  {
+    if (body)
+    {
         NSData *data;
+      
         if ([body isKindOfClass:[NSString class]])
         {
-            data = [body dataUsingEncoding:NSUTF8StringEncoding];
-            if (!additionalHTTPHeaders[@"Content-Type"])
-            {
+            if (!additionalHTTPHeaders[@"Content-Type"]) {
                 [NSException raise:@"NSRRequest Error"
-                            format:@"POST body was set as a string, but no Content-Type header was specific. Please use -[NSRRequest setAdditionalHTTPHeaders:...]"];
+                            format:@"POST body is a string, but no Content-Type header was specified. Please use -[NSRRequest setAdditionalHTTPHeaders:...]"];
             }
+
+            data = [body dataUsingEncoding:NSUTF8StringEncoding];
         }
         else
         {
-            //let it raise an exception if invalid json object
-            data = [NSJSONSerialization dataWithJSONObject:body options:0 error:nil];
-            if (data)
-            {
-                [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];                
+            //raise if given an invalid json object
+            if (![NSJSONSerialization isValidJSONObject:body]) {
+                [NSException raise:NSRJSONParsingException
+                            format:@"NSRRequest POST body is not a valid top-level JSON object (only array or dictionary allowed)."];
             }
+            
+            data = [NSJSONSerialization dataWithJSONObject:body options:0 error:nil];
         }
-        [request setHTTPBody:data];
-        [request setValue:@(data.length).stringValue forHTTPHeaderField:@"Content-Length"];
-  }
+      
+        if (data)
+        {
+            [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+            [request setHTTPBody:data];
+            [request setValue:@(data.length).stringValue forHTTPHeaderField:@"Content-Length"];
+        }
+    }
     
     return request;
 }
@@ -425,17 +432,14 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
         return nil;
     }
     
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:existing.userInfo];
-    NSString *domain = existing.domain;
-    NSInteger code = existing.code;
-    
     // Add on some extra info in user info dict
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:existing.userInfo];
     userInfo[NSRRequestObjectKey] = self;
     if (jsonResponse) {
         userInfo[NSRErrorResponseBodyKey] = jsonResponse;
     }
 
-    return [NSError errorWithDomain:domain code:code userInfo:userInfo];
+    return [NSError errorWithDomain:existing.domain code:existing.code userInfo:userInfo];
 }
 
 - (id) sendSynchronous:(NSError **)errorOut
@@ -458,18 +462,6 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
     }
 
     return (error ? nil : jsonResponse);
-}
-
-- (void) performCompletionBlock:(void(^)(void))block
-{
-    if (self.config.performsCompletionBlocksOnMainThread)
-    {
-        dispatch_sync(dispatch_get_main_queue(), block);
-    }
-    else
-    {
-        block();
-    }
 }
 
 - (void) sendAsynchronous:(NSRHTTPCompletionBlock)block
@@ -511,8 +503,17 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
          
          [self logIn:jsonResponse error:error];
          
+         if (error) {
+             jsonResponse = nil;
+         }
+         
          if (block) {
-             [self performCompletionBlock:^{ block( (error ? nil : jsonResponse), error); }];
+             if (self.config.performsCompletionBlocksOnMainThread) {
+                 dispatch_async(dispatch_get_main_queue(), ^{ block(jsonResponse, error); });
+             }
+             else {
+                 block(jsonResponse, error);
+             }
          }
      }];
 }

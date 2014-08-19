@@ -343,8 +343,8 @@
 
  Handles Rails errors, as well as basic connection errors.
 
- @param error Out parameter used if an error occurs while processing the request. May be `NULL`.
- @return JSON response object (could be an `NSArray` or `NSDictionary`).
+ @param error Out parameter used if an error occurs while processing the request. May be `NULL`, but please check for errors.
+ @return JSON response object.
  */
 - (id) sendSynchronous:(NSError **)error;
 

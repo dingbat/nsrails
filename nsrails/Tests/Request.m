@@ -7,6 +7,7 @@
 //
 
 #import "NSRAsserts.h"
+#import "NSRConfig.h"
 
 @interface NSRRequest (private)
 
@@ -88,7 +89,7 @@
 - (void) test_nsurlrequest
 {
     NSRRequest *req = [NSRRequest GET];
-    STAssertThrows([req HTTPRequest], nil);
+    STAssertThrowsSpecificNamed([req HTTPRequest], NSException, NSRMissingURLException, nil);
     
     [NSRConfig defaultConfig].appURL = @"http://myapp.com";
     
@@ -96,6 +97,9 @@
     STAssertEqualObjects([request.URL description], @"http://myapp.com", nil);
     STAssertEqualObjects([request HTTPMethod], @"GET", nil);
     STAssertNil([request HTTPBody], nil);
+
+    req.body = @(42);
+    STAssertThrowsSpecificNamed([req HTTPRequest], NSException, NSRJSONParsingException, nil);
 
     req.body = @[];
     request = [req HTTPRequest];
@@ -105,15 +109,14 @@
     request = [req HTTPRequest];
     STAssertEqualObjects([request.URL description], @"http://myapp.com/hello", nil);
     
-    req = [NSRRequest POST];    
-    NSString* strBody = @"this=that&thisarray[]=thatvalue";
-    [req setBody:strBody];
-    [req setAdditionalHTTPHeaders:@{@"Content-Type":@"application/x-www-form-urlencoded"}];
+    req = [NSRRequest POST];
+    req.body = @"this=that&thisarray[]=thatvalue]";
+    req.additionalHTTPHeaders = @{@"Content-Type":@"application/x-www-form-urlencoded"};
     request = [req HTTPRequest];
-    NSData* data = [strBody dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *data = [req.body dataUsingEncoding:NSUTF8StringEncoding];
     STAssertEqualObjects(request.HTTPBody, data, @"Body of NSRRequest was not able to be set to an NSString");
     
-    [req setAdditionalHTTPHeaders:nil];
+    req.additionalHTTPHeaders = nil;
     STAssertThrows([req HTTPRequest], @"Should throw exception because no Content-Type header was given when POST body was set as a string.");
 }
 
