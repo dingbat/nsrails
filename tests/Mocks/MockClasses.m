@@ -27,7 +27,7 @@
 @end
 
 @implementation SubClass
-@synthesize subDate, anything, primitiveInt, rect;
+@synthesize subDate, anything, primitiveInt, range;
 @end
 
 @implementation Post

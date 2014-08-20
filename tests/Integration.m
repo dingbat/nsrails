@@ -8,8 +8,6 @@
 
 #import "NSRAsserts.h"
 
-
-
 //bad because doesn't inherit from NSRRemoteObject
 @interface BadResponse : NSObject
 @property (nonatomic, strong) NSString *content, *author;

@@ -30,8 +30,6 @@
 
 #import "NSRRemoteObject.h"
 
-#import "NSRails.h"
-
 #import "NSString+NSRInflection.h"
 #import <objc/runtime.h>
 

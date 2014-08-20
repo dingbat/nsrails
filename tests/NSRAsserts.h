@@ -8,7 +8,7 @@
 
 #import <XCTest/XCTest.h>
 
-#import "NSRails.h"
+#import <NSRails/NSRails.h>
 #import "MockServer.h"
 #import "MockClasses.h"
 #import "NSString+NSRInflection.h"

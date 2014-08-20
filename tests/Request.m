@@ -7,7 +7,6 @@
 //
 
 #import "NSRAsserts.h"
-#import "NSRConfig.h"
 
 @interface NSRRequest (private)
 

@@ -28,7 +28,7 @@
  
  */
 
-#import "NSRRemoteObject.h"
+#import <NSRails/NSRails.h>
 
 /**
  # Setting up

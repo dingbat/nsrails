@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
-#import "NSRails.h"
+#import <NSRails/NSRails.h>
 
 @interface SuperClass : NSRRemoteObject
 @property (nonatomic, strong) NSString *superString;
@@ -19,7 +19,7 @@
 @property (nonatomic, strong) NSDate *subDate;
 @property (nonatomic, strong) id anything;
 @property (nonatomic) int primitiveInt;
-@property (nonatomic) CGRect rect;
+@property (nonatomic) NSRange range;
 @end
 
 @interface Post : NSRRemoteObject

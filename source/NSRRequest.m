@@ -28,11 +28,12 @@
  
  */
 
-#import "NSRails.h"
-
 #import "NSRRequest.h"
 #import "NSData+NSRBase64.h"
 
+#if TARGET_OS_IPHONE
+#import <UIKit/UIKit.h> //UIKit needed for managing activity indicator
+#endif
 
 #if NSRLog > 0
 

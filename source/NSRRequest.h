@@ -29,12 +29,11 @@
  */
 
 #import <Foundation/Foundation.h>
-
-//needed for block typedefs
-#import "NSRConfig.h"
+#import <NSRails/NSRails.h>
 
 @class NSRRemoteObject;
-@class NSRConfig;
+
+typedef void(^NSRHTTPCompletionBlock)(id jsonRep, NSError *error);
 
 /**
  NSRRequest is a class used internally by NSRRemoteObject to make `remoteX` requests, but can also be used directly to construct custom resource paths, etc.

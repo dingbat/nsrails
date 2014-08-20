@@ -28,7 +28,6 @@
  
  */
 
-#import "NSRails.h"
 #import "NSRConfig.h"
 
 //NSRConfigStackElement implementation

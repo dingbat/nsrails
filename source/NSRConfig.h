@@ -29,35 +29,11 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <NSRails/NSRails.h>
+
+#ifdef NSR_USE_COREDATA
 #import <CoreData/CoreData.h>
-#if TARGET_OS_IPHONE
-//UIKit needed for managing activity indicator
-#import <UIKit/UIKit.h>
 #endif
-
-//Common Blocks
-typedef void(^NSRHTTPCompletionBlock)(id jsonRep, NSError *error);
-
-typedef void(^NSRBasicCompletionBlock)(NSError *error);
-typedef void(^NSRFetchAllCompletionBlock)(NSArray *allRemote, NSError *error);
-typedef void(^NSRFetchObjectCompletionBlock)(id object, NSError *error);
-
-//Keys
-extern NSString * const NSRErrorResponseBodyKey;
-extern NSString * const NSRRequestObjectKey;
-extern NSString * const NSRValidationErrorsKey;
-
-//Exceptions+Domains
-extern NSString * const NSRRemoteErrorDomain;
-extern NSString * const NSRJSONParsingException;
-extern NSString * const NSRMissingURLException;
-extern NSString * const NSRNullRemoteIDException;
-extern NSString * const NSRCoreDataException;
-
-typedef NS_ENUM(NSInteger, NSRRailsVersion) {
-    NSRRailsVersion3,
-    NSRRailsVersion4
-};
 
 ////////////////////////////////
 
@@ -262,6 +238,7 @@ typedef NS_ENUM(NSInteger, NSRRailsVersion) {
  */
 @property (nonatomic, strong) NSString *dateFormat;
 
+#ifdef NSR_USE_COREDATA
 /// =============================================================================================
 /// @name CoreData
 /// =============================================================================================
@@ -274,6 +251,7 @@ typedef NS_ENUM(NSInteger, NSRRailsVersion) {
  Should stay `nil` (default) if CoreData is not being used.
  */
 @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+#endif
 
 /// =============================================================================================
 /// @name Configuring to a Rails version

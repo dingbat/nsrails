@@ -29,10 +29,17 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <NSRails/NSRails.h>
 
-//needed for block typedefs
-#import "NSRConfig.h"
+#ifdef NSR_USE_COREDATA
+#import <CoreData/CoreData.h>
+#endif
 
+typedef void(^NSRBasicCompletionBlock)(NSError *error);
+typedef void(^NSRFetchAllCompletionBlock)(NSArray *allRemote, NSError *error);
+typedef void(^NSRFetchObjectCompletionBlock)(id object, NSError *error);
+
+@class NSRConfig;
 @class NSRRequest;
 
 /*************************************************************************
