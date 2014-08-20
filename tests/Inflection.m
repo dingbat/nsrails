@@ -8,6 +8,8 @@
 
 #import "NSRAsserts.h"
 
+#import "NSString+NSRInflection.h"
+
 @interface Inflection : XCTestCase
 
 @end

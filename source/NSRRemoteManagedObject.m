@@ -29,7 +29,7 @@
  */
 
 #import <NSRails/NSRails.h>
-#import "NSRRemoteManagedObject.h"
+#import <CoreData/CoreData.h>
 
 NSString * const NSRCoreDataException = @"NSRCoreDataException";
 
@@ -248,19 +248,11 @@ NSString * const NSRCoreDataException = @"NSRCoreDataException";
 
 #pragma mark - Helpers
 
-- (BOOL) saveContext 
+- (NSError *) saveContext
 {
     NSError *error = nil;
-    if (![self.managedObjectContext save:&error])
-    {
-        //TODO
-        // maybe notify a client delegate to handle this error?
-        // raise exception?
-        
-        NSLog(@"NSR Warning: Failed to save CoreData context with error %@", error);
-    }
-    
-    return !error;
+    [self.managedObjectContext save:&error];
+    return error;
 }
 
 + (instancetype) findObjectWithRemoteID:(NSNumber *)rID

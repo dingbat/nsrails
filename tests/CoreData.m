@@ -190,12 +190,12 @@
     CDPost *p = [[CDPost alloc] initInserted];
     p.remoteID = @(99);
     
-    XCTAssertTrue([p saveContext]);
+    XCTAssertNil([p saveContext]);
     
     CDPost *p2 = [[CDPost alloc] initInserted];
     p2.remoteID = @(99);
     
-    XCTAssertFalse([p2 saveContext]);
+    XCTAssertNotNil([p2 saveContext]);
 }
 
 - (void) test_no_remote_id_uniqueness_validation
@@ -203,13 +203,13 @@
     CDPost *p = [[CDPost alloc] initInserted];
     p.remoteID = @(99);
     
-    XCTAssertTrue([p saveContext]);
+    XCTAssertNil([p saveContext]);
     
     CDPost *p2 = [[CDPost alloc] initInserted];
     p2.remoteID = @(99);
     p2.shouldNotValidateUniqueness = YES;
     
-    XCTAssertTrue([p2 saveContext]);
+    XCTAssertNil([p2 saveContext]);
 }
 
 - (void) test_nested_class_override

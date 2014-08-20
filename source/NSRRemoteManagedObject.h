@@ -129,9 +129,9 @@ extern NSString * const NSRCoreDataException;
 /**
  Save the CoreData object context of the receiver.
   
- @return Whether or not the save was successful.
+ @return The error from the save, if one occurred.
  */
-- (BOOL) saveContext;
+- (NSError *) saveContext;
 
 
 /// =============================================================================================

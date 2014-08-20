@@ -7,7 +7,6 @@
 //
 
 #import "MockClasses.h"
-#import "NSRails.h"
 
 @implementation Tester
 @synthesize tester, array, dictionary;

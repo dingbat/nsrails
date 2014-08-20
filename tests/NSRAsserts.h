@@ -11,7 +11,6 @@
 #import <NSRails/NSRails.h>
 #import "MockServer.h"
 #import "MockClasses.h"
-#import "NSString+NSRInflection.h"
 
 
 @interface NSRConfig (internal)
