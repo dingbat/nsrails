@@ -47,15 +47,15 @@ NSString * const NSRCoreDataException = @"NSRCoreDataException";
 - (void) setRemoteID:(NSNumber *)rID
 {
     [self willChangeValueForKey:@"remoteID"];
-    [(id)self setPrimitiveValue:rID forKey:@"remoteID"];
+    [self setPrimitiveValue:rID forKey:@"remoteID"];
     [self didChangeValueForKey:@"remoteID"];
 }
 
 - (NSNumber *) remoteID
 {
-    [(id)self willAccessValueForKey:@"remoteID"];
+    [self willAccessValueForKey:@"remoteID"];
     NSNumber *rID = [self primitiveRemoteID];
-    [(id)self didAccessValueForKey:@"remoteID"];
+    [self didAccessValueForKey:@"remoteID"];
     return rID;
 }
 
@@ -82,7 +82,7 @@ NSString * const NSRCoreDataException = @"NSRCoreDataException";
 
 - (Class) containerClassForRelationProperty:(NSString *)property
 {
-    BOOL ordered = [[[(id)self entity] propertiesByName][property] isOrdered];
+    BOOL ordered = [self.entity.propertiesByName[property] isOrdered];
     return ordered ? [NSMutableOrderedSet class] : [NSMutableSet class];
 }
 
@@ -90,14 +90,19 @@ NSString * const NSRCoreDataException = @"NSRCoreDataException";
 
 + (NSString *) entityName
 {
-    return [self description];
+    return NSStringFromClass(self);
+}
+
+- (BOOL) validatesRemoteIDUniqueness
+{
+    return ([self.primitiveRemoteID intValue] != 0 && self.changedValues[@"remoteID"]);
 }
 
 #pragma mark - Standard overrides
 
 - (Class) nestedClassForProperty:(NSString *)property
 {
-    NSDictionary *relationships = [[(id)self entity] relationshipsByName];
+    NSDictionary *relationships = self.entity.relationshipsByName;
     if (relationships.count > 0)
     {
         NSRelationshipDescription *cdRelation = relationships[property];
@@ -219,7 +224,7 @@ NSString * const NSRCoreDataException = @"NSRCoreDataException";
         return NO;
     }
     
-    [[(id)self managedObjectContext] deleteObject:(id)self];
+    [self.managedObjectContext deleteObject:self];
     [self saveContext];
     return YES;
 }
@@ -231,7 +236,7 @@ NSString * const NSRCoreDataException = @"NSRCoreDataException";
      {
          if (!error)
          {
-             [[(id)self managedObjectContext] deleteObject:(id)self];
+             [self.managedObjectContext deleteObject:self];
              [self saveContext];
          }
          if (completionBlock) {
@@ -246,7 +251,7 @@ NSString * const NSRCoreDataException = @"NSRCoreDataException";
 - (BOOL) saveContext 
 {
     NSError *error = nil;
-    if (![[(id)self managedObjectContext] save:&error])
+    if (![self.managedObjectContext save:&error])
     {
         //TODO
         // maybe notify a client delegate to handle this error?
@@ -284,7 +289,7 @@ NSString * const NSRCoreDataException = @"NSRCoreDataException";
 {
     if (![self isKindOfClass:[NSManagedObject class]])
     {
-        [NSException raise:NSRCoreDataException format:@"Trying to use NSRails with CoreData? Add `#define NSR_USE_COREDATA` to your Prefix.pch file. You can also add NSR_USE_COREDATA to \"Preprocessor Macros\" in your target's build settings. If you're in RubyMotion, change \":target => 'NSRails'\" to \":target => 'NSRailsCD'\" in your Rakefile."];
+        [NSException raise:NSRCoreDataException format:@"Trying to use NSRails with CoreData? With CocoaPods, use pod 'NSRails/CoreData' instead of pod 'NSRails'. Otherwise, add `#define NSR_USE_COREDATA` to your precompiled header file, or add NSR_USE_COREDATA to \"Preprocessor Macros\" in your target's build settings. If you're in RubyMotion, change \":target => 'NSRails'\" to \":target => 'NSRailsCD'\" in your Rakefile."];
     }
     
     NSManagedObjectContext *context = [[self class] getGlobalManagedObjectContextFromCmd:_cmd];
@@ -292,11 +297,6 @@ NSString * const NSRCoreDataException = @"NSRCoreDataException";
                                          inManagedObjectContext:context];
     
     return self;
-}
-
-- (BOOL) validatesRemoteIDUniqueness
-{
-    return ([self.primitiveRemoteID intValue] != 0 && [(id)self changedValues][@"remoteID"]);
 }
 
 - (BOOL) validateRemoteID:(id *)value error:(NSError **)error
@@ -310,7 +310,7 @@ NSString * const NSRCoreDataException = @"NSRCoreDataException";
     fetch.fetchLimit = 1;
     fetch.predicate = [NSPredicate predicateWithFormat:@"(remoteID == %@) && (self != %@)", *value, self];
     
-    NSArray *results = [[(id)self managedObjectContext] executeFetchRequest:fetch error:NULL];
+    NSArray *results = [self.managedObjectContext executeFetchRequest:fetch error:NULL];
     
     if (results.count > 0)
     {

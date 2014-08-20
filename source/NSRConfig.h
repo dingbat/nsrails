@@ -29,7 +29,6 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <NSRails/NSRails.h>
 
 #ifdef NSR_USE_COREDATA
 #import <CoreData/CoreData.h>
