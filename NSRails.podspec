@@ -16,8 +16,8 @@ Pod::Spec.new do |s|
   s.default_subspec = 'NSRails'
 
   s.subspec 'NSRails' do |ncd|
-    ncd.source_files = 'nsrails', 'nsrails/Source/**/*.{h,m}'
-    ncd.public_header_files = 'nsrails/Source/**/*.h'
+    ncd.source_files = 'source/**/*.{h,m}'
+    ncd.public_header_files = 'source/**/*.h'
   end
 
   s.subspec 'CoreData' do |cd|

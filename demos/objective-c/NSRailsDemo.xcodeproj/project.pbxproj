@@ -7,12 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		370E5A6C180B1C520061FF8B /* NSData+NSRBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 370E5A60180B1C520061FF8B /* NSData+NSRBase64.m */; };
-		370E5A6D180B1C520061FF8B /* NSString+NSRInflection.m in Sources */ = {isa = PBXBuildFile; fileRef = 370E5A62180B1C520061FF8B /* NSString+NSRInflection.m */; };
-		370E5A6E180B1C520061FF8B /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 370E5A65180B1C520061FF8B /* NSRConfig.m */; };
-		370E5A6F180B1C520061FF8B /* NSRRemoteManagedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 370E5A67180B1C520061FF8B /* NSRRemoteManagedObject.m */; };
-		370E5A70180B1C520061FF8B /* NSRRemoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 370E5A69180B1C520061FF8B /* NSRRemoteObject.m */; };
-		370E5A71180B1C520061FF8B /* NSRRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 370E5A6B180B1C520061FF8B /* NSRRequest.m */; };
 		370E5A75180B1D010061FF8B /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 370E5A74180B1D010061FF8B /* Default-568h@2x.png */; };
 		5975A4A3156364200088E453 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5975A4A2156364200088E453 /* UIKit.framework */; };
 		5975A4A5156364200088E453 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5975A4A4156364200088E453 /* Foundation.framework */; };
@@ -29,19 +23,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		370E5A5F180B1C520061FF8B /* NSData+NSRBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+NSRBase64.h"; sourceTree = "<group>"; };
-		370E5A60180B1C520061FF8B /* NSData+NSRBase64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+NSRBase64.m"; sourceTree = "<group>"; };
-		370E5A61180B1C520061FF8B /* NSString+NSRInflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+NSRInflection.h"; sourceTree = "<group>"; };
-		370E5A62180B1C520061FF8B /* NSString+NSRInflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+NSRInflection.m"; sourceTree = "<group>"; };
-		370E5A63180B1C520061FF8B /* NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRails.h; sourceTree = "<group>"; };
-		370E5A64180B1C520061FF8B /* NSRConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRConfig.h; sourceTree = "<group>"; };
-		370E5A65180B1C520061FF8B /* NSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConfig.m; sourceTree = "<group>"; };
-		370E5A66180B1C520061FF8B /* NSRRemoteManagedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRRemoteManagedObject.h; sourceTree = "<group>"; };
-		370E5A67180B1C520061FF8B /* NSRRemoteManagedObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRemoteManagedObject.m; sourceTree = "<group>"; };
-		370E5A68180B1C520061FF8B /* NSRRemoteObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRRemoteObject.h; sourceTree = "<group>"; };
-		370E5A69180B1C520061FF8B /* NSRRemoteObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRemoteObject.m; sourceTree = "<group>"; };
-		370E5A6A180B1C520061FF8B /* NSRRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRRequest.h; sourceTree = "<group>"; };
-		370E5A6B180B1C520061FF8B /* NSRRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRequest.m; sourceTree = "<group>"; };
 		370E5A74180B1D010061FF8B /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		5975A49E156364200088E453 /* NSRailsDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NSRailsDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5975A4A2156364200088E453 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -81,40 +62,10 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		370E5A5D180B1C520061FF8B /* NSRails source */ = {
-			isa = PBXGroup;
-			children = (
-				370E5A5E180B1C520061FF8B /* Categories */,
-				370E5A63180B1C520061FF8B /* NSRails.h */,
-				370E5A64180B1C520061FF8B /* NSRConfig.h */,
-				370E5A65180B1C520061FF8B /* NSRConfig.m */,
-				370E5A66180B1C520061FF8B /* NSRRemoteManagedObject.h */,
-				370E5A67180B1C520061FF8B /* NSRRemoteManagedObject.m */,
-				370E5A68180B1C520061FF8B /* NSRRemoteObject.h */,
-				370E5A69180B1C520061FF8B /* NSRRemoteObject.m */,
-				370E5A6A180B1C520061FF8B /* NSRRequest.h */,
-				370E5A6B180B1C520061FF8B /* NSRRequest.m */,
-			);
-			name = "NSRails source";
-			path = ../../nsrails/Source;
-			sourceTree = "<group>";
-		};
-		370E5A5E180B1C520061FF8B /* Categories */ = {
-			isa = PBXGroup;
-			children = (
-				370E5A5F180B1C520061FF8B /* NSData+NSRBase64.h */,
-				370E5A60180B1C520061FF8B /* NSData+NSRBase64.m */,
-				370E5A61180B1C520061FF8B /* NSString+NSRInflection.h */,
-				370E5A62180B1C520061FF8B /* NSString+NSRInflection.m */,
-			);
-			path = Categories;
-			sourceTree = "<group>";
-		};
 		5975A493156364200088E453 = {
 			isa = PBXGroup;
 			children = (
 				5975A4A8156364200088E453 /* NSRailsDemo */,
-				370E5A5D180B1C520061FF8B /* NSRails source */,
 				59B4B5CA15681CD70005A505 /* Supporting Files */,
 				5975A4A1156364200088E453 /* Frameworks */,
 				5975A49F156364200088E453 /* Products */,
@@ -254,16 +205,10 @@
 				5975A5651563686F0088E453 /* AppDelegate.m in Sources */,
 				5975A5661563686F0088E453 /* InputViewController.m in Sources */,
 				5975A5681563686F0088E453 /* PostsViewController.m in Sources */,
-				370E5A6E180B1C520061FF8B /* NSRConfig.m in Sources */,
-				370E5A6C180B1C520061FF8B /* NSData+NSRBase64.m in Sources */,
 				5975A5691563686F0088E453 /* ResponsesViewController.m in Sources */,
 				5975A56A1563686F0088E453 /* Post.m in Sources */,
 				5975A56B1563686F0088E453 /* Response.m in Sources */,
-				370E5A6D180B1C520061FF8B /* NSString+NSRInflection.m in Sources */,
 				59B4B5CE15681CD70005A505 /* main.m in Sources */,
-				370E5A70180B1C520061FF8B /* NSRRemoteObject.m in Sources */,
-				370E5A71180B1C520061FF8B /* NSRRequest.m in Sources */,
-				370E5A6F180B1C520061FF8B /* NSRRemoteManagedObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

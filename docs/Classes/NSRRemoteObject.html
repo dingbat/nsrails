@@ -118,6 +118,8 @@
 	
 	<option value="//api/name/shouldOnlySendIDKeyForNestedObjectProperty:">&nbsp;&nbsp;&nbsp;&nbsp;- shouldOnlySendIDKeyForNestedObjectProperty:</option>
 	
+	<option value="//api/name/shouldReplaceCollectionForProperty:">&nbsp;&nbsp;&nbsp;&nbsp;- shouldReplaceCollectionForProperty:</option>
+	
 	<option value="//api/name/shouldSendProperty:whenNested:">&nbsp;&nbsp;&nbsp;&nbsp;- shouldSendProperty:whenNested:</option>
 	
 	
@@ -237,6 +239,8 @@
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setPropertiesUsingRemoteDictionary:">setPropertiesUsingRemoteDictionary:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/shouldOnlySendIDKeyForNestedObjectProperty:">shouldOnlySendIDKeyForNestedObjectProperty:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/shouldReplaceCollectionForProperty:">shouldReplaceCollectionForProperty:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/shouldSendProperty:whenNested:">shouldSendProperty:whenNested:</a></span></li>
 	
@@ -592,6 +596,13 @@
 	<span class="tooltip">
 		<code><a href="#//api/name/propertyForRemoteKey:">&ndash;&nbsp;propertyForRemoteKey:</a></code>
 		<span class="tooltip"><p>Should return the equivalent Objective-C property for a given remote key.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/shouldReplaceCollectionForProperty:">&ndash;&nbsp;shouldReplaceCollectionForProperty:</a></code>
+		<span class="tooltip"><p>Whether or not to fully replace a collection for a given property, as opposed to simply adding to it.</p></span>
 	</span>
 	
 	
@@ -1552,11 +1563,13 @@ if ([myObj remoteFetch:&amp;error])
 
  - (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
  {
-     if ([property isEqualToString:@"csvArray"])
+     if ([property isEqualToString:@"csvArray"]) {
          return [csvArray componentsJoinedByString:@","];
+     }
 
-     if ([property isEqualToString:@"URL"])
+     if ([property isEqualToString:@"URL"]) {
          return [URL absoluteString];
+     }
 
      return [super encodeValueForProperty:property remoteKey:remoteKey];
  }
@@ -1568,8 +1581,9 @@ if ([myObj remoteFetch:&amp;error])
 
 <pre><code> - (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
  {
-     if ([property isEqualToString:@"objcProperty"])
+     if ([property isEqualToString:@"objcProperty"]) {
          *remoteKey = @"rails_attr";
+     }
 
      return [super encodeValueForProperty:property remoteKey:remoteKey];
  }
@@ -1639,8 +1653,9 @@ if ([myObj remoteFetch:&amp;error])
  {
      // Only necessary for 'responses' (to-many)
      // By default, the Author class (to-one) will be picked up through its property type
-     if ([property isEqualToString:@"responses"])
+     if ([property isEqualToString:@"responses"]) {
          return [Response class];
+     }
 
      return [super nestedClassForProperty:property];
  }
@@ -1723,11 +1738,10 @@ if ([myObj remoteFetch:&amp;error])
 <p>Typically, this method is overriden with an instance variable that represents a parent:</p>
 
 <pre><code> @implementation Invite
- @synthesize user, foo;
 
  - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request
  {
-     return user;
+     return self.user;
  }
 
  @end
@@ -1755,8 +1769,9 @@ if ([myObj remoteFetch:&amp;error])
 
 <pre><code> - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request
  {
-     if ([request.httpMethod isEqualToString:@"GET"] || [request.httpMethod isEqualToString:@"POST"])
+     if ([request.httpMethod isEqualToString:@"GET"] || [request.httpMethod isEqualToString:@"POST"]) {
          return user;
+     }
      return nil;
  }
 </code></pre>
@@ -1824,8 +1839,9 @@ if ([myObj remoteFetch:&amp;error])
 <pre><code> - (NSString *) propertyForRemoteKey:(NSString *)remoteKey
  {
      //the "rails" key given from a Rails hash will be translated to the "objc" property when decoding
-     if ([remoteKey isEqualToString:@"rails"])
+     if ([remoteKey isEqualToString:@"rails"]) {
          return @"objc";
+     }
 
      return [super propertyForRemoteKey:remoteKey];
  }
@@ -2721,6 +2737,62 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 </div>
 						
 						<div class="section-method">
+	<a name="//api/name/shouldReplaceCollectionForProperty:" title="shouldReplaceCollectionForProperty:"></a>
+	<h3 class="subsubtitle method-title">shouldReplaceCollectionForProperty:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Whether or not to fully replace a collection for a given property, as opposed to simply adding to it.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (BOOL)shouldReplaceCollectionForProperty:(NSString *)<em>property</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>property</em></dt>
+			<dd><p>The name of the collection property.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>Whether or not to fully replace a collection for a given property, as opposed to simply adding to it.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Will only be called for collection properties.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
 	<a name="//api/name/shouldSendProperty:whenNested:" title="shouldSendProperty:whenNested:"></a>
 	<h3 class="subsubtitle method-title">shouldSendProperty:whenNested:</h3>
 	
@@ -2779,12 +2851,14 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 <pre><code> - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
  {
     //never send retrieveOnlyProperty to your server
-    if ([property isEqualToString:@"retrieveOnlyProperty"])
+    if ([property isEqualToString:@"retrieveOnlyProperty"]) {
         return NO;
+    }
 
     //deepNest is a property with a has-one/has-many relationship that would otherwise not be sent when this object is *nested*
-    if ([property isEqualToString:@"deepNest"] &amp;&amp; nested)
+    if ([property isEqualToString:@"deepNest"] &amp;&amp; nested) {
         return YES;
+    }
 
     return [super shouldSendProperty:property whenNested:nested];
  }
@@ -2820,7 +2894,7 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2014 Dan Hassin. All rights reserved. (Last updated: 2014-01-08)</span><br />
+						<p><span class="copyright">&copy; 2014 Dan Hassin. All rights reserved. (Last updated: 2014-08-20)</span><br />
 						
 						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2 (build 961)</a>.</span></p>
 						
