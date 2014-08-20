@@ -71,6 +71,12 @@ NSString * const NSRRails3DateFormat        = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'
 NSString * const NSRRails4DateFormat        = @"yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
 
+@interface NSRConfig ()
+
+@property (nonatomic, strong) NSDateFormatter *dateFormatter;
+
+@end
+
 @implementation NSRConfig
 
 #pragma mark -
@@ -107,8 +113,7 @@ static NSMutableArray *overrideConfigStack = nil;
 {
     if ((self = [super init]))
     {
-        dateFormatter = [[NSDateFormatter alloc] init];
-        asyncOperationQueue = [[NSOperationQueue alloc] init];
+        self.dateFormatter = [[NSDateFormatter alloc] init];
         
         self.autoinflectsClassNames = YES;
         self.autoinflectsPropertyNames = YES;
@@ -151,22 +156,22 @@ static NSMutableArray *overrideConfigStack = nil;
 
 - (void) setDateFormat:(NSString *)dateFormat
 {
-    [dateFormatter setDateFormat:dateFormat];
+    [self.dateFormatter setDateFormat:dateFormat];
 }
 
 - (NSString *) dateFormat
 {
-    return dateFormatter.dateFormat;
+    return self.dateFormatter.dateFormat;
 }
 
 - (NSString *) stringFromDate:(NSDate *)date
 {
-    return [dateFormatter stringFromDate:date];
+    return [self.dateFormatter stringFromDate:date];
 }
 
 - (NSDate *) dateFromString:(NSString *)string
 {
-    NSDate *date = [dateFormatter dateFromString:string];
+    NSDate *date = [self.dateFormatter dateFromString:string];
     
     if (!date && string)
     {
@@ -178,7 +183,7 @@ static NSMutableArray *overrideConfigStack = nil;
         }
         else
         {
-            NSLog(@"NSR Warning: Attempted to convert remote date string (\"%@\") into an NSDate object, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation). Setting to nil",string,dateFormatter.dateFormat);
+            NSLog(@"NSR Warning: Attempted to convert remote date string (\"%@\") into an NSDate object, but conversion failed. Please check your config's dateFormat (used format \"%@\" for this operation). Setting to nil",string,self.dateFormat);
         }
     }
     
@@ -240,9 +245,7 @@ static NSMutableArray *overrideConfigStack = nil;
 {
     if (self = [super init])
     {
-        dateFormatter = [[NSDateFormatter alloc] init];
-        asyncOperationQueue = [[NSOperationQueue alloc] init];
-        
+        self.dateFormatter = [[NSDateFormatter alloc] init];
         self.dateFormat = [aDecoder decodeObjectForKey:@"dateFormat"];
         
         self.autoinflectsClassNames = [aDecoder decodeBoolForKey:@"autoinflectsClassNames"];

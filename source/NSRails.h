@@ -48,11 +48,6 @@ extern NSString * const NSRMissingURLException;
 extern NSString * const NSRNullRemoteIDException;
 extern NSString * const NSRCoreDataException;
 
-typedef NS_ENUM(NSInteger, NSRRailsVersion) {
-    NSRRailsVersion3,
-    NSRRailsVersion4
-};
-
 // Imports
 // =============
 #import <NSRails/NSRConfig.h>

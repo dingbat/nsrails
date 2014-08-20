@@ -88,12 +88,12 @@
     You can nest several config contexts within each other.
  */
 
-@interface NSRConfig : NSObject <NSCoding>
-{
-    NSDateFormatter *dateFormatter;
-    NSOperationQueue *asyncOperationQueue; //used for async requests
-}
+typedef NS_ENUM(NSInteger, NSRRailsVersion) {
+    NSRRailsVersion3,
+    NSRRailsVersion4
+};
 
+@interface NSRConfig : NSObject <NSCoding>
 
 /// =============================================================================================
 /// @name Properties
