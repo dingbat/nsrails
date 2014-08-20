@@ -255,7 +255,7 @@
     
     p.encodeNonJSON = YES;
     
-    XCTAssertThrowsSpecificNamed([p remoteDictionaryRepresentationWrapped:NO], NSException, NSRJSONParsingException, @"Encoding into non-JSON for sendable dict - where's the error?");
+    XCTAssertThrows([p remoteDictionaryRepresentationWrapped:NO], @"Encoding into non-JSON for sendable dict - where's the error?");
 }
 
 - (void) test_send_retrieve

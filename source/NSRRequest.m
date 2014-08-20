@@ -51,6 +51,13 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 
 #endif
 
+NSString * const NSRRequestObjectKey        = @"NSRRequestObjectKey";
+NSString * const NSRErrorResponseBodyKey    = @"NSRErrorResponseBodyKey";
+
+NSString * const NSRRemoteErrorDomain       = @"NSRRemoteErrorDomain";
+NSString * const NSRMissingURLException     = @"NSRMissingURLException";
+NSString * const NSRNullRemoteIDException   = @"NSRNullRemoteIDException";
+
 @interface NSRRequest (private)
 
 - (id) initWithHTTPMethod:(NSString *)method;
@@ -135,6 +142,15 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
 - (void) setBodyToObject:(NSRRemoteObject *)obj
 {
     self.body = [obj remoteDictionaryRepresentationWrapped:YES];
+}
+
+- (void) setBody:(id)body
+{
+    if (body && ![body isKindOfClass:[NSString class]] && ![NSJSONSerialization isValidJSONObject:body]) {
+        [NSException raise:NSInvalidArgumentException format:@"NSRRequest body is not a valid top-level JSON object (only array or dictionary allowed)."];
+    }
+    
+    _body = body;
 }
 
 # pragma mark - Factory requests
@@ -331,12 +347,6 @@ NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 
         }
         else
         {
-            //raise if given an invalid json object
-            if (![NSJSONSerialization isValidJSONObject:self.body]) {
-                [NSException raise:NSRJSONParsingException
-                            format:@"NSRRequest POST body is not a valid top-level JSON object (only array or dictionary allowed)."];
-            }
-            
             data = [NSJSONSerialization dataWithJSONObject:self.body options:0 error:nil];
         }
       

@@ -55,21 +55,8 @@
 
 @end
 
-
-NSString * const NSRRequestObjectKey                    = @"NSRRequestObjectKey";
-NSString * const NSRErrorResponseBodyKey                = @"NSRErrorResponseBodyKey";
-//backwards compatibility
-NSString * const NSRValidationErrorsKey                    = @"NSRErrorResponseBodyKey";
-
-NSString * const NSRRemoteErrorDomain                = @"NSRRemoteErrorDomain";
-NSString * const NSRJSONParsingException            = @"NSRJSONParsingException";
-NSString * const NSRMissingURLException                = @"NSRMissingURLException";
-NSString * const NSRNullRemoteIDException            = @"NSRNullRemoteIDException";
-NSString * const NSRCoreDataException                = @"NSRCoreDataException";
-
-NSString * const NSRRails3DateFormat        = @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
-NSString * const NSRRails4DateFormat        = @"yyyy-MM-dd'T'HH:mm:ss.SSSZ";
-
+NSString * const NSRRails3DateFormat =  @"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
+NSString * const NSRRails4DateFormat =  @"yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
 @interface NSRConfig ()
 

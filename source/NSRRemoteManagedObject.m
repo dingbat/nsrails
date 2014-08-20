@@ -31,6 +31,8 @@
 #import <NSRails/NSRails.h>
 #import "NSRRemoteManagedObject.h"
 
+NSString * const NSRCoreDataException = @"NSRCoreDataException";
+
 @interface NSRRemoteObject (private_overrides)
 
 - (Class) containerClassForRelationProperty:(NSString *)property;

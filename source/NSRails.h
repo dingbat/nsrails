@@ -28,25 +28,11 @@
  
  */
 
-#import <Foundation/Foundation.h>
-
 // Logging
 // =============
 //                    As undefined, NSRails will log nothing
 // #define NSRLog 1    //As 1, NSRails will log HTTP verbs with their outgoing URLs, as well as any server errors 
 #define NSRLog 2    //As 2, NSRails will also log any JSON going out/coming in
-
-//Keys
-extern NSString * const NSRErrorResponseBodyKey;
-extern NSString * const NSRRequestObjectKey;
-extern NSString * const NSRValidationErrorsKey;
-
-//Exceptions+Domains
-extern NSString * const NSRRemoteErrorDomain;
-extern NSString * const NSRJSONParsingException;
-extern NSString * const NSRMissingURLException;
-extern NSString * const NSRNullRemoteIDException;
-extern NSString * const NSRCoreDataException;
 
 // Imports
 // =============

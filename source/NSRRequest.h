@@ -35,6 +35,15 @@
 
 typedef void(^NSRHTTPCompletionBlock)(id jsonRep, NSError *error);
 
+//Keys
+extern NSString * const NSRErrorResponseBodyKey;
+extern NSString * const NSRRequestObjectKey;
+
+//Exceptions+Domains
+extern NSString * const NSRRemoteErrorDomain;
+extern NSString * const NSRMissingURLException;
+extern NSString * const NSRNullRemoteIDException;
+
 /**
  NSRRequest is a class used internally by NSRRemoteObject to make `remoteX` requests, but can also be used directly to construct custom resource paths, etc.
  

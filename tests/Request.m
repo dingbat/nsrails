@@ -97,8 +97,7 @@
     XCTAssertEqualObjects([request HTTPMethod], @"GET");
     XCTAssertNil([request HTTPBody]);
 
-    req.body = @(42);
-    XCTAssertThrowsSpecificNamed([req HTTPRequest], NSException, NSRJSONParsingException, @"Should throw an invalid body object exception");
+    XCTAssertThrows(req.body = @(42), @"Should throw an invalid body object exception");
 
     req.body = @[];
     request = [req HTTPRequest];

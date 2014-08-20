@@ -98,6 +98,8 @@
  **nestedClassForProperty:** Will search your CoreData entity relationships, and if one is found for that property, will return that relationship's destination class.
  */
 
+extern NSString * const NSRCoreDataException;
+
 @interface NSRRemoteManagedObject : NSRRemoteObject
 
 /// =============================================================================================
