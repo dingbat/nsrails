@@ -105,6 +105,7 @@ static NSMutableArray *overrideConfigStack = nil;
         self.autoinflectsClassNames = YES;
         self.autoinflectsPropertyNames = YES;
         self.ignoresClassPrefixes = YES;
+        self.networkLogging = YES;
         
         self.succinctErrorMessages = YES;
         self.timeoutInterval = 60.0f;

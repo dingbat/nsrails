@@ -36,21 +36,6 @@
 #import <UIKit/UIKit.h> //UIKit needed for managing activity indicator
 #endif
 
-#if NSRLog > 0
-
-#define NSRLogTagged(tag, ...)            \
-NSLog(@"[NSRails][%@] %@", tag, [NSString stringWithFormat:__VA_ARGS__])
-
-#define NSRLogInOut(inout, json, ...)    \
-NSRLogTagged(inout, @"%@ %@", [NSString stringWithFormat:__VA_ARGS__],(NSRLog > 1) ? (json ? json : @"") : @"")
-
-#else
-
-#define NSRLogTagged(...)
-#define NSRLogInOut(...)
-
-#endif
-
 NSString * const NSRRequestObjectKey        = @"NSRRequestObjectKey";
 NSString * const NSRErrorResponseBodyKey    = @"NSRErrorResponseBodyKey";
 
@@ -531,14 +516,20 @@ NSString * const NSRNullRemoteIDException   = @"NSRNullRemoteIDException";
 
 #pragma mark - Logging
 
+#define NSRLogInOut(inout, json, ...) NSLog(@"[NSRails][%@] %@ %@", inout, [NSString stringWithFormat:__VA_ARGS__], (json ? json : @""))
+
 - (void) logOut:(NSURLRequest *)request
 {
-    NSRLogInOut(@"OUT", self.body, @"===> %@ to %@", self.httpMethod, [request.URL absoluteString]);
+    if (self.config.networkLogging) {
+        NSRLogInOut(@"OUT", self.body, @"===> %@ to %@", self.httpMethod, [request.URL absoluteString]);
+    }
 }
 
 - (void) logIn:(id)json error:(NSError *)error
 {
-    NSRLogInOut(@"IN", error ? @"" : json, @"<=== Code %d; %@", (int)error.code, error ? error : @"");
+    if (self.config.networkLogging) {
+        NSRLogInOut(@"IN", error ? @"" : json, @"<=== Code %d; %@", (int)error.code, error ? error : @"");
+    }
 }
 
 #pragma mark - NSCoding

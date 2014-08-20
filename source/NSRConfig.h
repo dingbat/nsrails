@@ -187,6 +187,14 @@ typedef NS_ENUM(NSInteger, NSRRailsVersion) {
  */
 @property (nonatomic) BOOL ignoresClassPrefixes;
 
+/**
+ If `YES`, NSRails will log HTTP verbs with their outgoing URLs, as well as any any JSON going out/coming in
+ and server errors. If `NO`, NSRails will log nothing.
+ 
+ **Default:** `YES`.
+ */
+@property (nonatomic) BOOL networkLogging;
+
 /// =============================================================================================
 /// @name Authentication
 /// =============================================================================================

@@ -25,17 +25,8 @@
  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- 
  */
 
-// Logging
-// =============
-//                    As undefined, NSRails will log nothing
-// #define NSRLog 1    //As 1, NSRails will log HTTP verbs with their outgoing URLs, as well as any server errors 
-#define NSRLog 2    //As 2, NSRails will also log any JSON going out/coming in
-
-// Imports
-// =============
 #import <NSRails/NSRConfig.h>
 #import <NSRails/NSRRemoteObject.h>
 #import <NSRails/NSRRequest.h>
