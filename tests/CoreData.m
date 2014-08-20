@@ -71,16 +71,13 @@
 
 @interface CoreData : XCTestCase
 
-@property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
-@property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
-@property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (strong, nonatomic) NSManagedObjectModel *managedObjectModel;
+@property (strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
 @end
 
 @implementation CoreData
-@synthesize managedObjectContext = __managedObjectContext;
-@synthesize managedObjectModel = __managedObjectModel;
-@synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
 
 - (void) test_exceptions
 {
@@ -89,7 +86,7 @@
     XCTAssertThrows(([[CDPost alloc] initInserted]), @"");
     XCTAssertThrows([[NSRRemoteManagedObject alloc] initInserted], @"");
 
-    [[NSRConfig defaultConfig] setManagedObjectContext:__managedObjectContext];
+    [[NSRConfig defaultConfig] setManagedObjectContext:self.managedObjectContext];
 
     CDPost *p = [[CDPost alloc] initInserted];
     p.remoteID = @(15);
@@ -244,7 +241,17 @@
 
 - (void) setUp
 {
-    [[NSRConfig defaultConfig] setManagedObjectContext:[self managedObjectContext]];
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSURL *url = [bundle URLForResource:@"Test" withExtension:@"momd"];
+    self.managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:url];
+    
+    self.persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:self.managedObjectModel];
+    [self.persistentStoreCoordinator addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:NULL];
+    
+    self.managedObjectContext = [[NSManagedObjectContext alloc] init];
+    [self.managedObjectContext setPersistentStoreCoordinator:self.persistentStoreCoordinator];
+
+    [[NSRConfig defaultConfig] setManagedObjectContext:self.managedObjectContext];
 }
 
 + (void)setUp
@@ -254,44 +261,5 @@
     [[NSRConfig defaultConfig] setAppPassword:@"iphone"];
 }
 
-
-
-- (NSManagedObjectContext *)managedObjectContext
-{
-    if (__managedObjectContext != nil) {
-        return __managedObjectContext;
-    }
-    
-    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-    if (coordinator != nil) {
-        __managedObjectContext = [[NSManagedObjectContext alloc] init];
-        [__managedObjectContext setPersistentStoreCoordinator:coordinator];
-    }
-    return __managedObjectContext;
-}
-
-- (NSManagedObjectModel *)managedObjectModel
-{
-    if (__managedObjectModel != nil) {
-        return __managedObjectModel;
-    }
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    NSURL *url = [bundle URLForResource:@"Test" withExtension:@"momd"];
-    
-    __managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:url];
-    return __managedObjectModel;
-}
-
-- (NSPersistentStoreCoordinator *)persistentStoreCoordinator
-{
-    if (__persistentStoreCoordinator != nil) {
-        return __persistentStoreCoordinator;
-    }
-    
-    __persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    [__persistentStoreCoordinator addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:NULL];
-    
-    return __persistentStoreCoordinator;
-}
 
 @end
