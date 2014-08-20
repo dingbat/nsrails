@@ -28,6 +28,7 @@
  
  */
 
+#import "NSRails.h"
 #import "NSRRemoteObject.h"
 
 #import "NSString+NSRInflection.h"

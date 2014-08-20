@@ -29,9 +29,9 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <NSRails/NSRails.h>
 
 @class NSRRemoteObject;
+@class NSRConfig;
 
 typedef void(^NSRHTTPCompletionBlock)(id jsonRep, NSError *error);
 

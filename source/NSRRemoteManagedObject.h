@@ -28,7 +28,8 @@
  
  */
 
-#import <NSRails/NSRails.h>
+#import <Foundation/Foundation.h>
+#import <NSRails/NSRRemoteObject.h>
 
 /**
  # Setting up

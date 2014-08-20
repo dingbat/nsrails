@@ -28,6 +28,7 @@
  
  */
 
+#import <NSRails/NSRails.h>
 #import "NSRRemoteManagedObject.h"
 
 @interface NSRRemoteObject (private_overrides)

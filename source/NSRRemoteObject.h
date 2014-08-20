@@ -29,11 +29,6 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <NSRails/NSRails.h>
-
-#ifdef NSR_USE_COREDATA
-#import <CoreData/CoreData.h>
-#endif
 
 typedef void(^NSRBasicCompletionBlock)(NSError *error);
 typedef void(^NSRFetchAllCompletionBlock)(NSArray *allRemote, NSError *error);
@@ -89,6 +84,7 @@ typedef void(^NSRFetchObjectCompletionBlock)(id object, NSError *error);
   */
 
 #ifdef NSR_USE_COREDATA
+#import <CoreData/CoreData.h>
 #define _NSR_SUPERCLASS        NSManagedObject
 #else
 #define _NSR_SUPERCLASS        NSObject

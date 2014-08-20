@@ -28,6 +28,7 @@
  
  */
 
+#import <NSRails/NSRails.h>
 #import "NSRRequest.h"
 #import "NSData+NSRBase64.h"
 
