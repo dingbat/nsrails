@@ -10,6 +10,8 @@
 
 @interface NSRRequest (private)
 
++ (NSString *) base64EncodingOfData:(NSData *)data;
+
 + (NSRRequest *) requestWithHTTPMethod:(NSString *)method;
 
 - (NSURLRequest *) HTTPRequest;
@@ -613,21 +615,29 @@
     [NSRConfig defaultConfig].appOAuthToken = nil;
     
     /** User/pass **/
+    NSString *username = @"username";
+    NSString *password = @"password";
     
-    [[NSRConfig defaultConfig] setAppPassword:@"password"];
+    [[NSRConfig defaultConfig] setAppPassword:username];
     request = [req HTTPRequest];
     XCTAssertNil([request valueForHTTPHeaderField:@"Authorization"], @"Shouldn't send w/authorization if no password");
     
     
     [[NSRConfig defaultConfig] setAppPassword:nil];
-    [[NSRConfig defaultConfig] setAppUsername:@"username"];
+    [[NSRConfig defaultConfig] setAppUsername:username];
     request = [req HTTPRequest];
     XCTAssertNil([request valueForHTTPHeaderField:@"Authorization"], @"Shouldn't send w/authorization if no username");
     
     
-    [[NSRConfig defaultConfig] setAppPassword:@"password"];
+    [[NSRConfig defaultConfig] setAppPassword:password];
     request = [req HTTPRequest];
     XCTAssertNotNil([request valueForHTTPHeaderField:@"Authorization"], @"Should send w/authorization if username+password");
+    
+    NSString *authStr = [NSString stringWithFormat:@"%@:%@", username, password];
+    NSData *authData = [authStr dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *authHeader = [NSString stringWithFormat:@"Basic %@", [NSRRequest base64EncodingOfData:authData]];
+    
+    XCTAssertEqualObjects([request valueForHTTPHeaderField:@"Authorization"], authHeader, @"Should send HTTP basic auth if given user/pass");
 }
 
 - (void) test_serialization

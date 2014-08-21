@@ -26,7 +26,6 @@
 		595B0273158E826F002B23D4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17AA155C74890092B048 /* UIKit.framework */; };
 		595B0274158E826F002B23D4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DD17A8155C74200092B048 /* Foundation.framework */; };
 		595B0277158E826F002B23D4 /* libNSRails.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 595B0264158E826F002B23D4 /* libNSRails.a */; };
-		595B0288158E82B1002B23D4 /* NSData+NSRBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF771575CD6E00DA25F4 /* NSData+NSRBase64.m */; };
 		595B028B158E82B1002B23D4 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF801575CD6E00DA25F4 /* NSRConfig.m */; };
 		595B028C158E82B1002B23D4 /* NSRRemoteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF851575CD6E00DA25F4 /* NSRRemoteObject.m */; };
 		595B028D158E82B1002B23D4 /* NSRRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 598D217515800AC2002CC996 /* NSRRequest.m */; };
@@ -37,7 +36,6 @@
 		5974F24F158FA9A60068B5B8 /* NSRRemoteManagedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 5974F249158FA9A60068B5B8 /* NSRRemoteManagedObject.m */; };
 		598D217615800AC2002CC996 /* NSRRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 598D217415800AC2002CC996 /* NSRRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		598D217915800AC2002CC996 /* NSRRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 598D217515800AC2002CC996 /* NSRRequest.m */; };
-		5993AF891575CD6E00DA25F4 /* NSData+NSRBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF771575CD6E00DA25F4 /* NSData+NSRBase64.m */; };
 		5993AF9E1575CD6E00DA25F4 /* NSRails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7E1575CD6E00DA25F4 /* NSRails.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5993AFA11575CD6E00DA25F4 /* NSRConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 5993AF7F1575CD6E00DA25F4 /* NSRConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5993AFA41575CD6E00DA25F4 /* NSRConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 5993AF801575CD6E00DA25F4 /* NSRConfig.m */; };
@@ -87,8 +85,6 @@
 		5974F249158FA9A60068B5B8 /* NSRRemoteManagedObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRemoteManagedObject.m; sourceTree = "<group>"; };
 		598D217415800AC2002CC996 /* NSRRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRRequest.h; sourceTree = "<group>"; };
 		598D217515800AC2002CC996 /* NSRRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRRequest.m; sourceTree = "<group>"; };
-		5993AF761575CD6E00DA25F4 /* NSData+NSRBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+NSRBase64.h"; sourceTree = "<group>"; };
-		5993AF771575CD6E00DA25F4 /* NSData+NSRBase64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+NSRBase64.m"; sourceTree = "<group>"; };
 		5993AF7E1575CD6E00DA25F4 /* NSRails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRails.h; sourceTree = "<group>"; };
 		5993AF7F1575CD6E00DA25F4 /* NSRConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSRConfig.h; sourceTree = "<group>"; };
 		5993AF801575CD6E00DA25F4 /* NSRConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSRConfig.m; sourceTree = "<group>"; };
@@ -196,7 +192,6 @@
 		5993AF741575CD6E00DA25F4 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				5993AF751575CD6E00DA25F4 /* Categories */,
 				5993AF7E1575CD6E00DA25F4 /* NSRails.h */,
 				5993AF7F1575CD6E00DA25F4 /* NSRConfig.h */,
 				5993AF801575CD6E00DA25F4 /* NSRConfig.m */,
@@ -208,15 +203,6 @@
 				598D217515800AC2002CC996 /* NSRRequest.m */,
 			);
 			path = Source;
-			sourceTree = "<group>";
-		};
-		5993AF751575CD6E00DA25F4 /* Categories */ = {
-			isa = PBXGroup;
-			children = (
-				5993AF761575CD6E00DA25F4 /* NSData+NSRBase64.h */,
-				5993AF771575CD6E00DA25F4 /* NSData+NSRBase64.m */,
-			);
-			path = Categories;
 			sourceTree = "<group>";
 		};
 		59C4648B155C580D00920FD5 = {
@@ -440,7 +426,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5993AF891575CD6E00DA25F4 /* NSData+NSRBase64.m in Sources */,
 				5993AFA41575CD6E00DA25F4 /* NSRConfig.m in Sources */,
 				5993AFB31575CD6E00DA25F4 /* NSRRemoteObject.m in Sources */,
 				598D217915800AC2002CC996 /* NSRRequest.m in Sources */,
@@ -465,7 +450,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				595B0288158E82B1002B23D4 /* NSData+NSRBase64.m in Sources */,
 				595B028B158E82B1002B23D4 /* NSRConfig.m in Sources */,
 				595B028C158E82B1002B23D4 /* NSRRemoteObject.m in Sources */,
 				5974F24F158FA9A60068B5B8 /* NSRRemoteManagedObject.m in Sources */,
