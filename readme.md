@@ -65,7 +65,24 @@ Post.remoteObjectWithID(1) { post, error in }
 Response.remoteAllViaObject(post) { responses, error in }
 ```
 
-See the [documentation](http://dingbat.github.com/nsrails/) for more on what you can do with NSRails-charged classes, or the [cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook) for quick `NSRRemoteObject` recipes.
+A lot of behavior is customized via overrides. For instance, in the previous example, in order to populate a Post's `responses` array with `Response` objects automatically when one is retrieved, we have to specify the `Response` class as the type for that property.
+
+```swift
+@objc(Post) class Post: NSRRemoteObject {
+    var responses:[Response]
+    
+    override func nestedClassForProperty(property: String!) -> AnyClass! {
+        if property == "responses" {
+            return Response.self
+        }
+        return super.nestedClassForProperty(property)
+    }
+}
+```
+
+(Sidenote: at least in Swift, there's probably a good way to automatically infer the type from the generic specified in the array, but I haven't looked into it yet. Regardless, this is necessary for Objective-C of course.)
+
+See the [documentation](http://dingbat.github.com/nsrails/) for more on what you can do with NSRails-charged classes, or the [cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook) for quick `NSRRemoteObject` override recipes.
 
 Support
 --------
@@ -76,7 +93,7 @@ Support
 * [Issues](https//github.com/dingbat/nsrails/issues)
 * [Gitter](https://gitter.im/dingbat/nsrails), if you need any help, or just want to talk!
 
-Intallation
+Installation
 ---------
 
 The best way to install NSRails is to use the Great [CocoaPods](http://cocoapods.org/). Add `pod 'NSRails'` to your Podfile, or `pod 'NSRails/CoreData'` if you're using CoreData.
@@ -95,4 +112,4 @@ Credits
 
 NSRails is written and maintained by Dan Hassin. A lot of it was inspired by the [ObjectiveResource](https://github.com/yfactorial/objectiveresource) project, many thanks there!
 
-http://nsrails.com
+http://nsrails.com – an open forum -type thing running on Rails/Heroku and powered by the included NSRails demo app!
