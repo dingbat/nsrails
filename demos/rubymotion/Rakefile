@@ -4,13 +4,14 @@ require 'motion/project'
 Motion::Project::App.setup do |app|
   app.name = 'NSRails-Ruby'
   
-  # Add CoreData as a linked framework (required even if CoreData isn't used)
-  app.frameworks << "CoreData"
-
   # Add NSRails as a vendor project 
   # This reuses the main Xcode project, but in your apps you should copy it into a vendor folder
-  app.vendor_project('../../nsrails', :xcode, :target => 'NSRails', :headers_dir => 'Source')
+  app.vendor_project('../..', :xcode, :target => 'NSRails', :headers_dir => 'source')
 
-  # If you wish to use NSRails with CoreData (this app does not):
-  #app.vendor_project('../../nsrails', :xcode, :target => 'NSRailsCD', :headers_dir => 'Source')
+  # If you wish to use NSRails with CoreData (this app does not), comment out the line above, and:
+
+  # Add CoreData as a linked framework (required even if CoreData isn't used)
+  # app.frameworks << "CoreData"
+  
+  # app.vendor_project('../..', :xcode, :target => 'NSRailsCD', :headers_dir => 'source')
 end

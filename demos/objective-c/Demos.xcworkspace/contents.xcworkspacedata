@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:NSRailsDemo.xcodeproj">
+      location = "container:NSRailsDemo.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:../../NSRails.xcodeproj">
    </FileRef>
 </Workspace>

@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "NSRConfig.h"
+#import <NSRails/NSRails.h>
 
 #import "PostsViewController.h"
 
@@ -41,7 +41,7 @@
 {
     NSString *errorString;
     
-    NSDictionary *validationErrors = [[e userInfo] objectForKey:NSRValidationErrorsKey];
+    NSDictionary *validationErrors = [[e userInfo] objectForKey:NSRErrorResponseBodyKey];
     
     if (validationErrors)
     {
