@@ -34,19 +34,15 @@
 /**
  # Setting up
  
- ### You can either:
+ ### Installation
  
- - Add the following line to your Prefix.pch file:
+ - **CocoaPods:** Instead of `pod 'NSRails'`, use `pod 'NSRails/CoreData'`.
  
-        #define NSR_USE_COREDATA
+ - If you're otherwise including NSRails in a workspace with your project, link with the static library created by the NSRailsCD target, rather than just NSRails.
  
- - Or you can add **`NSR_USE_COREDATA`** to "Preprocessor Macros Not Used in Precompiled Headers" in your target's build settings:
+ **Why is a separate target necessary?**
  
- <div style="text-align:center"><a href="../docs/img/cd-flag.png"><img src="../docs/img/cd-flag.png" width=380></img></a></div>
- 
- ### Why is this necessary?
- 
- - By default, NSRRemoteObject inherits from NSObject. Because your managed, NSRails-enabled class need to inherit from NSManagedObject in order to function within CoreData, and because Objective-C does not allow multiple inheritance, NSRRemoteObject will modify its superclass to NSManagedObject during compile-time if `NSR_USE_COREDATA` is defined.
+ >In the NSRails target, NSRRemoteObject inherits from NSObject. But because your CoreData-managed, NSRails-enabled class need to inherit from NSManagedObject, and because Objective-C does not allow multiple inheritance, NSRRemoteObject inherits from NSManagedObject in the CoreData target. NSRRemoteManagedObject is a subclass of NSRRemoteObject with nice CoreData behavior.
  
  # Setting a universal context
  

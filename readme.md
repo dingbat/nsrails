@@ -14,7 +14,7 @@ NSRConfig.defaultConfig().rootURL = NSURL(string:"http://localhost:3000")
 [NSRConfig defaultConfig].rootURL = [NSURL URLWithString:@"http://localhost:3000"];
 ```
 
-Subclass model objects from `NSRRemoteObject`, or `NSRRemoteManagedObject` for CoreData integration:
+Inherit model objects from `NSRRemoteObject`, or `NSRRemoteManagedObject` with CoreData:
 
 ```swift
 @objc(Post) class Post : NSRRemoteObject {
@@ -27,13 +27,15 @@ Subclass model objects from `NSRRemoteObject`, or `NSRRemoteManagedObject` for C
 
 ```objc
 @interface Post : NSRRemoteObject
+
 @property (nonatomic, strong) NSString *author, *content;
 @property (nonatomic, strong) NSDate *createdAt;
 @property (nonatomic, strong) NSArray *responses;
+
 @end
 ```
 
-Note: `@objc(Post)` is currently required for Swift so the class name bridges over nicely.
+Note: `@objc(<ClassName>)` is currently required for Swift so the class name bridges over nicely.
 
 That's it! Instances inherit methods to remotely create, read, update, or destroy their corresponding remote object:
 
@@ -49,38 +51,43 @@ post.remoteCreateAsync() { error in
 
 // Push updates to remote
 post.content = "Changed!"
-post.remoteUpdateAsync() { error in }
+post.remoteUpdateAsync() { error in ... }
 
 // Fetch any latest data for this post
-post.remoteFetchAsync() { error in }
+post.remoteFetchAsync() { error in ... }
+
+// Destroy
+post.remoteDestroyAsync() { error in ... }
 
 // GET /posts.json
-Post.remoteAllAsync() { allPosts, error in }
+Post.remoteAllAsync() { allPosts, error in ... }
 
 // GET /posts/1.json
-Post.remoteObjectWithID(1) { post, error in }
+Post.remoteObjectWithID(1) { post, error in ... }
 
 // Retrieve a collection based on an object
 // GET /posts/1/responses.json
-Response.remoteAllViaObject(post) { responses, error in }
+Response.remoteAllViaObject(post) { responses, error in ... }
 ```
 
-A lot of behavior is customized via overrides. For instance, in the previous example, in order to populate a Post's `responses` array with `Response` objects automatically when one is retrieved, we have to specify the `Response` class as the type for that property.
+A lot of behavior is customized via overrides. For instance, in the previous example, in order to populate a Post's `responses` array with `Response` objects automatically when a Post is retrieved, we have to specify the `Response` class as the type for that property.
 
-```swift
-@objc(Post) class Post: NSRRemoteObject {
-    var responses:[Response]
-    
-    override func nestedClassForProperty(property: String!) -> AnyClass! {
-        if property == "responses" {
-            return Response.self
-        }
-        return super.nestedClassForProperty(property)
+```objc
+@implementation Post
+
+//override
+- (Class) nestedClassForProperty:(NSString *)property {
+    if ([property isEqualToString:@"response"]) {
+        return [Response class];
     }
+    
+    return [super nestedClassForProperty:property];
 }
+
+@end
 ```
 
-(Sidenote: at least in Swift, there's probably a good way to automatically infer the type from the generic specified in the array, but I haven't looked into it yet. Regardless, this is necessary for Objective-C of course.)
+(Sidenote: This is necessary for Objective-C of course, but at least in Swift, there's probably a good way to automatically infer the type from the generic specified in the array, which I haven't looked into it yet. Let me know if this is possible!)
 
 See the [documentation](http://dingbat.github.com/nsrails/) for more on what you can do with NSRails-charged classes, or the [cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook) for quick `NSRRemoteObject` override recipes.
 
@@ -89,7 +96,7 @@ Support
 
 * [Documentation](http://dingbat.github.com/nsrails)
 * [CoreData guide](http://dingbat.github.com/nsrails/Classes/NSRRemoteManagedObject.html)
-* [Cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook)
+* [Cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook) with various override recipes
 * [Issues](https//github.com/dingbat/nsrails/issues)
 * [Gitter](https://gitter.im/dingbat/nsrails), if you need any help, or just want to talk!
 

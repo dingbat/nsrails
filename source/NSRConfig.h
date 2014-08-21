@@ -36,8 +36,20 @@
 
 ////////////////////////////////
 
+/**
+ Specify versions of Rails with which to align some default configuration.
+ */
 typedef NS_ENUM(NSInteger, NSRRailsVersion) {
+    /**
+     Specifies a Rails 3.x configuration, where update methods use `PUT` and
+     the date format is `yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'`.
+     */
     NSRRailsVersion3,
+    
+    /**
+     Specifies a Rails 4.x configuration, where update methods use `PATCH` and
+     the default date format is `yyyy-MM-dd'T'HH:mm:ss.SSSZ`.
+     */
     NSRRailsVersion4
 };
 
