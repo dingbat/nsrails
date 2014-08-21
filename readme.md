@@ -60,6 +60,7 @@ Getting started
 
 1. Add NSRails to your project. You can:
   * Use [CocoaPods](http://cocoapods.org/) (highly recommended.) Add `pod 'NSRails'` to your Podfile, or `pod 'NSRails/CoreData'` if you're using CoreData
+  * Add the NSRails Xcode project to a workspace with your app, and link with the libNSRails.a library. You have to keep the path to the project stable, but at least you can update the framework easily
   * When Xcode 6 goes public, there will be a framework available that you can link to
   * Please do not just drag-and-drop the source files in!
 
