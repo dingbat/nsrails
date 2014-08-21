@@ -7,7 +7,7 @@
 //
 
 #import "Post.h"
-#import "NSRails.h"
+#import <NSRails/NSRails.h>
 
 @interface Response : NSRRemoteObject
 

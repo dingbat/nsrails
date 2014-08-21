@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
-#import "NSRails.h"
+#import <NSRails/NSRails.h>
 
 @interface Post : NSRRemoteObject
 

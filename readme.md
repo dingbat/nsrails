@@ -59,9 +59,9 @@ Getting started
 (Note: getting started using NSRails with Ruby has been moved [here](https://github.com/dingbat/nsrails/wiki/ruby).)
 
 1. Add NSRails to your project. You can:
-  * Use [CocoaPods](http://cocoapods.org/) (highly recommended.) Add `pod 'NSRails'` to your Podfile, or `pod 'NSRails/CoreData'` if you're using CoreData.
-  * If you're not using CocoaPods, or maybe you're really lazy, you can drop the Source folder into your project. But if you're using CoreData, you must also add `#define NSR_USE_COREDATA` to your Prefix.pch file, or add `NSR_USE_COREDATA` to Preprocessor Macros in your Build Settings.
-      
+  * Use [CocoaPods](http://cocoapods.org/) (highly recommended.) Add `pod 'NSRails'` to your Podfile, or `pod 'NSRails/CoreData'` if you're using CoreData
+  * When Xcode 6 goes public, there will be a framework available that you can link to
+  * Please do not just drag-and-drop the source files in!
 
 2. Make a class for your Rails model that subclasses **NSRRemoteObject** (or **NSRRemoteManagedObject** with CoreData)
 
@@ -83,7 +83,7 @@ Getting started
 
   - (BOOL)application:(UIApplication *)app didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
   {
-        [NSRConfig defaultConfig].appURL = @"http://localhost:3000";
+        [NSRConfig defaultConfig].rootURL = [NSURL URLWithString:@"http://localhost:3000"];
         // If you're using Rails 3
         //[[NSRConfig defaultConfig] configureToRailsVersion:NSRRailsVersion3];
         ...

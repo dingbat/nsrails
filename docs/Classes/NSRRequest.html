@@ -1,0 +1,2022 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
+		<title>NSRRequest Class Reference</title>
+		<meta id="xcode-display" name="xcode-display" content="render"/>
+		<meta name="viewport" content="width=550" />
+		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
+		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
+		<meta name="generator" content="appledoc 2.2 (build 961)" />
+	</head>
+	<body>
+		<header id="top_header">
+			<div id="library" class="hideInXcode">
+				<h1><a id="libraryTitle" href="../index.html">NSRails </a></h1>
+				<a id="developerHome" href="../index.html">Dan Hassin</a>
+			</div>
+			
+			<div id="title" role="banner">
+				<h1 class="hideInXcode">NSRRequest Class Reference</h1>
+			</div>
+			<ul id="headerButtons" role="toolbar">
+				<li id="toc_button">
+					<button aria-label="Show Table of Contents" role="checkbox" class="open" id="table_of_contents"><span class="disclosure"></span>Table of Contents</button>
+				</li>
+				<li id="jumpto_button" role="navigation">
+					<select id="jumpTo">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+	
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+	
+	
+	
+	<option value="properties">Properties</option>
+	
+	<option value="//api/name/additionalHTTPHeaders">&nbsp;&nbsp;&nbsp;&nbsp;additionalHTTPHeaders</option>
+	
+	<option value="//api/name/body">&nbsp;&nbsp;&nbsp;&nbsp;body</option>
+	
+	<option value="//api/name/config">&nbsp;&nbsp;&nbsp;&nbsp;config</option>
+	
+	<option value="//api/name/httpMethod">&nbsp;&nbsp;&nbsp;&nbsp;httpMethod</option>
+	
+	<option value="//api/name/queryParameters">&nbsp;&nbsp;&nbsp;&nbsp;queryParameters</option>
+	
+	<option value="//api/name/route">&nbsp;&nbsp;&nbsp;&nbsp;route</option>
+	
+	
+	
+	
+	<option value="class_methods">Class Methods</option>
+	
+	<option value="//api/name/DELETE">&nbsp;&nbsp;&nbsp;&nbsp;+ DELETE</option>
+	
+	<option value="//api/name/GET">&nbsp;&nbsp;&nbsp;&nbsp;+ GET</option>
+	
+	<option value="//api/name/PATCH">&nbsp;&nbsp;&nbsp;&nbsp;+ PATCH</option>
+	
+	<option value="//api/name/POST">&nbsp;&nbsp;&nbsp;&nbsp;+ POST</option>
+	
+	<option value="//api/name/PUT">&nbsp;&nbsp;&nbsp;&nbsp;+ PUT</option>
+	
+	<option value="//api/name/requestToCreateObject:">&nbsp;&nbsp;&nbsp;&nbsp;+ requestToCreateObject:</option>
+	
+	<option value="//api/name/requestToDestroyObject:">&nbsp;&nbsp;&nbsp;&nbsp;+ requestToDestroyObject:</option>
+	
+	<option value="//api/name/requestToFetchAllObjectsOfClass:">&nbsp;&nbsp;&nbsp;&nbsp;+ requestToFetchAllObjectsOfClass:</option>
+	
+	<option value="//api/name/requestToFetchAllObjectsOfClass:viaObject:">&nbsp;&nbsp;&nbsp;&nbsp;+ requestToFetchAllObjectsOfClass:viaObject:</option>
+	
+	<option value="//api/name/requestToFetchObject:">&nbsp;&nbsp;&nbsp;&nbsp;+ requestToFetchObject:</option>
+	
+	<option value="//api/name/requestToFetchObjectWithID:ofClass:">&nbsp;&nbsp;&nbsp;&nbsp;+ requestToFetchObjectWithID:ofClass:</option>
+	
+	<option value="//api/name/requestToReplaceObject:">&nbsp;&nbsp;&nbsp;&nbsp;+ requestToReplaceObject:</option>
+	
+	<option value="//api/name/requestToUpdateObject:">&nbsp;&nbsp;&nbsp;&nbsp;+ requestToUpdateObject:</option>
+	
+	
+	
+	
+	<option value="instance_methods">Instance Methods</option>
+	
+	<option value="//api/name/routeTo:">&nbsp;&nbsp;&nbsp;&nbsp;- routeTo:</option>
+	
+	<option value="//api/name/routeToClass:">&nbsp;&nbsp;&nbsp;&nbsp;- routeToClass:</option>
+	
+	<option value="//api/name/routeToClass:withCustomMethod:">&nbsp;&nbsp;&nbsp;&nbsp;- routeToClass:withCustomMethod:</option>
+	
+	<option value="//api/name/routeToObject:">&nbsp;&nbsp;&nbsp;&nbsp;- routeToObject:</option>
+	
+	<option value="//api/name/routeToObject:withCustomMethod:">&nbsp;&nbsp;&nbsp;&nbsp;- routeToObject:withCustomMethod:</option>
+	
+	<option value="//api/name/sendAsynchronous:">&nbsp;&nbsp;&nbsp;&nbsp;- sendAsynchronous:</option>
+	
+	<option value="//api/name/sendSynchronous:">&nbsp;&nbsp;&nbsp;&nbsp;- sendSynchronous:</option>
+	
+	<option value="//api/name/setBodyToObject:">&nbsp;&nbsp;&nbsp;&nbsp;- setBodyToObject:</option>
+	
+	
+	
+</select>
+				</li>
+			</ul>
+		</header>
+		<nav id="tocContainer" class="isShowingTOC">
+			<ul id="toc" role="tree">
+				
+<li role="treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#overview">Overview</a></span></li>
+
+
+
+
+<li role="treeitem" id="task_treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#tasks">Tasks</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Properties">Properties</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Creating an NSRRequest by HTTP method">Creating an NSRRequest by HTTP method</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Creating an NSRRequest by function">Creating an NSRRequest by function</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Routing a request">Routing a request</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Setting the request body">Setting the request body</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Sending the request">Sending the request</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#properties">Properties</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/additionalHTTPHeaders">additionalHTTPHeaders</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/body">body</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/config">config</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/httpMethod">httpMethod</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/queryParameters">queryParameters</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/route">route</a></span></li>
+	
+</ul></li>
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#class_methods">Class Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/DELETE">DELETE</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/GET">GET</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/PATCH">PATCH</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/POST">POST</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/PUT">PUT</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/requestToCreateObject:">requestToCreateObject:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/requestToDestroyObject:">requestToDestroyObject:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/requestToFetchAllObjectsOfClass:">requestToFetchAllObjectsOfClass:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/requestToFetchAllObjectsOfClass:viaObject:">requestToFetchAllObjectsOfClass:viaObject:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/requestToFetchObject:">requestToFetchObject:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/requestToFetchObjectWithID:ofClass:">requestToFetchObjectWithID:ofClass:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/requestToReplaceObject:">requestToReplaceObject:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/requestToUpdateObject:">requestToUpdateObject:</a></span></li>
+	
+</ul></li>
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/routeTo:">routeTo:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/routeToClass:">routeToClass:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/routeToClass:withCustomMethod:">routeToClass:withCustomMethod:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/routeToObject:">routeToObject:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/routeToObject:withCustomMethod:">routeToObject:withCustomMethod:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/sendAsynchronous:">sendAsynchronous:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/sendSynchronous:">sendSynchronous:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setBodyToObject:">setBodyToObject:</a></span></li>
+	
+</ul></li>
+
+
+			</ul>
+		</nav>
+		<article>
+			<div id="contents" class="isShowingTOC" role="main">
+				<a title="NSRRequest Class Reference" name="top"></a>
+				<div class="main-navigation navigation-top">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="header">
+					<div class="section-header">
+						<h1 class="title title-header">NSRRequest Class Reference</h1>
+					</div>		
+				</div>
+				<div id="container">	
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<td class="specification-title">Inherits from</td>
+	<td class="specification-value">NSObject</td>
+</tr><tr>
+	<td class="specification-title">Conforms to</td>
+	<td class="specification-value">NSCoding</td>
+</tr><tr>
+	<td class="specification-title">Declared in</td>
+	<td class="specification-value">NSRRequest.h</td>
+</tr>
+						</tbody></table></div>
+					
+					
+					
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p>NSRRequest is a class used internally by NSRRemoteObject to make <code>remoteX</code> requests, but can also be used directly to construct custom resource paths, etc.</p>
+
+<p>The methods in this class are set up so that making requests is concise and visually logical:</p>
+
+<pre><code>//GET to /posts/1
+id response = [[[NSRRequest GET] routeToObject:post] sendSynchronous:&amp;e];
+
+//PATCH to /posts/1 with post as body
+NSRRequest *request = [NSRRequest PATCH];
+[request routeToObject:post];
+[request setBodyToObject:post];
+id response = [request sendSynchronous:&amp;e];
+</code></pre>
+
+<p>Factory methods also exist (used by NSRRemoteObject) if you&rsquo;d like to make only an incremental change to an existing request:</p>
+
+<pre><code>NSRRequest *request = [NSRRequest requestToFetchAllObjectsOfClass:[Post class]];
+request.queryParameters = @{@"q":@"search"};
+
+//GET to /posts?q=search
+id response = [request sendSynchronous:&amp;e];
+</code></pre>
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						<h2 class="subtitle subtitle-tasks">Tasks</h2>
+						
+						
+						<a title="Properties" name="task_Properties"></a>
+						<h3 class="subsubtitle task-title">Properties</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/config">&nbsp;&nbsp;config</a></code>
+		<span class="tooltip"><p>Config used to make the request.</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/route">&nbsp;&nbsp;route</a></code>
+		<span class="tooltip"><p>The path to be appended to config&rsquo;s <a href="NSRConfig.html#//api/name/rootURL">rootURL</a> (the base URL of your app).</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/httpMethod">&nbsp;&nbsp;httpMethod</a></code>
+		<span class="tooltip"><p>The HTTP verb with which to make the request.</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/queryParameters">&nbsp;&nbsp;queryParameters</a></code>
+		<span class="tooltip"><p>The query parameters with which to make the request.</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/additionalHTTPHeaders">&nbsp;&nbsp;additionalHTTPHeaders</a></code>
+		<span class="tooltip"><p>A dictionary of additional HTTP headers to send with the request.</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/body">&nbsp;&nbsp;body</a></code>
+		<span class="tooltip"><p>Request body.</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li>
+						</ul>
+						
+						
+						<a title="Creating an NSRRequest by HTTP method" name="task_Creating an NSRRequest by HTTP method"></a>
+						<h3 class="subsubtitle task-title">Creating an NSRRequest by HTTP method</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/GET">+&nbsp;GET</a></code>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"GET"</code>.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/DELETE">+&nbsp;DELETE</a></code>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"DELETE"</code>.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/POST">+&nbsp;POST</a></code>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"POST"</code>.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/PUT">+&nbsp;PUT</a></code>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"PUT"</code>.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/PATCH">+&nbsp;PATCH</a></code>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"PATCH"</code>.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Creating an NSRRequest by function" name="task_Creating an NSRRequest by function"></a>
+						<h3 class="subsubtitle task-title">Creating an NSRRequest by function</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/requestToFetchObjectWithID:ofClass:">+&nbsp;requestToFetchObjectWithID:ofClass:</a></code>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object set to fetch an object with a specified ID.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/requestToFetchAllObjectsOfClass:">+&nbsp;requestToFetchAllObjectsOfClass:</a></code>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object set to fetch all objects of a given class.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/requestToFetchAllObjectsOfClass:viaObject:">+&nbsp;requestToFetchAllObjectsOfClass:viaObject:</a></code>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object set to fetch all objects of a given class given a parent object.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/requestToCreateObject:">+&nbsp;requestToCreateObject:</a></code>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object set to remotely create a given object.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/requestToFetchObject:">+&nbsp;requestToFetchObject:</a></code>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object set to fetch a given object&rsquo;s remote correspondance.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/requestToDestroyObject:">+&nbsp;requestToDestroyObject:</a></code>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object set to remotely destroy a given object.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/requestToUpdateObject:">+&nbsp;requestToUpdateObject:</a></code>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object set to remotely update a given object.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/requestToReplaceObject:">+&nbsp;requestToReplaceObject:</a></code>
+		<span class="tooltip"><p>Creates and returns an NSRRequest object set to remotely &ldquo;put&rdquo; (replace) a given object.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Routing a request" name="task_Routing a request"></a>
+						<h3 class="subsubtitle task-title">Routing a request</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/routeTo:">&ndash;&nbsp;routeTo:</a></code>
+		<span class="tooltip"><p>Routes the request to the given string.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/routeToClass:">&ndash;&nbsp;routeToClass:</a></code>
+		<span class="tooltip"><p>Routes the request to a given class&rsquo;s controller.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/routeToObject:">&ndash;&nbsp;routeToObject:</a></code>
+		<span class="tooltip"><p>Routes the request to a given object.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/routeToClass:withCustomMethod:">&ndash;&nbsp;routeToClass:withCustomMethod:</a></code>
+		<span class="tooltip"><p>Routes the request to a given class&rsquo;s controller.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/routeToObject:withCustomMethod:">&ndash;&nbsp;routeToObject:withCustomMethod:</a></code>
+		<span class="tooltip"><p>Routes the request to a given object.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Setting the request body" name="task_Setting the request body"></a>
+						<h3 class="subsubtitle task-title">Setting the request body</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/setBodyToObject:">&ndash;&nbsp;setBodyToObject:</a></code>
+		<span class="tooltip"><p>Sets the body to a given object.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Sending the request" name="task_Sending the request"></a>
+						<h3 class="subsubtitle task-title">Sending the request</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/sendSynchronous:">&ndash;&nbsp;sendSynchronous:</a></code>
+		<span class="tooltip"><p>Sends the request synchronously.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/sendAsynchronous:">&ndash;&nbsp;sendAsynchronous:</a></code>
+		<span class="tooltip"><p>Sends the request asynchronously.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Properties" name="properties"></a>
+						<h2 class="subtitle subtitle-methods">Properties</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/additionalHTTPHeaders" title="additionalHTTPHeaders"></a>
+	<h3 class="subsubtitle method-title">additionalHTTPHeaders</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>A dictionary of additional HTTP headers to send with the request.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSDictionary *additionalHTTPHeaders</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/body" title="body"></a>
+	<h3 class="subsubtitle method-title">body</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Request body.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) id body</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Must be a JSON-parsable object (NSArray, NSDictionary, NSString) or will throw an exception.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/config" title="config"></a>
+	<h3 class="subsubtitle method-title">config</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Config used to make the request.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSRConfig *config</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This property is automatically set when a <code>routeTo</code> method is invoked (will set it to the config of the class/instance).</p>
+
+<p>Will use <a href="../Classes/NSRConfig.html">NSRConfig</a>&rsquo;s <code>defaultConfig</code> by default (ie, is not routed to an object or class).</p>
+
+<p>When this request is made, any <a href="NSRConfig.html#//api/name/additionalHTTPHeaders">additionalHTTPHeaders</a> defined for this config are added to the request header (along with this instance&rsquo;s own <a href="#//api/name/additionalHTTPHeaders">additionalHTTPHeaders</a>).</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/httpMethod" title="httpMethod"></a>
+	<h3 class="subsubtitle method-title">httpMethod</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The HTTP verb with which to make the request.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, readonly) NSString *httpMethod</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This property is readonly. Use the <a href="#//api/name/GET">GET</a>, <a href="#//api/name/DELETE">DELETE</a>, <a href="#//api/name/POST">POST</a>, <a href="#//api/name/PUT">PUT</a>, and <a href="#//api/name/PATCH">PATCH</a> factory methods.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/queryParameters" title="queryParameters"></a>
+	<h3 class="subsubtitle method-title">queryParameters</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The query parameters with which to make the request.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSDictionary *queryParameters</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<pre><code> NSRRequest *request = [[NSRRequest GET] routeTo:@"something"];
+ request.queryParameters = @{@"q":@"search"};
+
+ //GET to /something?q=search
+ id response = [request sendSynchronous:&amp;e];
+</code></pre><div class="warning"><p><strong>Warning:</strong> Doesn&rsquo;t escape anything! Make sure your params are RFC 1808 compliant.</p></div>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/route" title="route"></a>
+	<h3 class="subsubtitle method-title">route</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The path to be appended to config&rsquo;s <a href="NSRConfig.html#//api/name/rootURL">rootURL</a> (the base URL of your app).</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, readonly) NSString *route</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>You cannot set this variable directly - use the <code>routeTo</code> methods below.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Class Methods" name="class_methods"></a>
+						<h2 class="subtitle subtitle-methods">Class Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/DELETE" title="DELETE"></a>
+	<h3 class="subsubtitle method-title">DELETE</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"DELETE"</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)DELETE</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"DELETE"</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/GET" title="GET"></a>
+	<h3 class="subsubtitle method-title">GET</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"GET"</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)GET</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"GET"</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/PATCH" title="PATCH"></a>
+	<h3 class="subsubtitle method-title">PATCH</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"PATCH"</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)PATCH</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"PATCH"</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/POST" title="POST"></a>
+	<h3 class="subsubtitle method-title">POST</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"POST"</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)POST</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"POST"</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/PUT" title="PUT"></a>
+	<h3 class="subsubtitle method-title">PUT</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"PUT"</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)PUT</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An NSRRequest object initialized with <a href="#//api/name/httpMethod"><code>httpMethod</code></a> set to <code>@"PUT"</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/requestToCreateObject:" title="requestToCreateObject:"></a>
+	<h3 class="subsubtitle method-title">requestToCreateObject:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an NSRRequest object set to remotely create a given object.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)requestToCreateObject:(NSRRemoteObject *)<em>obj</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>obj</em></dt>
+			<dd><p>Object you wish to create.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An NSRRequest object set to remotely create a given object.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p><code>POST</code> request routed to the given object (ID is ignored).</p>
+
+<pre><code>POST /posts
+</code></pre>
+
+<p>Or, if <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>&rsquo;s <code>objectUsedToPrefixRequest:</code> is overriden and returns a non-nil object,</p>
+
+<pre><code>POST /users/3/posts
+</code></pre>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/requestToDestroyObject:" title="requestToDestroyObject:"></a>
+	<h3 class="subsubtitle method-title">requestToDestroyObject:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an NSRRequest object set to remotely destroy a given object.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)requestToDestroyObject:(NSRRemoteObject *)<em>obj</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>obj</em></dt>
+			<dd><p>Object you wish to fetch.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An NSRRequest object set to destroy a given object&rsquo;s remote correspondance.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p><code>DELETE</code> request routed to the given object.</p>
+
+<pre><code>DELETE /posts/1
+</code></pre>
+
+<p>Or, if <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>&rsquo;s <code>objectUsedToPrefixRequest:</code> is overriden and returns a non-nil object,</p>
+
+<pre><code>DELETE /users/3/posts/1
+</code></pre>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/requestToFetchAllObjectsOfClass:" title="requestToFetchAllObjectsOfClass:"></a>
+	<h3 class="subsubtitle method-title">requestToFetchAllObjectsOfClass:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an NSRRequest object set to fetch all objects of a given class.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)requestToFetchAllObjectsOfClass:(Class)<em>class</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>class</em></dt>
+			<dd><p>Class of the object you wish to fetch. Must be an NSRRemoteObject subclass.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An NSRRequest object set to fetch all objects of a given class.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p><code>GET</code> request routed to the given class.</p>
+
+<pre><code>GET /posts
+</code></pre>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/requestToFetchAllObjectsOfClass:viaObject:" title="requestToFetchAllObjectsOfClass:viaObject:"></a>
+	<h3 class="subsubtitle method-title">requestToFetchAllObjectsOfClass:viaObject:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an NSRRequest object set to fetch all objects of a given class given a parent object.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)requestToFetchAllObjectsOfClass:(Class)<em>class</em> viaObject:(NSRRemoteObject *)<em>obj</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>class</em></dt>
+			<dd><p>Class of the object you wish to fetch. Must be an NSRRemoteObject subclass.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>obj</em></dt>
+			<dd><p>Parent object used to prefix the route.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An NSRRequest object set to fetch all objects of a given class given a parent object.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p><code>GET</code> request routed to the given parent object, the custom method being the class&rsquo;s index page.</p>
+
+<pre><code>GET /users/3/posts
+</code></pre>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/requestToFetchObject:" title="requestToFetchObject:"></a>
+	<h3 class="subsubtitle method-title">requestToFetchObject:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an NSRRequest object set to fetch a given object&rsquo;s remote correspondance.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)requestToFetchObject:(NSRRemoteObject *)<em>obj</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>obj</em></dt>
+			<dd><p>Object you wish to fetch.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An NSRRequest object set to fetch a given object&rsquo;s remote correspondance.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p><code>GET</code> request routed to the given object.</p>
+
+<pre><code>GET /posts/1
+</code></pre>
+
+<p>Or, if <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>&rsquo;s <code>objectUsedToPrefixRequest:</code> is overriden and returns a non-nil object,</p>
+
+<pre><code>GET /users/3/posts/1
+</code></pre>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/requestToFetchObjectWithID:ofClass:" title="requestToFetchObjectWithID:ofClass:"></a>
+	<h3 class="subsubtitle method-title">requestToFetchObjectWithID:ofClass:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an NSRRequest object set to fetch an object with a specified ID.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)requestToFetchObjectWithID:(NSNumber *)<em>remoteID</em> ofClass:(Class)<em>class</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>remoteID</em></dt>
+			<dd><p>Remote ID of the object you wish to fetch. Will raise an exception if this is <code>nil</code>.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>class</em></dt>
+			<dd><p>Class of the object you wish to fetch. Must be an NSRRemoteObject subclass.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An NSRRequest object set to fetch an object with a specified ID.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p><code>GET</code> request routed to the given class, the custom method being the remoteID.</p>
+
+<pre><code>GET /posts/1
+</code></pre>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/requestToReplaceObject:" title="requestToReplaceObject:"></a>
+	<h3 class="subsubtitle method-title">requestToReplaceObject:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an NSRRequest object set to remotely &ldquo;put&rdquo; (replace) a given object.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)requestToReplaceObject:(NSRRemoteObject *)<em>obj</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>obj</em></dt>
+			<dd><p>Object you wish to update.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An NSRRequest object set to remotely &ldquo;put&rdquo; (replace) a given object.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p><code>PUT</code> request routed to the given object.</p>
+
+<pre><code>PUT /posts/1
+</code></pre>
+
+<p>Or, if <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>&rsquo;s <code>objectUsedToPrefixRequest:</code> is overriden and returns a non-nil object,</p>
+
+<pre><code>PUT /users/3/posts/1
+</code></pre>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/requestToUpdateObject:" title="requestToUpdateObject:"></a>
+	<h3 class="subsubtitle method-title">requestToUpdateObject:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an NSRRequest object set to remotely update a given object.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSRRequest *)requestToUpdateObject:(NSRRemoteObject *)<em>obj</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>obj</em></dt>
+			<dd><p>Object you wish to update.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>An NSRRequest object set to remotely update a given object.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Request routed to the given object. HTTP method depends on config&rsquo;s <a href="NSRConfig.html#//api/name/updateMethod"><code>updateMethod</code></a>.</p>
+
+<pre><code>(PUT, PATCH, etc) /posts/1
+</code></pre>
+
+<p>Or, if <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>&rsquo;s <code>objectUsedToPrefixRequest:</code> is overriden and returns a non-nil object,</p>
+
+<pre><code>(PUT, PATCH, etc) /users/3/posts/1
+</code></pre>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Instance Methods" name="instance_methods"></a>
+						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/routeTo:" title="routeTo:"></a>
+	<h3 class="subsubtitle method-title">routeTo:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Routes the request to the given string.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (NSRRequest *)routeTo:(NSString *)<em>route</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>route</em></dt>
+			<dd><p>The route.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/routeToClass:" title="routeToClass:"></a>
+	<h3 class="subsubtitle method-title">routeToClass:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Routes the request to a given class&rsquo;s controller.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (NSRRequest *)routeToClass:(Class)<em>class</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>class</em></dt>
+			<dd><p>Class to which to route. Must be an NSRRemoteObject subclass.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/routeToClass:withCustomMethod:" title="routeToClass:withCustomMethod:"></a>
+	<h3 class="subsubtitle method-title">routeToClass:withCustomMethod:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Routes the request to a given class&rsquo;s controller.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (NSRRequest *)routeToClass:(Class)<em>class</em> withCustomMethod:(NSString *)<em>customMethod</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>class</em></dt>
+			<dd><p>Class to route to. Must be an NSRRemoteObject subclass.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>customMethod</em></dt>
+			<dd><p>Custom method to be appended to the <em>class</em>&rsquo;s controller RESTfully (can be <code>nil</code>.)</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/routeToObject:" title="routeToObject:"></a>
+	<h3 class="subsubtitle method-title">routeToObject:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Routes the request to a given object.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (NSRRequest *)routeToObject:(NSRRemoteObject *)<em>object</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>object</em></dt>
+			<dd><p>Object to route to. If this object&rsquo;s <code>remoteID</code> is <code>nil</code>, will only route to its class.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/routeToObject:withCustomMethod:" title="routeToObject:withCustomMethod:"></a>
+	<h3 class="subsubtitle method-title">routeToObject:withCustomMethod:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Routes the request to a given object.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (NSRRequest *)routeToObject:(NSRRemoteObject *)<em>object</em> withCustomMethod:(NSString *)<em>customMethod</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>object</em></dt>
+			<dd><p>Object to route to. If this object&rsquo;s <code>remoteID</code> is <code>nil</code>, will only route to its class.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>customMethod</em></dt>
+			<dd><p>Custom method to be appended RESTfully (can be <code>nil</code>.)</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The request itself. Done to allow concise constructions (see <a href="#overview">above</a>).</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/sendAsynchronous:" title="sendAsynchronous:"></a>
+	<h3 class="subsubtitle method-title">sendAsynchronous:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Sends the request asynchronously.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)sendAsynchronous:(NSRHTTPCompletionBlock)<em>completionBlock</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>completionBlock</em></dt>
+			<dd><p>Block to be executed when the request is complete.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Handles Rails errors, as well as basic connection errors.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/sendSynchronous:" title="sendSynchronous:"></a>
+	<h3 class="subsubtitle method-title">sendSynchronous:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Sends the request synchronously.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (id)sendSynchronous:(NSError **)<em>error</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>error</em></dt>
+			<dd><p>Out parameter used if an error occurs while processing the request. May be <code>NULL</code>, but please check for errors.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>JSON response object.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Handles Rails errors, as well as basic connection errors.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/setBodyToObject:" title="setBodyToObject:"></a>
+	<h3 class="subsubtitle method-title">setBodyToObject:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Sets the body to a given object.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)setBodyToObject:(NSRRemoteObject *)<em>object</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>object</em></dt>
+			<dd><p>Object to use as a body to send the request.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Will convert the object into a JSON-parsable object (an NSDictionary) by calling <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a>&rsquo;s <code>remoteDictionaryRepresentationWrapped:</code> on it.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRequest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+				</div>
+				<div class="main-navigation navigation-bottom">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="footer">
+					<hr />
+					<div class="footer-copyright">
+						<p><span class="copyright">&copy; 2014 Dan Hassin. All rights reserved. (Last updated: 2014-08-20)</span><br />
+						
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2 (build 961)</a>.</span></p>
+						
+					</div>
+				</div>
+			</div>
+		</article>
+		<script type="text/javascript">
+			function jumpToChange()
+			{
+				window.location.hash = this.options[this.selectedIndex].value;
+			}
+			
+			function toggleTOC()
+			{
+				var contents = document.getElementById('contents');
+				var tocContainer = document.getElementById('tocContainer');
+				
+				if (this.getAttribute('class') == 'open')
+				{
+					this.setAttribute('class', '');
+					contents.setAttribute('class', '');
+					tocContainer.setAttribute('class', '');
+					
+					window.name = "hideTOC";
+				}
+				else
+				{
+					this.setAttribute('class', 'open');
+					contents.setAttribute('class', 'isShowingTOC');
+					tocContainer.setAttribute('class', 'isShowingTOC');
+					
+					window.name = "";
+				}
+				return false;
+			}
+			
+			function toggleTOCEntryChildren(e)
+			{
+				e.stopPropagation();
+				var currentClass = this.getAttribute('class');
+				if (currentClass == 'children') {
+					this.setAttribute('class', 'children open');
+				}
+				else if (currentClass == 'children open') {
+					this.setAttribute('class', 'children');
+				}
+				return false;
+			}
+			
+			function tocEntryClick(e)
+			{
+				e.stopPropagation();
+				return true;
+			}
+			
+			function init()
+			{
+				var selectElement = document.getElementById('jumpTo');
+				selectElement.addEventListener('change', jumpToChange, false);
+				
+				var tocButton = document.getElementById('table_of_contents');
+				tocButton.addEventListener('click', toggleTOC, false);
+				
+				var taskTreeItem = document.getElementById('task_treeitem');
+				if (taskTreeItem.getElementsByTagName('li').length > 0)
+				{
+					taskTreeItem.setAttribute('class', 'children');
+					taskTreeItem.firstChild.setAttribute('class', 'disclosure');
+				}
+				
+				var tocList = document.getElementById('toc');
+				
+				var tocEntries = tocList.getElementsByTagName('li');
+				for (var i = 0; i < tocEntries.length; i++) {
+					tocEntries[i].addEventListener('click', toggleTOCEntryChildren, false);
+				}
+				
+				var tocLinks = tocList.getElementsByTagName('a');
+				for (var i = 0; i < tocLinks.length; i++) {
+					tocLinks[i].addEventListener('click', tocEntryClick, false);
+				}
+				
+				if (window.name == "hideTOC") {
+					toggleTOC.call(tocButton);
+				}
+			}
+			
+			window.onload = init;
+			
+			// If showing in Xcode, hide the TOC and Header
+			if (navigator.userAgent.match(/xcode/i)) {
+				document.getElementById("contents").className = "hideInXcode"
+				document.getElementById("tocContainer").className = "hideInXcode"
+				document.getElementById("top_header").className = "hideInXcode"
+			}
+			
+		</script>
+	</body>
+</html>

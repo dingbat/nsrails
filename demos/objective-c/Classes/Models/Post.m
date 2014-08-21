@@ -14,10 +14,11 @@
 
 - (Class) nestedClassForProperty:(NSString *)property
 {
-	if ([property isEqualToString:@"responses"])
-		return [Response class];
-	
-	return [super nestedClassForProperty:property];    
+    if ([property isEqualToString:@"responses"]) {
+        return [Response class];
+    }
+    
+    return [super nestedClassForProperty:property];    
 }
 
 @end

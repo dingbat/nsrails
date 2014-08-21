@@ -93,7 +93,7 @@ class InputViewController < UIViewController
 
   def textView(textView, shouldChangeTextInRange:range, replacementText:text)
     if text.empty? && ((range.length > 0 && range.length == textView.text.length) || (textView.tag == 0))
-  		placehold
+          placehold
       return false
     else
       if textView.tag == 0
@@ -109,7 +109,7 @@ class InputViewController < UIViewController
     if textView.text.empty?
       placehold
     end
-  	true
+      true
   end
 
   def textViewShouldBeginEditing(textView)

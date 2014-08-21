@@ -2,34 +2,34 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 
 %head
-	%title NSRails
-	=stylesheet_link_tag    "application"
-	=csrf_meta_tags
-	
+    %title NSRails
+    =stylesheet_link_tag    "application"
+    =csrf_meta_tags
+    
 %header
-	=link_to_source fork_me_ribbon
-	
-	#logo
-		NSRails
-	%table.links
-		%tr
-			%td= link_to_wiki image_tag("notes.png", :size => "65x65", :alt =>"Wiki")
-			%td= link_to_source image_tag("settings.png", :size => "65x65", :alt => "Source")
-			%td= link_to_screencast image_tag("browser.png", :size => "65x65", :alt => "Screencast")
-		%tr
-			%td= link_to_wiki "Wiki"
-			%td= link_to_source "Source"
-			%td= link_to_screencast "Screencast"
+    =link_to_source fork_me_ribbon
+    
+    #logo
+        NSRails
+    %table.links
+        %tr
+            %td= link_to_wiki image_tag("notes.png", :size => "65x65", :alt =>"Wiki")
+            %td= link_to_source image_tag("settings.png", :size => "65x65", :alt => "Source")
+            %td= link_to_screencast image_tag("browser.png", :size => "65x65", :alt => "Screencast")
+        %tr
+            %td= link_to_wiki "Wiki"
+            %td= link_to_source "Source"
+            %td= link_to_screencast "Screencast"
 
 %body= yield
-		
+        
 %footer
-	%p
-		%b NSRails
-		is a light-weight Objective-C framework (iOS or OS X) for simple but powerful communication with your Rails server.
-		%br
-		The comments above were posted using the demo iOS app bundled with the source.
-		=link_to_source "Download it"
-		and get started!
-		
-	=image_tag("railsphone.png", :size => "373x250", :alt => nil)
+    %p
+        %b NSRails
+        is a light-weight Objective-C framework (iOS or OS X) for simple but powerful communication with your Rails server.
+        %br
+        The comments above were posted using the demo iOS app bundled with the source.
+        =link_to_source "Download it"
+        and get started!
+        
+    =image_tag("railsphone.png", :size => "373x250", :alt => nil)
