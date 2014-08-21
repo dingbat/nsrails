@@ -16,14 +16,14 @@
 
 - (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [[NSRConfig defaultConfig] setAppURL:@"http://nsrails.com"];
+    [[NSRConfig defaultConfig] setRootURL:[NSURL URLWithString:@"http://nsrails.com"]];
     
     // For testing on local server:
     //[[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
     
     //authentication
-    [[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
-    [[NSRConfig defaultConfig] setAppPassword:@"iphone"];
+    [[NSRConfig defaultConfig] setBasicAuthUsername:@"NSRails"];
+    [[NSRConfig defaultConfig] setBasicAuthPassword:@"iphone"];
     
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
