@@ -7,7 +7,7 @@
 		<meta name="viewport" content="width=550" />
 		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
 		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
-		<meta name="generator" content="appledoc 2.1 (build 840)" />
+		<meta name="generator" content="appledoc 2.2 (build 961)" />
 	</head>
 	<body>
 		<header id="top_header">
@@ -117,6 +117,8 @@
 	<option value="//api/name/setPropertiesUsingRemoteDictionary:">&nbsp;&nbsp;&nbsp;&nbsp;- setPropertiesUsingRemoteDictionary:</option>
 	
 	<option value="//api/name/shouldOnlySendIDKeyForNestedObjectProperty:">&nbsp;&nbsp;&nbsp;&nbsp;- shouldOnlySendIDKeyForNestedObjectProperty:</option>
+	
+	<option value="//api/name/shouldReplaceCollectionForProperty:">&nbsp;&nbsp;&nbsp;&nbsp;- shouldReplaceCollectionForProperty:</option>
 	
 	<option value="//api/name/shouldSendProperty:whenNested:">&nbsp;&nbsp;&nbsp;&nbsp;- shouldSendProperty:whenNested:</option>
 	
@@ -238,6 +240,8 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/shouldOnlySendIDKeyForNestedObjectProperty:">shouldOnlySendIDKeyForNestedObjectProperty:</a></span></li>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/shouldReplaceCollectionForProperty:">shouldReplaceCollectionForProperty:</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/shouldSendProperty:whenNested:">shouldSendProperty:whenNested:</a></span></li>
 	
 </ul></li>
@@ -280,7 +284,7 @@
 					<div class="section section-overview">
 						<a title="Overview" name="overview"></a>
 						<h2 class="subtitle subtitle-overview">Overview</h2>
-						<p><code>NSRRemoteObject</code> is the primary class in NSRails &ndash; any classes that subclass it will be treated with a &ldquo;remote correspondance&rdquo; and ActiveResource-like APIs will be available.</p>
+						<p><code>NSRRemoteObject</code> is the primary class in NSRails - any classes that subclass it will be treated with a &ldquo;remote correspondance&rdquo; and ActiveResource-like APIs will be available.</p>
 
 <p>Note that you do not have to define an <code>id</code> property for your Objective-C class, as your subclass will inherit NSRRemoteObject&rsquo;s <code>remoteID</code> property.</p>
 
@@ -542,7 +546,7 @@
 </li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/remoteControllerName">+&nbsp;remoteControllerName</a></code>
-		<span class="tooltip"><p>The name of this class&rsquo;s controller on the server &ndash; where actions for this class should be routed.</p></span>
+		<span class="tooltip"><p>The name of this class&rsquo;s controller on the server - where actions for this class should be routed.</p></span>
 	</span>
 	
 	
@@ -592,6 +596,13 @@
 	<span class="tooltip">
 		<code><a href="#//api/name/propertyForRemoteKey:">&ndash;&nbsp;propertyForRemoteKey:</a></code>
 		<span class="tooltip"><p>Should return the equivalent Objective-C property for a given remote key.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/shouldReplaceCollectionForProperty:">&ndash;&nbsp;shouldReplaceCollectionForProperty:</a></code>
+		<span class="tooltip"><p>Whether or not to fully replace a collection for a given property, as opposed to simply adding to it.</p></span>
 	</span>
 	
 	
@@ -647,9 +658,11 @@
 		<p>The most recent dictionary of all properties returned by Rails, exactly as it returned it. (read-only)</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong, readonly) NSDictionary *remoteAttributes</code></div>
-	
+
+    
 	
 	
 	
@@ -659,7 +672,7 @@
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>This will include properties that you may not have defined in your Objective-C class, allowing you to dynamically add fields to your app if the server-side model changes. This dictionary won&rsquo;t go through any of the encoding methods &ndash; it&rsquo;ll be exactly the dictionary as was sent in JSON.</p>
+		<p>This will include properties that you may not have defined in your Objective-C class, allowing you to dynamically add fields to your app if the server-side model changes. This dictionary won&rsquo;t go through any of the encoding methods - it&rsquo;ll be exactly the dictionary as was sent in JSON.</p>
 
 <p>You&rsquo;re safe to use this property after any method that sets your object&rsquo;s properties from remote. For example:</p>
 
@@ -698,9 +711,11 @@ if ([myObj remoteFetch:&amp;error])
 		<p>If true, will remotely destroy this object if sent nested.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>@property (nonatomic) BOOL remoteDestroyOnNesting</code></div>
-	
+
+    
 	
 	
 	
@@ -712,7 +727,7 @@ if ([myObj remoteFetch:&amp;error])
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>If true, this object will include a <code>_destroy</code> key on send (ie, when the model nesting it is sent during a <a href="#//api/name/remoteUpdate:"><code>remoteUpdate:</code></a> or <a href="#//api/name/remoteCreate:"><code>remoteCreate:</code></a>).</p>
 
-<p>This can be useful if you have a lot of nested models you need to destroy &ndash; you can do it in one request instead of several repeated destroys on each object.</p>
+<p>This can be useful if you have a lot of nested models you need to destroy - you can do it in one request instead of several repeated destroys on each object.</p>
 
 <p>Note that this is relevant for a nested object only. And, for this to work, make sure <code>:allow_destroy =&gt; true</code> <a href="https://github.com/dingbat/nsrails/wiki/Nesting">is set in your Rails model</a>.</p>
 	</div>
@@ -741,9 +756,11 @@ if ([myObj remoteFetch:&amp;error])
 		<p>The corresponding local property for remote attribute <code>id</code>.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSNumber *remoteID</code></div>
-	
+
+    
 	
 	
 	
@@ -788,9 +805,11 @@ if ([myObj remoteFetch:&amp;error])
 		<p>Should return a configuration for this class and its members.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSRConfig *)config</code></div>
-	
+
+    
 	
 	
 	
@@ -832,9 +851,11 @@ if ([myObj remoteFetch:&amp;error])
 		<p>Initializes a new instance of the receiver&rsquo;s class with a given dictionary input.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (instancetype)objectWithRemoteDictionary:(NSDictionary *)<em>remoteDictionary</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -883,9 +904,11 @@ if ([myObj remoteFetch:&amp;error])
 		<p>Returns an array of new or existing instances of the receiver&rsquo;s class, based off input of any number of remote dictionaries (JSON array from the server).</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSArray *)objectsWithRemoteDictionaries:(NSArray *)<em>remoteDictionaries</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -934,9 +957,11 @@ if ([myObj remoteFetch:&amp;error])
 		<p>Returns an array of all remote objects (as instances of receiver&rsquo;s class.) Each instance’s properties will be set to those returned by Rails.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSArray *)remoteAll:(NSError **)<em>error</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -990,9 +1015,11 @@ if ([myObj remoteFetch:&amp;error])
 		<p>Retrieves an array of all remote objects (as instances of receiver&rsquo;s class.) Each instance’s properties will be set to those returned by Rails.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (void)remoteAllAsync:(NSRFetchAllCompletionBlock)<em>completionBlock</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1039,16 +1066,18 @@ if ([myObj remoteFetch:&amp;error])
 		<p>Retrieves an array of all remote objects (as instances of receiver&rsquo;s class.) Each instance’s properties will be set to those returned by Rails.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (void)remoteAllViaObject:(NSRRemoteObject *)<em>parentObject</em> async:(NSRFetchAllCompletionBlock)<em>completionBlock</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>parentObject</em></dt>
-			<dd><p>Remote object by which to request the collection from &ndash; establishes pattern for resources depending on nesting. Raises an exception if this object&rsquo;s <code>remoteID</code> is nil, as it is used to construct the route.</p></dd>
+			<dd><p>Remote object by which to request the collection from - establishes pattern for resources depending on nesting. Raises an exception if this object&rsquo;s <code>remoteID</code> is nil, as it is used to construct the route.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -1093,16 +1122,18 @@ if ([myObj remoteFetch:&amp;error])
 		<p>Returns an array of all remote objects (as instances of receiver&rsquo;s class), constructed with a parent prefix. Each instance’s properties will be set to those returned by Rails.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSArray *)remoteAllViaObject:(NSRRemoteObject *)<em>parentObject</em> error:(NSError **)<em>error</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>parentObject</em></dt>
-			<dd><p>Remote object by which to request the collection from &ndash; establishes pattern for resources depending on nesting. Raises an exception if this object&rsquo;s <code>remoteID</code> is nil, as it is used to construct the route.</p></dd>
+			<dd><p>Remote object by which to request the collection from - establishes pattern for resources depending on nesting. Raises an exception if this object&rsquo;s <code>remoteID</code> is nil, as it is used to construct the route.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -1151,12 +1182,14 @@ if ([myObj remoteFetch:&amp;error])
 	
 	
 	<div class="method-subsection brief-description">
-		<p>The name of this class&rsquo;s controller on the server &ndash; where actions for this class should be routed.</p>
+		<p>The name of this class&rsquo;s controller on the server - where actions for this class should be routed.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSString *)remoteControllerName</code></div>
-	
+
+    
 	
 	
 	
@@ -1209,9 +1242,11 @@ if ([myObj remoteFetch:&amp;error])
 		<p>The equivalent name of this class on your server.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (NSString *)remoteModelName</code></div>
-	
+
+    
 	
 	
 	
@@ -1264,9 +1299,11 @@ if ([myObj remoteFetch:&amp;error])
 		<p>Retrieves an instance receiver&rsquo;s class corresponding to the remote object with that ID.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (void)remoteObjectWithID:(NSNumber *)<em>objectID</em> async:(NSRFetchObjectCompletionBlock)<em>completionBlock</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1318,9 +1355,11 @@ if ([myObj remoteFetch:&amp;error])
 		<p>Returns an instance of receiver&rsquo;s class corresponding to the remote object with that ID.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>+ (instancetype)remoteObjectWithID:(NSNumber *)<em>objectID</em> error:(NSError **)<em>error</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1387,9 +1426,11 @@ if ([myObj remoteFetch:&amp;error])
 		<p>Should set what you want an Objective-C property to be set to, based off a remote representation.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (void)decodeRemoteValue:(id)<em>remoteObject</em> forRemoteKey:(NSString *)<em>remoteKey</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1472,9 +1513,11 @@ if ([myObj remoteFetch:&amp;error])
 		<p>Should return the remote representation for each property, optionally modifying the remote key.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (id)encodeValueForProperty:(NSString *)<em>property</em> remoteKey:(NSString **)<em>remoteKey</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1520,11 +1563,13 @@ if ([myObj remoteFetch:&amp;error])
 
  - (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
  {
-     if ([property isEqualToString:@"csvArray"])
+     if ([property isEqualToString:@"csvArray"]) {
          return [csvArray componentsJoinedByString:@","];
+     }
 
-     if ([property isEqualToString:@"URL"])
+     if ([property isEqualToString:@"URL"]) {
          return [URL absoluteString];
+     }
 
      return [super encodeValueForProperty:property remoteKey:remoteKey];
  }
@@ -1536,8 +1581,9 @@ if ([myObj remoteFetch:&amp;error])
 
 <pre><code> - (id) encodeValueForProperty:(NSString *)property remoteKey:(NSString **)remoteKey
  {
-     if ([property isEqualToString:@"objcProperty"])
+     if ([property isEqualToString:@"objcProperty"]) {
          *remoteKey = @"rails_attr";
+     }
 
      return [super encodeValueForProperty:property remoteKey:remoteKey];
  }
@@ -1570,9 +1616,11 @@ if ([myObj remoteFetch:&amp;error])
 		<p>Should return the class for the nested object stored in the property, or nil if it is not a nested object.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (Class)nestedClassForProperty:(NSString *)<em>property</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1605,8 +1653,9 @@ if ([myObj remoteFetch:&amp;error])
  {
      // Only necessary for 'responses' (to-many)
      // By default, the Author class (to-one) will be picked up through its property type
-     if ([property isEqualToString:@"responses"])
+     if ([property isEqualToString:@"responses"]) {
          return [Response class];
+     }
 
      return [super nestedClassForProperty:property];
  }
@@ -1648,9 +1697,11 @@ if ([myObj remoteFetch:&amp;error])
 		<p>Should be overridden if instances of your subclass class should have their resource path be based off an association.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (NSRRemoteObject *)objectUsedToPrefixRequest:(NSRRequest *)<em>request</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1687,11 +1738,10 @@ if ([myObj remoteFetch:&amp;error])
 <p>Typically, this method is overriden with an instance variable that represents a parent:</p>
 
 <pre><code> @implementation Invite
- @synthesize user, foo;
 
  - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request
  {
-     return user;
+     return self.user;
  }
 
  @end
@@ -1719,8 +1769,9 @@ if ([myObj remoteFetch:&amp;error])
 
 <pre><code> - (NSRRemoteObject *) objectUsedToPrefixRequest:(NSRRequest *)request
  {
-     if ([request.httpMethod isEqualToString:@"GET"] || [request.httpMethod isEqualToString:@"POST"])
+     if ([request.httpMethod isEqualToString:@"GET"] || [request.httpMethod isEqualToString:@"POST"]) {
          return user;
+     }
      return nil;
  }
 </code></pre>
@@ -1750,9 +1801,11 @@ if ([myObj remoteFetch:&amp;error])
 		<p>Should return the equivalent Objective-C property for a given remote key.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (NSString *)propertyForRemoteKey:(NSString *)<em>remoteKey</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1786,8 +1839,9 @@ if ([myObj remoteFetch:&amp;error])
 <pre><code> - (NSString *) propertyForRemoteKey:(NSString *)remoteKey
  {
      //the "rails" key given from a Rails hash will be translated to the "objc" property when decoding
-     if ([remoteKey isEqualToString:@"rails"])
+     if ([remoteKey isEqualToString:@"rails"]) {
          return @"objc";
+     }
 
      return [super propertyForRemoteKey:remoteKey];
  }
@@ -1795,7 +1849,7 @@ if ([myObj remoteFetch:&amp;error])
 
 <p>It is possible to also override decodeRemoteValue:forRemoteKey: and setting the <code>objc</code> property manually for a remoteKey of &ldquo;rails&rdquo;, but since <a href="#//api/name/decodeRemoteValue:forRemoteKey:"><code>decodeRemoteValue:forRemoteKey:</code></a> uses this method internally, it is cleaner to just override this method.</p>
 
-<p>The inverse method remoteKeyForProperty does not exist &ndash; instead override <a href="#//api/name/encodeValueForProperty:remoteKey:"><code>encodeValueForProperty:remoteKey:</code></a> and modify the remote key.</p>
+<p>The inverse method remoteKeyForProperty does not exist - instead override <a href="#//api/name/encodeValueForProperty:remoteKey:"><code>encodeValueForProperty:remoteKey:</code></a> and modify the remote key.</p>
 	</div>
 	
 	
@@ -1822,9 +1876,11 @@ if ([myObj remoteFetch:&amp;error])
 		<p>Should return whether or not this property should be encoded/decoded to/from a Date object.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (BOOL)propertyIsDate:(NSString *)<em>property</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1849,7 +1905,7 @@ if ([myObj remoteFetch:&amp;error])
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>NSRails has no idea what types your properties are in Ruby, so to benefit from automatic Date &ndash;> string and string &ndash;> Date, it needs to know what properties are dates.</p>
+		<p>NSRails has no idea what types your properties are in Ruby, so to benefit from automatic Date -> string and string -> Date, it needs to know what properties are dates.</p>
 
 <p>This is unnecessary in Objective-C.</p>
 
@@ -1885,9 +1941,11 @@ if ([myObj remoteFetch:&amp;error])
 		<p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including remoteID).</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (BOOL)remoteCreate:(NSError **)<em>error</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1940,9 +1998,11 @@ Request made synchronously. See remoteCreateAsync: for asynchronous operation.</
 		<p>Creates the receiver remotely. Receiver&rsquo;s properties will be set to those given by Rails (including <code>remoteID</code>).</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (void)remoteCreateAsync:(NSRBasicCompletionBlock)<em>completionBlock</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -1989,9 +2049,11 @@ Request made synchronously. See remoteCreateAsync: for asynchronous operation.</
 		<p>Destroys receiver&rsquo;s corresponding remote object. Local object will be unaffected.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (BOOL)remoteDestroy:(NSError **)<em>error</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -2044,9 +2106,11 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:"><code>
 		<p>Destroys receiver&rsquo;s corresponding remote object. Local object will be unaffected.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (void)remoteDestroyAsync:(NSRBasicCompletionBlock)<em>completionBlock</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -2095,9 +2159,11 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:"><code>
 <p>Uses the coding methods.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (NSDictionary *)remoteDictionaryRepresentationWrapped:(BOOL)<em>wrapped</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -2147,9 +2213,11 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:"><code>
 		<p>Retrieves the latest remote data for receiver and sets its properties to received response.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (BOOL)remoteFetch:(NSError **)<em>error</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -2205,9 +2273,11 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:"><code>
 		<p>Retrieves the latest remote data for receiver and sets its properties to received response.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (void)remoteFetchAsync:(NSRBasicCompletionBlock)<em>completionBlock</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -2256,9 +2326,11 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:"><code>
 		<p>Should return an array of all properties to be used by NSRails.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (NSMutableArray *)remoteProperties</code></div>
-	
+
+    
 	
 	
 	
@@ -2325,9 +2397,11 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:"><code>
 		<p>&ldquo;Places&rdquo; receiver&rsquo;s corresponding remote object.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (BOOL)remoteReplace:(NSError **)<em>error</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -2385,9 +2459,11 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:"><code>
 		<p>&ldquo;Places&rdquo; receiver&rsquo;s corresponding remote object.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (void)remoteReplaceAsync:(NSRBasicCompletionBlock)<em>completionBlock</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -2438,9 +2514,11 @@ Request made synchronously. See <a href="#//api/name/remoteDestroyAsync:"><code>
 		<p>Updates receiver&rsquo;s corresponding remote object.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (BOOL)remoteUpdate:(NSError **)<em>error</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -2497,9 +2575,11 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="NSRConf
 		<p>Updates receiver&rsquo;s corresponding remote object.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (void)remoteUpdateAsync:(NSRBasicCompletionBlock)<em>completionBlock</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -2549,9 +2629,11 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 		<p>Sets the receiver&rsquo;s properties given a dictionary.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (void)setPropertiesUsingRemoteDictionary:(NSDictionary *)<em>dictionary</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -2600,9 +2682,11 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 		<p>Should return whether or not a nested object should be sent with its entire body (<code>x_attributes</code>), or just ID (<code>x_id</code>).</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (BOOL)shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)<em>property</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -2629,13 +2713,69 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>The default behavior is to return <code>NO</code>. (You don&rsquo;t have to make a call to super here.)</p>
 
-<p>This is useful if you have a property whose relationship is &ldquo;belongs to&rdquo;. Meaning, the receiving object on the server holds the foreign key &ndash; it has, say, a <code>parent_id</code>, which you want sent instead of <code>parent_attributes</code> (which would anger Rails).</p>
+<p>This is useful if you have a property whose relationship is &ldquo;belongs to&rdquo;. Meaning, the receiving object on the server holds the foreign key - it has, say, a <code>parent_id</code>, which you want sent instead of <code>parent_attributes</code> (which would anger Rails).</p>
 
 <pre><code> - (BOOL) shouldOnlySendIDKeyForNestedObjectProperty:(NSString *)property
  {
     return [property isEqualToString:"group"];
  }
 </code></pre>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRRemoteObject.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/shouldReplaceCollectionForProperty:" title="shouldReplaceCollectionForProperty:"></a>
+	<h3 class="subsubtitle method-title">shouldReplaceCollectionForProperty:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Whether or not to fully replace a collection for a given property, as opposed to simply adding to it.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (BOOL)shouldReplaceCollectionForProperty:(NSString *)<em>property</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>property</em></dt>
+			<dd><p>The name of the collection property.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>Whether or not to fully replace a collection for a given property, as opposed to simply adding to it.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Will only be called for collection properties.</p>
 	</div>
 	
 	
@@ -2662,9 +2802,11 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 		<p>Should return whether or not a certain property should be sent in the outgoing dictionary.</p>
 	</div>		
 	
-	
+    
+
 	<div class="method-subsection method-declaration"><code>- (BOOL)shouldSendProperty:(NSString *)<em>property</em> whenNested:(BOOL)<em>nested</em></code></div>
-	
+
+    
 	
 	<div class="method-subsection arguments-section parameters">
 		<h4 class="method-subtitle parameter-title">Parameters</h4>
@@ -2709,12 +2851,14 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 <pre><code> - (BOOL) shouldSendProperty:(NSString *)property whenNested:(BOOL)nested
  {
     //never send retrieveOnlyProperty to your server
-    if ([property isEqualToString:@"retrieveOnlyProperty"])
+    if ([property isEqualToString:@"retrieveOnlyProperty"]) {
         return NO;
+    }
 
     //deepNest is a property with a has-one/has-many relationship that would otherwise not be sent when this object is *nested*
-    if ([property isEqualToString:@"deepNest"] &amp;&amp; nested)
+    if ([property isEqualToString:@"deepNest"] &amp;&amp; nested) {
         return YES;
+    }
 
     return [super shouldSendProperty:property whenNested:nested];
  }
@@ -2750,9 +2894,9 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2013 Dan Hassin. All rights reserved. (Last updated: 2013-10-20)</span><br />
+						<p><span class="copyright">&copy; 2014 Dan Hassin. All rights reserved. (Last updated: 2014-08-21)</span><br />
 						
-						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 840)</a>.</span></p>
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.2 (build 961)</a>.</span></p>
 						
 					</div>
 				</div>
@@ -2840,6 +2984,14 @@ Will use the HTTP method defined in the relevant config&rsquo;s <a href="../NSRC
 			}
 			
 			window.onload = init;
+			
+			// If showing in Xcode, hide the TOC and Header
+			if (navigator.userAgent.match(/xcode/i)) {
+				document.getElementById("contents").className = "hideInXcode"
+				document.getElementById("tocContainer").className = "hideInXcode"
+				document.getElementById("top_header").className = "hideInXcode"
+			}
+			
 		</script>
 	</body>
 </html>
