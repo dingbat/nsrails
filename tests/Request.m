@@ -3,7 +3,7 @@
 //  NSRails
 //
 //  Created by Dan Hassin on 6/11/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 InContext LLC. All rights reserved.
 //
 
 #import "NSRAsserts.h"
