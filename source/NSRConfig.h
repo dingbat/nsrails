@@ -36,6 +36,11 @@
 
 ////////////////////////////////
 
+typedef NS_ENUM(NSInteger, NSRRailsVersion) {
+    NSRRailsVersion3,
+    NSRRailsVersion4
+};
+
 /**
  The NSRails configuration class is NSRConfig, a class that stores your Rails app's configuration settings (server URL, etc) for either your app globally or in specific instances. It also supports basic HTTP authentication and very simple OAuth authentication.
  
@@ -88,11 +93,6 @@
  
     You can nest several config contexts within each other.
  */
-
-typedef NS_ENUM(NSInteger, NSRRailsVersion) {
-    NSRRailsVersion3,
-    NSRRailsVersion4
-};
 
 @interface NSRConfig : NSObject <NSCoding>
 

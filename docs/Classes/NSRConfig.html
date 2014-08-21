@@ -42,17 +42,13 @@
 	
 	<option value="//api/name/additionalHTTPHeaders">&nbsp;&nbsp;&nbsp;&nbsp;additionalHTTPHeaders</option>
 	
-	<option value="//api/name/appOAuthToken">&nbsp;&nbsp;&nbsp;&nbsp;appOAuthToken</option>
-	
-	<option value="//api/name/appPassword">&nbsp;&nbsp;&nbsp;&nbsp;appPassword</option>
-	
-	<option value="//api/name/appURL">&nbsp;&nbsp;&nbsp;&nbsp;appURL</option>
-	
-	<option value="//api/name/appUsername">&nbsp;&nbsp;&nbsp;&nbsp;appUsername</option>
-	
 	<option value="//api/name/autoinflectsClassNames">&nbsp;&nbsp;&nbsp;&nbsp;autoinflectsClassNames</option>
 	
 	<option value="//api/name/autoinflectsPropertyNames">&nbsp;&nbsp;&nbsp;&nbsp;autoinflectsPropertyNames</option>
+	
+	<option value="//api/name/basicAuthPassword">&nbsp;&nbsp;&nbsp;&nbsp;basicAuthPassword</option>
+	
+	<option value="//api/name/basicAuthUsername">&nbsp;&nbsp;&nbsp;&nbsp;basicAuthUsername</option>
 	
 	<option value="//api/name/dateFormat">&nbsp;&nbsp;&nbsp;&nbsp;dateFormat</option>
 	
@@ -62,7 +58,13 @@
 	
 	<option value="//api/name/managesNetworkActivityIndicator">&nbsp;&nbsp;&nbsp;&nbsp;managesNetworkActivityIndicator</option>
 	
+	<option value="//api/name/networkLogging">&nbsp;&nbsp;&nbsp;&nbsp;networkLogging</option>
+	
+	<option value="//api/name/oAuthToken">&nbsp;&nbsp;&nbsp;&nbsp;oAuthToken</option>
+	
 	<option value="//api/name/performsCompletionBlocksOnMainThread">&nbsp;&nbsp;&nbsp;&nbsp;performsCompletionBlocksOnMainThread</option>
+	
+	<option value="//api/name/rootURL">&nbsp;&nbsp;&nbsp;&nbsp;rootURL</option>
 	
 	<option value="//api/name/succinctErrorMessages">&nbsp;&nbsp;&nbsp;&nbsp;succinctErrorMessages</option>
 	
@@ -89,8 +91,6 @@
 	<option value="//api/name/dateFromString:">&nbsp;&nbsp;&nbsp;&nbsp;- dateFromString:</option>
 	
 	<option value="//api/name/end">&nbsp;&nbsp;&nbsp;&nbsp;- end</option>
-	
-	<option value="//api/name/initWithAppURL:">&nbsp;&nbsp;&nbsp;&nbsp;- initWithAppURL:</option>
 	
 	<option value="//api/name/stringFromDate:">&nbsp;&nbsp;&nbsp;&nbsp;- stringFromDate:</option>
 	
@@ -134,8 +134,6 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Date conversions">Date conversions</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Initializing a config">Initializing a config</a></span></li>
-	
 </ul></li>
 
 
@@ -146,17 +144,13 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/additionalHTTPHeaders">additionalHTTPHeaders</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/appOAuthToken">appOAuthToken</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/appPassword">appPassword</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/appURL">appURL</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/appUsername">appUsername</a></span></li>
-	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/autoinflectsClassNames">autoinflectsClassNames</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/autoinflectsPropertyNames">autoinflectsPropertyNames</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/basicAuthPassword">basicAuthPassword</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/basicAuthUsername">basicAuthUsername</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/dateFormat">dateFormat</a></span></li>
 	
@@ -166,7 +160,13 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/managesNetworkActivityIndicator">managesNetworkActivityIndicator</a></span></li>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/networkLogging">networkLogging</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/oAuthToken">oAuthToken</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/performsCompletionBlocksOnMainThread">performsCompletionBlocksOnMainThread</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/rootURL">rootURL</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/succinctErrorMessages">succinctErrorMessages</a></span></li>
 	
@@ -195,8 +195,6 @@
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/dateFromString:">dateFromString:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/end">end</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/initWithAppURL:">initWithAppURL:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/stringFromDate:">stringFromDate:</a></span></li>
 	
@@ -258,7 +256,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
- [[NSRConfig defaultConfig] setAppURL:@"http://myapp.com"];
+ [[NSRConfig defaultConfig] setRootURL:[NSURL URLWithString:@"http://myapp.com"]];
 
  //Similarly, if using HTTP Authentication, you can set your app's username and password like this:
  //[[NSRConfig defaultConfig] setAppUsername:@"username"];
@@ -272,7 +270,8 @@
 <li><p>When NSRails needs to retrieve configuration settings, it calls the <a href="../Classes/NSRRemoteObject.html">NSRRemoteObject</a> <code>config</code> method. The default behavior is to return <a href="#//api/name/contextuallyRelevantConfig"><code>contextuallyRelevantConfig</code></a>, but this can be overridden by your NSRRemoteObject subclass. Simply initialize your own NSRConfig instance and return it, and base URLs, autoinflection, date formats, and any other NSRConfig configurations will be used for NSRails actions called on this class or its instances.</p></li>
 <li><p>If specific actions must be called using a separate config, an NSRConfig instance can be used to define a context block in which to call those config-specific methods:</p>
 
-<pre><code>  NSRConfig *myConfig = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com/"];
+<pre><code>  NSRConfig *myConfig = [[NSRConfig alloc] init]
+  myConfig.rootURL = [NSURL URLWithString:@"http://secondrailsapp.com/"];
 
   [myConfig use];
   NSArray *peopleFromOtherServer = [Person getAllRemote];
@@ -282,7 +281,8 @@
 <p>  Or, using block notation:</p>
 
 <pre><code>  NSArray *peopleToTransfer = [Person getAllRemote];
-  NSRConfig *myConfig = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com/"];
+  NSRConfig *myConfig = [[NSRConfig alloc] init]
+  myConfig.rootURL = [NSURL URLWithString:@"http://secondrailsapp.com/"];
   [myConfig useIn:^
       {
           for (Person *p in peopleToTransfer)
@@ -315,7 +315,7 @@
 						<ul class="task-list">
 							<li>
 	<span class="tooltip">
-		<code><a href="#//api/name/appURL">&nbsp;&nbsp;appURL</a></code>
+		<code><a href="#//api/name/rootURL">&nbsp;&nbsp;rootURL</a></code>
 		<span class="tooltip"><p>Root URL for your Rails server.</p></span>
 	</span>
 	<span class="task-item-suffix">property</span>
@@ -377,6 +377,14 @@
 	</span>
 	<span class="task-item-suffix">property</span>
 	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/networkLogging">&nbsp;&nbsp;networkLogging</a></code>
+		<span class="tooltip"><p>If <code>YES</code>, NSRails will log HTTP verbs with their outgoing URLs, as well as any any JSON going out/coming in
+and server errors. If <code>NO</code>, NSRails will log nothing.</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
 </li>
 						</ul>
 						
@@ -387,21 +395,21 @@
 						<ul class="task-list">
 							<li>
 	<span class="tooltip">
-		<code><a href="#//api/name/appUsername">&nbsp;&nbsp;appUsername</a></code>
+		<code><a href="#//api/name/basicAuthUsername">&nbsp;&nbsp;basicAuthUsername</a></code>
 		<span class="tooltip"><p>Username for basic HTTP authentication (if used by server.)</p></span>
 	</span>
 	<span class="task-item-suffix">property</span>
 	
 </li><li>
 	<span class="tooltip">
-		<code><a href="#//api/name/appPassword">&nbsp;&nbsp;appPassword</a></code>
+		<code><a href="#//api/name/basicAuthPassword">&nbsp;&nbsp;basicAuthPassword</a></code>
 		<span class="tooltip"><p>Password for basic HTTP authentication (if used by server.)</p></span>
 	</span>
 	<span class="task-item-suffix">property</span>
 	
 </li><li>
 	<span class="tooltip">
-		<code><a href="#//api/name/appOAuthToken">&nbsp;&nbsp;appOAuthToken</a></code>
+		<code><a href="#//api/name/oAuthToken">&nbsp;&nbsp;oAuthToken</a></code>
 		<span class="tooltip"><p>Token for OAuth authentication (if used by server.)</p></span>
 	</span>
 	<span class="task-item-suffix">property</span>
@@ -548,21 +556,6 @@
 </li>
 						</ul>
 						
-						
-						<a title="Initializing a config" name="task_Initializing a config"></a>
-						<h3 class="subsubtitle task-title">Initializing a config</h3>
-
-						<ul class="task-list">
-							<li>
-	<span class="tooltip">
-		<code><a href="#//api/name/initWithAppURL:">&ndash;&nbsp;initWithAppURL:</a></code>
-		<span class="tooltip"><p>Initializes a new NSRConfig instance with an app URL.</p></span>
-	</span>
-	
-	
-</li>
-						</ul>
-						
 					</div>
 					
 					
@@ -586,150 +579,6 @@
     
 
 	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSDictionary *additionalHTTPHeaders</code></div>
-
-    
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRConfig.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/appOAuthToken" title="appOAuthToken"></a>
-	<h3 class="subsubtitle method-title">appOAuthToken</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Token for OAuth authentication (if used by server.)</p>
-	</div>		
-	
-    
-
-	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSString *appOAuthToken</code></div>
-
-    
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRConfig.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/appPassword" title="appPassword"></a>
-	<h3 class="subsubtitle method-title">appPassword</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Password for basic HTTP authentication (if used by server.)</p>
-	</div>		
-	
-    
-
-	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSString *appPassword</code></div>
-
-    
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRConfig.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/appURL" title="appURL"></a>
-	<h3 class="subsubtitle method-title">appURL</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Root URL for your Rails server.</p>
-	</div>		
-	
-    
-
-	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSString *appURL</code></div>
-
-    
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRConfig.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/appUsername" title="appUsername"></a>
-	<h3 class="subsubtitle method-title">appUsername</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Username for basic HTTP authentication (if used by server.)</p>
-	</div>		
-	
-    
-
-	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSString *appUsername</code></div>
 
     
 	
@@ -832,6 +681,78 @@
 
 <p><strong>Default:</strong> <code>YES</code>.</p>
 	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRConfig.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/basicAuthPassword" title="basicAuthPassword"></a>
+	<h3 class="subsubtitle method-title">basicAuthPassword</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Password for basic HTTP authentication (if used by server.)</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSString *basicAuthPassword</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRConfig.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/basicAuthUsername" title="basicAuthUsername"></a>
+	<h3 class="subsubtitle method-title">basicAuthUsername</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Username for basic HTTP authentication (if used by server.)</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSString *basicAuthUsername</code></div>
+
+    
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -1024,6 +945,84 @@
 </div>
 						
 						<div class="section-method">
+	<a name="//api/name/networkLogging" title="networkLogging"></a>
+	<h3 class="subsubtitle method-title">networkLogging</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>If <code>YES</code>, NSRails will log HTTP verbs with their outgoing URLs, as well as any any JSON going out/coming in
+and server errors. If <code>NO</code>, NSRails will log nothing.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic) BOOL networkLogging</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p><strong>Default:</strong> <code>YES</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRConfig.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/oAuthToken" title="oAuthToken"></a>
+	<h3 class="subsubtitle method-title">oAuthToken</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Token for OAuth authentication (if used by server.)</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSString *oAuthToken</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRConfig.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
 	<a name="//api/name/performsCompletionBlocksOnMainThread" title="performsCompletionBlocksOnMainThread"></a>
 	<h3 class="subsubtitle method-title">performsCompletionBlocksOnMainThread</h3>
 	
@@ -1053,6 +1052,42 @@
 
 <p><strong>Default:</strong> <code>YES</code>.</p>
 	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">NSRConfig.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/rootURL" title="rootURL"></a>
+	<h3 class="subsubtitle method-title">rootURL</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Root URL for your Rails server.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, strong) NSURL *rootURL</code></div>
+
+    
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -1475,52 +1510,6 @@
 			
 		</ul>
 	</div>
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSRConfig.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/initWithAppURL:" title="initWithAppURL:"></a>
-	<h3 class="subsubtitle method-title">initWithAppURL:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Initializes a new NSRConfig instance with an app URL.</p>
-	</div>		
-	
-    
-
-	<div class="method-subsection method-declaration"><code>- (id)initWithAppURL:(NSString *)<em>url</em></code></div>
-
-    
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>url</em></dt>
-			<dd><p>App URL to be set to the new instance.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
