@@ -6,6 +6,19 @@ NSRails is a light-weight Objective-C framework that provides your classes with 
 
 Instances will inherit methods to remotely create, read, update, or destroy a remote object:
 
+```swift
+let newPost = Post()
+newPost.author = "Me"
+newPost.content = "Some text"
+// Create this post with its properties right on a Rails server
+// POST /posts.json
+newPost.remoteCreateAsync() { error in
+    ...
+}
+```
+
+(For those stuck in 2013:)
+
 ```objc
 Post *newPost = [[Post alloc] init];
 newPost.author = @"Me";
@@ -19,17 +32,17 @@ newPost.content = @"Some text";
 
 Classes will inherit methods to retrieve all objects, or only certain ones:
 
-```objc
+```swift
 // GET /posts.json
-[Post remoteAllAsync:^(NSArray *allPosts, NSError *error) {
+Post.remoteAllAsync() { allPosts, error in
     //allPosts => [<#Post1#>, <#Post2#>]
-}];
+}
 
 // GET /posts/1.json
-[Post remoteObjectWithID:1 async:^(Post *post, NSError *error) {
+Post.remoteObjectWithID(1) { post, error in
     //post => <#Post#>
     //post.content => "First!!11!"
-}];
+}
 ```
 
 NSRails is accessible while very flexible, and keeps your code clean and organized. It uses your classes' names and standard `@properties` to map to your remote models, so it's easy to fit into any project.
@@ -66,6 +79,15 @@ Getting started
 
 2. Make a class for your Rails model that subclasses **NSRRemoteObject** (or **NSRRemoteManagedObject** with CoreData)
 
+  ```swift
+  @objc(Post) class Post : NSRRemoteObject { //NSRRemoteManagedObject with CoreData
+    var author:String
+    var content:String
+    var createdAt:NSDate
+    var responses:[Response]
+  }
+  ```
+
   ```objc
   #import <NSRails/NSRails.h>
 
@@ -73,11 +95,21 @@ Getting started
 
   @property (nonatomic, strong) NSString *author, *content;
   @property (nonatomic, strong) NSDate *createdAt;
+  @property (nonatomic, strong) NSArray *responses;
   
   @end
   ```
 
 3. Set your server URL in your app setup:
+
+  ```swift
+  func application(application: UIApplication!, didFinishLaunchingWithOptions launchOptions: NSDictionary!) -> Bool {
+        NSRConfig.defaultConfig().rootURL = NSURL(string:"http://localhost:3000")
+        // If you're using Rails 3
+        //NSRConfig.defaultConfig().configureToRailsVersion(NSRRailsVersion.Version3)
+        ...
+  }
+  ```
 
   ```objc
   #import <NSRails/NSRails.h>
