@@ -116,15 +116,6 @@ static NSMutableArray *overrideConfigStack = nil;
     return self;
 }
 
-- (id) initWithAppURL:(NSString *)url
-{
-    if ((self = [self init]))
-    {
-        [self setAppURL:url];
-    }
-    return self;
-}
-
 - (void) configureToRailsVersion:(NSRRailsVersion)railsVersion
 {
     if (railsVersion == NSRRailsVersion3)
@@ -246,9 +237,9 @@ static NSMutableArray *overrideConfigStack = nil;
 
         self.managesNetworkActivityIndicator = [aDecoder decodeBoolForKey:@"managesNetworkActivityIndicator"];
 
-        self.appURL = [aDecoder decodeObjectForKey:@"appURL"];
-        self.appUsername = [aDecoder decodeObjectForKey:@"appUsername"];
-        self.appPassword = [aDecoder decodeObjectForKey:@"appPassword"];
+        self.rootURL = [aDecoder decodeObjectForKey:@"rootURL"];
+        self.basicAuthUsername = [aDecoder decodeObjectForKey:@"basicAuthUsername"];
+        self.basicAuthPassword = [aDecoder decodeObjectForKey:@"basicAuthPassword"];
         
         self.additionalHTTPHeaders = [aDecoder decodeObjectForKey:@"additionalHTTPHeaders"];
     }
@@ -268,10 +259,10 @@ static NSMutableArray *overrideConfigStack = nil;
     [aCoder encodeDouble:self.timeoutInterval forKey:@"timeoutInterval"];
     
     [aCoder encodeBool:self.managesNetworkActivityIndicator forKey:@"managesNetworkActivityIndicator"];
-    
-    [aCoder encodeObject:self.appURL forKey:@"appURL"];
-    [aCoder encodeObject:self.appUsername forKey:@"appUsername"];
-    [aCoder encodeObject:self.appPassword forKey:@"appPassword"];
+
+    [aCoder encodeObject:self.rootURL forKey:@"rootURL"];
+    [aCoder encodeObject:self.basicAuthUsername forKey:@"basicAuthUsername"];
+    [aCoder encodeObject:self.basicAuthPassword forKey:@"basicAuthPassword"];
 
     [aCoder encodeObject:self.additionalHTTPHeaders forKey:@"additionalHTTPHeaders"];
 }

@@ -49,7 +49,7 @@
 
     - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
     {
-     [[NSRConfig defaultConfig] setAppURL:@"http://myapp.com"];
+     [[NSRConfig defaultConfig] setRootURL:[NSURL URLWithString:@"http://myapp.com"]];
      
      //Similarly, if using HTTP Authentication, you can set your app's username and password like this:
      //[[NSRConfig defaultConfig] setAppUsername:@"username"];
@@ -63,7 +63,8 @@
  
  - If specific actions must be called using a separate config, an NSRConfig instance can be used to define a context block in which to call those config-specific methods:
         
-        NSRConfig *myConfig = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com/"];
+        NSRConfig *myConfig = [[NSRConfig alloc] init]
+        myConfig.rootURL = [NSURL URLWithString:@"http://secondrailsapp.com/"];
         
         [myConfig use];
         NSArray *peopleFromOtherServer = [Person getAllRemote];
@@ -72,7 +73,8 @@
     Or, using block notation:
  
         NSArray *peopleToTransfer = [Person getAllRemote];
-        NSRConfig *myConfig = [[NSRConfig alloc] initWithAppURL:@"http://secondrailsapp.com/"];
+        NSRConfig *myConfig = [[NSRConfig alloc] init]
+        myConfig.rootURL = [NSURL URLWithString:@"http://secondrailsapp.com/"];
         [myConfig useIn:^
             {
                 for (Person *p in peopleToTransfer)
@@ -102,7 +104,7 @@ typedef NS_ENUM(NSInteger, NSRRailsVersion) {
 /**
  Root URL for your Rails server.
  */
-@property (nonatomic, strong) NSString *appURL;
+@property (nonatomic, strong) NSURL *rootURL;
 
 /**
  When true, the completion blocks passed into asynchronous `remote` methods will be called on the main thread.
@@ -202,17 +204,17 @@ typedef NS_ENUM(NSInteger, NSRRailsVersion) {
 /**
  Username for basic HTTP authentication (if used by server.)
  */
-@property (nonatomic, strong) NSString *appUsername;
+@property (nonatomic, strong) NSString *basicAuthUsername;
 
 /**
  Password for basic HTTP authentication (if used by server.)
  */
-@property (nonatomic, strong) NSString *appPassword;
+@property (nonatomic, strong) NSString *basicAuthPassword;
 
 /**
  Token for OAuth authentication (if used by server.)
  */
-@property (nonatomic, strong) NSString *appOAuthToken;
+@property (nonatomic, strong) NSString *oAuthToken;
 
 /**
  A dictionary of additional HTTP headers to send with each request that uses this configuration.
@@ -362,18 +364,6 @@ typedef NS_ENUM(NSInteger, NSRRailsVersion) {
  @see dateFormat.
  */
 - (NSDate *) dateFromString:(NSString *)string;
-
-
-/// =============================================================================================
-/// @name Initializing a config
-/// =============================================================================================
-
-/**
- Initializes a new NSRConfig instance with an app URL.
- 
- @param url App URL to be set to the new instance.
- */
-- (id) initWithAppURL:(NSString *)url;
 
 @end
 

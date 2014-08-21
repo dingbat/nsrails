@@ -83,7 +83,7 @@ Getting started
 
   - (BOOL)application:(UIApplication *)app didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
   {
-        [NSRConfig defaultConfig].appURL = @"http://localhost:3000";
+        [NSRConfig defaultConfig].rootURL = [NSURL URLWithString:@"http://localhost:3000"];
         // If you're using Rails 3
         //[[NSRConfig defaultConfig] configureToRailsVersion:NSRRailsVersion3];
         ...

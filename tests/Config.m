@@ -15,8 +15,10 @@ extern NSString * const NSRRails4DateFormat;
 
 @end
 
+#define NSRURL(string) [NSURL URLWithString:[@"http://" stringByAppendingString:string]]
+
 #define NSRAssertRelevantConfigURL(string) \
-XCTAssertEqualObjects(string, [NSRConfig contextuallyRelevantConfig].appURL)
+XCTAssertEqualObjects([@"http://" stringByAppendingString:string], [NSRConfig contextuallyRelevantConfig].rootURL.absoluteString)
 
 @implementation Config
 
@@ -27,13 +29,14 @@ XCTAssertEqualObjects(string, [NSRConfig contextuallyRelevantConfig].appURL)
 
 - (void) test_nested_contexts
 {
-    [[NSRConfig defaultConfig] setAppURL:@"Default"];
+    [[NSRConfig defaultConfig] setRootURL:NSRURL(@"Default")];
     
     NSRAssertRelevantConfigURL(@"Default");
     
     [[NSRConfig defaultConfig] useIn:^
      {
-         NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"Nested"];
+         NSRConfig *c = [[NSRConfig alloc] init];
+         c.rootURL = NSRURL(@"Nested");
          [c use];
          
          NSRAssertRelevantConfigURL(@"Nested");
@@ -55,7 +58,8 @@ XCTAssertEqualObjects(string, [NSRConfig contextuallyRelevantConfig].appURL)
     
     XCTAssertEqualObjects(@"custom_coder", [CustomCoder remoteModelName], @"auto-underscoring");
     
-    NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"NoAuto"];
+    NSRConfig *c = [[NSRConfig alloc] init];
+    c.rootURL = NSRURL(@"NoAuto");
     c.autoinflectsClassNames = NO;
     [c useIn:
      ^{

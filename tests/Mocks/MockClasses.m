@@ -338,7 +338,8 @@
 
 + (NSRConfig *) config
 {
-    NSRConfig *c = [[NSRConfig alloc] initWithAppURL:@"http://class"];
+    NSRConfig *c = [[NSRConfig alloc] init];
+    c.rootURL = [NSURL URLWithString:@"http://class"];
     c.autoinflectsClassNames = NO;
     return c;
 }

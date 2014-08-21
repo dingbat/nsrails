@@ -256,9 +256,9 @@
 
 + (void)setUp
 {
-    [[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
-    [[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
-    [[NSRConfig defaultConfig] setAppPassword:@"iphone"];
+    [[NSRConfig defaultConfig] setRootURL:[NSURL URLWithString:@"http://localhost:3000"]];
+    [[NSRConfig defaultConfig] setBasicAuthUsername:@"NSRails"];
+    [[NSRConfig defaultConfig] setBasicAuthPassword:@"iphone"];
 }
 
 

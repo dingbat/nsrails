@@ -85,7 +85,7 @@ extern NSString * const NSRNullRemoteIDException;
 @property (nonatomic, strong) NSRConfig *config;
 
 /**
- The path to be appended to config's [appURL](NSRConfig.html#//api/name/appURL) (the base URL of your app).
+ The path to be appended to config's [rootURL](NSRConfig.html#//api/name/rootURL) (the base URL of your app).
  
  You cannot set this variable directly - use the `routeTo` methods below.
  */

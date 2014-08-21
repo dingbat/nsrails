@@ -271,14 +271,13 @@ NSString * const NSRNullRemoteIDException   = @"NSRNullRemoteIDException";
         appendedRoute = [appendedRoute stringByAppendingFormat:@"?%@",[params componentsJoinedByString:@"&"]];
     }
     
-    NSURL *base = [NSURL URLWithString:self.config.appURL];
-    if (!base)
+    if (!self.config.rootURL)
     {
-        [NSException raise:NSRMissingURLException format:@"No server root URL specified. Set your rails app's root with [[NSRConfig defaultConfig] setAppURL:] somewhere in your app setup."];
+        [NSException raise:NSRMissingURLException format:@"No server root URL specified. Set your rails app's root with [[NSRConfig defaultConfig] setRootURL:] somewhere in your app setup."];
     }
 
     
-    NSURL *url = [NSURL URLWithString:appendedRoute relativeToURL:base];
+    NSURL *url = [NSURL URLWithString:appendedRoute relativeToURL:self.config.rootURL];
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url
                                                            cachePolicy:NSURLRequestReloadIgnoringLocalCacheData 
@@ -298,18 +297,18 @@ NSString * const NSRNullRemoteIDException   = @"NSRNullRemoteIDException";
          [request setValue:obj forHTTPHeaderField:key];
      }];
     
-    if (self.config.appUsername && self.config.appPassword)
+    if (self.config.basicAuthUsername && self.config.basicAuthPassword)
     {
         //add auth header encoded in base64
-        NSString *authStr = [NSString stringWithFormat:@"%@:%@", self.config.appUsername, self.config.appPassword];
+        NSString *authStr = [NSString stringWithFormat:@"%@:%@", self.config.basicAuthUsername, self.config.basicAuthPassword];
         NSData *authData = [authStr dataUsingEncoding:NSUTF8StringEncoding];
         NSString *authHeader = [NSString stringWithFormat:@"Basic %@", [NSRRequest base64EncodingOfData:authData]];
         
         [request setValue:authHeader forHTTPHeaderField:@"Authorization"]; 
     }
-    else if (self.config.appOAuthToken)
+    else if (self.config.oAuthToken)
     {
-        NSString *authHeader = [NSString stringWithFormat:@"OAuth %@", self.config.appOAuthToken];
+        NSString *authHeader = [NSString stringWithFormat:@"OAuth %@", self.config.oAuthToken];
         [request setValue:authHeader forHTTPHeaderField:@"Authorization"];
     }
     

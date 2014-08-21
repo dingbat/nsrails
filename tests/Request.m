@@ -41,7 +41,7 @@
 {
     NSRRequest *req = [NSRRequest GET];
     
-    [NSRConfig defaultConfig].appURL = @"http://myapp.com";
+    [NSRConfig defaultConfig].rootURL = [NSURL URLWithString:@"http://myapp.com"];
     
     NSURLRequest *request = [req HTTPRequest];
     XCTAssertEqualObjects([request.URL description], @"http://myapp.com");
@@ -92,7 +92,7 @@
     NSRRequest *req = [NSRRequest GET];
     XCTAssertThrowsSpecificNamed([req HTTPRequest], NSException, NSRMissingURLException, @"Should throw a missing root URL exception");
     
-    [NSRConfig defaultConfig].appURL = @"http://myapp.com";
+    [NSRConfig defaultConfig].rootURL = [NSURL URLWithString:@"http://myapp.com"];
     
     NSURLRequest *request = [req HTTPRequest];
     XCTAssertEqualObjects([request.URL description], @"http://myapp.com");
@@ -127,7 +127,7 @@
     NSRRequest *req = [NSRRequest POST];
     [req setBodyToObject:nil];
     
-    [NSRConfig defaultConfig].appURL = @"http://myapp.com";
+    [NSRConfig defaultConfig].rootURL = [NSURL URLWithString:@"http://myapp.com"];
 
     NSURLRequest *request = [req HTTPRequest];
     XCTAssertNil([request HTTPBody]);
@@ -458,29 +458,30 @@
     XCTAssertEqual(req.config, [NSRConfig defaultConfig]);
     XCTAssertThrows([req.HTTPRequest URL]);
     
-    [NSRConfig defaultConfig].appURL = @"http://myapp.com";
+    [NSRConfig defaultConfig].rootURL = [NSURL URLWithString:@"http://myapp.com"];
     
     XCTAssertEqualObjects([req.HTTPRequest URL], [NSURL URLWithString:@"http://myapp.com"]);
     
-    NSRConfig *customConfig = [[NSRConfig alloc] initWithAppURL:@"http://custom"];
+    NSRConfig *customConfig = [[NSRConfig alloc] init];
+    customConfig.rootURL = [NSURL URLWithString:@"http://custom"];
     req.config = customConfig;
     XCTAssertEqual(req.config, customConfig);
     XCTAssertEqualObjects([req.HTTPRequest URL], [NSURL URLWithString:@"http://custom"]);
     
     [req routeToClass:[CustomConfigClass class]];
-    XCTAssertEqualObjects(req.config.appURL, [CustomConfigClass config].appURL);
+    XCTAssertEqualObjects(req.config.rootURL, [CustomConfigClass config].rootURL);
     XCTAssertEqualObjects([req.HTTPRequest URL], [NSURL URLWithString:@"http://class/CustomConfigClasses"]);
 
     [req routeToObject:[[CustomConfigClass alloc] init]];
-    XCTAssertEqualObjects(req.config.appURL, [[[CustomConfigClass alloc] init].class config].appURL);
+    XCTAssertEqualObjects(req.config.rootURL, [[[CustomConfigClass alloc] init].class config].rootURL);
     XCTAssertEqualObjects([req.HTTPRequest URL], [NSURL URLWithString:@"http://class/CustomConfigClasses"]);
 }
 
 - (void) test_completion_block_threads
 {
-    [[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
-    [[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
-    [[NSRConfig defaultConfig] setAppPassword:@"iphone"];
+    [[NSRConfig defaultConfig] setRootURL:[NSURL URLWithString:@"http://localhost:3000"]];
+    [[NSRConfig defaultConfig] setBasicAuthUsername:@"NSRails"];
+    [[NSRConfig defaultConfig] setBasicAuthPassword:@"iphone"];
     
     [[NSRConfig defaultConfig] setPerformsCompletionBlocksOnMainThread:YES];
     
@@ -494,9 +495,9 @@
          
          //do the second test inside the block so they don't overwrite each other
          
-         [[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
-         [[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
-         [[NSRConfig defaultConfig] setAppPassword:@"iphone"];
+         [[NSRConfig defaultConfig] setRootURL:[NSURL URLWithString:@"http://localhost:3000"]];
+         [[NSRConfig defaultConfig] setBasicAuthUsername:@"NSRails"];
+         [[NSRConfig defaultConfig] setBasicAuthPassword:@"iphone"];
          
          [[NSRConfig defaultConfig] setPerformsCompletionBlocksOnMainThread:NO];
          
@@ -510,8 +511,8 @@
 
 - (void) test_error_detection
 {
-    NSString *url = @"http://localhost:3000";
-    [[NSRConfig defaultConfig] setAppURL:url];
+    NSURL *url = [NSURL URLWithString:@"http://localhost:3000"];
+    [[NSRConfig defaultConfig] setRootURL:url];
 
     NSRRequest *r = [NSRRequest GET];
     
@@ -582,7 +583,7 @@
     
     /* Try a bogus hostname */
     e = nil;
-    [[NSRConfig defaultConfig] setAppURL:@"http://ojeaoifjif"];
+    [[NSRConfig defaultConfig] setRootURL:[NSURL URLWithString:@"http://ojeaoifjif"]];
     [[NSRRequest GET] sendSynchronous:&e];
     XCTAssertNotNil(e, @"Should error with bogus hostname");
 }
@@ -591,8 +592,8 @@
 {
     /** No user/pass (*/
     
-    NSString *url = @"http://localhost:3000";
-    [[NSRConfig defaultConfig] setAppURL:url];
+    NSURL *url = [NSURL URLWithString:@"http://localhost:3000"];
+    [[NSRConfig defaultConfig] setRootURL:url];
     
     NSRRequest *req = [NSRRequest GET];
     
@@ -603,33 +604,33 @@
     
     for (int i = 0; i < 2; i++)
     {
-        [NSRConfig defaultConfig].appOAuthToken = @"token123";
+        [NSRConfig defaultConfig].oAuthToken = @"token123";
         request = [req HTTPRequest];
         
         XCTAssertEqualObjects([request valueForHTTPHeaderField:@"Authorization"], @"OAuth token123", @"Should send OAuth token");
         
         //should be identical if only one user/pass element is present (but still oauth)
-        [[NSRConfig defaultConfig] setAppPassword:@"password"];
+        [[NSRConfig defaultConfig] setBasicAuthPassword:@"password"];
     }
     
-    [NSRConfig defaultConfig].appOAuthToken = nil;
+    [NSRConfig defaultConfig].oAuthToken = nil;
     
     /** User/pass **/
     NSString *username = @"username";
     NSString *password = @"password";
     
-    [[NSRConfig defaultConfig] setAppPassword:username];
+    [[NSRConfig defaultConfig] setBasicAuthPassword:username];
     request = [req HTTPRequest];
     XCTAssertNil([request valueForHTTPHeaderField:@"Authorization"], @"Shouldn't send w/authorization if no password");
     
     
-    [[NSRConfig defaultConfig] setAppPassword:nil];
-    [[NSRConfig defaultConfig] setAppUsername:username];
+    [[NSRConfig defaultConfig] setBasicAuthPassword:nil];
+    [[NSRConfig defaultConfig] setBasicAuthUsername:username];
     request = [req HTTPRequest];
     XCTAssertNil([request valueForHTTPHeaderField:@"Authorization"], @"Shouldn't send w/authorization if no username");
     
     
-    [[NSRConfig defaultConfig] setAppPassword:password];
+    [[NSRConfig defaultConfig] setBasicAuthPassword:password];
     request = [req HTTPRequest];
     XCTAssertNotNil([request valueForHTTPHeaderField:@"Authorization"], @"Should send w/authorization if username+password");
     
@@ -644,7 +645,8 @@
 {
     NSString *file = [NSHomeDirectory() stringByAppendingPathComponent:@"test.dat"];
 
-    NSRConfig *config = [[NSRConfig alloc] initWithAppURL:@"hi"];
+    NSRConfig *config = [[NSRConfig alloc] init];
+    config.rootURL = [NSURL URLWithString:@"http://hi"];
     
     NSRRequest *req = [[NSRRequest GET] routeTo:@"hi"];
     req.config = config;
@@ -660,13 +662,13 @@
     XCTAssertEqualObjects(req.route, req2.route, @"Should've carried over");    
     XCTAssertEqualObjects(req.queryParameters, req2.queryParameters, @"Should've carried over");    
     XCTAssertEqualObjects(req.additionalHTTPHeaders, req2.additionalHTTPHeaders, @"Should've carried over");    
-    XCTAssertEqualObjects(req.config.appURL, req2.config.appURL, @"Should've carried over");    
+    XCTAssertEqualObjects(req.config.rootURL, req2.config.rootURL, @"Should've carried over");
     XCTAssertEqualObjects(req.body, req2.body, @"Should've carried over");    
 }
 
 - (void) test_additional_headers
 {
-    [[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
+    [[NSRConfig defaultConfig] setRootURL:[NSURL URLWithString:@"http://localhost:3000"]];
     
     NSRRequest *req = [NSRRequest GET];
     req.additionalHTTPHeaders = @{@"test":@"hi"};
@@ -686,7 +688,7 @@
 
 - (void) test_additional_config_headers
 {
-    [[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
+    [[NSRConfig defaultConfig] setRootURL:[NSURL URLWithString:@"http://localhost:3000"]];
     [[NSRConfig defaultConfig] setAdditionalHTTPHeaders:@{@"test":@"hi"}];
     
     NSRRequest *req = [NSRRequest GET];

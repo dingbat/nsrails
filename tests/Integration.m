@@ -402,9 +402,9 @@ static BOOL noServer = NO;
     e = nil;
     
     //point app to localhost as it should be, but no authentication
-    [[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
-    [[NSRConfig defaultConfig] setAppUsername:nil];
-    [[NSRConfig defaultConfig] setAppPassword:nil];
+    [[NSRConfig defaultConfig] setRootURL:[NSURL URLWithString:@"http://localhost:3000"]];
+    [[NSRConfig defaultConfig] setBasicAuthUsername:nil];
+    [[NSRConfig defaultConfig] setBasicAuthPassword:nil];
     
     [req routeTo:@"404"];
     NSString *root = [req sendSynchronous:&e];
@@ -423,8 +423,8 @@ static BOOL noServer = NO;
     e = nil;
     
     //add authentication
-    [[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
-    [[NSRConfig defaultConfig] setAppPassword:@"iphone"];
+    [[NSRConfig defaultConfig] setBasicAuthUsername:@"NSRails"];
+    [[NSRConfig defaultConfig] setBasicAuthPassword:@"iphone"];
     
     index = [req sendSynchronous:&e];
     XCTAssertNil(e, @"Authenticated, should be no error");
@@ -742,7 +742,7 @@ static BOOL noServer = NO;
     
     NSError *e = nil;
     
-    [[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000/"];
+    [[NSRConfig defaultConfig] setRootURL:[NSURL URLWithString:@"http://localhost:3000/"]];
     
     [[[NSRRequest GET] routeTo:@"404.html"] sendSynchronous:&e];
     
@@ -784,9 +784,9 @@ static BOOL noServer = NO;
 {
     [NSRConfig resetConfigs];
     
-    [[NSRConfig defaultConfig] setAppURL:@"http://localhost:3000"];
-    [[NSRConfig defaultConfig] setAppUsername:@"NSRails"];
-    [[NSRConfig defaultConfig] setAppPassword:@"iphone"];
+    [[NSRConfig defaultConfig] setRootURL:[NSURL URLWithString:@"http://localhost:3000"]];
+    [[NSRConfig defaultConfig] setBasicAuthUsername:@"NSRails"];
+    [[NSRConfig defaultConfig] setBasicAuthPassword:@"iphone"];
     [[NSRConfig defaultConfig] configureToRailsVersion:NSRRailsVersion3];
     
     // Run before each test method
