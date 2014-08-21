@@ -8,17 +8,22 @@
 
 #import "NSRAsserts.h"
 
-#import "NSString+NSRInflection.h"
+@interface NSRRemoteObject (inflection)
+
++ (NSString *) stringByUnderscoringString:(NSString *)string ignoringPrefix:(BOOL)ignorePrefix;
++ (NSString *) stringByCamelizingString:(NSString *)string;
+
+@end
 
 @interface Inflection : XCTestCase
 
 @end
 
 #define NSRAssertEqualsUnderscored(string, underscored, strip) \
-XCTAssertEqualObjects([string nsr_stringByUnderscoringIgnoringPrefix:strip], underscored)
+XCTAssertEqualObjects([NSRRemoteObject stringByUnderscoringString:string ignoringPrefix:strip], underscored)
 
 #define NSRAssertEqualsCamelized(string, camelized) \
-XCTAssertEqualObjects([string nsr_stringByCamelizing], camelized)
+XCTAssertEqualObjects([NSRRemoteObject stringByCamelizingString:string], camelized)
 
 @implementation Inflection
 

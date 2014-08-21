@@ -31,7 +31,6 @@
 #import "NSRails.h"
 #import "NSRRemoteObject.h"
 
-#import "NSString+NSRInflection.h"
 #import <objc/runtime.h>
 
 
@@ -55,14 +54,14 @@
 @synthesize remoteAttributes=_remoteAttributes;
 @synthesize remoteDestroyOnNesting=_remoteDestroyOnNesting;
 
+#pragma mark - Private
+
 - (NSNumber *) primitiveRemoteID
 {
     return _remoteID;
 }
 
 #pragma mark - Overrides
-
-#pragma mark Encouraged
 
 + (NSRConfig *) config
 {
@@ -79,7 +78,7 @@
     
     if ([self config].autoinflectsClassNames)
     {
-        return [class nsr_stringByUnderscoringIgnoringPrefix:[self config].ignoresClassPrefixes];
+        return [self stringByUnderscoringString:class ignoringPrefix:[self config].ignoresClassPrefixes];
     }
     else
     {
@@ -260,7 +259,7 @@
 
     NSString *property = remoteKey;
     if ([self.class config].autoinflectsPropertyNames) {
-        property = [property nsr_stringByCamelizing];
+        property = [self.class stringByCamelizingString:property];
     }
     
     return ([self.remoteProperties containsObject:property] ? property : nil);
@@ -453,7 +452,7 @@
         
         NSString *remoteKey = objcProperty;
         if ([self.class config].autoinflectsPropertyNames) {
-            remoteKey = [remoteKey nsr_stringByUnderscoring];
+            remoteKey = [self.class stringByUnderscoringString:remoteKey ignoringPrefix:NO];
         }
         
         id remoteRep = [self encodeValueForProperty:objcProperty remoteKey:&remoteKey];
@@ -696,6 +695,83 @@
     [aCoder encodeObject:self.remoteID forKey:@"remoteID"];
     [aCoder encodeObject:self.remoteAttributes forKey:@"remoteAttributes"];
     [aCoder encodeBool:self.remoteDestroyOnNesting forKey:@"remoteDestroyOnNesting"];
+}
+
+
+#pragma mark - Inflection helpers
+
++ (NSString *) stringByCamelizingString:(NSString *)string
+{
+    NSMutableString *camelized = [NSMutableString string];
+    BOOL capitalizeNext = NO;
+    for (int i = 0; i < string.length; i++) {
+        NSString *str = [string substringWithRange:NSMakeRange(i, 1)];
+        
+        if ([str isEqualToString:@"_"]) {
+            capitalizeNext = YES;
+            continue;
+        }
+        
+        if (capitalizeNext) {
+            [camelized appendString:[str uppercaseString]];
+            capitalizeNext = NO;
+        }
+        else {
+            [camelized appendString:str];
+        }
+    }
+    
+    // replace items that end in Id with ID
+    if ([camelized hasSuffix:@"Id"]) {
+        [camelized replaceCharactersInRange:NSMakeRange(camelized.length - 2, 2) withString:@"ID"];
+    }
+    
+    // replace items that end in Ids with IDs
+    if ([camelized hasSuffix:@"Ids"]) {
+        [camelized replaceCharactersInRange:NSMakeRange(camelized.length - 3, 3) withString:@"IDs"];
+    }
+    
+    return camelized;
+}
+
++ (NSString *) stringByUnderscoringString:(NSString *)string ignoringPrefix:(BOOL)stripPrefix
+{
+    NSCharacterSet *caps = [NSCharacterSet uppercaseLetterCharacterSet];
+    
+    NSMutableString *underscored = [NSMutableString string];
+    BOOL isPrefix = YES;
+    BOOL previousLetterWasCaps = NO;
+    
+    for (int i = 0; i < string.length; i++) {
+        unichar c = [string characterAtIndex:i];
+        NSString *currChar = [NSString stringWithFormat:@"%C",c];
+        if ([caps characterIsMember:c])
+        {
+            BOOL nextLetterIsCaps = (i+1 == string.length || [caps characterIsMember:[string characterAtIndex:i+1]]);
+            
+            //only add the delimiter if, it's not the first letter, it's not in the middle of a bunch of caps, and it's not a _ repeat
+            if (i != 0 && !(previousLetterWasCaps && nextLetterIsCaps) && [string characterAtIndex:i-1] != '_')
+            {
+                if (isPrefix && stripPrefix) {
+                    underscored = [NSMutableString string];
+                }
+                else {
+                    [underscored appendString:@"_"];
+                }
+            }
+            [underscored appendString:[currChar lowercaseString]];
+            previousLetterWasCaps = YES;
+        }
+        else
+        {
+            isPrefix = NO;
+            
+            [underscored appendString:currChar];
+            previousLetterWasCaps = NO;
+        }
+    }
+    
+    return underscored;
 }
 
 @end
