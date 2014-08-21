@@ -447,7 +447,7 @@ NSString * const NSRNullRemoteIDException   = @"NSRNullRemoteIDException";
     id jsonResponse = [self jsonResponseFromData:data];
     NSError *error = [self errorForResponse:jsonResponse existingError:appleError statusCode:response.statusCode];
     
-    [self logIn:jsonResponse error:error];
+    [self logIn:jsonResponse response:response error:error];
     
     if (errorOut) {
         *errorOut = error;
@@ -493,7 +493,7 @@ NSString * const NSRNullRemoteIDException   = @"NSRNullRemoteIDException";
          id jsonResponse = [self jsonResponseFromData:data];
          NSError *error = [self errorForResponse:jsonResponse existingError:appleError statusCode:[(NSHTTPURLResponse *)response statusCode]];
          
-         [self logIn:jsonResponse error:error];
+         [self logIn:jsonResponse response:(NSHTTPURLResponse *)response error:error];
          
          if (error) {
              jsonResponse = nil;
@@ -512,19 +512,33 @@ NSString * const NSRNullRemoteIDException   = @"NSRNullRemoteIDException";
 
 #pragma mark - Logging
 
-#define NSRLogInOut(inout, json, ...) NSLog(@"[NSRails][%@] %@ %@", inout, [NSString stringWithFormat:__VA_ARGS__], (json ? json : @""))
+- (NSString *) prettyPrintedJSONFromObject:(id)object
+{
+    if (object) {
+        if ([object isKindOfClass:[NSString class]]) {
+            return object;
+        }
+        else {
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:object options:NSJSONWritingPrettyPrinted error:nil];
+            return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        }
+    }
+    return nil;
+}
 
 - (void) logOut:(NSURLRequest *)request
 {
     if (self.config.networkLogging) {
-        NSRLogInOut(@"OUT", self.body, @"===> %@ to %@", self.httpMethod, [request.URL absoluteString]);
+        NSString *json = [self prettyPrintedJSONFromObject:self.body];
+        NSLog(@"[NSRails][OUT] ===> %@ to %@ %@", self.httpMethod, [request.URL absoluteString], json ?: @"");
     }
 }
 
-- (void) logIn:(id)json error:(NSError *)error
+- (void) logIn:(id)jsonObj response:(NSHTTPURLResponse *)response error:(NSError *)error
 {
     if (self.config.networkLogging) {
-        NSRLogInOut(@"IN", error ? @"" : json, @"<=== Code %d; %@", (int)error.code, error ? error : @"");
+        NSString *json = [self prettyPrintedJSONFromObject:jsonObj];
+        NSLog(@"[NSRails][IN] <=== Code %d %@", (int)response.statusCode, error ?: json ?: @"");
     }
 }
 
