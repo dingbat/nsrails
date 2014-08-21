@@ -49,14 +49,15 @@ post.remoteCreateAsync() { error in
     ...
 }
 
-// Push updates to remote
 post.content = "Changed!"
+// PATCH /posts/1.json => {post:{author:"Me", content:"Changed!"}}
 post.remoteUpdateAsync() { error in ... }
 
-// Fetch any latest data for this post
+// Fetch any latest data for this post and update locally
+// GET /posts/1.json
 post.remoteFetchAsync() { error in ... }
 
-// Destroy
+// DELETE /posts/1.json
 post.remoteDestroyAsync() { error in ... }
 
 // GET /posts.json
@@ -90,6 +91,10 @@ A lot of behavior is customized via overrides. For instance, in the previous exa
 (Sidenote: This is necessary for Objective-C of course, but at least in Swift, there's probably a good way to automatically infer the type from the generic specified in the array, which I haven't looked into it yet. Let me know if this is possible!)
 
 See the [documentation](http://dingbat.github.com/nsrails/) for more on what you can do with NSRails-charged classes, or the [cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook) for quick `NSRRemoteObject` override recipes.
+
+####NSRRequest
+
+Requests themselves can be customized with query parameters (`/?a=b&c=d`), additional HTTP headers, or to go to custom routes (i.e. for custom controller methods) using the [NSRRequest class](http://dingbat.github.io/nsrails/Classes/NSRRequest.html). The results of these requests can easily be converted from JSON into native model objects using inherited convenience methods such as `+[MyClass objectWithRemoteDictionary:]` and `+[MyClass objectsWithRemoteDictionaries:]`.
 
 Support
 --------
