@@ -92,7 +92,7 @@ A lot of behavior is customized via overrides. For instance, in the previous exa
 
 See the [documentation](http://dingbat.github.com/nsrails/) for more on what you can do with NSRails-charged classes, or the [cookbook](https://github.com/dingbat/nsrails/wiki/Cookbook) for quick `NSRRemoteObject` override recipes.
 
-####NSRRequest
+#### NSRRequest
 
 Requests themselves can be customized with query parameters (`/?a=b&c=d`), additional HTTP headers, or to go to custom routes (i.e. for custom controller methods) using the [NSRRequest class](http://dingbat.github.io/nsrails/Classes/NSRRequest.html). The results of these requests can easily be converted from JSON into native model objects using inherited convenience methods such as `+[MyClass objectWithRemoteDictionary:]` and `+[MyClass objectsWithRemoteDictionaries:]`.
 
